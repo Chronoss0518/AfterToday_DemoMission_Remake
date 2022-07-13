@@ -1,0 +1,3 @@
+[submodule "Src/External/ChCppLibrary"]
+	path = Src/External/ChCppLibrary
+	url = https://github.com/Chronoss0518/ChCppLibrary
