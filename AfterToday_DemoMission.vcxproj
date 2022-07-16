@@ -20,54 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\AllStruct.h" />
+    <ClInclude Include="Src\BaseIncluder.h" />
     <ClInclude Include="Src\BaseRobot\BaseRobot.h" />
     <ClInclude Include="Src\BaseRobot\RobParts.h" />
-    <ClInclude Include="Src\ChDXLibrary\ChGameIncludeFile.h" />
-    <ClInclude Include="Src\ChDXLibrary\ChInclude\CBasichInclude.h" />
-    <ClInclude Include="Src\ChDXLibrary\ChInclude\ChDirect3D9Include.h" />
-    <ClInclude Include="Src\ChDXLibrary\ChWindows\ChWindows.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChBitBool\ChBitBool.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChIOActionController\ChIOActionController.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChNamespace\ChCmd.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChNamespace\ChFIO.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChNamespace\ChPtr.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChNamespace\ChStd.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChNetWorkProgram\ChSocket.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChPngController\ChPngController.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChProcessManager\ChProcessManager.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChScript\ChScript.h" />
-    <ClInclude Include="Src\ChDXLibrary\CPP\ChType\ChFloat.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChBaseFrame\ChBaseFrame.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChBoundingBox\ChBoundingBox.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChCamera\ChCamera.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChDirectX9Controller\ChDirectX9Controller.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChDSound\ChDSound.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChFont\ChFont.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChLight\ChLight.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChMeshManager\ChMeshManager.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChMouseController\ChMouseController.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChObjectController\ChObjectController.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChObject\ChObject.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPackDate\ChMaterial.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPackDate\ChMatrix.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPackDate\ChQuaternion.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPackDate\ChVector3.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPartsObject\ChKeyFrameAniObj.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPartsObject\ChSimplicityXFile.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPartsObject\ChSoundData.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPartsObject\ChTexture.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPhysicalBase\ChPhysicalBase.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChPolygonBoard\ChPolygonBoard.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChRenderTarget\ChRenderTarget.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChRotationAnimation\ChRotationAnimation.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChShader\ChShader.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChSimplicityAnimationController\ChSimplicityAnimationController.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChSimplicityXfile\ChSimplicityXfileList.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChSkinMeshXFile\ChSkinMeshXFile.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChSprite\ChSprite.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChStringController\ChStringController.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChTexManager\ChTexManager.h" />
-    <ClInclude Include="Src\ChDXLibrary\Direct3D9\ChTextureList\ChTextureList.h" />
     <ClInclude Include="Src\CloudObj\CloudObj.h" />
     <ClInclude Include="Src\Damage\Damage.h" />
     <ClInclude Include="Src\EnemyObj\EnemyObj.h" />
@@ -80,36 +35,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Src\BaseRobot\BaseRobot.cpp" />
     <ClCompile Include="Src\BaseRobot\RobParts.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\ChWindows\ChWindows.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\CPP\ChBitBool\ChBitBool.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\CPP\ChNetWorkProgram\ChSocket.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\CPP\ChPngController\ChPngController.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\CPP\ChProcessManager\ChProcessManager.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\CPP\ChScript\ChScrit.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChBaseFrame\ChBaseFrame.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChBoundingBox\ChBoundingBox.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChCamera\ChCamera.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChDirectX9Controller\ChDirectX9Controller.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChDSound\ChDSound.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChFont\ChFont.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChLight\ChLight.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChMeshManager\ChMeshManager.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChMouseController\ChMouseController.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChObjectController\ChObjectController.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChObject\ChObject.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChPartsObject\ChPartsObject.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChPhysicalBase\ChPhysicalBase.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChPolygonBoard\ChPolygonBoard.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChRenderTarget\ChRenderTarget.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChRotationAnimation\ChRotationAnimation.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChShader\ChShader.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChSimplicityAnimationController\ChSimplicityAnimationController.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChSimplicityXfile\ChSimplicityXfileList.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChSkinMeshXFile\ChSkinMeshXFile.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChSprite\ChSprite.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChStringController\ChStringController.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChTexManager\ChTexManager.cpp" />
-    <ClCompile Include="Src\ChDXLibrary\Direct3D9\ChTextureList\ChTextureList.cpp" />
     <ClCompile Include="Src\CloudObj\CloudObj.cpp" />
     <ClCompile Include="Src\Damage\Damage.cpp" />
     <ClCompile Include="Src\EnemyObj\EnemyObj.cpp" />
@@ -117,25 +42,6 @@
     <ClCompile Include="Src\HitPosList\HitPosList.cpp" />
     <ClCompile Include="Src\PlayerObj\PlayerObj.cpp" />
     <ClCompile Include="Src\TitleFrame.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Src\ChDXLibrary\EffectDate\Model.fx">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
-      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableOptimizations>
-      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</EnableDebuggingInformation>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="Src\ChDXLibrary\EffectDate\ShaderData.fx">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2.0</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(MSBuildProjectDirectory)\%(Filename).cso</ObjectFileOutput>
-      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DisableOptimizations>
-      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</EnableDebuggingInformation>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>
-    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -189,12 +95,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
