@@ -2,23 +2,20 @@
 #ifndef _AllStruct
 #define _AllStruct
 
-///////////////////////////////////////////////////////////////////////////////////////
-//Struct
-///////////////////////////////////////////////////////////////////////////////////////
+#ifdef MESH_DIRECTORY
+#define ROBOT_PARTS_DIRECTORY(current_path) MESH_DIRECTORY("RobotsParts/") current_path
+#define WEAPOIN_DIRECTORY(current_path) ROBOT_PARTS_DIRECTORY("Weapon/") current_path
+#endif
 
-namespace ChTitle
+
+namespace ChBattle
 {
 
-
-}
-
-namespace ChGame
-{
 	//WeaponsData//
 	struct WeapData
 	{
 		unsigned char Damage;
-		ChVec3_9 ShotPos;
+		ChVec3_11 ShotPos;
 		float HitLen;
 		float Speed;
 		std::string SEName;
@@ -27,16 +24,13 @@ namespace ChGame
 	//AttackPosData//
 	struct APosData
 	{
-		ChVec3_9 Pos;
-		ChVec3_9 Dir;
+		ChVec3_11 Pos;
+		ChVec3_11 Dir;
 		WeapData Base;
 
 	};
 
 }
-
-
-
 
 
 #endif
