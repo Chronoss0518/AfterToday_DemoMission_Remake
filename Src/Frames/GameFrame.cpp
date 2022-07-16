@@ -1,5 +1,8 @@
+#include<Windows.h>
+#include<ChBaseLibrary.h>
+#include<ChWindowsLibrary.h>
+#include<ChDirect3D11Library.h>
 
-#include"ChDXLibrary/ChGameIncludeFile.h"
 
 #include"AllStruct.h"
 #include"Damage/Damage.h"

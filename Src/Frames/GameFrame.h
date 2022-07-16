@@ -6,7 +6,7 @@ class HitPosList;
 class BaseRobotsList;
 class CloudList;
 
-class Game
+class Game:public ChCpp::BaseFrame
 {
 public:
 
@@ -40,14 +40,14 @@ private:
 	const enum{VTop,VLeft,VBottom,VRight};
 
 	const float MapScaling = 50.0f;
-	ChVec3_9 MapPos;
+	ChVec3_11 MapPos;
 	const float MapMove = 0.8f;
 
-	D3DXMATRIX CamMat;
+	ChMat_11 CamMat;
 	char CurrentPath[256];
 
 	char NextFrame = 'G';
-	ChStd::Bool StartFlg = ChStd::False;
+	ChStd::Bool StartFlg = false;
 	unsigned long fps;
 	//OpenWorldMap *World;
 	
@@ -64,11 +64,11 @@ private:
 	ChPtr::Shared<CloudList>Cloud;
 
 	ChPtr::Shared<BaseRobotsList> RobotsList;
-	ChVec3_9 PPos;
+	ChVec3_11 PPos;
 
 	//Viewïœêî//
-	ChVector3_9 BaseCamPos = ChVec3_9(0.0f, 6.0f, -12.0f)
-		, BaseCamLook = ChVec3_9(0.0f, 4.0f, 0.0f);
+	ChVec3_11 BaseCamPos = ChVec3_11(0.0f, 6.0f, -12.0f)
+		, BaseCamLook = ChVec3_11(0.0f, 4.0f, 0.0f);
 
 	DWORD CamRobotNo;
 	ChPtr::Shared<ChCamera9>Camera;
