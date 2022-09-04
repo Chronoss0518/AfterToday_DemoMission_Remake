@@ -1,41 +1,36 @@
-#include<Windows.h>
-#include<ChBaseLibrary.h>
-#include<ChWindowsLibrary.h>
-#include<ChDirect3D11Library.h>
+#include"../BaseIncluder.h"
 
 
-#include"AllStruct.h"
-#include"Damage/Damage.h"
-#include"BaseRobot/BaseRobot.h"
+#include"../AllStruct.h"
+#include"../Damage/Damage.h"
+#include"../BaseRobot/BaseRobot.h"
 #include"GameFrame.h"
 
-#include"PlayerObj/PlayerObj.h"
-#include"EnemyObj/EnemyObj.h"
+#include"../PlayerObj/PlayerObj.h"
+#include"../EnemyObj/EnemyObj.h"
 
-#include"HitPosList/HitPosList.h"
+#include"../HitPosList/HitPosList.h"
 
-#include"CloudObj/CloudObj.h"
+#include"../CloudObj/CloudObj.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //GameÉÅÉ\ÉbÉh
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void Game::Init()
+void GameFrame::Init()
 {
 
 	ChDSound9.SetBGMSound("Battle", "TestBattle.wav", "Sound");
 	ChDSound9.PlayBGM("Battle");
 	ChDSound9.SetBGMSound("Boss", "MainBattle1.wav", "Sound");
-	ChMat_9 TmpMat;
+	ChLMat tmpMat;
 
 	HitPos = ChPtr::Make_S<HitPosList>();
 
 	HitPos->Init();
 
 	RobotsList = ChPtr::Make_S<BaseRobotsList>();
-
-	Camera =ChPtr::Make_S<ChCamera9>(ChDevice.GetDevice(), ChWinAPID);
 
 	Light =ChPtr::Make_S<ChLight9>(ChDevice.GetDevice());
 
@@ -49,26 +44,26 @@ void Game::Init()
 
 	ChMeMa.SetSmpXFile("skysphya_Bluesky.x", "Sky", "Base");
 	
-	TmpMat.ScalingMode(MapScaling);
+	tmpMat.ScalingMode(MapScaling);
 	for (auto Mate : ChMeMa.GetXFileMaterials("Field"))
 	{
-		Mate->Mat = TmpMat;
+		Mate->Mat = tmpMat;
 	}
 	for (auto Mate : ChMeMa.GetXFileMaterials("Field2"))
 	{
-		Mate->Mat = TmpMat;
+		Mate->Mat = tmpMat;
 	}
 	for (auto Mate : ChMeMa.GetXFileMaterials("FieldHit"))
 	{
-		Mate->Mat = TmpMat;
+		Mate->Mat = tmpMat;
 	}
 
 	ChMeMa.CreateFaseNormal("Field", 0);
 
 	ChMeMa.CreateFaseNormal("FieldHit", 0);
 
-	TmpMat.ScalingMode(MapScaling * 2.0f);
-	ChMeMa.GetXFileMaterials("Sky")[0]->Mat = TmpMat;
+	tmpMat.ScalingMode(MapScaling * 2.0f);
+	ChMeMa.GetXFileMaterials("Sky")[0]->Mat = tmpMat;
 
 	Cloud = ChPtr::Make_S<CloudList>();
 	Cloud->Init();
@@ -76,13 +71,13 @@ void Game::Init()
 
 	RobotsList->SetHitPosList(HitPos);
 
-	RobotsList->SetRobots("", &ChVec3_9(100.0f, 200.0f, -150.0f),0);
+	RobotsList->SetRobots("", &ChVec3(100.0f, 200.0f, -150.0f),0);
 
 
-	RobotsList->SetRobots2(ChStd::True, &ChVec3_9(-60.0f, 100.0f, 10.0f));
-	RobotsList->SetRobots2(ChStd::True, &ChVec3_9(-30.0f, 100.0f, 30.0f));
-	RobotsList->SetRobots2(ChStd::True, &ChVec3_9(30.0f, 100.0f, 30.0f));
-	RobotsList->SetRobots2(ChStd::True, &ChVec3_9(50.0f, 100.0f, 10.0f));
+	RobotsList->SetRobots2(ChStd::True, &ChVec3(-60.0f, 100.0f, 10.0f));
+	RobotsList->SetRobots2(ChStd::True, &ChVec3(-30.0f, 100.0f, 30.0f));
+	RobotsList->SetRobots2(ChStd::True, &ChVec3(30.0f, 100.0f, 30.0f));
+	RobotsList->SetRobots2(ChStd::True, &ChVec3(50.0f, 100.0f, 10.0f));
 	RobotsList->SetCamRobot(0);
 
 	Light->SetDir(&D3DXVECTOR3(1.0f, -1.0f, 0.0f));
@@ -100,7 +95,7 @@ void Game::Init()
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-void Game::Release()
+void GameFrame::Release()
 {
 
 	ChDSound9.ClearBGM();
@@ -113,7 +108,7 @@ void Game::Release()
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-char Game::Frame(void)
+void GameFrame::Update()
 {
 
 	if (DFlg)Draw();
@@ -135,11 +130,11 @@ char Game::Frame(void)
 	Update();
 
 
-	//TmpVec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	//tmpVec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	//TmpMat = TmpAngX * TmpAngY * TmpMat;
+	//tmpMat = tmpAngX * tmpAngY * tmpMat;
 
-	//float TmpLen;
+	//float tmpLen;
 
 	CamUpdate();
 
@@ -149,25 +144,25 @@ char Game::Frame(void)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-void Game::Update(void)
+void GameFrame::Update(void)
 {
 
 	Cloud->Update();
 
-	ChVec3_9 TmpVec;
+	ChVec3 tmpVec;
 
 	RobotsList->Update();
 
 	HitPos->UpDate();
 
-	TmpVec = *RobotsList->GetMat(CamRobotNo);
+	tmpVec = *RobotsList->GetMat(CamRobotNo);
 
-	if (PPos.GetLen(&TmpVec) != 0.0f)
+	if (PPos.GetLen(&tmpVec) != 0.0f)
 	{
-		ChVec3_9 TmpMove;
-		TmpMove = TmpVec - PPos;
-		MapPos += TmpMove * MapMove;
-		PPos = TmpVec;
+		ChVec3 tmpMove;
+		tmpMove = tmpVec - PPos;
+		MapPos += tmpMove * MapMove;
+		PPos = tmpVec;
 	}
 
 
@@ -176,12 +171,12 @@ void Game::Update(void)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-void Game::Render3D(void)
+void GameFrame::Render3D(void)
 {
 
-	ChMatrix_9 TmpMat;
-	ChMatrix_9 TmpRot;
-	ChMatrix_9 TmpScl;
+	ChLMat tmpMat;
+	ChLMat tmpRot;
+	ChLMat tmpScl;
 
 	ChEffectDraw.SetCam(Camera);
 
@@ -193,14 +188,14 @@ void Game::Render3D(void)
 
 
 
-	TmpMat.Identity();
+	tmpMat.Identity();
 
-	ChMeMa.DrawSmpXFile(&TmpMat, "Sky");
+	ChMeMa.DrawSmpXFile(&tmpMat, "Sky");
 
 	ChDevice.LightSetting(ChStd::True);
 
-	ChMeMa.DrawSmpXFile(&TmpMat, "Field");
-	ChMeMa.DrawSmpXFile(&TmpMat, "Field2");
+	ChMeMa.DrawSmpXFile(&tmpMat, "Field");
+	ChMeMa.DrawSmpXFile(&tmpMat, "Field2");
 
 	Cloud->Draw();
 
@@ -220,7 +215,7 @@ void Game::Render3D(void)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void Game::Render2D(void)
+void GameFrame::Render2D(void)
 {
 	RobotsList->DrawMarker();
 
@@ -228,19 +223,19 @@ void Game::Render2D(void)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void Game::CamUpdate(void)
+void GameFrame::CamUpdate(void)
 {
-	ChVector3_9 TmpCamP,TmpVec;
-	ChMat_9 TmpMat;
-	TmpMat = *RobotsList->GetCamPos();
+	ChVec3 tmpCamP,tmpVec;
+	ChLMat tmpMat;
+	tmpMat = *RobotsList->GetCamPos();
 
-	TmpCamP.MatPos(&TmpMat, &BaseCamPos);
+	tmpCamP.MatPos(&tmpMat, &BaseCamPos);
 
-	Camera->SetCamPos(&TmpCamP);
+	Camera->SetCamPos(&tmpCamP);
 
-	TmpCamP.MatPos(RobotsList->GetCamLookPos(), &BaseCamLook);
+	tmpCamP.MatPos(RobotsList->GetCamLookPos(), &BaseCamLook);
 	
-	Camera->SetCamLook(&TmpCamP);
+	Camera->SetCamLook(&tmpCamP);
 
 	Camera->SetCamMat(RobotsList->GetCamLookPos());
 
@@ -251,23 +246,23 @@ void Game::CamUpdate(void)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void Game::SqriptUpdate()
+void GameFrame::UpdateFunction()
 {
 
-	float TmpData = 0.0f;
+	float tmpData = 0.0f;
 	switch (Pattern)
 	{
 	case 0:
 		if (RobotsList->IsEnemyLive())break;
 
 		ChDSound9.PlayBGM("Boss");
-		RobotsList->SetRobots(ChStd::True, &ChVec3_9(-150.0f, 200.0f, 100.0f), 1);
-		RobotsList->SetRobots(ChStd::True, &ChVec3_9(-150.0f, 200.0f, 150.0f), 1);
-		RobotsList->SetRobots(ChStd::True, &ChVec3_9(-100.0f, 200.0f, 100.0f), 1);
-		RobotsList->SetRobots(ChStd::True, &ChVec3_9(-100.0f, 200.0f, 150.0f), 1);
-		RobotsList->SetRobots(ChStd::False, &ChVec3_9(100.0f, 200.0f, -200.0f), 2);
-		RobotsList->SetRobots(ChStd::False, &ChVec3_9(100.0f, 200.0f, -250.0f), 2);
-		RobotsList->SetRobots(ChStd::False, &ChVec3_9(150.0f, 200.0f, -200.0f), 2);
+		RobotsList->SetRobots(ChStd::True, &ChVec3(-150.0f, 200.0f, 100.0f), 1);
+		RobotsList->SetRobots(ChStd::True, &ChVec3(-150.0f, 200.0f, 150.0f), 1);
+		RobotsList->SetRobots(ChStd::True, &ChVec3(-100.0f, 200.0f, 100.0f), 1);
+		RobotsList->SetRobots(ChStd::True, &ChVec3(-100.0f, 200.0f, 150.0f), 1);
+		RobotsList->SetRobots(ChStd::False, &ChVec3(100.0f, 200.0f, -200.0f), 2);
+		RobotsList->SetRobots(ChStd::False, &ChVec3(100.0f, 200.0f, -250.0f), 2);
+		RobotsList->SetRobots(ChStd::False, &ChVec3(150.0f, 200.0f, -200.0f), 2);
 		Pattern = 1;
 
 		break;
@@ -276,12 +271,12 @@ void Game::SqriptUpdate()
 		if (RobotsList->GetEnemyCnt() < 4)
 		{
 			EnemyBreakCnt++;
-			RobotsList->SetRobots(ChStd::True, &ChVec3_9(-100.0f, 200.0f, 150.0f), 1);
+			RobotsList->SetRobots(ChStd::True, &ChVec3(-100.0f, 200.0f, 150.0f), 1);
 		}
 
 		if (RobotsList->GetMemberCnt() < 4)
 		{
-			RobotsList->SetRobots(ChStd::False, &ChVec3_9(100.0f, 200.0f, -200.0f), 2);
+			RobotsList->SetRobots(ChStd::False, &ChVec3(100.0f, 200.0f, -200.0f), 2);
 		}
 
 		if (EnemyBreakCnt > 2) {
@@ -322,9 +317,9 @@ void Game::SqriptUpdate()
 	case 4:
 
 		if(ChWinAPID.IsPushKeyNoHold(VK_SPACE))Pattern = 5;
-		unsigned char TmpData;
-		TmpData = (FaidOutCnt <= 200 ? 55 + FaidOutCnt : 55 + 400 - FaidOutCnt);
-		ChTexMa.SetBlendAlpha(TmpData, "Space");
+		unsigned char tmpData;
+		tmpData = (FaidOutCnt <= 200 ? 55 + FaidOutCnt : 55 + 400 - FaidOutCnt);
+		ChTexMa.SetBlendAlpha(tmpData, "Space");
 		FaidOutCnt += 4;
 
 
@@ -347,51 +342,51 @@ void Game::SqriptUpdate()
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void Game::SqriptDraw()
+void GameFrame::DrawFunction()
 {
-	ChMat_9 TmpMat;
-	TmpMat.Identity();
+	ChLMat tmpMat;
+	tmpMat.Identity();
 
-	ChVec3_9 TmpVec;
-	TmpVec = 0.0f;
+	ChVec3 tmpVec;
+	tmpVec = 0.0f;
 	switch (Pattern)
 	{
 	case 2:
 
-		TmpMat = ChVec3_9(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
+		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
 
 		ChSp9.DrawSprite(ChTexMa.GetTexture("Black")
-			, &TmpMat
-			, &TmpVec 
+			, &tmpMat
+			, &tmpVec 
 			,nullptr);
 
 		break;
 	case 3:
-		TmpMat = ChVec3_9(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
+		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black" ), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Black" ), &tmpMat, &tmpVec, nullptr);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &tmpMat, &tmpVec, nullptr);
 
 		break;
 
 	case 4:
-		TmpMat = ChVec3_9(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
+		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black"), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Black"), &tmpMat, &tmpVec, nullptr);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &tmpMat, &tmpVec, nullptr);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Space"), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Space"), &tmpMat, &tmpVec, nullptr);
 
 		break;
 
 	case 5:
-		TmpMat = ChVec3_9(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
+		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black"), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Black"), &tmpMat, &tmpVec, nullptr);
 
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &TmpMat, &TmpVec, nullptr);
+		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &tmpMat, &tmpVec, nullptr);
 
 		break;
 	default:
@@ -403,7 +398,7 @@ void Game::SqriptDraw()
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void Game::Draw()
+void GameFrame::Draw()
 {
 
 

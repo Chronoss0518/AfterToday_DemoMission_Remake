@@ -1,25 +1,24 @@
 
-#include"../ChDXLibrary/ChGameIncludeFile.h"
+#include"../BaseIncluder.h"
+
 #include"CloudObj.h"
 
-const float BaseHigh = 300.0f;
-const float MaxLen = 1000.0f;
+#define BASE_HIGH 300.0f
+#define MAX_LEN 1000.0f
 
 void CloudList::Init()
 {
-	MoveDir = ChVec3_9(
-		(ChStd::GetRand(3) * 2.0f - 2.0f)
-		, 0.0f
-		, (ChStd::GetRand(3) * 2.0f - 2.0f));
+	UpdateMoveDirection();
 
-	MoveDir.Normalize();
+	texture = ChPtr::Make_S<ChD3D11::Texture11>();
 
-	MoveSize = (ChStd::GetRand(9) + 1.0f) * 0.05f;
+	texture->CreateTexture(TEXTURE_DIRECTORY("Cloud.png"));
 
+	pobo.Init(ChD3D11::D3D11Device());
 
-	ChTexMa.SetTexture("Cloud.png", "Cloud", "Base", 128, 128, 128, 128);
+	//ChTexMa.SetTexture("Cloud.png", "Cloud", "Base", 128, 128, 128, 128);
 
-	for (unsigned char i = 0; i < StartCloudCnt; i++)
+	for (unsigned char i = 0; i < startCloudCnt; i++)
 	{
 		CloudBurth();
 	}
@@ -27,93 +26,76 @@ void CloudList::Init()
 
 void CloudList::Update()
 {
-	ChVec3_9 TmpVec, TmpPos;
-	TmpVec = MoveDir * MoveSize;
+	ChVec3 tmpVec, tmpPos;
+	tmpVec = moveDir * moveSize;
 
-	for (unsigned char i =0 ;i < Cloud_List.size();i++)
+	for (unsigned char i =0 ;i < cloudList.size();i++)
 	{
 
-		Cloud_List[i]->Move(&TmpVec);
-		TmpPos = *Cloud_List[i]->GetPos();
+		cloudList[i]->pos += (tmpVec);
+		tmpPos = cloudList[i]->pos;
 
-		if (TmpPos.GetLen(&ChVec3_9(0.0f, BaseHigh, 0.0f)) < MaxLen)continue;
-		Cloud_List.erase(Cloud_List.begin() + i);
+		if (ChVec3::GetLen(tmpPos,ChVec3(0.0f, BASE_HIGH, 0.0f)) < MAX_LEN)continue;
+		cloudList.erase(cloudList.begin() + i);
 		i--;
 
 	}
 
-	if (ChStd::GetRand(5) <= 1)CloudBurth();
+	if ((std::rand() % 5) <= 1)CloudBurth();
 
-	if (Cloud_List.size() >= MaxCloufdCnt)Cloud_List.pop_back();
+	if (cloudList.size() >= maxCloufdCnt)cloudList.pop_back();
 
-	++ChengeCnt%=ChengeIntervalCnt;
+	++chengeCnt %= chengeIntervalCnt;
 
-	if (ChengeCnt != 0)return;
-	if(ChStd::GetRand(100)<90)return;
+	if (chengeCnt != 0)return;
+	if ((std::rand() % 100) < 90)return;
 
-	MoveDir = ChVec3_9(
-		(ChStd::GetRand(3) * 2.0f - 2.0f)
-		, 0.0f
-		, (ChStd::GetRand(3) * 2.0f - 2.0f));
-
-	MoveDir.Normalize();
-
-	MoveSize = (ChStd::GetRand(9) + 1.0f) * 0.05f;
-
-
+	UpdateMoveDirection();
 
 }
 
-void CloudList::Draw()
+void CloudList::Draw(ID3D11DeviceContext* _dc,ChD3D11::Shader::BaseDrawPolygonBoard11& _drawPoBo)
 {
 
-	ChPoBo9.SetAlphaFlg(ChStd::True);
-	for (auto Obj : Cloud_List)
-	{
-		Obj->Draw();
-	}
+	ChLMat tmpMat = _drawPoBo.GetViewMatrix();
 
-	ChPoBo9.SetAlphaFlg(ChStd::False);
+	for (auto obj : cloudList)
+	{
+		tmpMat.SetScalling(obj->scl);
+		tmpMat.SetPosition(obj->pos);
+
+		_drawPoBo.Draw(_dc, *texture, pobo, (DirectX::XMFLOAT4X4)tmpMat);
+	}
 }
 
 void CloudList::CloudBurth()
 {
-	auto TmpData = ChPtr::Make_S<CloudObj>();
-	TmpData->Init();
-	Cloud_List.push_back(TmpData);
-}
+	auto tmpObj = ChPtr::Make_S<CloudObject>();
+	tmpObj->scl = (float)((std::rand() % 3) + 1.0f);
 
-void CloudObj::Init()
-{
-	Scl = (float)(ChStd::GetRand(3) + 1.0f);
-	Pos = ChVec3_9(
-		(ChStd::GetRand(3) * 2.0f - 2.0f)
-		, 0.0f
-		, (ChStd::GetRand(3) * 2.0f - 2.0f));
-	Pos.Normalize();
-	Pos *= MaxLen * (ChStd::GetRand(100) * 0.01f);
-	Pos.y = BaseHigh;
-}
-
-void CloudObj::Move(const ChVec3_9* _Move)
-{
 	
-	ChVec3_9 TmpVec = *_Move;
-	TmpVec.y = 0;
-	Pos += TmpVec;
+	tmpObj->pos = CreateVec();
+	tmpObj->pos *= MAX_LEN * ((std::rand() % 100) * 0.01f);
+	tmpObj->pos.y = BASE_HIGH;
+
+	cloudList.push_back(tmpObj);
 }
 
-void CloudObj::Draw()
+void CloudList::UpdateMoveDirection()
 {
-	ChMat_9 TmpMat;
-	ChVec3_9 TmpVec;
-	TmpMat = TmpMat * *ChDevice.GetCamVMat();
-	TmpMat.Inverse();
-	TmpMat = Pos;
 
-	ChPoBo9.SetXYPosition(&ChVec3_9(-10.0f * Scl, 10.0f * Scl, 0.0f), 20.0f * Scl, 20.0f * Scl);
+	moveDir = CreateVec();
 
-	ChPoBo9.Draw(ChTexMa.GetTexture(TextureName.c_str()), &TmpMat);
+	moveDir.Normalize();
 
+	moveSize = ((std::rand() % 9) + 1.0f) * 0.05f;
 
+}
+
+ChVec3 CloudList::CreateVec()
+{
+	return ChVec3(
+		((std::rand() % 3) * 2.0f - 2.0f)
+		, 0.0f
+		, ((std::rand() % 3) * 2.0f - 2.0f));;
 }

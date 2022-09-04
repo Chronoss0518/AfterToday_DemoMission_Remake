@@ -13,8 +13,8 @@ public:
 	//RobotData//
 	struct BaseData
 	{
-		ChVec3_9 Pos;
-		ChStd::FPOINT Rot;
+		ChVec3 Pos;
+		ChVec4 Rot;
 		char Team;
 		unsigned char RobotsNo;
 		ChStd::Bool EnemyFlg;
@@ -23,13 +23,13 @@ public:
 	//位置情報//
 	struct MoveData
 	{
-		ChVec3_9 MoveV;//移動量//
-		ChStd::FPOINT TmpRot;//仮の回転量//
+		ChVec3 MoveV;//移動量//
+		ChVec4 tmpRot;//仮の回転量//
 		const float AvoDen = 0.8f;//回避時の減速する割合//
 		float AvoMax = 5.0f;//回避時の最大回避速度//
 		float AvoV = 0.0f;//回避時の速度//
 		const float AvoMin = 0.0005f;//回避時の最低速度//
-		ChVec3_9 AvoDir;//回避する向き//
+		ChVec3 AvoDir;//回避する向き//
 	};
 
 	enum class KeyName :ChStd::DataNo
@@ -44,7 +44,7 @@ public:
 
 	virtual ~BRobot();
 
-	inline void SetPos(const ChVec3_9 *_Pos) { BaseD.Pos = *_Pos; }
+	inline void SetPos(const ChVec3& _Pos) { BaseD.Pos = _Pos; }
 
 	void SetHitPosList(const ChPtr::Shared<HitPosList> _HitPosList)
 	{
@@ -63,31 +63,20 @@ public:
 		DData = _D;
 	}
 
-	void SetLookView(ChPtr::Shared<ChCamera9> _Cam)
-	{
-		WpLook = _Cam;
-	}
-
 	inline void SetDData(
-		const ChVec3_9* _Pos)
+		const ChVec3* _Pos)
 	{
 		if (DData == nullptr)return;
-		ChStd::Bool DFlg = ChStd::False;
-		if (HP < 1)DFlg = ChStd::True;
+		ChStd::Bool DFlg = false;
+		if (HP < 1)DFlg = true;
 		DData->SetDPos(_Pos, DFlg);
 	}
 
-	inline virtual const ChMat_9* GetCamPos() { return &CamPos; }
-
-	inline const ChVec3_9* GetPos() { return &BaseD.Pos; }
-
-	inline const ChVec3_9* GetMoveVec() { return &CamMoveVec; }
-
-
+	inline const ChVec3 GetPos() { return BaseD.Pos; }
 
 	inline ChStd::Bool GetIsKey(const ChStd::DataNo _Key)
 	{
-		return ButtonFlg[_Key];
+		return ButtonFlg.GetBitFlg(_Key);
 	}
 
 	inline const ChPtr::Shared<RobPartsList>GetRobParts()
@@ -95,9 +84,9 @@ public:
 		return RobParts;
 	}
 
-	inline const ChMat_9* GetMat() { return &Mat; }
+	inline const ChLMat GetMat() { return Mat; }
 
-	inline const ChMat_9* GetDrawMat() { return &DrawMat; }
+	inline const ChLMat GetDrawMat() { return DrawMat; }
 
 	inline float GetPraHp() { return HP > 0 ? (float)(HP / MaxHp) : 0.0f; }
 
@@ -114,15 +103,15 @@ public:
 
 	inline ChStd::Bool IsDorpOutFlg()
 	{
-		if (DData == nullptr)return ChStd::False;
-		if (HP > 0 || !DData->GetDDataEmpty())return ChStd::True;
-		return ChStd::False;
+		if (DData == nullptr)return false;
+		if (HP > 0 || !DData->GetDDataEmpty())return true;
+		return false;
 	}
 
 	inline ChStd::Bool IsLiveFlg()
 	{
-		if (HP > 0)return ChStd::True;
-		return ChStd::False;
+		if (HP > 0)return true;
+		return false;
 	}
 
 	void Draw(const ChStd::Bool _EffectFlg);
@@ -133,15 +122,14 @@ public:
 	
 	BRobot& operator= (BRobot& _cm)
 	{
-		this->Mat = *_cm.GetMat();
-		this->CamPos = *_cm.GetCamPos();
+		this->Mat = _cm.GetMat();
 		this->BaseD.EnemyFlg = _cm.IsEnemy();
 		return *this;
 	}
 
 protected:
 
-	void Attack(const ChPtr::Shared<ChGame::WeapData> _Weap);
+	void Attack(const ChPtr::Shared<WeapData> _Weap);
 
 	void InputKeyData();
 
@@ -159,8 +147,7 @@ protected:
 	//inputData//
 
 	static const unsigned char KeyCount = 12;
-	ChStd::Bool ButtonFlg[KeyCount];
-	ChPtr::Shared<ChMouCon>Mouse;
+	ChCpp::BitBool ButtonFlg = ChCpp::BitBool(2);
 
 	//行動を変える割合(最大100%)//
 	unsigned char SpNow = 95;
@@ -181,7 +168,7 @@ protected:
 	float BLen = 5.0f;
 
 	ChStd::Bool SetTargetPos();
-	ChMat_9 TargetPos;
+	ChLMat TargetPos;
 	//ターゲットのウィンドウ上の位置から中央までの距離//
 	float TWindOnPosLen = 0.0f;
 
@@ -195,7 +182,7 @@ protected:
 
 	void CreatLook();
 
-	void CreateShotData(const ChStd::DataNo _TmpNo);
+	void CreateShotData(const ChStd::DataNo _tmpNo);
 
 	void SetRobParts();
 
@@ -210,12 +197,12 @@ protected:
 	unsigned short AddDamage = 0;
 
 
-	ChStd::FPOINT MoveRot;
+	ChVec4 MoveRot;
 
 	float Sens = 1.0f;
 	const float MouMoveP = 30.0f;
 
-	ChStd::Bool BoostFlg = ChStd::False;
+	ChStd::Bool BoostFlg = false;
 	float BoostV = 1.0f;
 	//short BoostEnelgy = 100;
 
@@ -231,42 +218,38 @@ protected:
 	ChPtr::Shared<Damage> DData = nullptr;
 
 	//DrawData//
-	ChStd::COLOR1f Col;
-	ChMat_9 Mat;
-	ChMat_9 DrawMat;
+	ChVec4 Col;
+	ChLMat Mat;
+	ChLMat DrawMat;
 
 	//CamData//
 
 	void CamUpdate();
 
-	ChPtr::Shared<ChCamera9>Look;
-	ChStd::Bool LookFlg = ChStd::False;
 
-	ChVec3_9 CamMoveVec;
+	ChLMat CamMoveVec;
 
-	ChVec3_9 BaseCamPos = ChVec3_9(0.0f, 0.0f, 5.0f)
-		, BaseCamLook = ChVec3_9(0.0f, 0.0f, 6.0f);
+	ChVec3 BaseCamPos = ChVec3(0.0f, 0.0f, 5.0f)
+		, BaseCamLook = ChVec3(0.0f, 0.0f, 6.0f);
 
 	void SetCamMat();
 
 	void SetLook();
 
-	ChMat_9 CamLookMat;
+	ChLMat CamLookMat;
 
 	static const unsigned char CamPosMatCnt = 10;
 
-	ChVec3_9 CamOffPos = ChVec3_9(0.0f, 7.0f, -6.0f);
-	ChMat_9 CamOffMat[CamPosMatCnt];
+	ChVec3 CamOffPos = ChVec3(0.0f, 7.0f, -6.0f);
+	ChLMat CamOffMat[CamPosMatCnt];
 
-	ChMat_9 CamPos;
+	ChLMat CamPos;
 	std::vector<ChPtr::Shared<ChPhysicalBase9>> Physical;
 
 	//LookAnotherRobots//
 	ChPtr::Weak<BaseRobotsList> WpBRobotsList;
 
 	ChPtr::Weak<HitPosList> WpHitPosList;
-
-	ChPtr::Weak<ChCamera9>WpLook;
 
 	//AvoHitAnotherRobotsData//
 
@@ -282,57 +265,40 @@ public:
 
 	BaseRobotsList() {}
 
-	~BaseRobotsList() { RobotsList.clear(); }
+	~BaseRobotsList() { robotsList.clear(); }
 
 	void Init();
 
-	inline void SetHitPosList(const ChPtr::Shared<HitPosList> _HitPosList)
-	{
-		WpHitPosList = _HitPosList;
-	}
+	void SetRobots(std::string _PlayerData, const ChVec3 *_StartPos,const unsigned short _PartsNum);
 
-	void SetRobots(std::string _PlayerData, const ChVec3_9 *_StartPos,const unsigned short _PartsNum);
+	void SetRobots(const ChStd::Bool _EneFlg, ChVec3 *_StartPos,const unsigned short _PartsNum);
 
-	void SetRobots(const ChStd::Bool _EneFlg, ChVec3_9 *_StartPos,const unsigned short _PartsNum);
-
-	void SetRobots2(const ChStd::Bool _EneFlg, ChVec3_9 *_StartPos);
-
-	void SetCamRobot(const DWORD _No)
-	{
-		if (RobotsList.size() <= _No)return;
-		WpCamRobot = RobotsList[_No];
-	}
+	void SetRobots2(const ChStd::Bool _EneFlg, ChVec3 *_StartPos);
 
 	void SetDData(
 		const DWORD _No
-		, const ChVec3_9* _Pos)
+		, const ChVec3* _Pos)
 	{
-		if (_No >= RobotsList.size())return;
-		RobotsList[_No]->SetDData(_Pos);
+		if (_No >= robotsList.size())return;
+		robotsList[_No]->SetDData(_Pos);
 	}
 
-	const ChMat_9* GetCamPos();
-
-	const ChMat_9* GetCamLookPos();
-
-	inline const DWORD GetRobotsCnt() { return  RobotsList.size(); }
-
-	const ChMat_9* GetMat(const DWORD _No);
+	inline const DWORD GetRobotsCnt() { return  robotsList.size(); }
 
 	inline ChStd::Bool GetEnemyFlg(const DWORD _No)
 	{
-		if (RobotsList.empty()
-			|| RobotsList.size() <= _No)return ChStd::False;
-		return RobotsList[_No]->IsEnemy();
+		if (robotsList.empty()
+			|| robotsList.size() <= _No)return false;
+		return robotsList[_No]->IsEnemy();
 	}
 
-	inline unsigned char GetEnemyCnt() { return EnemyCnt; }
+	inline unsigned char GetEnemyCnt() { return enemyCnt; }
 
-	inline unsigned char GetMemberCnt() { return MemberCnt; }
+	inline unsigned char GetMemberCnt() { return memberCnt; }
 
-	ChStd::Bool IsDFlg() { return DFlg; }
+	ChStd::Bool IsDFlg() { return dFlg; }
 
-	void DownDFlg() { DFlg = ChStd::False; }
+	void DownDFlg() { dFlg = false; }
 
 	void Draw();
 
@@ -340,9 +306,9 @@ public:
 
 	void CamUpdate();
 
-	ChStd::Bool IsMemberLive() { return MemberCnt > 0 ? ChStd::True : ChStd::False; }
+	ChStd::Bool IsMemberLive() { return memberCnt > 0 ? true : false; }
 
-	ChStd::Bool IsEnemyLive() { return EnemyCnt > 0 ? ChStd::True : ChStd::False; }
+	ChStd::Bool IsEnemyLive() { return enemyCnt > 0 ? true : false; }
 
 	void DrawMarker();
 
@@ -350,30 +316,26 @@ private:
 
 	void MoveCamRobot();
 
-	ChMat_9 TmpMat;
+	ChLMat tmpMat;
 
-	std::vector<ChPtr::Shared<BRobot>> RobotsList;
+	std::vector<ChPtr::Shared<BRobot>> robotsList;
 
-	ChPtr::Shared<BRobot> EndCamRobot;
-
-	ChPtr::Weak<BRobot> WpCamRobot;
-
-	ChPtr::Weak<HitPosList> WpHitPosList;
+	ChPtr::Shared<BRobot> endCamRobot;
 
 	//View変数//
-	ChVector3_9 BaseCamPos = ChVec3_9(0.0f, 5.0f, -20.0f)
-		, BaseCamLook = ChVec3_9(0.0f, 0.0f, 6.0f);
+	ChVec3 baseCamPos = ChVec3(0.0f, 5.0f, -20.0f)
+		, baseCamLook = ChVec3(0.0f, 0.0f, 6.0f);
 
-	ChStd::Bool DFlg = ChStd::True;
+	ChStd::Bool dFlg = true;
 
-	char PartsData[3];
+	char partsData[3];
 
-	unsigned char EnemyCnt = 0;
-	unsigned char MemberCnt = 0;
+	unsigned char enemyCnt = 0;
+	unsigned char memberCnt = 0;
 
 	ChPtr::Shared<DDataBase>DBase;
 
-	ChPtr::Shared<ChCamera9> Camera;
+	ChLMat camera;
 
 
 };

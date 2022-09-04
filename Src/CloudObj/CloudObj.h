@@ -1,7 +1,5 @@
 #pragma once
 
-class CloudObj;
-
 class CloudList
 {
 public:
@@ -10,49 +8,35 @@ public:
 
 	void Update();
 
-	void Draw();
+	void Draw(ID3D11DeviceContext* _dc,ChD3D11::Shader::BaseDrawPolygonBoard11& _drawPoBo);
 
 private:
 
 	void CloudBurth();
 
-	ChVec3_9 MoveDir;
-	float MoveSize;
-	const unsigned char ChengeIntervalCnt = 100;
-	unsigned char ChengeCnt = 0;
+	void UpdateMoveDirection();
 
+	ChVec3 CreateVec();
 
-	const unsigned char StartCloudCnt = 10;
-	const unsigned char MaxCloufdCnt = 50;
+	ChVec3 moveDir;
+	float moveSize;
+	const unsigned char chengeIntervalCnt = 100;
+	unsigned char chengeCnt = 0;
 
+	const unsigned char startCloudCnt = 10;
+	const unsigned char maxCloufdCnt = 50;
 
-	std::vector<ChPtr::Shared<CloudObj>> Cloud_List;
+	struct CloudObject
+	{
 
+		float scl = 1.0f;
+		ChVec3 pos;
+	};
 
-};
+	std::vector<ChPtr::Shared<CloudObject>> cloudList;
+	
+	ChD3D11::PolygonBoard11 pobo;
 
-
-class CloudObj
-{
-public:
-
-	CloudObj(){}
-
-	~CloudObj(){}
-
-	void Init();
-
-	inline const ChVec3_9* GetPos() { return &Pos; }
-
-	void Move(const ChVec3_9* _Move);
-
-	void Draw();
-
-private:
-
-	float Scl = 1.0f;
-	ChVec3_9 Pos;
-
-	std::string TextureName = "Cloud";
+	ChPtr::Shared<ChD3D11::Texture11>texture = nullptr;
 
 };

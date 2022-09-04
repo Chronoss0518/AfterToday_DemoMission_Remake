@@ -1,7 +1,7 @@
 #ifndef _EnemyObj
 #define _EnemyObj
 
-const enum class EnemyType :char
+enum class EnemyType :char
 {
 	Normal,Captain,Boss
 };
@@ -27,7 +27,7 @@ private:
 	void EInit(const char _Type);
 
 	//EnemyType//
-	char EType = GetEnumCNum(EnemyType, Normal);
+	char EType = ChStd::EnumCast(EnemyType::Normal);
 
 	std::vector<ChPtr::Shared<std::string>>TestDate;
 };
@@ -54,7 +54,7 @@ private:
 	std::function<void(void)> InputDate;
 
 	//–Ú•W•¨‚Ö‚Ì•ûŒü//
-	ChVec3_9 Dir;
+	ChVec3 Dir;
 
 	//EnemyBattleLen
 	float BLen = 5.0f;

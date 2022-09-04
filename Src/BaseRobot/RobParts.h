@@ -16,7 +16,7 @@ public:
 
 	virtual void SetDitailsData(const std::string _DataName) {};
 
-	virtual void SetPColor(const ChStd::COLOR1f* _Color);
+	virtual void SetPColor(const ChVec4* _Color);
 
 	inline void SetXList(ChPtr::Shared<ChSmpXList9> _XList)
 	{
@@ -37,19 +37,19 @@ public:
 		return Weap;
 	}
 
-	inline const ChMat_9* GetBasePos() { return &BaseMat; }
+	inline const ChLMat* GetBasePos() { return &BaseMat; }
 
 	inline const ChB_Box9* GetBBox() { return &BBox; }
 
 	inline ChStd::Bool IsBreak()
 	{
-		if (HP <= 0.0f)return ChStd::True;
-		return ChStd::False;
+		if (HP <= 0.0f)return true;
+		return false;
 	}
 
 	virtual void Update() {}
 
-	virtual void Draw(const ChMat_9 *_Mat);
+	virtual void Draw(const ChLMat *_Mat);
 
 protected:
 
@@ -61,10 +61,10 @@ protected:
 	struct PartsData
 	{
 		ChStd::DataNo _PartsNo;
-		ChMat_9* OffsetMat;
+		ChLMat* OffsetMat;
 	};
 
-	ChMat_9 BaseMat;
+	ChLMat BaseMat;
 	unsigned char PType;//ƒp[ƒc‚ÌŽí—Þ//
 
 	std::string XFilePath;
@@ -95,7 +95,7 @@ public:
 
 	~RPFoot();
 
-	void SetPColor(const ChStd::COLOR1f* _Color)override;
+	void SetPColor(const ChVec4* _Color)override;
 
 private:
 
@@ -116,16 +116,16 @@ public:
 
 	~RPBody();
 
-	const ChVec3_9* GetArmOffPos() { return &ArmOffPos; }
+	const ChVec3* GetArmOffPos() { return &ArmOffPos; }
 
-	const ChVec3_9* GetHeadOffPos() { return &HeadOffPos; }
+	const ChVec3* GetHeadOffPos() { return &HeadOffPos; }
 
-	const ChVec3_9* GetBoostOffPos() { return &BoostOffPos; }
+	const ChVec3* GetBoostOffPos() { return &BoostOffPos; }
 private:
 
-	ChVec3_9 ArmOffPos = ChVec3_9(0.0f,1.6f,0.0f);
-	ChVec3_9 HeadOffPos = ChVec3_9(0.0f, 2.1f, 0.0f);
-	ChVec3_9 BoostOffPos = ChVec3_9(0.0f, 1.8f, 0.0f);
+	ChVec3 ArmOffPos = ChVec3(0.0f,1.6f,0.0f);
+	ChVec3 HeadOffPos = ChVec3(0.0f, 2.1f, 0.0f);
+	ChVec3 BoostOffPos = ChVec3(0.0f, 1.8f, 0.0f);
 
 	void SetStandardParts()override;
 
@@ -169,7 +169,7 @@ public:
 
 	~RPArm();
 
-	void SetPColor(const ChStd::COLOR1f* _Color);
+	void SetPColor(const ChVec4* _Color);
 
 private:
 
@@ -190,7 +190,7 @@ public:
 
 	~RPBoost();
 
-	void Draw(const ChMat_9 *_Mat)override;
+	void Draw(const ChLMat *_Mat)override;
 
 private:
 
@@ -264,7 +264,7 @@ public:
 
 	void SetColor(
 		const ChStd::DataNo _PartsNo
-		, const ChStd::COLOR1f* _Color);
+		, const ChVec4* _Color);
 
 	float SetFootParts(std::string _PartsName);
 

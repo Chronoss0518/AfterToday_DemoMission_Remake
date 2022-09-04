@@ -26,10 +26,11 @@
     <ClInclude Include="Src\CloudObj\CloudObj.h" />
     <ClInclude Include="Src\Damage\Damage.h" />
     <ClInclude Include="Src\EnemyObj\EnemyObj.h" />
-    <ClInclude Include="Src\GameFrame.h" />
+    <ClInclude Include="Src\Frames\GameFrame.h" />
+    <ClInclude Include="Src\Frames\TitleFrame.h" />
+    <ClInclude Include="Src\GameFrameScript\GameFrameScript.h" />
     <ClInclude Include="Src\HitPosList\HitPosList.h" />
     <ClInclude Include="Src\PlayerObj\PlayerObj.h" />
-    <ClInclude Include="Src\TitleFrame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -38,10 +39,11 @@
     <ClCompile Include="Src\CloudObj\CloudObj.cpp" />
     <ClCompile Include="Src\Damage\Damage.cpp" />
     <ClCompile Include="Src\EnemyObj\EnemyObj.cpp" />
-    <ClCompile Include="Src\GameFrame.cpp" />
+    <ClCompile Include="Src\Frames\GameFrame.cpp" />
+    <ClCompile Include="Src\Frames\TitleFrame.cpp" />
+    <ClCompile Include="Src\GameFrameScript\GameFrameScript.cpp" />
     <ClCompile Include="Src\HitPosList\HitPosList.cpp" />
     <ClCompile Include="Src\PlayerObj\PlayerObj.cpp" />
-    <ClCompile Include="Src\TitleFrame.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

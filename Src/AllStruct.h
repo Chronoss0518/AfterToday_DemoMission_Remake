@@ -15,7 +15,7 @@ namespace ChBattle
 	struct WeapData
 	{
 		unsigned char Damage;
-		ChVec3_11 ShotPos;
+		ChVec3 ShotPos;
 		float HitLen;
 		float Speed;
 		std::string SEName;
@@ -24,8 +24,8 @@ namespace ChBattle
 	//AttackPosData//
 	struct APosData
 	{
-		ChVec3_11 Pos;
-		ChVec3_11 Dir;
+		ChVec3 Pos;
+		ChVec3 Dir;
 		WeapData Base;
 
 	};

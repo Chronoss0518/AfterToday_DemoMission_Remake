@@ -11,13 +11,13 @@ public:
 
 	void Update();
 
-	void SetDPos(const ChVec3_9 *_Pos, const ChStd::Bool _DFlg);
+	void SetDPos(const ChVec3 *_Pos, const ChStd::Bool _DFlg);
 
 	ChStd::Bool GetDDataEmpty() { return DEffectList.empty(); }
 
 	struct DData
 	{
-		ChVec3_9 Pos;
+		ChVec3 Pos;
 		float Rot;
 		float Scl;
 		float Alpha;

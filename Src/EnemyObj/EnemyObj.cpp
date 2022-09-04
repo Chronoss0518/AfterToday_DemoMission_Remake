@@ -1,4 +1,8 @@
-#include"../ChDXLibrary/ChGameIncludeFile.h"
+#include<Windows.h>
+#include<ChBaseLibrary.h>
+#include<ChWindowsLibrary.h>
+#include<ChDirect3D11Library.h>
+
 #include"../AllStruct.h"
 #include"../HitPosList/HitPosList.h"
 #include"../Damage/Damage.h"
@@ -24,9 +28,9 @@ void EnemyObj::Init(unsigned short _PartsNum)
 	BaseD.Rot.x = 0.0f;
 	BaseD.Rot.y = 0.0f;
 
-	Col = ChStd::COLOR1f(1.0f, 1.0f, 0.0f, 0.0f);
+	Col = ChVec4(1.0f, 1.0f, 0.0f, 0.0f);
 	if (!BaseD.EnemyFlg) {
-		Col = ChStd::COLOR1f(1.0f, 0.0f, 1.0f, 1.0f);
+		Col = ChVec4(1.0f, 0.0f, 1.0f, 1.0f);
 	}
 
 	BInit(_PartsNum);
@@ -45,25 +49,25 @@ void EnemyObj::Input()
 void EnemyObj::EInit(const char _Type)
 {
 
-	//float TmpFps = (float)ChWinAPID.GetFPSCnt();
+	//float tmpFps = (float)ChWinAPID.GetFPSCnt();
 
 	switch (_Type)
 	{
-	case GetEnumCNum(EnemyType, Normal):
+	case ChStd::EnumCast(EnemyType::Normal):
 		AAS = 50.0f;
 		ADS = 15.0f;
 		BLen = 5.0f;
 		ViweLen = 300.0f;
 		SpNow = 98;
 		return;
-	case GetEnumCNum(EnemyType, Captain):
+	case  ChStd::EnumCast(EnemyType::Captain):
 		AAS = 75.0f;
 		ADS = 10.0f;
 		BLen = 7.0f;
 		ViweLen = 150.0f;
 		SpNow = 90;
 		return;
-	case GetEnumCNum(EnemyType, Boss):
+	case ChStd::EnumCast(EnemyType::Boss):
 		AAS = 100.0f;
 		ADS = 5.0f;
 		BLen = 9.0f;
@@ -71,7 +75,7 @@ void EnemyObj::EInit(const char _Type)
 		SpNow = 85;
 		return;
 	default:
-		EType = GetEnumCNum(EnemyType, Normal);
+		EType = ChStd::EnumCast(EnemyType::Normal);
 		AAS = 50.0f;
 		ADS = 20.0f;
 		BLen = 5.0f;
@@ -100,9 +104,9 @@ void EnemyObj2::Init(const unsigned short _PartsNum)
 	MoveS = 0.0f;
 	HP = 30;
 
-	Col = ChStd::COLOR1f(1.0f, 1.0f, 0.0f, 0.0f);
+	Col =ChVec4(1.0f, 1.0f, 0.0f, 0.0f);
 	if (!BaseD.EnemyFlg) {
-		Col = ChStd::COLOR1f(1.0f, 0.0f, 1.0f, 1.0f);
+		Col = ChVec4(1.0f, 0.0f, 1.0f, 1.0f);
 	}
 
 	BInit(_PartsNum);
@@ -122,18 +126,18 @@ void EnemyObj2::BInit(unsigned short _PartsNum)
 
 	for (char i = 0; i < KeyCount; i++)
 	{
-		ButtonFlg[i] = ChStd::False;
+		ButtonFlg[i] = false;
 	}
 
 	TargetPos.Identity();
 
 	{
-		auto TmpData = ChPtr::Make_S<ChGravity9>();
-		TmpData->Init(
+		auto tmpData = ChPtr::Make_S<ChGravity9>();
+		tmpData->Init(
 			(float)ChWinAPID.GetFPSCnt());
-		TmpData->SetSmpXFile(ChMeMa.GetSmpXFile("Field"));
-		TmpData->SetLen(2.0f);
-		Physical.push_back(TmpData);
+		tmpData->SetSmpXFile(ChMeMa.GetSmpXFile("Field"));
+		tmpData->SetLen(2.0f);
+		Physical.push_back(tmpData);
 	}
 
 	Look = ChPtr::Make_S<ChCamera9>(ChDevice.GetDevice(), ChWinAPID);

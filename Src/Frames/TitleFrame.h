@@ -8,15 +8,15 @@ public:
 
 	void Release()override;
 
-	void Frame()override;
+	void Update()override;
 
 private:
 
 	void SetScript();
 
-	void Draw();
+	void DrawFunction();
 
-	void Update();
+	void UpdateFunction();
 
 	enum class Mesh :ChStd::DataNo
 	{
@@ -42,19 +42,25 @@ private:
 
 	ChCpp::ChScCon Script;
 
-	ChAnimationObject9 Animations;
+	//ChAnimationObject9 Animations;
 
-	ChTex::TextureList9 TexList;
+	ChPtr::Shared<ChD3D11::Mesh11> msd = nullptr;
+	ChPtr::Shared<ChD3D11::Mesh11> desk = nullptr;
+	ChPtr::Shared<ChD3D11::Mesh11> room = nullptr;
 
-	ChMesh::ChMeshList9 MeshList;
+	ChD3D11::Texture11 title_name;
+	ChD3D11::Texture11 title;
+	ChD3D11::Texture11 tmpTitle;
+	ChD3D11::Texture11 push_space;
+	ChD3D11::Texture11 blackTex;
+	float blendPow = 0;
 
-	ChTex::ChRTList9 RTList;
 
-	ChPtr::Shared<ChCamera9> Cam;
+	ChPtr::Shared<ChD3D11::RenderTarget11> renderTarget = ChPtr::Make_S<ChD3D11::RenderTarget11>();
 
-	ChPtr::Shared<ChLight9> Light;
+	ChGame::Camera Cam;
 
-	ChPtr::Shared<ChMouCon>Mouse;
-	ChVec3_9 MousePos;
+	ChPtr::Shared<ChD3D11::CB::CBLight11> Light;
+
 
 };

@@ -1,131 +1,120 @@
 
-#include"../ChDXLibrary2/ChGameIncludeFile.h"
+#include"../BaseIncluder.h"
 
-#include"Title.h"
+#include"TitleFrame.h"
+
+
+#define TITLE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Title/") current_path
+#define TITLE_MESH_DIRECTORY(current_path) MESH_DIRECTORY("Title/") current_path
 
 void TitleFrame::Init()
 {
-	Cam = ChPtr::Make_S<ChCamera9>(ChD3D9::D3D9API().GetDevice(), &ChSystem::WinAPI());
-
 	//SetCamAnimation//
+#if 0
 	{
-		ChMat_9 TmpMat;
+		ChLMat tmpMat;
 
-		TmpMat.RotYPR(-30.0f, 0.0f, 0.0f);
-		TmpMat = ChVec3_9(0.0f, -10.0f, -10.0f);
-		Animations.SetAniObject(TmpMat);
+		tmpMat.RotYPR(-30.0f, 0.0f, 0.0f);
+		tmpMat = ChVec3_11(0.0f, -10.0f, -10.0f);
+		Animations.SetAniObject(tmpMat);
 
-		TmpMat.RotYPR(0.0f, 0.0f, 0.0f);
-		TmpMat = ChVec3_9(0.0f, -10.0f, -10.0f);
-		Animations.SetAniObject(TmpMat);
+		tmpMat.RotYPR(0.0f, 0.0f, 0.0f);
+		tmpMat = ChVec3_11(0.0f, -10.0f, -10.0f);
+		Animations.SetAniObject(tmpMat);
 
 		Animations.Play();
 		Animations.SetOneFrameTime(60.0f * 5);
 	}
 
-
 	Light = ChPtr::Make_S<ChLight9>(ChD3D9::D3D9API().GetDevice());
 
 	Mouse = ChPtr::Make_S<ChMouCon>(true, &ChSystem::WinAPI());
 
-	Light->SetDir(ChVec3_9(1.0f, -1.0f, 1.0f));
+	Light->SetDir(ChVec3(1.0f, -1.0f, 1.0f));
 	Light->SetLightDif(1.0f, 1.0f, 1.0f, 1.0f);
 	Light->SetLightSpe(true, 1.0f, 1.0f, 1.0f);
 
-	TexList.Init(ChD3D9::D3D9API().GetDevice(), "../ŽÀs/data/Texture");
+#endif
 
-	TexList.SetTexture("TitleName.png"
-		, ChStd::EnumCast(Tex::TitleName), 1280, 720);
-
-	TexList.SetTexture("Title.png"
-		, ChStd::EnumCast(Tex::Title1), 1280, 720);
-
-	TexList.SetTexture("TmpTitle.png"
-		, ChStd::EnumCast(Tex::Title2), 1280, 720);
-
-	TexList.SetTexture("Push_Space.png"
-		, ChStd::EnumCast(Tex::Push_Space), 1280, 720);
-
-	MeshList.Init(ChD3D9::D3D9API().GetDevice(), "../ŽÀs/data/XFile/Title");
-
-	MeshList.SetMesh("MSD.x", ChStd::EnumCast(Mesh::MSD));
-
-	//MeshList.SetMesh("Device.x", ChStd::EnumCast(Mesh::MSD));
-
-	MeshList.SetMesh("Desk.x", ChStd::EnumCast(Mesh::Desk));
-
-	MeshList.SetMesh("Room.x", ChStd::EnumCast(Mesh::Room));
-
-	RTList.Init(
-		ChD3D9::D3D9API().GetDevice()
-		, ChSystem::WinAPI().GetWindWidth()
-		, ChSystem::WinAPI().GetWindHeight());
-
-
-
-	RTList.SetClearColor(D3DCOLOR_ARGB(255, 0, 0, 0));
-
-	RTList.CreateRT(0);
+	title_name.CreateTexture(TITLE_TEXTURE_DIRECTORY("TitleName.png"));
+	title.CreateTexture(TITLE_TEXTURE_DIRECTORY("Title.png"));
+	tmpTitle.CreateTexture(TITLE_TEXTURE_DIRECTORY("TmpTitle.png"));
+	push_space.CreateTexture(TITLE_TEXTURE_DIRECTORY("Push_Space.png"));
 
 	{
-		unsigned long Tmp = 0;
+		ChCpp::ModelObject tmpModel;
 
-		for (auto&& Mate : MeshList.GetMeshMaterials(ChStd::EnumCast(Mesh::MSD)))
-		{
-			if (Mate->Name.find("Display") != Mate->Name.npos) {
+		ChCpp::ModelLoader::XFile loader;
 
-				Mate->Diffuse.a = 2.0f;
-				Mate->Diffuse.r = 2.0f;
-				Mate->Diffuse.g = 2.0f;
-				Mate->Diffuse.b = 2.0f;
+		loader.CreateModel(msd, TITLE_MESH_DIRECTORY("MSD.x"));
+		loader.CreateModel(desk, TITLE_MESH_DIRECTORY("Desk.x"));
+		loader.CreateModel(room, TITLE_MESH_DIRECTORY("Room.x"));
 
-				MeshList.SetTexture(ChStd::EnumCast(Mesh::MSD)
-					, Tmp, RTList.GetRTTexture(0));
+	}
+	
+	{
+		auto system = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 
-				break;
-			}
-			Tmp++;
-		}
+		auto windSize = system->GetWindObject().GetWindSize();
+
+		renderTarget->CreateRenderTarget(
+			ChD3D11::D3D11Device()
+			, windSize.w
+			, windSize.h);
+
+
+		renderTarget->SetBackColor(ChD3D11::D3D11DC(), ChVec4(0, 0, 0, 1));
+	}
+
+	{
+		unsigned long tmp = 0;
+
+		auto disp = msd->GetFrame("Display");
+
+		auto&& mate = disp->primitiveDatas[0]->mate;
+
+		mate->material.diffuse.a = 2.0f;
+		mate->material.diffuse.r = 2.0f;
+		mate->material.diffuse.g = 2.0f;
+		mate->material.diffuse.b = 2.0f;
+
+		mate->textures[Ch3D::TextureType::Diffuse] = renderTarget;
+
 
 	}
 
-	BackCol = 255;
-
-	ChTex::TexManager9().SetBlendAlpha(255, "BrackTex");
+	blendPow = 255;
 
 	SetScript();
 
 
 }
 
-void TitleFrame::Frame()
+void TitleFrame::Update()
 {
-	if (!ChStd::FPSProcess(ChSystem::WinAPI().GetFPSCnt()))return;
+	if (!ChSystem::SysManager().FPSProcess())return;
 
-	Update();
+	UpdateFunction();
 
-	Draw();
+	DrawFunction();
 }
 
 void TitleFrame::Release()
 {
-	Cam = nullptr;
 	Mouse = nullptr;
 	Light = nullptr;
-	RTList.Release();
 	Script.Release();
+	renderTarget = nullptr;
 	Animations.Release();
-	TexList.Release();
-	MeshList.Release();
 }
 
-void TitleFrame::Draw()
+void TitleFrame::DrawFunction()
 {
 
-	ChMat_9 TmpMat;
+	ChLMat tmpMat;
 
 	Light->SetLight(true);
-	Light->SetDir(ChVec3_9(0.0f, -0.8f, 0.2f));
+	Light->SetDir(ChVec3(0.0f, -0.8f, 0.2f));
 	ChD3D9::D3D9API().LightUseFlg(0, true);
 
 	ChD3D9::D3D9API().AlphaBlendSetting();
@@ -134,24 +123,24 @@ void TitleFrame::Draw()
 
 	ChD3D9::D3D9API().DrawStart(D3DCOLOR_ARGB(255, 0, 0, 0));
 
-	TmpMat = ChVec3_9(0.0f, -8.0f, 10.0f);
+	tmpMat = ChVec3(0.0f, -8.0f, 10.0f);
 
-	MeshList.DrawMesh(TmpMat, ChStd::EnumCast(Mesh::Desk));
+	MeshList.DrawMesh(tmpMat, ChStd::EnumCast(Mesh::Desk));
 
-	TmpMat.Identity();
-	TmpMat.ScalingMode(10.0f);
+	tmpMat.Identity();
+	tmpMat.ScalingMode(10.0f);
 
-	TmpMat = ChVec3_9(0.0f, -23.0f, 10.0f);
+	tmpMat = ChVec3(0.0f, -23.0f, 10.0f);
 
-	MeshList.DrawMesh(TmpMat, ChStd::EnumCast(Mesh::Room));
+	MeshList.DrawMesh(tmpMat, ChStd::EnumCast(Mesh::Room));
 
 	Script.Draw();
 
 	/*
 		DrawClass::TShader().DrawPolygonBord(
 			TexList.GetTex(ChStd::EnumCast(Tex::TitleName))->Tex
-			, TmpPos
-			, TmpMat);
+			, tmpPos
+			, tmpMat);
 
 		ChangeFrame("");
 	*/
@@ -167,48 +156,48 @@ void TitleFrame::Update()
 		PostQuitMessage(0);
 	}
 
-	ChStd::FPOINT TmpP;
-	Mouse->GetMovePos(&TmpP);
+	ChStd::FPOINT tmpP;
+	Mouse->GetMovePos(&tmpP);
 
-	MousePos.y += TmpP.x;
-	MousePos.x += TmpP.y;
+	MousePos.y += tmpP.x;
+	MousePos.x += tmpP.y;
 
 	Script.Update();
 
-	ChMat_9 TmpMat;
+	ChLMat tmpMat;
 
 	RTList.ReturnRT();
 
 	DeviceTexChenge++;
 	DeviceTexChenge %= ChengeCount;
 
-	Cam->SetCamLook(ChVec3_9(0.0f, 0.0f, 0.0f));
+	Cam->SetCamLook(ChVec3(0.0f, 0.0f, 0.0f));
 
 	{
 
-		ChMat_9 Tmp;
-		ChVec3_9 TmpVec;
+		ChLMat tmp;
+		ChVec3 tmpVec;
 
-		Tmp.RotWorld(MousePos.x, MousePos.y, 0.0f);
-		TmpVec.MatNormal(Tmp, ChVec3_9(0.0f, 0.0f, -1.0f));
+		tmp.RotWorld(MousePos.x, MousePos.y, 0.0f);
+		tmpVec.MatNormal(tmp, ChVec3(0.0f, 0.0f, -1.0f));
 
-		TmpVec *= 20.0f;
+		tmpVec *= 20.0f;
 
-		//TmpVec += ChVec3_9(0.0f, 10.0f, 0.0f);
+		//tmpVec += ChVec3(0.0f, 10.0f, 0.0f);
 
-		//TmpVec = ChVec3_9(0.0f, 0.0f, -20.0f);
-
-
-		TmpVec = ChVec3_9(0.0f, 10.0f, 0.0f);
-		TmpVec.MatPos(Animations.Update(), TmpVec);
+		//tmpVec = ChVec3(0.0f, 0.0f, -20.0f);
 
 
-		Cam->SetCamPos(TmpVec);
+		tmpVec = ChVec3(0.0f, 10.0f, 0.0f);
+		tmpVec.MatPos(Animations.Update(), tmpVec);
+
+
+		Cam->SetCamPos(tmpVec);
 
 	}
 
 
-	//Cam->SetCamPos(ChVec3_9(0.0f, 0.0f, -20.0f));
+	//Cam->SetCamPos(ChVec3(0.0f, 0.0f, -20.0f));
 
 
 
@@ -223,11 +212,11 @@ void TitleFrame::SetScript()
 	Script.SetScript
 	([this]()
 	{
-		if (ChSystem::WinAPI().IsPushKeyNoHold(VK_SPACE))
+		if (ChSystem::SysManager().IsPushKeyNoHold(VK_SPACE))
 		{
 			Script.ChangeScript(3);
 			TexList.SetBlendAlpha(255, ChStd::EnumCast(Tex::TitleName));
-			ChTex::TexManager9().SetBlendAlpha(0, "BrackTex");
+			blendPow = 0;
 		}
 
 		BackCol -= MoveCol;
@@ -237,22 +226,22 @@ void TitleFrame::SetScript()
 		Test -= MoveCol;
 
 
-		ChMat_9 TmpMat;
+		ChLMat tmpMat;
 
-		TmpMat = ChVec3_9(1280 / 2.0f, 720 / 2.0f, 0.0f);
+		tmpMat = ChVec3(1280 / 2.0f, 720 / 2.0f, 0.0f);
 
 		RTList.SetRT(0);
 
 		if (DeviceTexChenge % 6 == 0 || DeviceTexChenge % 7 == 0)
 		{
 			ChTex::DrawSp9().DrawSprite(
-				TexList.GetTex(ChStd::EnumCast(Tex::Title2)), TmpMat
-				, ChVec3_9());
+				TexList.GetTex(ChStd::EnumCast(Tex::Title2)), tmpMat
+				, ChVec3());
 		}
 		else {
 			ChTex::DrawSp9().DrawSprite(
-				TexList.GetTex(ChStd::EnumCast(Tex::Title1)), TmpMat
-				, ChVec3_9());
+				TexList.GetTex(ChStd::EnumCast(Tex::Title1)), tmpMat
+				, ChVec3());
 		}
 
 		if (Test > 0)return;
@@ -265,35 +254,35 @@ void TitleFrame::SetScript()
 		[this]()
 	{
 
-		ChMat_9 TmpMat;
-		ChVec3_9 TmpVec;
+		ChLMat tmpMat;
+		ChVec3 tmpVec;
 
-		TmpMat.RotYPR(10.0f, 0.0f, 0.0f);
+		tmpMat.RotYPR(10.0f, 0.0f, 0.0f);
 
-		TmpMat = ChVec3_9(0.0f, 0.0f, 5.0f);
+		tmpMat = ChVec3(0.0f, 0.0f, 5.0f);
 
-		TmpVec = TmpMat;
+		tmpVec = tmpMat;
 
-		MeshList.DrawMesh(TmpMat, ChStd::EnumCast(Mesh::MSD));
+		MeshList.DrawMesh(tmpMat, ChStd::EnumCast(Mesh::MSD));
 
-		TmpMat.Identity();
+		tmpMat.Identity();
 
-		TmpMat = ChVec3_9(
+		tmpMat = ChVec3(
 			ChSystem::WinAPI().GetWindWidth() / 2.0f
 			, ChSystem::WinAPI().GetWindHeight() / 2.0f
 			, 0.0f);
 
 
-		TmpMat.Identity();
-		TmpMat.ScalingMode(ChVec3_9(1280.0f, 720.0f, 0.0f));
-		TmpMat = ChVec3_9(
+		tmpMat.Identity();
+		tmpMat.ScalingMode(ChVec3(1280.0f, 720.0f, 0.0f));
+		tmpMat = ChVec3(
 			ChSystem::WinAPI().GetWindWidth() / 2.0f
 			, ChSystem::WinAPI().GetWindHeight() / 2.0f
 			, 0.0f);
 
 		ChTex::DrawSp9().DrawSprite(
 			ChTex::TexManager9().GetTexture("BrackTex")
-			, TmpMat, ChVec3_9());
+			, tmpMat, ChVec3());
 
 	}
 	);
@@ -317,22 +306,22 @@ void TitleFrame::SetScript()
 		short Test = BackCol;
 		Test += MoveCol;
 
-		ChMat_9 TmpMat;
+		ChLMat tmpMat;
 
-		TmpMat = ChVec3_9(1280 / 2.0f, 720 / 2.0f, 0.0f);
+		tmpMat = ChVec3(1280 / 2.0f, 720 / 2.0f, 0.0f);
 
 		RTList.SetRT(0);
 
 		if (DeviceTexChenge % 6 == 0 || DeviceTexChenge % 7 == 0)
 		{
 			ChTex::DrawSp9().DrawSprite(
-				TexList.GetTex(ChStd::EnumCast(Tex::Title2)), TmpMat
-				, ChVec3_9());
+				TexList.GetTex(ChStd::EnumCast(Tex::Title2)), tmpMat
+				, ChVec3());
 		}
 		else {
 			ChTex::DrawSp9().DrawSprite(
-				TexList.GetTex(ChStd::EnumCast(Tex::Title1)), TmpMat
-				, ChVec3_9());
+				TexList.GetTex(ChStd::EnumCast(Tex::Title1)), tmpMat
+				, ChVec3());
 		}
 
 		if (Test <= UCHAR_MAX)return;
@@ -345,26 +334,26 @@ void TitleFrame::SetScript()
 		[this]()
 	{
 
-		ChMat_9 TmpMat;
-		ChVec3_9 TmpVec;
+		ChLMat tmpMat;
+		ChVec3 tmpVec;
 
-		TmpMat.RotYPR(10.0f, 0.0f, 0.0f);
+		tmpMat.RotYPR(10.0f, 0.0f, 0.0f);
 
-		TmpMat = ChVec3_9(0.0f, 0.0f, 5.0f);
+		tmpMat = ChVec3(0.0f, 0.0f, 5.0f);
 
-		TmpVec = TmpMat;
+		tmpVec = tmpMat;
 
-		MeshList.DrawMesh(TmpMat, ChStd::EnumCast(Mesh::MSD));
+		MeshList.DrawMesh(tmpMat, ChStd::EnumCast(Mesh::MSD));
 
-		TmpMat.Identity();
-		TmpMat = ChVec3_9(
+		tmpMat.Identity();
+		tmpMat = ChVec3(
 			ChSystem::WinAPI().GetWindWidth() / 2.0f
 			, ChSystem::WinAPI().GetWindHeight() / 2.0f
 			, 0.0f);
 
 		ChTex::DrawSp9().DrawSprite(
 			TexList.GetTex(ChStd::EnumCast(Tex::TitleName))
-			, TmpMat, ChVec3_9());
+			, tmpMat, ChVec3());
 
 
 
@@ -381,22 +370,22 @@ void TitleFrame::SetScript()
 			Script.ChangeScript(3);
 		}
 
-		ChMat_9 TmpMat;
+		ChLMat tmpMat;
 
-		TmpMat = ChVec3_9(1280 / 2.0f, 720 / 2.0f, 0.0f);
+		tmpMat = ChVec3(1280 / 2.0f, 720 / 2.0f, 0.0f);
 
 		RTList.SetRT(0);
 
 		if (DeviceTexChenge % 6 == 0 || DeviceTexChenge % 7 == 0)
 		{
 			ChTex::DrawSp9().DrawSprite(
-				TexList.GetTex(ChStd::EnumCast(Tex::Title2)), TmpMat
-				, ChVec3_9());
+				TexList.GetTex(ChStd::EnumCast(Tex::Title2)), tmpMat
+				, ChVec3());
 		}
 		else {
 			ChTex::DrawSp9().DrawSprite(
-				TexList.GetTex(ChStd::EnumCast(Tex::Title1)), TmpMat
-				, ChVec3_9());
+				TexList.GetTex(ChStd::EnumCast(Tex::Title1)), tmpMat
+				, ChVec3());
 		}
 
 
@@ -404,26 +393,26 @@ void TitleFrame::SetScript()
 		[this]()
 	{
 
-		ChMat_9 TmpMat;
-		ChVec3_9 TmpVec;
+		ChLMat tmpMat;
+		ChVec3 tmpVec;
 
-		TmpMat.RotYPR(10.0f, 0.0f, 0.0f);
+		tmpMat.RotYPR(10.0f, 0.0f, 0.0f);
 
-		TmpMat = ChVec3_9(0.0f, 0.0f, 5.0f);
+		tmpMat = ChVec3(0.0f, 0.0f, 5.0f);
 
-		TmpVec = TmpMat;
+		tmpVec = tmpMat;
 
-		MeshList.DrawMesh(TmpMat, ChStd::EnumCast(Mesh::MSD));
+		MeshList.DrawMesh(tmpMat, ChStd::EnumCast(Mesh::MSD));
 
-		TmpMat.Identity();
-		TmpMat = ChVec3_9(
+		tmpMat.Identity();
+		tmpMat = ChVec3(
 			ChSystem::WinAPI().GetWindWidth() / 2.0f
 			, ChSystem::WinAPI().GetWindHeight() / 2.0f
 			, 0.0f);
 
 		ChTex::DrawSp9().DrawSprite(
 			TexList.GetTex(ChStd::EnumCast(Tex::TitleName))
-			, TmpMat, ChVec3_9());
+			, tmpMat, ChVec3());
 
 
 	}
@@ -441,26 +430,26 @@ void TitleFrame::SetScript()
 		[this]()
 	{
 
-		ChMat_9 TmpMat;
-		ChVec3_9 TmpVec;
+		ChLMat tmpMat;
+		ChVec3 tmpVec;
 
-		TmpMat.RotYPR(10.0f, 0.0f, 0.0f);
+		tmpMat.RotYPR(10.0f, 0.0f, 0.0f);
 
-		TmpMat = ChVec3_9(0.0f, 0.0f, 5.0f);
+		tmpMat = ChVec3(0.0f, 0.0f, 5.0f);
 
-		TmpVec = TmpMat;
+		tmpVec = tmpMat;
 
-		MeshList.DrawMesh(TmpMat, ChStd::EnumCast(Mesh::MSD));
+		MeshList.DrawMesh(tmpMat, ChStd::EnumCast(Mesh::MSD));
 
-		TmpMat.Identity();
-		TmpMat = ChVec3_9(
+		tmpMat.Identity();
+		tmpMat = ChVec3(
 			ChSystem::WinAPI().GetWindWidth() / 2.0f
 			, ChSystem::WinAPI().GetWindHeight() / 2.0f
 			, 0.0f);
 
 		ChTex::DrawSp9().DrawSprite(
 			TexList.GetTex(ChStd::EnumCast(Tex::TitleName))
-			, TmpMat, ChVec3_9());
+			, tmpMat, ChVec3());
 
 
 	}

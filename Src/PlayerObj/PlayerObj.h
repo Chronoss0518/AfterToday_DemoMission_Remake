@@ -7,7 +7,7 @@ public:
 
 	PlayerObj(){};
 
-	~PlayerObj() { Mouse = nullptr; }
+	~PlayerObj() { mouse = nullptr; }
 
 	void Init(unsigned short _PartsNum)override;
 
@@ -15,7 +15,7 @@ public:
 
 private:
 
-	ChStd::Bool InputFlg = ChStd::True;
+	ChStd::Bool InputFlg = true;
 
 };
 

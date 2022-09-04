@@ -1,5 +1,8 @@
+#include<Windows.h>
+#include<ChBaseLibrary.h>
+#include<ChWindowsLibrary.h>
+#include<ChDirect3D11Library.h>
 
-#include"../ChDXLibrary/ChGameIncludeFile.h"
 #include"../AllStruct.h"
 #include"../Damage/Damage.h"
 #include"../BaseRobot/BaseRobot.h"
@@ -8,32 +11,33 @@
 
 void Bullet::BInit()
 {
-	auto TmpData = ChPtr::Make_S<ChPushBack9>();
+	auto tmpData = ChPtr::Make_S<ChPushBack9>();
 
 
-	TmpData->SetSmpXFile(ChMeMa.GetSmpXFile("Field"));
-	//TmpData->SetLen(Pos.Base.HitLen);
-	TmpData->SetLen(0.0f);
-	Physical.push_back(TmpData);
+	tmpData->SetSmpXFile(ChMeMa.GetSmpXFile("Field"));
+	//tmpData->SetLen(Pos.Base.HitLen);
+	tmpData->SetLen(0.0f);
+	Physical.push_back(tmpData);
 	
 }
 
-void Bullet::Update(const ChVec3_9* _BPos, const float _ClearLen)
+void Bullet::Update(const 
+	* _BPos, const float _ClearLen)
 {
-	float TmpLen;
-	TmpLen = Pos.Pos.GetLen(&StartPos);
-	if (TmpLen > _ClearLen)ClearFlg = ChStd::True;
+	float tmpLen;
+	tmpLen = Pos.Pos.GetLen(&StartPos);
+	if (tmpLen > _ClearLen)ClearFlg = ChStd::True;
 
 
 	{
-		ChVec3_9 TmpVec;
-		ChVec3_9 TmpPos;
+		ChVec3 tmpVec;
+		ChVec3 tmpPos;
 
-		TmpVec = Pos.Dir * Pos.Base.Speed;
+		tmpVec = Pos.Dir * Pos.Base.Speed;
 
 		for (unsigned char i = 0; i < Physical.size(); i++)
 		{
-			if (Physical[i]->UpDate(&Pos.Pos, &TmpVec))
+			if (Physical[i]->UpDate(&Pos.Pos, &tmpVec))
 			{
 				BreakFlg = ChStd::True;
 			}
@@ -47,13 +51,13 @@ void Bullet::Update(const ChVec3_9* _BPos, const float _ClearLen)
 
 	if (ChObjCon9.SmpXFileHitRay(
 		ChMeMa.GetSmpXFile("Field")
-		, &ChMat_9()
+		, &ChLMat()
 		, &Pos.Pos
-		, &ChVec3_9(0.0f, 1.0f, 0.0f)
+		, &ChVec3(0.0f, 1.0f, 0.0f)
 		, NULL
-		, &TmpLen)) {
+		, &tmpLen)) {
 
-		if (TmpLen >= Pos.Base.HitLen)
+		if (tmpLen >= Pos.Base.HitLen)
 		{
 			BreakFlg = ChStd::True;
 		}
@@ -74,15 +78,15 @@ HitPosList::~HitPosList()
 
 void HitPosList::Init()
 {
-	ChMat_9 TmpMat;
-	TmpMat.ScalingMode(4.0f);
+	ChLMat tmpMat;
+	tmpMat.ScalingMode(4.0f);
 	DData = ChPtr::Make_S<Damage>();
 	DDataList = ChPtr::Make_S<DDataBase>();
 	DDataList->Init();
 	DDataList->SharedDamageData(DData);
 
 	ChMeMa.SetSmpXFile("AL120mmBullet.x", "B120mm", "Bullet");
-	ChMeMa.GetXFileMaterials("B120mm")[0]->Mat = TmpMat;
+	ChMeMa.GetXFileMaterials("B120mm")[0]->Mat = tmpMat;
 	ChMeMa.GetXFileMaterials("B120mm")[0]->Diffuse.a = 1.0f;
 	ChMeMa.GetXFileMaterials("B120mm")[0]->Diffuse.r = 2.0f;
 	ChMeMa.GetXFileMaterials("B120mm")[0]->Diffuse.g = 2.0f;
@@ -94,11 +98,11 @@ void HitPosList::SetAData(const ChPtr::Shared<ChGame::APosData>_AData)
 {
 
 	if (_AData == nullptr)return;
-	ChPtr::Shared<Bullet> TmpBullet = ChPtr::Make_S<Bullet>();
+	ChPtr::Shared<Bullet> tmpBullet = ChPtr::Make_S<Bullet>();
 
-	if (TmpBullet->SetAData(_AData)) {
-		TmpBullet->BInit();
-		BList.push_back(TmpBullet);
+	if (tmpBullet->SetAData(_AData)) {
+		tmpBullet->BInit();
+		BList.push_back(tmpBullet);
 	}
 
 }
@@ -155,11 +159,11 @@ void HitPosList::Draw()
 	{
 
 		ChGame::APosData AData = *Obj->GetAPosData();
-		ChMat_9 TmpMat;
-		TmpMat.RotVec(&AData.Dir);
-		TmpMat = AData.Pos;
+		ChLMat tmpMat;
+		tmpMat.RotVec(&AData.Dir);
+		tmpMat = AData.Pos;
 
-		ChMeMa.DrawSmpXFile(&TmpMat, "B120mm");
+		ChMeMa.DrawSmpXFile(&tmpMat, "B120mm");
 	}
 	DDataList->Draw();
 	ChDevice.LightSetting(ChStd::True);

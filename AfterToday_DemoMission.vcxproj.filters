@@ -30,9 +30,6 @@
     <ClInclude Include="Src\EnemyObj\EnemyObj.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GameFrame.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\HitPosList\HitPosList.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -42,10 +39,16 @@
     <ClInclude Include="Src\BaseRobot\RobParts.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\TitleFrame.h">
+    <ClInclude Include="Src\BaseIncluder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseIncluder.h">
+    <ClInclude Include="Src\Frames\TitleFrame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\GameFrame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameFrameScript\GameFrameScript.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,19 +68,22 @@
     <ClCompile Include="Src\EnemyObj\EnemyObj.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\GameFrame.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\HitPosList\HitPosList.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlayerObj\PlayerObj.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\TitleFrame.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Src\Frames\TitleFrame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\GameFrame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameFrameScript\GameFrameScript.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,10 +17,10 @@ public:
 
 	inline ChStd::Bool SetAData(const ChPtr::Shared<ChGame::APosData>_AData)
 	{
-		if (_AData == nullptr)return ChStd::False;
+		if (_AData == nullptr)return false;
 		Pos = *_AData;
 		StartPos = Pos.Pos;
-		return ChStd::True;
+		return true;
 	}
 
 	//使用するTexture、MeshのNo//
@@ -35,15 +35,15 @@ public:
 	ChStd::Bool IsClear() { return ClearFlg; }
 
 	//更新//
-	virtual void Update(const ChVec3_9* _BPos,const float _ClearLen);
+	virtual void Update(const ChVec3* _BPos,const float _ClearLen);
 
 protected:
 
-	ChVec3_9 StartPos;
+	ChVec3 StartPos;
 	std::vector<ChPtr::Shared<ChPhysicalBase9>> Physical;
 
-	ChStd::Bool BreakFlg = ChStd::False;
-	ChStd::Bool ClearFlg = ChStd::False;
+	ChStd::Bool BreakFlg = false;
+	ChStd::Bool ClearFlg = false;
 
 	ChGame::APosData Pos;
 	ChStd::DataNo TextureNo;
@@ -70,7 +70,7 @@ public:
 
 	void Init();
 
-	inline void SetBasePos(ChVec3_9* _Pos)
+	inline void SetBasePos(ChVec3* _Pos)
 	{
 		if (ChPtr::NullCheck(_Pos))return;
 		BasePos = _Pos;
@@ -96,7 +96,7 @@ public:
 
 private:
 
-	ChVec3_9* BasePos;
+	ChVec3* BasePos;
 
 	const unsigned short MaxAPos = 100;
 

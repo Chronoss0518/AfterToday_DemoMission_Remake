@@ -3,6 +3,7 @@
 #include<ChBaseLibrary.h>
 #include<ChWindowsLibrary.h>
 #include<ChDirect3D11Library.h>
+#include<ChDirect3D9Library.h>
 
 #ifndef SOUND_DIRECTORY
 #define SOUND_DIRECTORY "../é¿çs/data/Sound/"
@@ -13,7 +14,7 @@
 #endif
 
 #ifndef TEXTURE_DIRECTORY
-#define TEXTURE_DIRECTORY(current_path) "../é¿çs/data/Texture/" currernt_path
+#define TEXTURE_DIRECTORY(current_path) "../é¿çs/data/Texture/" current_path
 #endif
 
 #ifndef MESH_DIRECTORY

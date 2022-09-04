@@ -6,27 +6,30 @@ class HitPosList;
 class BaseRobotsList;
 class CloudList;
 
-class Game:public ChCpp::BaseFrame
+class GameFrame:public ChCpp::BaseFrame
 {
 public:
 
-	Game() {};
+	GameFrame() {};
 
-	~Game() { Release(); };
+	~GameFrame() { Release(); };
 
-	void Init();
+	void Init()override;
 
-	void Release();
+	void Release()override;
 
-	char Frame(void);
+	void Update()override;
 
 private:
 
-	void SqriptUpdate();
+	void UpdateFunction();
 
-	void SqriptDraw();
+	void DrawFunction();
 
-	enum class DrawEffect:ChStd::DataNo{Effect,Obj};
+	enum class DrawEffect:ChStd::DataNo
+	{
+		Effect,Obj
+	};
 
 	void CamUpdate();
 
@@ -40,13 +43,13 @@ private:
 	const enum{VTop,VLeft,VBottom,VRight};
 
 	const float MapScaling = 50.0f;
-	ChVec3_11 MapPos;
+	ChVec3 MapPos;
 	const float MapMove = 0.8f;
 
-	ChMat_11 CamMat;
+	
+	CamMat;
 	char CurrentPath[256];
 
-	char NextFrame = 'G';
 	ChStd::Bool StartFlg = false;
 	unsigned long fps;
 	//OpenWorldMap *World;
@@ -64,22 +67,21 @@ private:
 	ChPtr::Shared<CloudList>Cloud;
 
 	ChPtr::Shared<BaseRobotsList> RobotsList;
-	ChVec3_11 PPos;
+	ChVec3 PPos;
 
 	//Viewïœêî//
-	ChVec3_11 BaseCamPos = ChVec3_11(0.0f, 6.0f, -12.0f)
-		, BaseCamLook = ChVec3_11(0.0f, 4.0f, 0.0f);
+	ChVec3 BaseCamPos = ChVec3(0.0f, 6.0f, -12.0f)
+		, BaseCamLook = ChVec3(0.0f, 4.0f, 0.0f);
 
 	DWORD CamRobotNo;
-	ChPtr::Shared<ChCamera9>Camera;
-	ChPtr::Shared<ChLight9>Light;
+	ChGame::Camera Camera;
+	ChD3D11::CB::CBLight11 Light;
 	unsigned long TestFps;
 
 
-	//LpChFileCon FileCon;
 
-	// çXêVèàóù
-	void Update(void);
+
+	//LpChFileCon FileCon;
 
 	// 3Dï`âÊ
 	void Render3D(void);

@@ -1,5 +1,6 @@
 
-#include"../ChDXLibrary/ChGameIncludeFile.h"
+#include"../BaseIncluder.h"
+
 #include"../AllStruct.h"
 #include"../HitPosList/HitPosList.h"
 #include"../Damage/Damage.h"
@@ -10,61 +11,62 @@
 #include"../EnemyObj/EnemyObj.h"
 
 float TestData;
-ChVec3_9 TestPosData;
+ChVec3 TestPosData;
 unsigned char ChTmpCnt;
 
 BRobot::~BRobot()
 {
 	//TexList = nullptr;
 	RobParts = nullptr;
-	Look = nullptr;
 }
 
 ChStd::Bool BRobot::SetTargetPos()
 {
 
 	ChPtr::Shared<BaseRobotsList> SpTmpRobot = WpBRobotsList.lock();
-	if (SpTmpRobot == nullptr)return ChStd::False;
+	if (SpTmpRobot == nullptr)return false;
 
 	//キャラクター行動//
-	ChVec3_9 TmpVec;
-	ChVec3_9 TmpTDir;
+	ChVec3 tmpVec;
+	ChVec3 tmpTDir;
 
-	float TmpLen = 1000.0f;
-	float TmpObjLen;
+	float tmpLen = 1000.0f;
+	float tmpObjLen;
 
 
-	TargetPos = ChVec3_9(0.0f, 100.0f, 0.0f);
+	TargetPos.SetPosition(0.0f, 100.0f, 0.0f);
 
-	ChStd::Bool LookEFlg = ChStd::False;
+	ChStd::Bool LookEFlg = false;
 
 	for (DWORD i = 0; i < SpTmpRobot->GetRobotsCnt(); i++)
 	{
 		if (SpTmpRobot->GetEnemyFlg(i) == BaseD.EnemyFlg)continue;
-		TmpObjLen = 0.0f;
-		TmpTDir = Mat;
-		TmpVec = *SpTmpRobot->GetMat(i);
-		TmpTDir = TmpVec - TmpTDir;
-		TmpTDir.Normalize();
-		float TTmpLen = BaseD.Pos.GetLen(&TmpVec);
+		tmpObjLen = 0.0f;
+		tmpTDir = Mat.GetPosition();
+		tmpVec = SpTmpRobot->GetMat(i);
+		tmpTDir = tmpVec - tmpTDir;
+		tmpTDir.Normalize();
+		float TTmpLen = BaseD.Pos.GetLen(tmpVec);
 
 		if (TTmpLen <= 0.0f)continue;
 
-		if (TmpLen < TTmpLen)continue;
+		if (tmpLen < TTmpLen)continue;
 
-		if (ChObjCon9.SmpXFileHitRay(
-			ChMeMa.GetSmpXFile("Field")
-			, nullptr
-			, &BaseD.Pos
-			, &TmpTDir
-			, nullptr
-			, &TmpObjLen))
-		{
-			if (TmpObjLen >= 0.0f && TmpObjLen < TTmpLen)continue;
-		}
 
-		LookEFlg = ChStd::True;
-		TmpLen = TTmpLen;
+
+		//if (ChObjCon9.SmpXFileHitRay(
+		//	ChMeMa.GetSmpXFile("Field")
+		//	, nullptr
+		//	, &BaseD.Pos
+		//	, &tmpTDir
+		//	, nullptr
+		//	, &tmpObjLen))
+		//{
+		//	if (tmpObjLen >= 0.0f && tmpObjLen < TTmpLen)continue;
+		//}
+
+		LookEFlg = true;
+		tmpLen = TTmpLen;
 		TargetPos = *SpTmpRobot->GetMat(i);
 
 	}
@@ -77,7 +79,7 @@ void BRobot::BInit(const unsigned short _PartsNum)
 
 	for (char i = 0; i < KeyCount; i++)
 	{
-		ButtonFlg[i] = ChStd::False;
+		ButtonFlg[i] = false;
 	}
 
 	switch (_PartsNum)
@@ -97,28 +99,7 @@ void BRobot::BInit(const unsigned short _PartsNum)
 	MoveD.MoveV = 0.0f;
 	TargetPos.Identity();
 
-	{
 
-		auto TmpData = ChPtr::Make_S<ChPushBack9>();
-		TmpData->SetSmpXFile(ChMeMa.GetSmpXFile("Field"));
-		TmpData->SetSmpXFile(ChMeMa.GetSmpXFile("FieldHit"));
-		TmpData->SetLen(0.0f);
-		TmpData->SetData(1.0f);
-		Physical.push_back(TmpData);
-	}
-
-	{
-		auto TmpData = ChPtr::Make_S<ChGravity9>();
-		TmpData->Init(
-			(float)ChWinAPID.GetFPSCnt());
-		TmpData->SetSmpXFile(ChMeMa.GetSmpXFile("Field"));
-		TmpData->SetSmpXFile(ChMeMa.GetSmpXFile("FieldHit"));
-		TmpData->SetLen(4.0f);
-		//TmpData->SetData(5.0f);
-		Physical.push_back(TmpData);
-	}
-
-	Look = ChPtr::Make_S<ChCamera9>(ChDevice.GetDevice(), ChWinAPID);
 	RobParts = ChPtr::Make_S<RobPartsList>();
 	RobParts->Init(shared_from_this(), _PartsNum);
 
@@ -128,11 +109,6 @@ void BRobot::BInit(const unsigned short _PartsNum)
 
 void BRobot::PartsSet()
 {
-	RobParts->SetColor(GetEnumCNum(RobPartsList::BodyPartsListName, Foot), &Col);
-	RobParts->SetColor(GetEnumCNum(RobPartsList::BodyPartsListName, Body), &Col);
-	RobParts->SetColor(GetEnumCNum(RobPartsList::BodyPartsListName, Head), &Col);
-	RobParts->SetColor(GetEnumCNum(RobPartsList::BodyPartsListName, Arm), &Col);
-	RobParts->SetColor(GetEnumCNum(RobPartsList::BodyPartsListName, Boost), &Col);
 
 }
 
@@ -159,24 +135,24 @@ void BRobot::IsDamage(const short _D)
 
 }
 
-void BRobot::CreateShotData(const ChStd::DataNo _TmpNo)
+void BRobot::CreateShotData(const ChStd::DataNo _tmpNo)
 {
-	ChPtr::Shared<HitPosList> TmpHitPosList = WpHitPosList.lock();
-	ChVec3_9 TmpVec;
+	ChPtr::Shared<HitPosList> tmpHitPosList = WpHitPosList.lock();
+	ChVec3 tmpVec;
 	/*
 		for (auto obj : RobPartsList)
 		{
-			auto TmpAtkPos = obj->GetWeapDate();
-			if (TmpAtkPos == nullptr)continue;
-			ChPtr::Shared<ChGame::APosData> TmpDate = ChPtr::Make_S<ChGame::APosData>();
+			auto tmpAtkPos = obj->GetWeapDate();
+			if (tmpAtkPos == nullptr)continue;
+			ChPtr::Shared<ChGame::APosData> tmpDate = ChPtr::Make_S<ChGame::APosData>();
 
-			TmpAtkPos->WeakCnt = 0;
-			TmpVec = *obj->GetBasePos();
-			TmpVec.z += *TmpAtkPos->ShotPos;
-			TmpDate->Base = *TmpAtkPos;
-			TmpDate->Pos.MatPos(&Mat, &TmpVec);
-			TmpDate->Dir.MatNormal(&Mat, &ChVec3(0.0f, 0.0f, 1.0f));
-			TmpHitPosList->SetAData(TmpDate);
+			tmpAtkPos->WeakCnt = 0;
+			tmpVec = *obj->GetBasePos();
+			tmpVec.z += *tmpAtkPos->ShotPos;
+			tmpDate->Base = *tmpAtkPos;
+			tmpDate->Pos.MatPos(&Mat, &tmpVec);
+			tmpDate->Dir.MatNormal(&Mat, &ChVec3(0.0f, 0.0f, 1.0f));
+			tmpHitPosList->SetAData(tmpDate);
 
 		}
 	*/
@@ -188,11 +164,11 @@ void BRobot::InputKeyData()
 	auto SpTmpRobot = WpBRobotsList.lock();
 	if (SpTmpRobot == nullptr)return;
 
-	auto TmpHit = WpHitPosList.lock();
-	if (TmpHit == nullptr)return;
+	auto tmpHit = WpHitPosList.lock();
+	if (tmpHit == nullptr)return;
 
 
-	if (!TmpHit->IsHaveBullet())
+	if (!tmpHit->IsHaveBullet())
 	{
 		if (IsEnemy()) {
 			if (!SpTmpRobot->IsMemberLive())return;
@@ -205,23 +181,23 @@ void BRobot::InputKeyData()
 	SetTargetPos();
 
 	//キャラクター向き//
-	Mouse->GetMovePos(&MoveRot);
+	mouse->GetMovePos(&MoveRot);
 
 	if (ChWinAPID.IsPushKey(VK_SHIFT))
 	{
-		if (ChWinAPID.IsPushKey(VK_SPACE))ButtonFlg[GetEnumCNum(KeyName, JAvo)] = ChStd::True;
-		if (ChWinAPID.IsPushKey('W'))ButtonFlg[GetEnumCNum(KeyName, UAvo)] = ChStd::True;
-		if (ChWinAPID.IsPushKey('A'))ButtonFlg[GetEnumCNum(KeyName, LAvo)] = ChStd::True;
-		if (ChWinAPID.IsPushKey('D'))ButtonFlg[GetEnumCNum(KeyName, RAvo)] = ChStd::True;
-		if (ChWinAPID.IsPushKeyNoHold('S'))ButtonFlg[GetEnumCNum(KeyName, OverBoost)] = ChStd::True;
+		if (ChWinAPID.IsPushKey(VK_SPACE))ButtonFlg[ChStd::EnumCast(KeyName::JAvo)] = true;
+		if (ChWinAPID.IsPushKey('W'))ButtonFlg[ChStd::EnumCast(KeyName::UAvo)] = true;
+		if (ChWinAPID.IsPushKey('A'))ButtonFlg[ChStd::EnumCast(KeyName::LAvo)] = true;
+		if (ChWinAPID.IsPushKey('D'))ButtonFlg[ChStd::EnumCast(KeyName::RAvo)] = true;
+		if (ChWinAPID.IsPushKeyNoHold('S'))ButtonFlg[ChStd::EnumCast(KeyName::OverBoost)] = true;
 
 	}
 
-	if (ChWinAPID.IsPushKey('W'))ButtonFlg[GetEnumCNum(KeyName, Up)] = ChStd::True;
-	if (ChWinAPID.IsPushKey('S'))ButtonFlg[GetEnumCNum(KeyName, Down)] = ChStd::True;
-	if (ChWinAPID.IsPushKey('A'))ButtonFlg[GetEnumCNum(KeyName, Left)] = ChStd::True;
-	if (ChWinAPID.IsPushKey('D'))ButtonFlg[GetEnumCNum(KeyName, Right)] = ChStd::True;
-	if (ChWinAPID.IsPushKey(VK_SPACE))ButtonFlg[GetEnumCNum(KeyName, Jump)] = ChStd::True;
+	if (ChWinAPID.IsPushKey('W'))ButtonFlg[ChStd::EnumCast(KeyName::Up)] = true;
+	if (ChWinAPID.IsPushKey('S'))ButtonFlg[ChStd::EnumCast(KeyName::Down)] = true;
+	if (ChWinAPID.IsPushKey('A'))ButtonFlg[ChStd::EnumCast(KeyName::Left)] = true;
+	if (ChWinAPID.IsPushKey('D'))ButtonFlg[ChStd::EnumCast(KeyName::Right)] = true;
+	if (ChWinAPID.IsPushKey(VK_SPACE))ButtonFlg[ChStd::EnumCast(KeyName::Jump)] = true;
 
 
 	if (IsEnemy()) {
@@ -231,8 +207,8 @@ void BRobot::InputKeyData()
 		if (!SpTmpRobot->IsEnemyLive())return;
 	}
 
-	if (ChWinAPID.IsPushKey(VK_RBUTTON))ButtonFlg[GetEnumCNum(KeyName, MAttack)] = ChStd::True;
-	if (ChWinAPID.IsPushKey(VK_LBUTTON))ButtonFlg[GetEnumCNum(KeyName, SAttack)] = ChStd::True;
+	if (ChWinAPID.IsPushKey(VK_RBUTTON))ButtonFlg[ChStd::EnumCast(KeyName::MAttack)] = true;
+	if (ChWinAPID.IsPushKey(VK_LBUTTON))ButtonFlg[ChStd::EnumCast(KeyName::SAttack)] = true;
 
 }
 
@@ -242,11 +218,11 @@ void BRobot::InputCPUData()
 	auto SpTmpRobot = WpBRobotsList.lock();
 	if (SpTmpRobot == nullptr)return;
 
-	auto TmpHit = WpHitPosList.lock();
-	if (TmpHit == nullptr)return;
+	auto tmpHit = WpHitPosList.lock();
+	if (tmpHit == nullptr)return;
 
 
-	if (!TmpHit->IsHaveBullet())
+	if (!tmpHit->IsHaveBullet())
 	{
 		if (IsEnemy()) {
 			if (!SpTmpRobot->IsMemberLive())return;
@@ -261,7 +237,7 @@ void BRobot::InputCPUData()
 	{
 
 		MoveKey[0] = 'W';
-		ButtonFlg[GetEnumCNum(KeyName, Up)] = ChStd::True;
+		ButtonFlg[ChStd::EnumCast(KeyName::Up)] = true;
 
 		//加算計算//
 		AIMoveMouInput();
@@ -280,74 +256,74 @@ void BRobot::InputCPUData()
 
 void BRobot::AIMoveKeyInput()
 {
-	ChVec3_9 TmpVec;
+	ChVec3 tmpVec;
 
-	TmpVec = TargetPos;
+	tmpVec = TargetPos;
 
-	float TmpLen = BaseD.Pos.GetLen(&TmpVec);
-	ChStd::Bool TmpFlg = ChStd::False;
+	float tmpLen = BaseD.Pos.GetLen(&tmpVec);
+	ChStd::Bool tmpFlg = ChStd::False;
 
-	if (ChStd::GetRand(100) > SpNow)
+	if (rand() % (100) > SpNow)
 	{
-		if (MoveKey[0] == 'A')ButtonFlg[GetEnumCNum(KeyName, LAvo)] = ChStd::True;
-		else if (MoveKey[0] == 'D')ButtonFlg[GetEnumCNum(KeyName, RAvo)] = ChStd::True;
-		else if (MoveKey[0] == 'W')ButtonFlg[GetEnumCNum(KeyName, UAvo)] = ChStd::True;
-		else ButtonFlg[GetEnumCNum(KeyName, JAvo)] = ChStd::True;
+		if (MoveKey[0] == 'A')ButtonFlg[ChStd::EnumCast(KeyName::LAvo)] = true;
+		else if (MoveKey[0] == 'D')ButtonFlg[ChStd::EnumCast(KeyName::RAvo)] = true;
+		else if (MoveKey[0] == 'W')ButtonFlg[ChStd::EnumCast(KeyName::UAvo)] = true;
+		else ButtonFlg[ChStd::EnumCast(KeyName::JAvo)] = true;
 
-		TmpFlg = ChStd::True;
+		tmpFlg = true;
 	}
 
-	if (!TmpFlg)
+	if (!tmpFlg)
 	{
-		if (TmpLen > 200.0f) {
-			if (!BoostFlg)ButtonFlg[GetEnumCNum(KeyName, MAttack)] = ChStd::True;
+		if (tmpLen > 200.0f) {
+			if (!BoostFlg)ButtonFlg[ChStd::EnumCast(KeyName::MAttack)] = true;
 
 			MoveKey[0] = 'W';
-			ButtonFlg[GetEnumCNum(KeyName, Up)] = ChStd::True;
+			ButtonFlg[ChStd::EnumCast(KeyName::Up)] = true;
 
 			switch (MoveKey[1])
 			{
 			case 'A':
-				ButtonFlg[GetEnumCNum(KeyName, Left)] = ChStd::True;
+				ButtonFlg[ChStd::EnumCast(KeyName::Left)] = true;
 				break;
 			case 'J':
-				ButtonFlg[GetEnumCNum(KeyName, Jump)] = ChStd::True;
+				ButtonFlg[ChStd::EnumCast(KeyName::Jump)] = true;
 				break;
 			case 'S':
-				//ButtonFlg[GetEnumCNum(KeyName, Down)] = ChStd::True;
-				MoveKey[1] = KeyCode[ChStd::GetRand(5)];
+				//ButtonFlg[ChStd::EnumCast(KeyName::Down)] = true;
+				MoveKey[1] = KeyCode[rand() % (5)];
 				break;
 			case 'D':
-				ButtonFlg[GetEnumCNum(KeyName, Right)] = ChStd::True;
+				ButtonFlg[ChStd::EnumCast(KeyName::Right)] = true;
 				break;
 			default:
-				MoveKey[1] = KeyCode[ChStd::GetRand(5)];
+				MoveKey[1] = KeyCode[rand() % (5)];
 				break;
 			}
 		}
-		else if (TmpLen > 100.0f) {
-			if (!BoostFlg)ButtonFlg[GetEnumCNum(KeyName, MAttack)] = ChStd::True;
+		else if (tmpLen > 100.0f) {
+			if (!BoostFlg)ButtonFlg[ChStd::EnumCast(KeyName::MAttack)] = true;
 
 			MoveKey[0] = 'W';
-			ButtonFlg[GetEnumCNum(KeyName, Up)] = ChStd::True;
+			ButtonFlg[ChStd::EnumCast(KeyName::Up)] = true;
 
 			switch (MoveKey[1])
 			{
 			case 'A':
-				ButtonFlg[GetEnumCNum(KeyName, Left)] = ChStd::True;
+				ButtonFlg[ChStd::EnumCast(KeyName::Left)] = true;
 				break;
 			case 'J':
-				ButtonFlg[GetEnumCNum(KeyName, Jump)] = ChStd::True;
+				ButtonFlg[ChStd::EnumCast(KeyName::Jump)] = true;
 				break;
 			case 'S':
-				//ButtonFlg[GetEnumCNum(KeyName, Down)] = ChStd::True;
-				MoveKey[1] = KeyCode[ChStd::GetRand(5)];
+				//ButtonFlg[ChStd::EnumCast(KeyName::Down)] = true;
+				MoveKey[1] = KeyCode[rand() % (5)];
 				break;
 			case 'D':
-				ButtonFlg[GetEnumCNum(KeyName, Right)] = ChStd::True;
+				ButtonFlg[ChStd::EnumCast(KeyName::Right)] = true;
 				break;
 			default:
-				MoveKey[1] = KeyCode[ChStd::GetRand(5)];
+				MoveKey[1] = KeyCode[rand() % (5)];
 				break;
 			}
 		}
@@ -358,16 +334,16 @@ void BRobot::AIMoveKeyInput()
 				switch (MoveKey[i])
 				{
 				case 'A':
-					ButtonFlg[GetEnumCNum(KeyName, Left)] = ChStd::True;
+					ButtonFlg[ChStd::EnumCast(KeyName::Left)] = true;
 					break;
 				case 'J':
-					ButtonFlg[GetEnumCNum(KeyName, Jump)] = ChStd::True;
+					ButtonFlg[ChStd::EnumCast(KeyName::Jump)] = true;
 					break;
 				case 'S':
-					ButtonFlg[GetEnumCNum(KeyName, Down)] = ChStd::True;
+					ButtonFlg[ChStd::EnumCast(KeyName::Down)] = true;
 					break;
 				case 'D':
-					ButtonFlg[GetEnumCNum(KeyName, Right)] = ChStd::True;
+					ButtonFlg[ChStd::EnumCast(KeyName::Right)] = true;
 					break;
 				default:
 					Change();
@@ -378,7 +354,7 @@ void BRobot::AIMoveKeyInput()
 		}
 	}
 
-	if (ChStd::GetRand(100) > SpNow)Change();
+	if (rand() % (100) > SpNow)Change();
 
 }
 
@@ -388,44 +364,44 @@ void BRobot::AIMoveMouInput()
 	if (SpTmpRobot == nullptr)return;
 
 
-	ChVector3_9 TmpVec, TmpPos;
-	ChVec3_9 TmpMove;
-	ChMatrix_9 TmpMat;
-	float TmpLen;
+	ChVec3 tmpVec, tmpPos;
+	ChVec3 tmpMove;
+	ChLMat tmpMat;
+	float tmpLen;
 
-	TmpVec = Mat;
-	Look->SetCamPos(&TmpVec);
+	tmpVec = Mat;
+	Look->SetCamPos(&tmpVec);
 
-	TmpVec.MatPos(&Mat, &ChVec3_9(0.0f, 0.0f, 1.0f));
+	tmpVec.MatPos(&Mat, &ChVec3(0.0f, 0.0f, 1.0f));
 
 
-	Look->SetCamLook(&TmpVec);
+	Look->SetCamLook(&tmpVec);
 	Look->SetCamMat(&Mat);
 	Look->SetView();
 
-	TmpMat = TargetPos;
+	tmpMat = TargetPos;
 
-	ChDevice.GetOnViewPos(&TmpVec, &TmpMat);
+	ChDevice.GetOnViewPos(&tmpVec, &tmpMat);
 
-	TmpPos = ChVec3_9(
+	tmpPos = ChVec3(
 		ChWinAPID.GetWindWidth() / 2.0f
 		, ChWinAPID.GetWindHeight() / 2.0f
 		, 0.0f);
 
-	TmpPos.z = TmpVec.z;
+	tmpPos.z = tmpVec.z;
 
-	TmpMove = TmpPos - TmpVec;
+	tmpMove = tmpPos - tmpVec;
 
-	TmpMove *= (0.02f * ADS);
-	CurrsolMove(std::fabsf(TmpMove.x),std::fabsf(TmpMove.y));
+	tmpMove *= (0.02f * ADS);
+	CurrsolMove(std::fabsf(tmpMove.x),std::fabsf(tmpMove.y));
 
-	TWindOnPosLen = TmpPos.GetLen(&TmpVec);
+	TWindOnPosLen = tmpPos.GetLen(&tmpVec);
 
-	if (TmpPos.z <= 0.0f)return;
+	if (tmpPos.z <= 0.0f)return;
 
-	TmpLen = TmpVec.GetLen(&TmpPos);
+	tmpLen = tmpVec.GetLen(&tmpPos);
 
-	if (TmpLen > ViweLen)return;
+	if (tmpLen > ViweLen)return;
 
 
 
@@ -438,9 +414,9 @@ void BRobot::AIMoveMouInput()
 	if (LookFlg)
 	{
 
-		ButtonFlg[GetEnumCNum(KeyName, MAttack)] = ChStd::True;
+		ButtonFlg[ChStd::EnumCast(KeyName::MAttack)] = true;
 
-		ButtonFlg[GetEnumCNum(KeyName, SAttack)] = ChStd::True;
+		ButtonFlg[ChStd::EnumCast(KeyName::SAttack)] = true;
 	}
 
 
@@ -450,53 +426,53 @@ void BRobot::CurrsolMove(const float _MoveX, const float _MoveY)
 {
 	if (!IsEnemy())TestData = _MoveX;
 
-	ChStd::FPOINT TmpDir;
+	ChVec2 tmpDir;
 
-	ChVector3_9 TmpVec, UpVec;
-	ChVector3_9 TmpCross, TmpVDir;
-	ChMat_9 TmpMat;
+	ChVec3 tmpVec, UpVec;
+	ChVec3 tmpCross, tmpVDir;
+	ChLMat tmpMat;
 
-	TmpVec = Mat;
-	TmpVDir = TargetPos;
-	TmpVec = TmpVDir - TmpVec;
+	tmpVec = Mat;
+	tmpVDir = TargetPos;
+	tmpVec = tmpVDir - tmpVec;
 
-	TmpVDir.MatNormal(&Mat, &ChVec3_9(0.0f, 0.0f, 1.0f));
+	tmpVDir.MatNormal(&Mat, &ChVec3(0.0f, 0.0f, 1.0f));
 
-	TmpVec.Normalize();
+	tmpVec.Normalize();
 
-	TmpCross.CrossVec(&TmpVDir, &TmpVec);
+	tmpCross.CrossVec(&tmpVDir, &tmpVec);
 
-	TmpDir.x = TmpCross.y > 0 ? _MoveX : -_MoveX;
-	TmpDir.y = TmpCross.x > 0 ? _MoveY : -_MoveY;
+	tmpDir.x = tmpCross.y > 0 ? _MoveX : -_MoveX;
+	tmpDir.y = tmpCross.x > 0 ? _MoveY : -_MoveY;
 
-	if (TmpVec.z < 0)TmpDir.y = -TmpDir.y;
+	if (tmpVec.z < 0)tmpDir.y = -tmpDir.y;
 
 
-	MoveRot.x = TmpDir.x;
-	MoveRot.y = TmpDir.y;
+	MoveRot.x = tmpDir.x;
+	MoveRot.y = tmpDir.y;
 }
 
 void BRobot::Change()
 {
 	for (unsigned char i = 0; i < MoveKeyCnt; i++)
 	{
-		switch (ChStd::GetRand(5))
+		switch (rand() % (5))
 		{
 		case 0:
 			MoveKey[i] = 'A';
-			ButtonFlg[GetEnumCNum(KeyName, Left)] = ChStd::True;
+			ButtonFlg[ChStd::EnumCast(KeyName::Left)] = true;
 			break;
 		case 1:
 			MoveKey[i] = 'S';
-			ButtonFlg[GetEnumCNum(KeyName, Down)] = ChStd::True;
+			ButtonFlg[ChStd::EnumCast(KeyName::Down)] = true;
 			break;
 		case 2:
 			MoveKey[i] = 'D';
-			ButtonFlg[GetEnumCNum(KeyName, Right)] = ChStd::True;
+			ButtonFlg[ChStd::EnumCast(KeyName::Right)] = true;
 			break;
 		case 3:
 			MoveKey[i] = 'J';
-			ButtonFlg[GetEnumCNum(KeyName, Jump)] = ChStd::True;
+			ButtonFlg[ChStd::EnumCast(KeyName::Jump)] = true;
 			break;
 		default:
 			if (i != 0)return;
@@ -509,9 +485,9 @@ void BRobot::Change()
 void BRobot::InputToMove()
 {
 
-	ChMat_9 TmpMat;
-	TmpMat.RotYPR(0.0f, BaseD.Rot.y, 0.0f);
-	CamMoveVec = ChVec3_9(0.0f, 0.0f, 0.0f);
+	ChLMat tmpMat;
+	tmpMat.RotYPR(0.0f, BaseD.Rot.y, 0.0f);
+	CamMoveVec = ChVec3(0.0f, 0.0f, 0.0f);
 	//キャラクター向き//
 
 	if (abs(MoveRot.x) > 1.0f)BaseD.Rot.y += (MoveRot.x / MouMoveP) * Sens;
@@ -520,78 +496,78 @@ void BRobot::InputToMove()
 	if (abs(BaseD.Rot.x) > 90.0f)BaseD.Rot.x > 0.0f ? BaseD.Rot.x = 90.0f : BaseD.Rot.x = -90.0f;
 
 	//キャラクター行動//
-	ChVec3_9 TmpVec;
-	ChVec3_9 UpVec;
+	ChVec3 tmpVec;
+	ChVec3 UpVec;
 
 	/*
-		if (ButtonFlg[GetEnumCNum(KeyName, OverBoost)])
+		if (ButtonFlg[ChStd::EnumCast(KeyName::OverBoost)])
 		{
 			BoostFlg = !BoostFlg;
 		}
 
 	*/
-	if (ButtonFlg[GetEnumCNum(KeyName,JAvo)] && MoveD.AvoV <= 0.0f)
+	if (ButtonFlg[ChStd::EnumCast(KeyName::JAvo)] && MoveD.AvoV <= 0.0f)
 	{
-		CamMoveVec += ChVec3_9(0.0f, 1.0f, 0.0f);
-		MoveD.AvoDir.MatNormal(&TmpMat, &ChVec3_9(0.0f, 1.0f, 0.0f));
+		CamMoveVec += ChVec3(0.0f, 1.0f, 0.0f);
+		MoveD.AvoDir.MatNormal(&tmpMat, &ChVec3(0.0f, 1.0f, 0.0f));
 		MoveD.AvoV = MoveD.AvoMax;
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, LAvo)] && MoveD.AvoV <= 0.0f)
+	if (ButtonFlg[ChStd::EnumCast(KeyName::LAvo)] && MoveD.AvoV <= 0.0f)
 	{
-		CamMoveVec += ChVec3_9(-1.0f, 0.0f, 0.0f);
-		MoveD.AvoDir.MatNormal(&TmpMat, &ChVec3_9(-1.0f, 0.0f, 0.0f));
+		CamMoveVec += ChVec3(-1.0f, 0.0f, 0.0f);
+		MoveD.AvoDir.MatNormal(&tmpMat, &ChVec3(-1.0f, 0.0f, 0.0f));
 		MoveD.AvoV = MoveD.AvoMax;
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, RAvo)] && MoveD.AvoV <= 0.0f)
+	if (ButtonFlg[ChStd::EnumCast(KeyName::RAvo)] && MoveD.AvoV <= 0.0f)
 	{
-		CamMoveVec += ChVec3_9(1.0f, 0.0f, 0.0f);
-		MoveD.AvoDir.MatNormal(&TmpMat, &ChVec3_9(1.0f, 0.0f, 0.0f));
+		CamMoveVec += ChVec3(1.0f, 0.0f, 0.0f);
+		MoveD.AvoDir.MatNormal(&tmpMat, &ChVec3(1.0f, 0.0f, 0.0f));
 		MoveD.AvoV = MoveD.AvoMax;
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, UAvo)] && MoveD.AvoV <= 0.0f)
+	if (ButtonFlg[ChStd::EnumCast(KeyName::UAvo)] && MoveD.AvoV <= 0.0f)
 	{
-		CamMoveVec += ChVec3_9(0.0f, 0.0f, 1.0f);
-		MoveD.AvoDir.MatNormal(&TmpMat, &ChVec3_9(0.0f, 0.0f, 1.0f));
+		CamMoveVec += ChVec3(0.0f, 0.0f, 1.0f);
+		MoveD.AvoDir.MatNormal(&tmpMat, &ChVec3(0.0f, 0.0f, 1.0f));
 		MoveD.AvoV = MoveD.AvoMax;
 	}
 
 
-	if (ButtonFlg[GetEnumCNum(KeyName, Up)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::Up)])
 	{
-		CamMoveVec += ChVec3_9(0.0f, 0.0f, 1.0f);
-		TmpVec.Move(0.0f, 0.0f, 1.0f);
+		CamMoveVec += ChVec3(0.0f, 0.0f, 1.0f);
+		tmpVec.Move(0.0f, 0.0f, 1.0f);
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, Down)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::Down)])
 	{
-		CamMoveVec += ChVec3_9(0.0f, 0.0f, -1.0f);
-		TmpVec.Move(0.0f, 0.0f, -1.0f);
+		CamMoveVec += ChVec3(0.0f, 0.0f, -1.0f);
+		tmpVec.Move(0.0f, 0.0f, -1.0f);
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, Left)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::Left)])
 	{
-		CamMoveVec += ChVec3_9(-1.0f, 0.0f, 0.0f);
-		TmpVec.Move(-1.0f, 0.0f, 0.0f);
+		CamMoveVec += ChVec3(-1.0f, 0.0f, 0.0f);
+		tmpVec.Move(-1.0f, 0.0f, 0.0f);
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, Right)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::Right)])
 	{
-		CamMoveVec += ChVec3_9(1.0f, 0.0f, 0.0f);
-		TmpVec.Move(1.0f, 0.0f, 0.0f);
+		CamMoveVec += ChVec3(1.0f, 0.0f, 0.0f);
+		tmpVec.Move(1.0f, 0.0f, 0.0f);
 	}
-	if (ButtonFlg[GetEnumCNum(KeyName, Jump)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::Jump)])
 	{
-		CamMoveVec += ChVec3_9(0.0f, 1.0f, 0.0f);
-		TmpVec.Move(0.0f, 1.0f, 0.0f);
+		CamMoveVec += ChVec3(0.0f, 1.0f, 0.0f);
+		tmpVec.Move(0.0f, 1.0f, 0.0f);
 	}
 
 
 
-	if (fabsf(TmpVec.GetLen(&D3DXVECTOR3(0.0f, 0.0f, 0.0f))) > 1.0f)TmpVec.Normalize();
-	TmpVec.MatNormal(&TmpMat, &TmpVec);
+	if (fabsf(tmpVec.GetLen(&D3DXVECTOR3(0.0f, 0.0f, 0.0f))) > 1.0f)tmpVec.Normalize();
+	tmpVec.MatNormal(&tmpMat, &tmpVec);
 	CamMoveVec.Normalize();
 
 
-	MoveD.MoveV += TmpVec * MoveS;
+	MoveD.MoveV += tmpVec * MoveS;
 
-	if (BoostFlg)MoveD.MoveV += TmpVec * BoostV;
+	if (BoostFlg)MoveD.MoveV += tmpVec * BoostV;
 
 	MoveD.MoveV += MoveD.AvoDir * MoveD.AvoV;
 	MoveD.AvoV *= MoveD.AvoDen;
@@ -599,12 +575,12 @@ void BRobot::InputToMove()
 	if (fabsf(MoveD.AvoV) < MoveD.AvoMin)MoveD.AvoV = 0.0f;
 
 
-	if (ButtonFlg[GetEnumCNum(KeyName, MAttack)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::MAttack)])
 	{
 		Attack(RobParts->GetMWeap());
 	}
 
-	if (ButtonFlg[GetEnumCNum(KeyName, SAttack)])
+	if (ButtonFlg[ChStd::EnumCast(KeyName::SAttack)])
 	{
 		Attack(RobParts->GetSWeap());
 	}
@@ -626,15 +602,15 @@ void BRobot::CamUpdate(void)
 
 	if (Camera == nullptr)return;
 
-	ChVector3_9 TmpCamP, TmpVec;
+	ChVec3 tmpCamP, tmpVec;
 
-	TmpCamP.MatPos(&Mat, &BaseCamPos);
+	tmpCamP.MatPos(&Mat, &BaseCamPos);
 
-	Camera->SetCamPos(&TmpCamP);
+	Camera->SetCamPos(&tmpCamP);
 
-	TmpCamP.MatPos(&Mat, &BaseCamLook);
+	tmpCamP.MatPos(&Mat, &BaseCamLook);
 
-	Camera->SetCamLook(&TmpCamP);
+	Camera->SetCamLook(&tmpCamP);
 
 	Camera->SetCamMat(&Mat);
 
@@ -643,13 +619,13 @@ void BRobot::CamUpdate(void)
 
 void BRobot::Move()
 {
-	ChVec3_9 TmpVec;
+	ChVec3 tmpVec;
 
 	auto RobotsList = WpBRobotsList.lock();
 	if (RobotsList == nullptr)return;
 	InputToMove();
 
-	ChPtr::Shared<HitPosList> TmpHPos = WpHitPosList.lock();
+	ChPtr::Shared<HitPosList> tmpHPos = WpHitPosList.lock();
 
 
 	AvoHitRobots();
@@ -658,7 +634,7 @@ void BRobot::Move()
 		ChStd::Bool PhyFlg = ChStd::False;
 		for (auto Phy : Physical)
 		{
-			if (Phy->UpDate(&BaseD.Pos, &MoveD.MoveV))PhyFlg = ChStd::True;
+			if (Phy->UpDate(&BaseD.Pos, &MoveD.MoveV))PhyFlg = true;
 		}
 
 		if (PhyFlg)
@@ -673,26 +649,26 @@ void BRobot::Move()
 
 	Mat.RotYPR(BaseD.Rot.x, BaseD.Rot.y, 0.0f);
 	{
-		ChVec3_9 TmpPos = BaseD.Pos;
-		TmpPos.y += 5.0f;
-		float TmpLen;
+		ChVec3 tmpPos = BaseD.Pos;
+		tmpPos.y += 5.0f;
+		float tmpLen;
 		if (ChObjCon9.SmpXFileHitRay(
 			ChMeMa.GetSmpXFile("Field")
 			, nullptr
 			, &BaseD.Pos
-			, &ChVec3_9(0.0f, -1.0f, 0.0f), nullptr, &TmpLen))
+			, &ChVec3(0.0f, -1.0f, 0.0f), nullptr, &tmpLen))
 		{
-			if (TmpLen < 5.0f
-				&& MoveD.MoveV.GetLen(&ChVec3_9()) < 0.1f
+			if (tmpLen < 5.0f
+				&& MoveD.MoveV.GetLen(&ChVec3()) < 0.1f
 				&& !RobotsList->IsEnemyLive())Mat.RotYPR(0.0f, BaseD.Rot.y, 0.0f);
 		}
 	}
 
 	MoveD.MoveV = 0.0f;
-	float TmpLen = BaseD.Pos.GetLen();
+	float tmpLen = BaseD.Pos.GetLen();
 
 	if (!IsEnemy())TestPosData = BaseD.Pos;
-	//if (!IsEnemy())TestData = TmpLen;
+	//if (!IsEnemy())TestData = tmpLen;
 
 	Mat = BaseD.Pos;
 	DrawMat = BaseD.Pos;
@@ -719,18 +695,18 @@ void BRobot::AvoHitRobots()
 {
 	ChPtr::Shared<BaseRobotsList> SpTmpRobot = WpBRobotsList.lock();
 	if (SpTmpRobot == nullptr)return;
-	ChVec3_9 TmpVec;
-	float TmpLen;
+	ChVec3 tmpVec;
+	float tmpLen;
 
 	for (DWORD i = 0; i < SpTmpRobot->GetRobotsCnt(); i++)
 	{
-		TmpVec = *SpTmpRobot->GetMat(i);
-		if (TmpVec == BaseD.Pos)continue;
-		TmpLen = BaseD.Pos.GetLen(&TmpVec);
-		if (TmpLen > Len)continue;
-		TmpVec = TmpVec - BaseD.Pos;
-		TmpVec.Normalize();
-		BaseD.Pos -= TmpVec * TmpLen;
+		tmpVec = *SpTmpRobot->GetMat(i);
+		if (tmpVec == BaseD.Pos)continue;
+		tmpLen = BaseD.Pos.GetLen(&tmpVec);
+		if (tmpLen > Len)continue;
+		tmpVec = tmpVec - BaseD.Pos;
+		tmpVec.Normalize();
+		BaseD.Pos -= tmpVec * tmpLen;
 	}
 }
 
@@ -741,31 +717,31 @@ void BRobot::Attack(const ChPtr::Shared<ChGame::WeapData> _Weap)
 	if (_Weap == nullptr)return;
 	if (HitPos == nullptr)return;
 
-	ChVec3_9 TmpVec;
-	ChMat_9 TmpMat;
+	ChVec3 tmpVec;
+	ChLMat tmpMat;
 
-	TmpMat = Mat;
+	tmpMat = Mat;
 
-	TmpMat = BaseD.Pos + MoveD.MoveV;
+	tmpMat = BaseD.Pos + MoveD.MoveV;
 
-	TmpVec = _Weap->ShotPos;
-	auto TmpAData = ChPtr::Make_S<ChGame::APosData>();
-	TmpAData->Base = *_Weap;
-	TmpAData->Base.Damage += AddDamage;
-	TmpVec.MatPos(&TmpMat, &TmpVec);
-	TmpAData->Pos = TmpVec;
-	ChDSound9.PlaySE(TmpAData->Base.SEName, "Sound", &TmpVec);
-	TmpVec.MatNormal(&Mat, &ChVec3_9(0.0f, 0.0f, TmpAData->Base.Speed));
+	tmpVec = _Weap->ShotPos;
+	auto tmpAData = ChPtr::Make_S<ChGame::APosData>();
+	tmpAData->Base = *_Weap;
+	tmpAData->Base.Damage += AddDamage;
+	tmpVec.MatPos(&tmpMat, &tmpVec);
+	tmpAData->Pos = tmpVec;
+	ChDSound9.PlaySE(tmpAData->Base.SEName, "Sound", &tmpVec);
+	tmpVec.MatNormal(&Mat, &ChVec3(0.0f, 0.0f, tmpAData->Base.Speed));
 
-	TmpAData->Base.Speed += MoveD.MoveV.GetLen(&ChVec3_9(0.0f, 0.0f, 0.0f));
+	tmpAData->Base.Speed += MoveD.MoveV.GetLen(&ChVec3(0.0f, 0.0f, 0.0f));
 
 
-	//TmpVec = MoveD.MoveV + TmpVec;
-	TmpVec.Normalize();
+	//tmpVec = MoveD.MoveV + tmpVec;
+	tmpVec.Normalize();
 
-	TmpAData->Dir = TmpVec;
+	tmpAData->Dir = tmpVec;
 
-	HitPos->SetAData(TmpAData);
+	HitPos->SetAData(tmpAData);
 
 }
 
@@ -795,7 +771,7 @@ void BaseRobotsList::Draw()
 
 	DBase->Draw();
 
-	ChDevice.LightSetting(ChStd::True);
+	ChDevice.LightSetting(true);
 
 }
 
@@ -840,7 +816,7 @@ void BaseRobotsList::Update()
 
 }
 
-void BaseRobotsList::SetRobots(std::string _PlayerData, const ChVec3_9 *_StartPos, unsigned short _PartsNum)
+void BaseRobotsList::SetRobots(std::string _PlayerData, const ChVec3 *_StartPos, unsigned short _PartsNum)
 {
 	RobotsList.push_back(ChPtr::Make_S<PlayerObj>());
 	RobotsList[RobotsList.size() - 1]->Init(0);
@@ -848,32 +824,32 @@ void BaseRobotsList::SetRobots(std::string _PlayerData, const ChVec3_9 *_StartPo
 	RobotsList[RobotsList.size() - 1]->SetHitPosList(WpHitPosList.lock());
 	RobotsList[RobotsList.size() - 1]->SetRobotsList(shared_from_this());
 
-	auto TmpDData = ChPtr::Make_S<Damage>();
-	RobotsList[RobotsList.size() - 1]->SharedDamageData(TmpDData);
-	DBase->SharedDamageData(TmpDData);
+	auto tmpDData = ChPtr::Make_S<Damage>();
+	RobotsList[RobotsList.size() - 1]->SharedDamageData(tmpDData);
+	DBase->SharedDamageData(tmpDData);
 
 	MemberCnt++;
 }
 
-void BaseRobotsList::SetRobots(const ChStd::Bool _EneFlg, ChVec3_9 *_StartPos, unsigned short _PartsNum)
+void BaseRobotsList::SetRobots(const ChStd::Bool _EneFlg, ChVec3 *_StartPos, unsigned short _PartsNum)
 {
-	if (!_EneFlg)RobotsList.push_back(ChPtr::Make_S<EnemyObj>(GetEnumCNum(EnemyType, Boss), _EneFlg));
-	else RobotsList.push_back(ChPtr::Make_S<EnemyObj>(GetEnumCNum(EnemyType, Normal), _EneFlg));
+	if (!_EneFlg)RobotsList.push_back(ChPtr::Make_S<EnemyObj>(ChStd::EnumCast(EnemyType, Boss), _EneFlg));
+	else RobotsList.push_back(ChPtr::Make_S<EnemyObj>(ChStd::EnumCast(EnemyType, Normal), _EneFlg));
 	RobotsList[RobotsList.size() - 1]->Init(_PartsNum);
 	RobotsList[RobotsList.size() - 1]->SetPos(_StartPos);
 	RobotsList[RobotsList.size() - 1]->SetHitPosList(WpHitPosList.lock());
 	RobotsList[RobotsList.size() - 1]->SetRobotsList(shared_from_this());
 
-	auto TmpDData = ChPtr::Make_S<Damage>();
-	RobotsList[RobotsList.size() - 1]->SharedDamageData(TmpDData);
-	DBase->SharedDamageData(TmpDData);
+	auto tmpDData = ChPtr::Make_S<Damage>();
+	RobotsList[RobotsList.size() - 1]->SharedDamageData(tmpDData);
+	DBase->SharedDamageData(tmpDData);
 
 	if (_EneFlg)EnemyCnt++;
 	else MemberCnt++;
 
 }
 
-void BaseRobotsList::SetRobots2(const ChStd::Bool _EneFlg, ChVec3_9 *_StartPos)
+void BaseRobotsList::SetRobots2(const ChStd::Bool _EneFlg, ChVec3 *_StartPos)
 {
 
 	if (!_EneFlg)RobotsList.push_back(std::make_shared<EnemyObj2>(_EneFlg));
@@ -883,39 +859,39 @@ void BaseRobotsList::SetRobots2(const ChStd::Bool _EneFlg, ChVec3_9 *_StartPos)
 	RobotsList[RobotsList.size() - 1]->SetHitPosList(WpHitPosList.lock());
 	RobotsList[RobotsList.size() - 1]->SetRobotsList(shared_from_this());
 
-	auto TmpDData = ChPtr::Make_S<Damage>();
-	RobotsList[RobotsList.size() - 1]->SharedDamageData(TmpDData);
-	DBase->SharedDamageData(TmpDData);
+	auto tmpDData = ChPtr::Make_S<Damage>();
+	RobotsList[RobotsList.size() - 1]->SharedDamageData(tmpDData);
+	DBase->SharedDamageData(tmpDData);
 
 	if (_EneFlg)EnemyCnt++;
 	else MemberCnt++;
 }
 
-const ChMat_9* BaseRobotsList::GetCamPos()
+const ChLMat* BaseRobotsList::GetCamPos()
 {
-	TmpMat.Identity();
-	ChPtr::Shared<BRobot>TmpRobot = WpCamRobot.lock();
-	if (TmpRobot == nullptr)return &TmpMat;
-	TmpMat = *TmpRobot->GetCamPos();
-	return &TmpMat;
+	tmpMat.Identity();
+	ChPtr::Shared<BRobot>tmpRobot = WpCamRobot.lock();
+	if (tmpRobot == nullptr)return &tmpMat;
+	tmpMat = *tmpRobot->GetCamPos();
+	return &tmpMat;
 }
 
-const ChMat_9* BaseRobotsList::GetMat(const DWORD _No)
+const ChLMat* BaseRobotsList::GetMat(const DWORD _No)
 {
-	TmpMat.Identity();
-	if (RobotsList.size() <= _No)return &TmpMat;
-	TmpMat = *RobotsList[_No]->GetMat();
-	return &TmpMat;
+	tmpMat.Identity();
+	if (RobotsList.size() <= _No)return &tmpMat;
+	tmpMat = *RobotsList[_No]->GetMat();
+	return &tmpMat;
 }
 
-const ChMat_9* BaseRobotsList::GetCamLookPos()
+const ChLMat* BaseRobotsList::GetCamLookPos()
 {
 
-	TmpMat.Identity();
-	ChPtr::Shared<BRobot>TmpRobot = WpCamRobot.lock();
-	if (TmpRobot == nullptr)return &TmpMat;
-	TmpMat = *TmpRobot->GetMat();
-	return &TmpMat;
+	tmpMat.Identity();
+	ChPtr::Shared<BRobot>tmpRobot = WpCamRobot.lock();
+	if (tmpRobot == nullptr)return &tmpMat;
+	tmpMat = *tmpRobot->GetMat();
+	return &tmpMat;
 }
 
 void BaseRobotsList::MoveCamRobot()
@@ -948,12 +924,12 @@ void BaseRobotsList::DrawMarker()
 	if (Robot == nullptr)return;
 
 	ChDSound9.SetListenerPos(Robot->GetPos());
-	ChVec3_9 TmpVec;
+	ChVec3 tmpVec;
 
-	ChVec3_9 TmpPos;
+	ChVec3 tmpPos;
 
-	ChMat_9 TmpMat, TmpRMat;
-	float TmpLen;
+	ChLMat tmpMat, tmpRMat;
+	float tmpLen;
 
 
 	POINT Cnt;
@@ -964,49 +940,49 @@ void BaseRobotsList::DrawMarker()
 	{
 		if (!Obj->IsEnemy())continue;
 
-		TmpMat = *Obj->GetMat();
+		tmpMat = *Obj->GetMat();
 
-		ChDevice.GetOnViewPos(&TmpVec, &TmpMat);
+		ChDevice.GetOnViewPos(&tmpVec, &tmpMat);
 
-		TmpPos = ChVec3_9(
+		tmpPos = ChVec3(
 			ChWinAPID.GetWindWidth() / 2.0f
 			, ChWinAPID.GetWindHeight() / 2.0f
 			, 0.0f);
 
-		TmpPos.z = TmpVec.z;
+		tmpPos.z = tmpVec.z;
 
-		float TmpLen = TmpVec.GetLen(&TmpPos);
+		float tmpLen = tmpVec.GetLen(&tmpPos);
 
-		ChVec3_9 TmpVec1, TmpVec2;
-		TmpMat = *Robot->GetMat();
-		TmpVec1 = TmpMat;
-		TmpVec2 = *Obj->GetMat();
-		TmpMat.Inverse();
-		TmpVec2.MatPos(&TmpMat, &TmpVec2);
+		ChVec3 tmpVec1, tmpVec2;
+		tmpMat = *Robot->GetMat();
+		tmpVec1 = tmpMat;
+		tmpVec2 = *Obj->GetMat();
+		tmpMat.Inverse();
+		tmpVec2.MatPos(&tmpMat, &tmpVec2);
 
-		if (TmpVec2.z > 0.0f)
+		if (tmpVec2.z > 0.0f)
 		{
-			if (0.0f <= TmpVec.x && TmpVec.x <= (float)ChWinAPID.GetWindWidth())
+			if (0.0f <= tmpVec.x && tmpVec.x <= (float)ChWinAPID.GetWindWidth())
 			{
 
-				if (0.0f <= TmpVec.y && TmpVec.y <= (float)ChWinAPID.GetWindHeight())
+				if (0.0f <= tmpVec.y && tmpVec.y <= (float)ChWinAPID.GetWindHeight())
 				{
 
 
-					if (TmpLen > 300.0f)continue;
+					if (tmpLen > 300.0f)continue;
 
-					TmpMat.Identity();
-					TmpMat.ScalingMode(100.0f / 64.0f);
+					tmpMat.Identity();
+					tmpMat.ScalingMode(100.0f / 64.0f);
 
-					//TmpVec.z = 0.0f;
-					TmpMat = TmpVec;
+					//tmpVec.z = 0.0f;
+					tmpMat = tmpVec;
 
-					if (TmpPos.z <= 0.0f)continue;
+					if (tmpPos.z <= 0.0f)continue;
 
 					ChSp9.DrawSprite(
 						ChTexMa.GetTexture("TargetMa")
-						, &TmpMat
-						, &ChVec3_9(0.0f, 0.0f, 0.0f)
+						, &tmpMat
+						, &ChVec3(0.0f, 0.0f, 0.0f)
 						, nullptr);
 
 					continue;
@@ -1019,41 +995,41 @@ void BaseRobotsList::DrawMarker()
 
 
 
-		TmpPos = ChVec3_9(
+		tmpPos = ChVec3(
 			ChWinAPID.GetWindWidth() / 2.0f
 			, ChWinAPID.GetWindHeight() * 1.0f / 3.0f
 			, 0.0f);
 
-		TmpMat.Identity();
+		tmpMat.Identity();
 
 
 
-		if (TmpVec2.x > 0.0f) {
-			TmpPos.x = ChWinAPID.GetWindWidth() - 64.0f;
-			TmpPos.y += 128.0f * Cnt.x;
+		if (tmpVec2.x > 0.0f) {
+			tmpPos.x = ChWinAPID.GetWindWidth() - 64.0f;
+			tmpPos.y += 128.0f * Cnt.x;
 			Cnt.x++;
-			TmpMat = TmpPos;
+			tmpMat = tmpPos;
 
 			ChSp9.DrawSprite(
 				ChTexMa.GetTexture("Right")
-				, &TmpMat
-				, &ChVec3_9(0.0f, 0.0f, 0.0f)
+				, &tmpMat
+				, &ChVec3(0.0f, 0.0f, 0.0f)
 				, nullptr);
 			continue;
 		}
 
-		if (TmpVec2.x < 0.0f)
+		if (tmpVec2.x < 0.0f)
 		{
 
-			TmpPos.x = 64.0f;
-			TmpPos.y += 128.0f * Cnt.y;
+			tmpPos.x = 64.0f;
+			tmpPos.y += 128.0f * Cnt.y;
 			Cnt.y++;
-			TmpMat = TmpPos;
+			tmpMat = tmpPos;
 
 			ChSp9.DrawSprite(
 				ChTexMa.GetTexture("Left")
-				, &TmpMat
-				, &ChVec3_9(0.0f, 0.0f, 0.0f)
+				, &tmpMat
+				, &ChVec3(0.0f, 0.0f, 0.0f)
 				, nullptr);
 			continue;
 		}
@@ -1061,82 +1037,82 @@ void BaseRobotsList::DrawMarker()
 
 	}
 
-	TmpMat.Identity();
-	TmpVec = *Robot->GetMoveVec();
+	tmpMat.Identity();
+	tmpVec = *Robot->GetMoveVec();
 
-	TmpLen = TmpVec.GetLen();
-	TmpVec.Normalize();
+	tmpLen = tmpVec.GetLen();
+	tmpVec.Normalize();
 
 
-	TmpMat.ScalingMode(32.0f / 64.0f);
+	tmpMat.ScalingMode(32.0f / 64.0f);
 
-	TmpPos = ChVec3_9(
+	tmpPos = ChVec3(
 		ChWinAPID.GetWindWidth() / 2.0f
 		, ChWinAPID.GetWindHeight() / 2.0f - 30.0f
 		, 0.0f);
-	TmpPos -= TmpVec * TmpLen * 70.0f;
+	tmpPos -= tmpVec * tmpLen * 70.0f;
 
-	TmpPos.y = (ChWinAPID.GetWindHeight() / 2.0f - 50.0f)
-		- ((TmpPos.y / 25.0f) * (TmpLen - TmpVec.z));
+	tmpPos.y = (ChWinAPID.GetWindHeight() / 2.0f - 50.0f)
+		- ((tmpPos.y / 25.0f) * (tmpLen - tmpVec.z));
 
-	TmpPos.z = 0.0f;
+	tmpPos.z = 0.0f;
 
-	TmpMat = TmpPos;
+	tmpMat = tmpPos;
 
 
 	ChSp9.DrawSprite(
 		ChTexMa.GetTexture("ATC")
-		, &TmpMat
-		, &ChVec3_9(0.0f, 0.0f, 0.0f)
+		, &tmpMat
+		, &ChVec3(0.0f, 0.0f, 0.0f)
 		, nullptr);
 
 
-	TmpPos = ChVec3_9(
+	tmpPos = ChVec3(
 		ChWinAPID.GetWindWidth() / 2.0f
 		, ChWinAPID.GetWindHeight() / 2.0f
 		, 0.0f);
 
-	TmpMat.ScalingMode(600.0f / 128.0f);
+	tmpMat.ScalingMode(600.0f / 128.0f);
 
-	TmpMat = TmpPos;
+	tmpMat = tmpPos;
 
 	{
 
-		float TmpR, TmpG, TmpB;
-		TmpG = Robot->GetPraHp() < 50 ? 255.0f * (2.0f * Robot->GetPraHp())
+		float tmpR, tmpG, tmpB;
+		tmpG = Robot->GetPraHp() < 50 ? 255.0f * (2.0f * Robot->GetPraHp())
 			: 255.0f - 255.0f * (2.0f * Robot->GetPraHp());
-		TmpB = Robot->GetPraHp() * 255.0f;
-		TmpR = 255 - Robot->GetPraHp() * 255.0f;
-		ChStd::COLOR255 TmpCol;
-		TmpCol.a = 255;
-		TmpCol.r = (unsigned char)TmpR;
-		TmpCol.g = 0;
-		TmpCol.b = (unsigned char)TmpB;
-		ChTexMa.SetBlendColor(&TmpCol, "Wind");
+		tmpB = Robot->GetPraHp() * 255.0f;
+		tmpR = 255 - Robot->GetPraHp() * 255.0f;
+		ChStd::COLOR255 tmpCol;
+		tmpCol.a = 255;
+		tmpCol.r = (unsigned char)tmpR;
+		tmpCol.g = 0;
+		tmpCol.b = (unsigned char)tmpB;
+		ChTexMa.SetBlendColor(&tmpCol, "Wind");
 	}
 
 	ChSp9.DrawSprite(
 		ChTexMa.GetTexture("Wind")
-		, &TmpMat
-		, &ChVec3_9(0.0f, 0.0f, 0.0f)
+		, &tmpMat
+		, &ChVec3(0.0f, 0.0f, 0.0f)
 		, nullptr);
 
-	//char TmpFont[200];
+	//char tmpFont[200];
 	/*
 
 			ChDFont9.SetFontSize(16, 8);
-			sprintf(TmpFont, "%.2f", TestData);
+			sprintf(tmpFont, "%.2f", TestData);
 
-			ChDFont9.Draw(TmpFont, 0, 0);
+			ChDFont9.Draw(tmpFont, 0, 0);
 	*/
 	/*
-			sprintf(TmpFont, "%.2f\n%.2f\n%.2f", TestPosData.x, TestPosData.y,TestPosData.z);
+			sprintf(tmpFont, "%.2f\n%.2f\n%.2f", TestPosData.x, TestPosData.y,TestPosData.z);
 
-			ChDFont9.Draw(TmpFont, 0, 90);
+			ChDFont9.Draw(tmpFont, 0, 90);
 	*/
 	/*
-			sprintf(TmpFont, "%d", ChTmpCnt);
+			sprintf(tmpFont, "%d", ChtmpCnt);
 
-			ChDFont9.Draw(TmpFont, 0, 90 * 4);
+			ChDFont9.Draw(tmpFont, 0, 90 * 4);
 		*/
 }

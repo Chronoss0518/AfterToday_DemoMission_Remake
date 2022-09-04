@@ -1,4 +1,8 @@
-#include"../ChDXLibrary/ChGameIncludeFile.h"
+#include<Windows.h>
+#include<ChBaseLibrary.h>
+#include<ChWindowsLibrary.h>
+#include<ChDirect3D11Library.h>
+
 #include"../AllStruct.h"
 #include"../HitPosList/HitPosList.h"
 #include"../Damage/Damage.h"
@@ -11,22 +15,20 @@ void PlayerObj::Init(unsigned short _PartsNum)
 
 	//ChStd::COLOR1f Col(1.0f, 1.0f, 1.0f, 1.0f);
 
-	ChMatrix_9 TmpMat;
+	ChLMat tmpMat;
 
-	BaseD.EnemyFlg = ChStd::False;
-
-	Mouse = std::make_shared<ChMouseController>(TRUE, &ChWinAPID);
+	BaseD.EnemyFlg = false;
 
 	//Mouse->ShouFlg(ChStd::True);
 	Mat.Identity();
 
-	MoveD.TmpRot.x = 0.0f;
-	MoveD.TmpRot.y = 0.0f;
+	MoveD.tmpRot.x = 0.0f;
+	MoveD.tmpRot.y = 0.0f;
 
 	BaseD.Rot.x = 0.0f;
 	BaseD.Rot.y = 0.0f;
 
-	Col = ChStd::COLOR1f(1.0f, 0.0f, 0.0f, 1.0f);
+	Col = ChVec4(1.0f, 0.0f, 0.0f, 1.0f);
 	BInit(_PartsNum);
 	AddDamage = 5;
 	PartsSet();
@@ -37,11 +39,7 @@ void PlayerObj::Input()
 
 	if (HP < 1)return;
 
-
-
-	ChWinAPID.SetKeyCode();
-
-	if (ChWinAPID.IsPushKeyNoHold(VK_RETURN))InputFlg = !InputFlg;
+	if (ChSystem::SysManager().IsPushKeyNoHold(VK_RETURN))InputFlg = !InputFlg;
 
 	if (InputFlg)
 	{

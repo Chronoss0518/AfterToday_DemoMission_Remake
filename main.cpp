@@ -1,8 +1,8 @@
 
 #include"Src/BaseIncluder.h"
 
-#include"Src/GameFrame.h"
-#include"Src/TitleFrame.h"
+#include"Src/Frames/GameFrame.h"
+#include"Src/Frames/TitleFrame.h"
 
 
 int WINAPI WinMain(
@@ -48,8 +48,8 @@ int WINAPI WinMain(
 
 	ChCpp::FrameList frameList;
 
-	frameList.SetFrame<Title>();
-	frameList.SetFrame<Game>();
+	frameList.SetFrame<TitleFrame>();
+	frameList.SetFrame<GameFrame>();
 
 
 	// ƒQ[ƒ€‚ÉŠÖ‚·‚é‰Šú‰»ˆ— ---------------------------

@@ -1,5 +1,8 @@
+#include<Windows.h>
+#include<ChBaseLibrary.h>
+#include<ChWindowsLibrary.h>
+#include<ChDirect3D11Library.h>
 
-#include"../ChDXLibrary/ChGameIncludeFile.h"
 #include"../AllStruct.h"
 #include"../HitPosList/HitPosList.h"
 #include"../Damage/Damage.h"
@@ -19,8 +22,8 @@ void RobParts::Init(
 	if (WpRobParts.lock() != nullptr)return;
 	WpRobParts = _RobPartsList;
 
-	auto TmpXList = WpXList.lock();
-	if (TmpXList == nullptr)return;
+	auto tmpXList = WpXList.lock();
+	if (tmpXList == nullptr)return;
 
 	
 
@@ -30,48 +33,48 @@ void RobParts::Init(
 
 void RobParts::SetParts(std::string _PartsName)
 {
-	ChPtr::Shared<ChSmpXList9> TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9> tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	std::string TmpString = "Normal.x";
+	std::string tmpString = "Normal.x";
 
 	if (_PartsName.length() <= 0)
 	{
-		TmpString = XFilePath + TmpString;
+		tmpString = XFilePath + tmpString;
 
-		TmpXList->SetSmpXFile(
-			TmpString
+		tmpXList->SetSmpXFile(
+			tmpString
 			, PType
 		);
 
-		BBox.SetBBoxToXFile(TmpXList->GetSmpXFile(PType));
+		BBox.SetBBoxToXFile(tmpXList->GetSmpXFile(PType));
 
-		SetDitailsData(TmpString);
+		SetDitailsData(tmpString);
 
 		return;
 	}
 
-	TmpString = XFilePath + _PartsName;
+	tmpString = XFilePath + _PartsName;
 
-	TmpXList->SetSmpXFile(
-		TmpString
+	tmpXList->SetSmpXFile(
+		tmpString
 		, PType
 	);
 
-	BBox.SetBBoxToXFile(TmpXList->GetSmpXFile(PType));
+	BBox.SetBBoxToXFile(tmpXList->GetSmpXFile(PType));
 
-	SetDitailsData(TmpString);
+	SetDitailsData(tmpString);
 
 }
 
 void RobParts::SetPColor(const ChStd::COLOR1f* _Color)
 {
-	ChPtr::Shared<ChSmpXList9>TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9>tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	for (auto Mate : TmpXList->GetXFileMaterials(PType))
+	for (auto Mate : tmpXList->GetXFileMaterials(PType))
 	{
 		if (Mate->Name != "Color")continue;
 		Mate->Diffuse.a = _Color->a;
@@ -82,20 +85,20 @@ void RobParts::SetPColor(const ChStd::COLOR1f* _Color)
 
 }
 
-void RobParts::Draw(const ChMat_9 *_Mat)
+void RobParts::Draw(const ChLMat *_Mat)
 {
-	ChPtr::Shared<ChSmpXList9>TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9>tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	ChMat_9 TmpMat = *_Mat;
-	TmpMat = BaseMat * TmpMat;
+	ChLMat tmpMat = *_Mat;
+	tmpMat = BaseMat * tmpMat;
 
-	TmpXList->DrawSmpXFile(&TmpMat,PType);
+	tmpXList->DrawSmpXFile(&tmpMat,PType);
 /*
 	ChEffectDraw.SmpXfileNormalDraw(
-		TmpXList->GetSmpXFile(PType)
-		, &TmpMat
+		tmpXList->GetSmpXFile(PType)
+		, &tmpMat
 		, ChNoEffect);
 */
 }
@@ -105,7 +108,7 @@ RPFoot::RPFoot()
 	HP = 100;
 	XFilePath = "Foot/";
 	PType = GetEnumCNum(RobPartsList::BodyPartsListName, Foot);
-	BaseMat.Trans(&ChVec3_9(0.0f, 0.0f, 0.0f));
+	BaseMat.Trans(&ChVec3(0.0f, 0.0f, 0.0f));
 }
 
 RPFoot::~RPFoot()
@@ -116,11 +119,11 @@ RPFoot::~RPFoot()
 void RPFoot::SetPColor(const ChStd::COLOR1f* _Color)
 {
 
-	ChPtr::Shared<ChSmpXList9>TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9>tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	for (auto Mate : TmpXList->GetXFileMaterials(PType))
+	for (auto Mate : tmpXList->GetXFileMaterials(PType))
 	{
 		if (Mate->Name != "Color")continue;
 		Mate->Diffuse.a = _Color->a;
@@ -148,7 +151,7 @@ RPBody::RPBody()
 	HP = 100;
 	XFilePath = "Body/";
 	PType = GetEnumCNum(RobPartsList::BodyPartsListName, Body);
-	BaseMat.Trans(&ChVec3_9(0.0f, 0.0f, 0.0f));
+	BaseMat.Trans(&ChVec3(0.0f, 0.0f, 0.0f));
 }
 
 RPBody::~RPBody()
@@ -169,7 +172,7 @@ RPHead::RPHead(const ChStd::Bool _WeapFlg)
 	if (_WeapFlg)Weap = ChPtr::Make_U<ChGame::WeapData>();
 	XFilePath = "Head/";
 	PType = GetEnumCNum(RobPartsList::BodyPartsListName, Head);
-	BaseMat.Trans(&ChVec3_9(0.0f, 2.1f, 0.0f));
+	BaseMat.Trans(&ChVec3(0.0f, 2.1f, 0.0f));
 }
 
 RPHead::~RPHead()
@@ -195,7 +198,7 @@ RPArm::RPArm()
 	HP = 100;
 	XFilePath = "Arm/";
 	PType = GetEnumCNum(RobPartsList::BodyPartsListName, Arm);
-	BaseMat.Trans(&ChVec3_9(0.0f, 1.6f, 0.0f));
+	BaseMat.Trans(&ChVec3(0.0f, 1.6f, 0.0f));
 }
 
 RPArm::~RPArm()
@@ -206,11 +209,11 @@ RPArm::~RPArm()
 void RPArm::SetPColor(const ChStd::COLOR1f* _Color)
 {
 
-	ChPtr::Shared<ChSmpXList9>TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9>tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	for (auto Mate : TmpXList->GetXFileMaterials(PType))
+	for (auto Mate : tmpXList->GetXFileMaterials(PType))
 	{
 		if (Mate->Name != "Color")continue;
 		Mate->Diffuse.a = _Color->a;
@@ -235,7 +238,7 @@ RPBoost::RPBoost()
 	HP = 100;
 	XFilePath = "Boost/";
 	PType = GetEnumCNum(RobPartsList::BodyPartsListName, Boost);
-	BaseMat.Trans(&ChVec3_9(0.0f, 1.2f, 0.0f));
+	BaseMat.Trans(&ChVec3(0.0f, 1.2f, 0.0f));
 }
 
 RPBoost::~RPBoost()
@@ -243,14 +246,14 @@ RPBoost::~RPBoost()
 
 }
 
-void RPBoost::Draw(const ChMat_9 *_Mat)
+void RPBoost::Draw(const ChLMat *_Mat)
 {
 
-	ChPtr::Shared<ChSmpXList9>TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9>tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	for (auto Mate : TmpXList->GetXFileMaterials(PType))
+	for (auto Mate : tmpXList->GetXFileMaterials(PType))
 	{
 		for (auto Boost : BoostPowList)
 		{
@@ -259,16 +262,16 @@ void RPBoost::Draw(const ChMat_9 *_Mat)
 		}
 	}
 
-	ChMat_9 TmpMat = *_Mat;
-	TmpMat = BaseMat * TmpMat;
+	ChLMat tmpMat = *_Mat;
+	tmpMat = BaseMat * tmpMat;
 
-	TmpXList->DrawSmpXFile(&TmpMat, PType);
+	tmpXList->DrawSmpXFile(&tmpMat, PType);
 
 /*
-	for (int i = 0; i < TmpXList->GetXFileMaterials(PType).size(); i++)
+	for (int i = 0; i < tmpXList->GetXFileMaterials(PType).size(); i++)
 	{
-		if (TmpXList->GetXFileMaterials(PType)[i]->Name != "Boost"
-			&& TmpXList->GetXFileMaterials(PType)[i]->Name != "Color")
+		if (tmpXList->GetXFileMaterials(PType)[i]->Name != "Boost"
+			&& tmpXList->GetXFileMaterials(PType)[i]->Name != "Color")
 		{
 			ChDevice.AddBlendSetting();
 		}
@@ -278,15 +281,15 @@ void RPBoost::Draw(const ChMat_9 *_Mat)
 			ChDevice.AlphaBlendSetting();
 		}
 		
-		TmpXList->DrawSmpXFileToSubSet(&TmpMat, PType, i);
+		tmpXList->DrawSmpXFileToSubSet(&tmpMat, PType, i);
 
 	}
 */
 	ChDevice.AlphaBlendSetting();
 /*
 	ChEffectDraw.SmpXfileNormalDraw(
-		TmpXList->GetSmpXFile(PType)
-		, &TmpMat
+		tmpXList->GetSmpXFile(PType)
+		, &tmpMat
 		, ChNoEffect);
 */
 	ChDevice.LightSetting(ChStd::False);
@@ -308,51 +311,51 @@ void RPBoost::SetStandardParts()
 
 void RPBoost::SetParts(std::string _PartsName)
 {
-	ChPtr::Shared<ChSmpXList9> TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9> tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	std::string TmpString = "Normal.x";
+	std::string tmpString = "Normal.x";
 
 	if (_PartsName.length() <= 0)
 	{
-		TmpString = XFilePath + TmpString;
+		tmpString = XFilePath + tmpString;
 
-		TmpXList->SetSmpXFile(
-			TmpString
+		tmpXList->SetSmpXFile(
+			tmpString
 			, PType
 		);
 
-		BBox.SetBBoxToXFile(TmpXList->GetSmpXFile(PType));
+		BBox.SetBBoxToXFile(tmpXList->GetSmpXFile(PType));
 
-		SetDitailsData(TmpString);
+		SetDitailsData(tmpString);
 
 		SetBoost();
 
 		return;
 	}
 
-	TmpString = XFilePath + _PartsName;
+	tmpString = XFilePath + _PartsName;
 
-	TmpXList->SetSmpXFile(
-		TmpString
+	tmpXList->SetSmpXFile(
+		tmpString
 		, PType
 	);
 
-	BBox.SetBBoxToXFile(TmpXList->GetSmpXFile(PType));
+	BBox.SetBBoxToXFile(tmpXList->GetSmpXFile(PType));
 
-	SetDitailsData(TmpString);
+	SetDitailsData(tmpString);
 
 	SetBoost();
 }
 
 void RPBoost::SetBoost()
 {
-	ChPtr::Shared<ChSmpXList9>TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9>tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	for (auto Mate : TmpXList->GetXFileMaterials(PType))
+	for (auto Mate : tmpXList->GetXFileMaterials(PType))
 	{
 		if (Mate->Name == "Boost" || Mate->Name == "Color")continue;
 		Mate->Mat.ScalingMode(0.0f);
@@ -366,27 +369,27 @@ void RPBoost::SetBoost()
 void RPBoost::IsBoost()
 {
 	if (WpRobParts.lock() == nullptr)return;
-	auto TmpPartsList = WpRobParts.lock();
+	auto tmpPartsList = WpRobParts.lock();
 
-	if (TmpPartsList->GetBRobot() == nullptr)return;
-	auto Rob = TmpPartsList->GetBRobot();
+	if (tmpPartsList->GetBRobot() == nullptr)return;
+	auto Rob = tmpPartsList->GetBRobot();
 
 	if (WpXList.lock() == nullptr)return;
-	auto TmpXList = WpXList.lock();
+	auto tmpXList = WpXList.lock();
 
-	ChVec3_9 TmpVec;
-	float TmpMovePow;
-	ChMat_9 TmpMat;
+	ChVec3 tmpVec;
+	float tmpMovePow;
+	ChLMat tmpMat;
 
 
-	TmpMovePow = Rob->GetMoveData().AvoV;
+	tmpMovePow = Rob->GetMoveData().AvoV;
 	
-	TmpVec = Rob->GetMoveData().AvoDir;
+	tmpVec = Rob->GetMoveData().AvoDir;
 
-	TmpMat = *Rob->GetMat();
-	TmpMat.Inverse();
+	tmpMat = *Rob->GetMat();
+	tmpMat.Inverse();
 
-	TmpVec.MatNormal(&TmpMat, &TmpVec);
+	tmpVec.MatNormal(&tmpMat, &tmpVec);
 
 }
 
@@ -399,7 +402,7 @@ RPWeapon::RPWeapon()
 
 	BaseMat.RotYPR(-90.0f, 0.0f, 0.0f);
 
-	BaseMat = ChVec3_9(0.0f, -0.09f, 0.0f);
+	BaseMat = ChVec3(0.0f, -0.09f, 0.0f);
 }
 
 RPWeapon::~RPWeapon()
@@ -417,44 +420,44 @@ void RPWeapon::Update()
 void RPWeapon::SetParts(std::string _PartsName)
 {
 
-	ChPtr::Shared<ChSmpXList9> TmpXList = WpXList.lock();
+	ChPtr::Shared<ChSmpXList9> tmpXList = WpXList.lock();
 
-	if (TmpXList == nullptr)return;
+	if (tmpXList == nullptr)return;
 
-	std::string TmpString = "GunSample.x";
+	std::string tmpString = "GunSample.x";
 
 	if (_PartsName.length() <= 0)
 	{
-		TmpString = XFilePath + TmpString;
+		tmpString = XFilePath + tmpString;
 
-		TmpXList->SetSmpXFile(
-			TmpString
+		tmpXList->SetSmpXFile(
+			tmpString
 			, PType
 		);
-		BBox.SetBBoxToXFile(TmpXList->GetSmpXFile(PType));
+		BBox.SetBBoxToXFile(tmpXList->GetSmpXFile(PType));
 
-		SetDitailsData(TmpString);
+		SetDitailsData(tmpString);
 		SetStandardParts();
 		Weap->SEName = "SE_Shot.wav";
 
 		return;
 	}
 
-	TmpString = XFilePath + _PartsName;
+	tmpString = XFilePath + _PartsName;
 
-	TmpXList->SetSmpXFile(
-		TmpString
+	tmpXList->SetSmpXFile(
+		tmpString
 		, PType
 	);
 
-	BBox.SetBBoxToXFile(TmpXList->GetSmpXFile(PType));
+	BBox.SetBBoxToXFile(tmpXList->GetSmpXFile(PType));
 	SetStandardParts();
-	SetDitailsData(TmpString);
+	SetDitailsData(tmpString);
 	Weap->SEName = "SE_Shot2.wav";
 
 	Weap->Damage = 10;
 	Weap->HitLen = 2.0f;
-	Weap->ShotPos.MatPos(&BaseMat, &ChVec3_9(0.0f, -10.0f, 0.0f));
+	Weap->ShotPos.MatPos(&BaseMat, &ChVec3(0.0f, -10.0f, 0.0f));
 	Weap->Speed = 3.0f;
 
 	WeakCnt = 0;
@@ -470,7 +473,7 @@ void RPWeapon::SetStandardParts()
 	APos = ChPtr::Make_S<ChGame::APosData>();
 	Weap->Damage = 5;
 	Weap->HitLen = 2.0f;
-	Weap->ShotPos.MatPos(&BaseMat, &ChVec3_9(0.0f, -10.0f, 0.0f));
+	Weap->ShotPos.MatPos(&BaseMat, &ChVec3(0.0f, -10.0f, 0.0f));
 	Weap->Speed = 5.0f;
 
 	WeakCnt = 0;
@@ -487,24 +490,24 @@ void RobPartsList::Init(ChPtr::Shared<BRobot>_BRobot)
 	XList = ChPtr::Make_S<ChSmpXList9>(ChDevice.GetDevice(), "../é¿çs/data/XFile/RobotsParts");
 
 	/*
-		std::string TmpStr;
-		TmpStr = TmpStr.substr(0, 3);
-		std::string::iterator TmpIt;
-		TmpIt = TmpStr.begin();
-		for (unsigned short i = 0 ; TmpIt != TmpStr.end(); i++)
+		std::string tmpStr;
+		tmpStr = tmpStr.substr(0, 3);
+		std::string::iterator tmpIt;
+		tmpIt = tmpStr.begin();
+		for (unsigned short i = 0 ; tmpIt != tmpStr.end(); i++)
 		{
-			if (TmpStr[i] == ' ')
+			if (tmpStr[i] == ' ')
 			{
-				TmpStr.erase(TmpIt);
+				tmpStr.erase(tmpIt);
 				continue;
 			}
 
 			i++;
-			TmpIt++;
+			tmpIt++;
 		}
 	*/
 
-	SetMWeapParts("TmpObj.x");
+	SetMWeapParts("tmpObj.x");
 
 	return;
 
@@ -525,36 +528,36 @@ void RobPartsList::Init(ChPtr::Shared<BRobot>_BRobot, unsigned short _RobotNum)
 	*TestDate[0] = "Normal.x";
 	*TestDate[1] = "Guardian.x";
 	*TestDate[2] = "Air.x";
-	unsigned short TmpNum = _RobotNum % 3;
+	unsigned short tmpNum = _RobotNum % 3;
 /*
-	std::string TmpStr;
-	TmpStr = TmpStr.substr(0, 3);
-	std::string::iterator TmpIt;
-	TmpIt = TmpStr.begin();
-	for (unsigned short i = 0 ; TmpIt != TmpStr.end(); i++)
+	std::string tmpStr;
+	tmpStr = tmpStr.substr(0, 3);
+	std::string::iterator tmpIt;
+	tmpIt = tmpStr.begin();
+	for (unsigned short i = 0 ; tmpIt != tmpStr.end(); i++)
 	{
-		if (TmpStr[i] == ' ')
+		if (tmpStr[i] == ' ')
 		{
-			TmpStr.erase(TmpIt);
+			tmpStr.erase(tmpIt);
 			continue;
 		}
 
 		i++;
-		TmpIt++;
+		tmpIt++;
 	}
 */
 
-	std::string TmpString = *TestDate[TmpNum];
+	std::string tmpString = *TestDate[tmpNum];
 
-	SetFootParts(TmpString);
+	SetFootParts(tmpString);
 
-	SetBodyParts(TmpString);
+	SetBodyParts(tmpString);
 
-	SetHeadParts(TmpString);
+	SetHeadParts(tmpString);
 
-	SetArmParts(TmpString);
+	SetArmParts(tmpString);
 
-	SetBoostParts(TmpString);
+	SetBoostParts(tmpString);
 
 	SetMWeapParts("\0");
 
@@ -588,75 +591,75 @@ void RobPartsList::SetColor(
 
 float RobPartsList::SetFootParts(std::string _PartsName)
 {
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, Foot);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, Foot);
 
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo,ChPtr::Shared<RobParts>>
-		(TmpNum,ChPtr::Make_S<RPFoot>()));
+		(tmpNum,ChPtr::Make_S<RPFoot>()));
 
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
 	return 0.0f;
 }
 
 float RobPartsList::SetBodyParts(std::string _PartsName)
 {
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, Body);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, Body);
 
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo, ChPtr::Shared<RobParts>>
-		(TmpNum, ChPtr::Make_S<RPBody>()));
+		(tmpNum, ChPtr::Make_S<RPBody>()));
 
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
 
 	return 0.0f;
 }
 
 float RobPartsList::SetHeadParts(std::string _PartsName)
 {
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, Head);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, Head);
 
-	auto TmpHead = ChPtr::Make_S<RPHead>(ChStd::False);
+	auto tmpHead = ChPtr::Make_S<RPHead>(ChStd::False);
 
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo, ChPtr::Shared<RobParts>>
-		(TmpNum, TmpHead));
+		(tmpNum, tmpHead));
 
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
 
-	if (ChStd::False)WpHeadWeapon = TmpHead;
+	if (ChStd::False)WpHeadWeapon = tmpHead;
 	return 0.0f;
 }
 
 void RobPartsList::SetArmParts(std::string _PartsName)
 {
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, Arm);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, Arm);
 
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo, ChPtr::Shared<RobParts>>
 		(GetEnumCNum(BodyPartsListName, Arm), ChPtr::Make_S<RPArm>()));
 
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
 
 }
 
 float RobPartsList::SetBoostParts(std::string _PartsName)
 {
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, Boost);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, Boost);
 
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo, ChPtr::Shared<RobParts>>
-		(TmpNum, ChPtr::Make_S<RPBoost>()));
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
+		(tmpNum, ChPtr::Make_S<RPBoost>()));
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
 	return 0.0f;
 }
 
@@ -666,35 +669,35 @@ void RobPartsList::SetMWeapParts(std::string _PartsName)
 	//if (PartsList.find(GetEnumCNum(BodyPartsListName, Arm)) == PartsList.end())return;
 	//if (WpHeadWeapon.lock() != nullptr)return;
 
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, MWeap);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, MWeap);
 
-	ChPtr::Shared<RPWeapon>TmpWeap = ChPtr::Make_S<RPWeapon>();
+	ChPtr::Shared<RPWeapon>tmpWeap = ChPtr::Make_S<RPWeapon>();
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo, ChPtr::Shared<RobParts>>
-		(TmpNum, TmpWeap));
+		(tmpNum, tmpWeap));
 
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
-	WpSWeapons = TmpWeap;
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
+	WpSWeapons = tmpWeap;
 }
 
 void RobPartsList::SetSWeapParts(std::string _PartsName)
 {
 
 	//if (WpHeadWeapon.lock() != nullptr)return;
-	ChStd::DataNo TmpNum = GetEnumCNum(BodyPartsListName, SWeap);
+	ChStd::DataNo tmpNum = GetEnumCNum(BodyPartsListName, SWeap);
 
-	ChPtr::Shared<RPWeapon>TmpWeap = ChPtr::Make_S<RPWeapon>();
+	ChPtr::Shared<RPWeapon>tmpWeap = ChPtr::Make_S<RPWeapon>();
 
 	PartsList.insert(
 		std::pair
 		<ChStd::DataNo, ChPtr::Shared<RobParts>>
-		(TmpNum, TmpWeap));
+		(tmpNum, tmpWeap));
 
-	PartsList[TmpNum]->SetXList(XList);
-	PartsList[TmpNum]->Init(shared_from_this(), _PartsName);
-	WpSWeapons = TmpWeap;
+	PartsList[tmpNum]->SetXList(XList);
+	PartsList[tmpNum]->Init(shared_from_this(), _PartsName);
+	WpSWeapons = tmpWeap;
 
 }
 
@@ -702,24 +705,24 @@ ChStd::Bool RobPartsList::IsPosHit(
 	const ChGame::APosData* _AData)
 {
 	if (ChPtr::NullCheck(_AData))return ChStd::False;
-	ChPtr::Shared<BRobot> TmpRob = WpSetRobot.lock();
-	if (TmpRob == nullptr)return ChStd::False;
-	ChMat_9 TmpMat;
-	ChB_Box9 TmpBBox;
-	ChGame::APosData TmpData = *_AData;
+	ChPtr::Shared<BRobot> tmpRob = WpSetRobot.lock();
+	if (tmpRob == nullptr)return ChStd::False;
+	ChLMat tmpMat;
+	ChB_Box9 tmpBBox;
+	ChGame::APosData tmpData = *_AData;
 	for (ChStd::DataNo i = 0; i < PartsCnt; i++)
 	{
 		if (PartsList.find(i) == PartsList.end())continue;
 		if (PartsList[i]->IsBreak())continue;
-		TmpBBox = *PartsList[i]->GetBBox();
+		tmpBBox = *PartsList[i]->GetBBox();
 
-		if (!TmpBBox.IsHitToBull(
-			TmpRob->GetMat()
-			, &TmpData.Pos
-			, TmpData.Base.HitLen))continue;
+		if (!tmpBBox.IsHitToBull(
+			tmpRob->GetMat()
+			, &tmpData.Pos
+			, tmpData.Base.HitLen))continue;
 
-		TmpRob->IsDamage(TmpData.Base.Damage);
-		TmpRob->SetDData(&TmpData.Pos);
+		tmpRob->IsDamage(tmpData.Base.Damage);
+		tmpRob->SetDData(&tmpData.Pos);
 		return ChStd::True;
 	}
 	return ChStd::False;

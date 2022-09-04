@@ -1,4 +1,8 @@
-#include"../ChDXLibrary/ChGameIncludeFile.h"
+#include<Windows.h>
+#include<ChBaseLibrary.h>
+#include<ChWindowsLibrary.h>
+#include<ChDirect3D11Library.h>
+
 #include"Damage.h"
 
 Damage::Damage()
@@ -42,20 +46,20 @@ void Damage::Update()
 
 }
 
-void Damage::SetDPos(const ChVec3_9 *_Pos, const ChStd::Bool _DFlg)
+void Damage::SetDPos(const ChVec3 *_Pos, const ChStd::Bool _DFlg)
 {
-	ChPtr::Shared<DData>TmpDate = std::make_shared<DData>();
-	TmpDate->Pos = *_Pos;
-	TmpDate->Rot = 0.0f;
-	TmpDate->Scl = 1.0f;
-	TmpDate->Alpha = 2.0f;
-	TmpDate->DataName = "Burn";
+	ChPtr::Shared<DData>tmpDate = std::make_shared<DData>();
+	tmpDate->Pos = *_Pos;
+	tmpDate->Rot = 0.0f;
+	tmpDate->Scl = 1.0f;
+	tmpDate->Alpha = 2.0f;
+	tmpDate->DataName = "Burn";
 	ChDSound9.PlaySE(SEName, "Sound", _Pos);
 	if (_DFlg)
 	{
 		MaxScl = 50.0f;
 	}
-	DEffectList.push_back(TmpDate);
+	DEffectList.push_back(tmpDate);
 
 }
 
@@ -86,17 +90,17 @@ void DDataBase::Draw()
 	for (auto Obj : DList)
 	{
 
-		ChMat_9 TmpMat;
-		ChMat_9 TmpRot;
-		float TmpScl;
+		ChLMat tmpMat;
+		ChLMat tmpRot;
+		float tmpScl;
 
 		for (auto It = Obj->GetDData(); It != Obj->GetEndDData(); It++)
 		{
-			TmpScl = (*It)->Scl;
-			TmpMat.ScalingMode(TmpScl, TmpScl, TmpScl);
-			TmpMat = ((*It)->Pos);
-			TmpRot.RotYPR(0.0f, (*It)->Rot, 0.0f);
-			TmpMat = TmpRot * TmpMat;
+			tmpScl = (*It)->Scl;
+			tmpMat.ScalingMode(tmpScl, tmpScl, tmpScl);
+			tmpMat = ((*It)->Pos);
+			tmpRot.RotYPR(0.0f, (*It)->Rot, 0.0f);
+			tmpMat = tmpRot * tmpMat;
 
 			//XList->SetAlpha(DEffectList[i]->Alpha, DEffectList[i]->DateNo);
 			ChStd::COLOR1f Col(
@@ -105,11 +109,11 @@ void DDataBase::Draw()
 				, (*It)->Alpha
 				, (*It)->Alpha);
 
-			ChMeMa.DrawSmpXFile(&TmpMat, (*It)->DataName);
+			ChMeMa.DrawSmpXFile(&tmpMat, (*It)->DataName);
 /*
 			ChEffectDraw.SmpXfileNormalDraw(
 				ChMeMa.GetSmpXFile((*It)->DataName)
-				, &TmpMat
+				, &tmpMat
 				, ChNoEffect);
 */
 		}
