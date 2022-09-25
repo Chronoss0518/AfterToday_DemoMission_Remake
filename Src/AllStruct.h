@@ -8,29 +8,4 @@
 #endif
 
 
-namespace ChBattle
-{
-
-	//WeaponsData//
-	struct WeapData
-	{
-		unsigned char Damage;
-		ChVec3 ShotPos;
-		float HitLen;
-		float Speed;
-		std::string SEName;
-	};
-
-	//AttackPosData//
-	struct APosData
-	{
-		ChVec3 Pos;
-		ChVec3 Dir;
-		WeapData Base;
-
-	};
-
-}
-
-
 #endif

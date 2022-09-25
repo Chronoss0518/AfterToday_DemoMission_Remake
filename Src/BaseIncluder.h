@@ -3,14 +3,9 @@
 #include<ChBaseLibrary.h>
 #include<ChWindowsLibrary.h>
 #include<ChDirect3D11Library.h>
-#include<ChDirect3D9Library.h>
 
 #ifndef SOUND_DIRECTORY
-#define SOUND_DIRECTORY "../実行/data/Sound/"
-#endif
-
-#ifndef EFFECT_FILE
-#define EFFECT_FILE "../実行/data/Model.cso"
+#define SOUND_DIRECTORY(current_path) "../実行/data/Sound/" current_path
 #endif
 
 #ifndef TEXTURE_DIRECTORY
@@ -21,20 +16,8 @@
 #define MESH_DIRECTORY(current_path) "../実行/data/XFile/" current_path
 #endif
 
-
 enum class FrameNo :unsigned long
 {
 	Title,
 	Game,
 };
-
-namespace ChGame
-{
-	struct Camera
-	{
-		ChVec3 pos;
-		ChVec3 dir;
-		ChVec3 up;
-	};
-
-}
