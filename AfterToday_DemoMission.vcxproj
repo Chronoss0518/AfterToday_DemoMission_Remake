@@ -21,29 +21,23 @@
   <ItemGroup>
     <ClInclude Include="Src\AllStruct.h" />
     <ClInclude Include="Src\BaseIncluder.h" />
-    <ClInclude Include="Src\BaseRobot\BaseRobot.h" />
-    <ClInclude Include="Src\BaseRobot\RobParts.h" />
+    <ClInclude Include="Src\BaseMecha\BaseMecha.h" />
+    <ClInclude Include="Src\BaseMecha\MechaParts.h" />
+    <ClInclude Include="Src\Bullet\Bullet.h" />
     <ClInclude Include="Src\CloudObj\CloudObj.h" />
-    <ClInclude Include="Src\Damage\Damage.h" />
-    <ClInclude Include="Src\EnemyObj\EnemyObj.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
     <ClInclude Include="Src\Frames\TitleFrame.h" />
     <ClInclude Include="Src\GameFrameScript\GameFrameScript.h" />
-    <ClInclude Include="Src\HitPosList\HitPosList.h" />
-    <ClInclude Include="Src\PlayerObj\PlayerObj.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Src\BaseRobot\BaseRobot.cpp" />
-    <ClCompile Include="Src\BaseRobot\RobParts.cpp" />
+    <ClCompile Include="Src\BaseMecha\BaseMecha.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaParts.cpp" />
+    <ClCompile Include="Src\Bullet\Bullet.cpp" />
     <ClCompile Include="Src\CloudObj\CloudObj.cpp" />
-    <ClCompile Include="Src\Damage\Damage.cpp" />
-    <ClCompile Include="Src\EnemyObj\EnemyObj.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
     <ClCompile Include="Src\Frames\TitleFrame.cpp" />
     <ClCompile Include="Src\GameFrameScript\GameFrameScript.cpp" />
-    <ClCompile Include="Src\HitPosList\HitPosList.cpp" />
-    <ClCompile Include="Src\PlayerObj\PlayerObj.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -105,8 +99,8 @@
     <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
