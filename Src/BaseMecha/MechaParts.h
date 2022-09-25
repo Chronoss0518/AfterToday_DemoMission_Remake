@@ -1,6 +1,14 @@
 #ifndef _BRobParts
 #define _BRobParts
 
+class EnelgyTank;
+class Camera;
+class Scope;
+class NormalWorl;
+class Boost;
+class Sword;
+class Gun;
+
 class MechaParts :public ChCpp::BaseObject
 {
 public://Override Functions//
@@ -324,6 +332,11 @@ protected:
 	//Œ»İ‚ÌƒŠƒ[ƒhŒo‰ßŠÔ//
 	unsigned long reLoadCount = 0.0f;
 
+	std::string bulletFile = "";
+
+	//’e‚Ìí—Ş//
+	unsigned char bulletType = 0;
+	//’e‘¬//
 	ChPtr::Shared<ChD3D11::Mesh11>bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
 
 };

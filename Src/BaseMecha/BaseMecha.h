@@ -1,7 +1,9 @@
 #ifndef _BaseRobot
 #define _BaseRobot
 
-class RobParts;
+class MechaParts;
+
+class Scope;
 class Weapon;
 
 class BaseMecha :public ChCpp::BaseObject
@@ -17,6 +19,8 @@ public://Inner Struct Class Enum//
 	{
 		ChVec3 moveV;//ˆÚ“®—Ê//
 		ChVec3 tmpRot;//‰¼‚Ì‰ñ“]—Ê//
+		float movePow;//ˆÚ“®—Í//
+		
 	};
 
 	enum class InputName :ChStd::DataNo
@@ -51,6 +55,25 @@ public://Create Function//
 
 public://Set Function//
 
+	void SetTeam(const unsigned char _team) { team = _team; }
+
+	void SetPosition(const ChVec3& _pos) { pos = _pos; }
+
+	void SetRotation(const ChVec3& _rot) { rot = _rot; }
+
+	void SetMass(const float _mass) { mass = _mass; }
+
+	void SetFovy(const float _fovy) { fovy = _fovy; }
+
+	void SetMovePower(const float _movePow) { movePow = _movePow; }
+
+	void SetBoostPower(const float _boostPow) { boostPow = _boostPow; }
+
+	void SetAvoidancePower(const float _avoidPow) { avoidPow = _avoidPow; }
+
+	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
+
+	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
 
 public://Get Function//
 
@@ -85,16 +108,24 @@ protected:
 
 	ChVec3 pos;
 	ChVec3 rot;
-	float mass;
-	float fovy;
-	float scopeFovy;
-	char team;
-	unsigned char mechasNo;
+	float mass = 1.0f;
+	float fovy = 60.0f;
+	float movePow = 0.0f;
+	float boostPow = 0.0f;
+	float avoidPow = 0.0f;
+
+	float scopeFovy = fovy;
+	unsigned char team = 0;
+	unsigned char mechasNo = 0;
+	unsigned long maxEnelgy = 0;
+	unsigned long chargeEnelgy = 0;
+	unsigned long nowEnelgy = 0;
 
 	MoveData move;
 	
 	ChCpp::BitBool inputFlgs;
 
+	std::vector<ChPtr::Shared<Scope>>scopeList;
 	std::vector<ChPtr::Shared<Weapon>>rightWeapom;
 	std::vector<ChPtr::Shared<Weapon>>leftWeapom;
 

@@ -1,8 +1,6 @@
 #include"../BaseIncluder.h"
 
 #include"../AllStruct.h"
-#include"../HitPosList/HitPosList.h"
-#include"../Damage/Damage.h"
 #include"BaseMecha.h"
 #include"MechaParts.h"
 
@@ -145,7 +143,7 @@ unsigned long MechaParts::CreateGun(ChCpp::TextObject& _textObject, unsigned lon
 	unsigned long linePos = _linePos + 1;
 	auto&& enelgyTank = SetComponent<Gun>();
 	std::string text = "";
-	for (unsigned long i = 0; i < 2; i++)
+	for (unsigned long i = 0; i < 7; i++)
 	{
 		text += _textObject.GetTextLine(linePos + i) + "\n";
 		linePos = _linePos + 1 + i;
@@ -320,10 +318,11 @@ void Gun::Deserialize(const std::string& _text)
 	bulletNum = std::atol(text.GetTextLine(2).c_str());
 	magazineNum = std::atol(text.GetTextLine(3).c_str());
 	reloadTime = std::atol(text.GetTextLine(4).c_str());
+	bulletType = std::atol(text.GetTextLine(5).c_str());
 
 	{
 		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(bullet, text.GetTextLine(5));
+		loader.CreateModel(bullet, text.GetTextLine(6));
 	}
 
 }
@@ -337,6 +336,7 @@ std::string Gun::Serialize()
 	res += std::to_string(bulletNum) + "\n";
 	res += std::to_string(magazineNum) + "\n";
 	res += std::to_string(reloadTime) + "\n";
+	res += std::to_string(bulletType) + "\n";
 	res += bullet->GetModelName() + "\n";
 
 	return res;
