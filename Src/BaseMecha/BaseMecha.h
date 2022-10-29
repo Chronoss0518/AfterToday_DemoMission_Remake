@@ -4,14 +4,14 @@
 class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
-class MoveComponent;
+class FunctionComponent;
 
 
 class BaseMecha :public ChCpp::BaseObject
 {
 public://Inner Struct Class Enum//
 
-	friend MoveComponent;
+	friend FunctionComponent;
 
 	BaseMecha();
 
@@ -56,8 +56,6 @@ public://Override Functions//
 	void Draw3D()override;
 
 public:
-
-	void NormalMoveUpdate(unsigned char _inputName, float _movePow,const ChLMat& _nowPosMatrix);
 
 	void BaseMove();
 
@@ -138,12 +136,6 @@ public://Set Function//
 
 	void SetMass(const float _mass) { mass = _mass; }
 
-	void SetMovePow(const float _movePow) { movePow = _movePow; }
-	
-	void SetRotatePow(const float _rotatePow) { rotatePow = _rotatePow; }
-
-	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
-
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
 	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
@@ -212,22 +204,6 @@ protected:
 		return list;
 	}
 
-	inline ChVec3 GetDirectionVector(unsigned long _num)
-	{
-		if (_num >= 6)return ChVec3();
-		static ChVec3 direction[6]
-		{
-			ChVec3(0.0f,0.0f,1.0f),
-			ChVec3(0.0f,0.0f,-1.0f),
-			ChVec3(-1.0f,0.0f,0.0f),
-			ChVec3(1.0f,0.0f,0.0f),
-			ChVec3(0.0f,1.0f,0.0f),
-			ChVec3(0.0f,-1.0f,0.0f)
-		};
-
-		return direction[_num];
-	}
-
 	ChVec2 viewSize;
 
 	ChVec3 pos;
@@ -236,9 +212,6 @@ protected:
 	ChVec3 rotateVec;
 	ChVec3 moveVec;//ˆÚ“®—Í//
 
-	float movePow = 0.0f;
-	float jumpPow = 0.0f;
-	float rotatePow = 0.0f;
 
 	float mass = 1.0f;
 

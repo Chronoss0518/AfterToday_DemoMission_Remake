@@ -6,7 +6,8 @@
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
 #include"MechaParts.h"
-#include"MoveComponent/BoostComponents.h"
+#include"FunctionComponent/BoostComponents.h"
+#include"FunctionComponent/MoveComponent.h"
 
 #ifndef PARTS_DIRECTORY
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
@@ -324,9 +325,11 @@ std::string WalkData::Serialize()
 
 void WalkData::SetPartsParameter(BaseMecha& _base)
 {
-	_base.SetMovePow(movePow);
-	_base.SetRotatePow(rotatePow);
-	_base.SetJumpPow(jumpPow);
+	auto&& walk = GetComponent<MoveComponent>(_base);
+
+	walk->SetMovePow(movePow);
+	walk->SetRotatePow(rotatePow);
+	walk->SetJumpPow(jumpPow);
 }
 
 unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -481,7 +484,7 @@ void BoostBrust::SetPartsParameter(BaseMecha& _base)
 
 void RightBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetBoostComponent<RightBoostComponent>(_base);
+	auto com = GetComponent<RightBoostComponent>(_base);
 	
 	com->AddBoostPow(boostPower);
 	com->AddBoostUseEnelgy(useEnelgy);
@@ -494,7 +497,7 @@ void RightBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Fram
 
 void LeftBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetBoostComponent<LeftBoostComponent>(_base);
+	auto com = GetComponent<LeftBoostComponent>(_base);
 
 	com->AddBoostPow(boostPower);
 	com->AddBoostUseEnelgy(useEnelgy);
@@ -507,7 +510,7 @@ void LeftBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Frame
 
 void FrontBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetBoostComponent<FrontBoostComponent>(_base);
+	auto com = GetComponent<FrontBoostComponent>(_base);
 
 	com->AddBoostPow(boostPower);
 	com->AddBoostUseEnelgy(useEnelgy);
@@ -520,7 +523,7 @@ void FrontBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Fram
 
 void BackBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetBoostComponent<BackBoostComponent>(_base);
+	auto com = GetComponent<BackBoostComponent>(_base);
 
 	com->AddBoostPow(boostPower);
 	com->AddBoostUseEnelgy(useEnelgy);
@@ -533,7 +536,7 @@ void BackBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Frame
 
 void UpBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetBoostComponent<UpBoostComponent>(_base);
+	auto com = GetComponent<UpBoostComponent>(_base);
 
 	com->AddBoostPow(boostPower);
 	com->AddBoostUseEnelgy(useEnelgy);
@@ -546,7 +549,7 @@ void UpBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameOb
 
 void DownBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetBoostComponent<DownBoostComponent>(_base);
+	auto com = GetComponent<DownBoostComponent>(_base);
 
 	com->AddBoostPow(boostPower);
 	com->AddBoostUseEnelgy(useEnelgy);

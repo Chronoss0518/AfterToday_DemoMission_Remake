@@ -93,6 +93,18 @@ public://Get Functions//
 
 	virtual std::string GetPartsTypeTag() = 0;
 
+	template<class T>
+	ChPtr::Shared<T> GetComponent(ChCpp::BaseObject& _base)
+	{
+		auto&& ComList = _base.GetComponents<T>();
+		if (!ComList.empty())
+		{
+			return ComList[0];
+		}
+
+		return _base.SetComponent<T>();
+	}
+
 public:
 
 	//virtual void ReleaseParts(BaseMecha& _base) = 0;
@@ -463,18 +475,6 @@ public://Set Functions//
 public://Get Functions//
 
 	inline std::string GetObjectNameList() { return objectName; }
-
-	template<class T>
-	ChPtr::Shared<T> GetBoostComponent(ChCpp::BaseObject& _base)
-	{
-		auto&& boostComList = _base.GetComponents<T>();
-		if (!boostComList.empty())
-		{
-			return boostComList[0];
-		}
-
-		return _base.SetComponent<T>();
-	}
 
 public:
 

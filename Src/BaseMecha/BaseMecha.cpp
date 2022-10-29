@@ -82,36 +82,6 @@ void BaseMecha::Release()
 
 void BaseMecha::UpdateEnd()
 {
-	ChLMat tmp;
-	tmp.SetRotationYAxis(ChMath::ToRadian(rot.y));
-
-
-	for (unsigned char i = 0; i <= ChStd::EnumCast(InputName::Jump) - ChStd::EnumCast(InputName::Front); i++)
-	{
-		if (!inputFlgs.GetBitFlg(i + ChStd::EnumCast(InputName::Front)))continue;
-		NormalMoveUpdate(i, i != ChStd::EnumCast(InputName::Jump) ? movePow : jumpPow, tmp);
-	}
-
-	if (inputFlgs.GetBitFlg(ChStd::EnumCast(InputName::LeftRotation)))
-	{
-		rotateVec.y -= rotatePow;
-	}
-	if (inputFlgs.GetBitFlg(ChStd::EnumCast(InputName::RightRotation)))
-	{
-		rotateVec.y += rotatePow;
-	}
-
-}
-
-void BaseMecha::NormalMoveUpdate(unsigned char _inputName, float _movePow, const ChLMat& _nowPosMatrix)
-{
-	if (_inputName > ChStd::EnumCast(InputName::Jump))return;
-
-	if (inputFlgs.GetBitFlg(ChStd::EnumCast(InputName::Avo))) inputFlgs.SetBitTrue(_inputName + ChStd::EnumCast(InputName::FrontAvo));
-
-	else if (inputFlgs.GetBitFlg(ChStd::EnumCast(InputName::Boost))) inputFlgs.SetBitTrue(_inputName + ChStd::EnumCast(InputName::FrontBoost));
-
-	moveVec += _nowPosMatrix.TransformCoord(GetDirectionVector(_inputName)) * _movePow;
 
 }
 
@@ -122,8 +92,6 @@ void BaseMecha::Move()
 	inputFlgs.SetAllDownFlg();
 
 	//return;
-
-
 
 	ChMat_11 camMat;
 	{
