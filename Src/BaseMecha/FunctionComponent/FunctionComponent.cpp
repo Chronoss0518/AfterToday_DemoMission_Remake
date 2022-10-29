@@ -3,12 +3,10 @@
 
 #include"../../AllStruct.h"
 
-#include"../MechaParts.h"
-#include"../MechaPartsObject.h"
-#include"MoveComponent.h"
+#include"FunctionComponent.h"
 
 
-void MoveComponent::Init()
+void FunctionComponent::Init()
 {
 	target = LookObj<BaseMecha>();
 

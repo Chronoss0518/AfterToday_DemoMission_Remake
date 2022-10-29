@@ -1,8 +1,8 @@
 #pragma once
 
-#include"MoveComponent.h"
+#include"FunctionComponent.h"
 
-class BoostComponent:public MoveComponent
+class BoostComponent:public FunctionComponent
 {
 public:
 

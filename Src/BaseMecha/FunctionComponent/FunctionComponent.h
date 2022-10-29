@@ -2,7 +2,7 @@
 
 #include"../BaseMecha.h"
 
-class MoveComponent:public ChCpp::BaseComponent
+class FunctionComponent :public ChCpp::BaseComponent
 {
 public:
 
@@ -21,6 +21,10 @@ public:
 	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->AddMoveVector(_moveVecAdd); }
 	
 	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->AddRotateVector(_rotateVecAdd); }
+
+public:
+
+	inline void SetPushFlg(InputName _name){ target->inputFlgs.SetBitTrue(ChStd::EnumCast(_name)); }
 
 public:
 

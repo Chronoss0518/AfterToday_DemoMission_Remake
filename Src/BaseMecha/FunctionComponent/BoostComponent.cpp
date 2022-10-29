@@ -3,8 +3,6 @@
 
 #include"../../AllStruct.h"
 
-#include"../MechaParts.h"
-#include"../MechaPartsObject.h"
 #include"BoostComponent.h"
 #include"BoostComponents.h"
 
