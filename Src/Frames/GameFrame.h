@@ -5,6 +5,7 @@
 class HitPosList;
 class BaseRobotsList;
 class CloudList;
+class GameScript;
 
 class GameFrame:public ChCpp::BaseFrame
 {
@@ -16,6 +17,16 @@ public:
 
 	void Init()override;
 
+	void InitScriptFunction();
+
+	void LoadScript(const std::string& _text);
+
+	void LoadMechas();
+
+	void LoadBGMs();
+
+	void LoadMaps();
+
 	void Release()override;
 
 	void Update()override;
@@ -26,6 +37,11 @@ private:
 
 	void DrawFunction();
 
+	ChMat_11 viewMat;
+	ChMat_11 proMat;
+
+	ChVec2 windSize;
+
 	enum class DrawEffect:ChStd::DataNo
 	{
 		Effect,Obj
@@ -33,55 +49,30 @@ private:
 
 	void CamUpdate();
 
-	//XFileóp
-	const enum { Map, Sky };
+	void TestUpdate();
 
-	//Soundóp
-	const enum{BGM};
+	std::vector<ChPtr::Shared<ChD3D11::Mesh11>> map;
 
-	//PolygonBordAnimationóp
-	const enum{VTop,VLeft,VBottom,VRight};
+	ChPtr::Shared<ChD3D11::Mesh11> sky_sphere = ChPtr::Make_S<ChD3D11::Mesh11>();
 
-	const float MapScaling = 50.0f;
-	ChVec3 MapPos;
-	const float MapMove = 0.8f;
+	std::vector<ChPtr::Shared<ChD3D::AudioObject>>audios;
 
+	ChStd::Bool startFlg = false;
 	
-	CamMat;
-	char CurrentPath[256];
-
-	ChStd::Bool StartFlg = false;
-	unsigned long fps;
-	//OpenWorldMap *World;
-	
-	const ChStd::DataNo RTNo = 0;
-
-	unsigned char Pattern = 0;
-	unsigned short FOCUpDateCnt = 0;
-	unsigned short FaidOutCnt = 0;
-	unsigned short EnemyBreakCnt = 0;
-
-	//ChObject
-	ChPtr::Shared<HitPosList> HitPos;
-
-	ChPtr::Shared<CloudList>Cloud;
-
-	ChPtr::Shared<BaseRobotsList> RobotsList;
-	ChVec3 PPos;
-
-	//Viewïœêî//
-	ChVec3 BaseCamPos = ChVec3(0.0f, 6.0f, -12.0f)
-		, BaseCamLook = ChVec3(0.0f, 4.0f, 0.0f);
-
-	DWORD CamRobotNo;
-	ChGame::Camera Camera;
-	ChD3D11::CB::CBLight11 Light;
-	unsigned long TestFps;
-
-
-
-
 	//LpChFileCon FileCon;
+
+	ChCpp::ObjectList mechaList;
+	ChCpp::ObjectList mapObjects;
+
+	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
+	ChPtr::Shared<ChD3D11::Texture11>baseMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
+
+	ChD3D11::RenderTarget11 enemyMarker;
+	ChD3D11::RenderTarget11 baseMarker;
+
+
+	ChD3D11::CB::CBLight11 light;
+	MeshDrawer meshDrawer;
 
 	// 3Dï`âÊ
 	void Render3D(void);
@@ -89,9 +80,8 @@ private:
 	// 2Dï`âÊ
 	void Render2D(void);
 
-	//ï`âÊóp//
-	ChStd::Bool DFlg;
-	void Draw();
+
+	ChPtr::Shared<GameScript> script = nullptr;
 
 };
 

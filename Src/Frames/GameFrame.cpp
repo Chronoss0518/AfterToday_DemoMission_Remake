@@ -2,95 +2,213 @@
 
 
 #include"../AllStruct.h"
-#include"../Damage/Damage.h"
-#include"../BaseRobot/BaseRobot.h"
+#include"../BaseMecha/BaseMecha.h"
+#include"../GameScript/GameScript.h"
 #include"GameFrame.h"
 
-#include"../PlayerObj/PlayerObj.h"
-#include"../EnemyObj/EnemyObj.h"
-
-#include"../HitPosList/HitPosList.h"
+#include"../BaseMecha/Controller/ControllerBase.h"
 
 #include"../CloudObj/CloudObj.h"
+
+#define PLAYER_MECHA_FILE_NAME ""
+
+#define GAME_WINDOW_WITDH 3840
+#define GAME_WINDOW_HEIGHT 2160
+#define FPS 60
+#define DEBUG_FLG 1
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Gameメソッド
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void GameFrame::Init()
+void GameFrame::TestUpdate()
 {
 
-	ChDSound9.SetBGMSound("Battle", "TestBattle.wav", "Sound");
-	ChDSound9.PlayBGM("Battle");
-	ChDSound9.SetBGMSound("Boss", "MainBattle1.wav", "Sound");
-	ChLMat tmpMat;
+	static ChVec3 testCamRotate = ChVec3(-60.0f, 0.0f, 0.0f);
+	static float testCamLen = 10.0f;
 
-	HitPos = ChPtr::Make_S<HitPosList>();
+	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 
-	HitPos->Init();
+	if (windows->IsPushKey(VK_LEFT))
+	{
+		testCamRotate.y -= 5.0f;
+	}
 
-	RobotsList = ChPtr::Make_S<BaseRobotsList>();
+	if (windows->IsPushKey(VK_RIGHT))
+	{
+		testCamRotate.y += 5.0f;
+	}
 
-	Light =ChPtr::Make_S<ChLight9>(ChDevice.GetDevice());
+	if (windows->IsPushKey(VK_UP))
+	{
+		testCamLen -= 0.5f;
+	}
+
+	if (windows->IsPushKey(VK_DOWN))
+	{
+		testCamLen += 0.5f;
+	}
+
+	{
 
 
+		ChLMat tmpMat;
 
-	ChMeMa.SetSmpXFile("TestField.x", "Field", "Base");
-	ChMeMa.SetSmpXFile("TestField2.x", "Field2", "Base");
-	ChMeMa.SetSmpXFile("TestFieldHitBox.x", "FieldHit", "Base");
+		tmpMat.SetRotationXAxis(ChMath::ToRadian(testCamRotate.x));
+		tmpMat.SetRotationYAxis(ChMath::ToRadian(testCamRotate.y));
 
-	ChMeMa.SetSmpXFile("Boost.x", "Boost", "Base");
+		ChVec3 tmpVec = ChVec3(0.0f, 0.0f, -testCamLen);
 
-	ChMeMa.SetSmpXFile("skysphya_Bluesky.x", "Sky", "Base");
+		tmpVec = tmpMat.Transform(tmpVec);
+
+		{
+
+			ChMat_11 camMat;
+
+			camMat.SetRotation(testCamRotate);
+
+			//camMat.CreateViewMatLookTarget(tmpVec, headPos->GetDrawLHandMatrix().GetPosition(), ChVec3(0.0f, 1.0f, 0.0f));
+			camMat.CreateViewMatLookTarget(tmpVec, 0.0f, ChVec3(0.0f, 1.0f, 0.0f));
+
+			meshDrawer.drawer.SetViewMatrix(camMat);
+
+			light.SetCamPos(tmpVec);
+		}
+
+		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
+
+	}
+
+
+}
+
+void GameFrame::Init()
+{
+	script = ChPtr::Make_S<GameScript>();
 	
-	tmpMat.ScalingMode(MapScaling);
-	for (auto Mate : ChMeMa.GetXFileMaterials("Field"))
+	//InitScriptFunction();
+
+	ChSystem::SysManager().SetFPS(FPS);
+
+	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
+
+#if DEBUG_FLG
+
+
+	//auto s_screen = ChWin::GetScreenSize();
+	//windSize = ChVec2(static_cast<float>(s_screen.w), static_cast<float>(s_screen.h));
+
 	{
-		Mate->Mat = tmpMat;
+
+		ChMat_11 proMat;
+		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), windSize.w, windSize.h, 0.1f, 100000.0f);
+
+		meshDrawer.drawer.Init(ChD3D11::D3D11Device());
+		meshDrawer.drawer.SetProjectionMatrix(proMat);
+
+		light.Init(ChD3D11::D3D11Device());
+
 	}
-	for (auto Mate : ChMeMa.GetXFileMaterials("Field2"))
+
+#endif
+
+	//windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
+	
+	ChCpp::ChMultiThread thread;
+	thread.Init([&]() { LoadMechas(); }) ;
+	LoadMaps();
+	LoadBGMs();
+
+	light.Init(ChD3D11::D3D11Device());
+
+	enemyMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Ts.png"), ChD3D11::D3D11Device());
+	baseMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Window.png"), ChD3D11::D3D11Device());
+
+	enemyMarker.CreateRenderTarget(
+		ChD3D11::D3D11Device(),
+		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
+
+	baseMarker.CreateRenderTarget(
+		ChD3D11::D3D11Device(),
+		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
+
+	thread.Join();
+
+
+}
+
+void GameFrame::InitScriptFunction()
+{
+	script->SetFunction("Load", [&](const std::string _text)
+		{
+			unsigned long nowPos = 0;
+			unsigned long nextPos = 0;
+			std::vector<std::string>argment;
+
+			while (1)
+			{
+				nextPos = _text.find(" ", nowPos + 1);
+				argment.push_back(_text.substr(nowPos, nextPos - nowPos));
+				if (nextPos >= _text.size())break;
+				nowPos = _text.find(" ", nextPos + 1);
+			}
+
+			
+
+
+		});
+}
+
+void GameFrame::LoadScript(const std::string& _text)
+{
+	ChCpp::TextObject text;
+	text.SetText(_text);
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+void GameFrame::LoadMechas()
+{
+	auto&& mecha = mechaList.SetObject<BaseMecha>("player");
+
+	mecha->Create(windSize, meshDrawer);
+
+	mecha->SetComponent<PlayerController>();
+
+	mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+void GameFrame::LoadBGMs()
+{
+	
+	//ChD3D::XAudioManager().CreateSound(&testBattle, SOUND_DIRECTORY("TestBattle.wav"));
+	//ChD3D::XAudioManager().CreateSound(&mainBattle, SOUND_DIRECTORY("MainBattle1.wav"));
+
+	//testBattle.Play();
+
+}
+
+void GameFrame::LoadMaps()
+{
+	auto mainMap = ChPtr::Make_S<ChD3D11::Mesh11>();
+	mainMap->Init(ChD3D11::D3D11Device());
 	{
-		Mate->Mat = tmpMat;
+		ChCpp::ModelLoader::XFile loader;
+		loader.CreateModel(mainMap, MESH_DIRECTORY("TestField.x"));
 	}
-	for (auto Mate : ChMeMa.GetXFileMaterials("FieldHit"))
+	map.push_back(mainMap);
+
+	auto subMap = ChPtr::Make_S<ChD3D11::Mesh11>();
+	subMap->Init(ChD3D11::D3D11Device());
 	{
-		Mate->Mat = tmpMat;
+		ChCpp::ModelLoader::XFile loader;
+		loader.CreateModel(subMap, MESH_DIRECTORY("TestField2.x"));
 	}
-
-	ChMeMa.CreateFaseNormal("Field", 0);
-
-	ChMeMa.CreateFaseNormal("FieldHit", 0);
-
-	tmpMat.ScalingMode(MapScaling * 2.0f);
-	ChMeMa.GetXFileMaterials("Sky")[0]->Mat = tmpMat;
-
-	Cloud = ChPtr::Make_S<CloudList>();
-	Cloud->Init();
-	RobotsList->Init();
-
-	RobotsList->SetHitPosList(HitPos);
-
-	RobotsList->SetRobots("", &ChVec3(100.0f, 200.0f, -150.0f),0);
-
-
-	RobotsList->SetRobots2(ChStd::True, &ChVec3(-60.0f, 100.0f, 10.0f));
-	RobotsList->SetRobots2(ChStd::True, &ChVec3(-30.0f, 100.0f, 30.0f));
-	RobotsList->SetRobots2(ChStd::True, &ChVec3(30.0f, 100.0f, 30.0f));
-	RobotsList->SetRobots2(ChStd::True, &ChVec3(50.0f, 100.0f, 10.0f));
-	RobotsList->SetCamRobot(0);
-
-	Light->SetDir(&D3DXVECTOR3(1.0f, -1.0f, 0.0f));
-	Light->SetLightDif(0.0f, 1.0f, 1.0f, 1.0f);
-	Light->SetLightSpe(ChStd::True, 1.0f, 1.0f, 1.0f);
-	ChDevice.SetCullMode(ChCULL(CCW));
-
-
-	PPos = *RobotsList->GetMat(0);
-
-	ChTexMa.SetBlendAlpha(0, "Black");
-	ChTexMa.SetBlendAlpha(0, "Continue");
-	ChTexMa.SetBlendAlpha(0, "Space");
+	map.push_back(subMap);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -98,126 +216,132 @@ void GameFrame::Init()
 void GameFrame::Release()
 {
 
-	ChDSound9.ClearBGM();
-	HitPos = nullptr;
-	RobotsList = nullptr;
-	Camera = nullptr;
-	Light = nullptr;
-	//delete World;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 void GameFrame::Update()
 {
+	UpdateFunction();
 
-	if (DFlg)Draw();
+#if DEBUG_FLG
 
-	if (!ChStd::FPSProcess(ChWinAPID.GetFPSCnt()))return NextFrame;
+	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+	if (windows->IsPushKey(VK_ESCAPE))
+	{
+		windows->Release();
+		return;
+	}
 
-	if(!RobotsList->IsMemberLive())NextFrame = 'T';
-	ChWinAPID.SetKeyCode();
-	if (ChWinAPID.IsPushKeyNoHold(VK_ESCAPE))NextFrame = 'T';
-	DFlg = ChStd::True;
+	//TestUpdate();
 
-	SqriptUpdate();
-	if (Pattern > 2)return NextFrame;
-
-	// バックバッファと Z バッファをクリア
-	ChDevice.GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
 	
 
-	Update();
+	{
+		auto tmpMat = meshDrawer.drawer.GetViewMatrix();
+		tmpMat.Inverse();
+
+		light.SetCamPos(tmpMat.GetPosition());
+
+		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 
 
-	//tmpVec = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
-	//tmpMat = tmpAngX * tmpAngY * tmpMat;
-
-	//float tmpLen;
-
-	CamUpdate();
+	}
 
 
-	return NextFrame;
+#endif
+
+	DrawFunction();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-void GameFrame::Update(void)
+void GameFrame::UpdateFunction()
 {
 
-	Cloud->Update();
+	mechaList.ObjectUpdateBegin();
 
-	ChVec3 tmpVec;
+	mechaList.ObjectUpdate();
 
-	RobotsList->Update();
+	mechaList.ObjectUpdateEnd();
 
-	HitPos->UpDate();
+	mechaList.ObjectMove();
 
-	tmpVec = *RobotsList->GetMat(CamRobotNo);
+	mechaList.ObjectMoveEnd();
 
-	if (PPos.GetLen(&tmpVec) != 0.0f)
+	return;
+
 	{
-		ChVec3 tmpMove;
-		tmpMove = tmpVec - PPos;
-		MapPos += tmpMove * MapMove;
-		PPos = tmpVec;
+		auto&& rob = BaseMecha::GetCameraFromMecha();
+
+		ChLMat tmpMat;
+		tmpMat.SetRotationYAxis(rob.GetRotation().y);
+		tmpMat.SetRotationXAxis(rob.GetRotation().x);
+
+		ChVec3 dir = tmpMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+
+		ChVec3 up = tmpMat.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f));
+
+		/*
+		viewMat.CreateViewMat(rob.GetPosition(), dir, up);
+
+		proMat.CreateProjectionMat(
+			60.0f,//rob.GetFovy(),
+			GAME_WINDOW_WITDH,
+			GAME_WINDOW_HEIGHT,
+			0.1f,
+			10000.0f);
+		*/
 	}
 
+}
 
+//////////////////////////////////////////////////////////////////////////////////
 
+void GameFrame::DrawFunction()
+{
+
+	ChD3D11::Shader11().DrawStart();
+
+	ChD3D11::Shader11().DrawStart3D();
+
+	light.SetDrawData(ChD3D11::D3D11DC());
+
+	Render3D();
+
+	ChD3D11::Shader11().DrawStart2D();
+
+	Render2D();
+
+	ChD3D11::Shader11().DrawEnd();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 void GameFrame::Render3D(void)
 {
+	meshDrawer.dc = ChD3D11::D3D11DC();
 
-	ChLMat tmpMat;
-	ChLMat tmpRot;
-	ChLMat tmpScl;
+	meshDrawer.drawer.DrawStart(ChD3D11::D3D11DC());
 
-	ChEffectDraw.SetCam(Camera);
-
-	ChEffectDraw.LightCheck(FALSE);
-
-	ChDevice.LightSetting(ChStd::False);
-	ChEffectDraw.SetLight(Light);
+	mechaList.ObjectDraw3D();
 
 
+	ChMat_11 mapSizeMatrix;
+	mapSizeMatrix.SetPosition(ChVec3(0.0f, -10.0f, 0.0f));
+	mapSizeMatrix.SetScaleSize(ChVec3(100.0f));
+	for (auto mapModel : map)
+	{
+		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel, mapSizeMatrix);
+	}
 
-
-	tmpMat.Identity();
-
-	ChMeMa.DrawSmpXFile(&tmpMat, "Sky");
-
-	ChDevice.LightSetting(ChStd::True);
-
-	ChMeMa.DrawSmpXFile(&tmpMat, "Field");
-	ChMeMa.DrawSmpXFile(&tmpMat, "Field2");
-
-	Cloud->Draw();
-
-	HitPos->Draw();
-
-	Light->SetLight(TRUE);
-
-	ChDevice.LightSetting(ChStd::True);
-	ChEffectDraw.LightCheck(TRUE);
-	ChEffectDraw.SetLight(Light);
-
-
-
-	RobotsList->Draw();
-
+	meshDrawer.drawer.DrawEnd();
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
 void GameFrame::Render2D(void)
 {
-	RobotsList->DrawMarker();
 
 }
 
@@ -225,201 +349,6 @@ void GameFrame::Render2D(void)
 
 void GameFrame::CamUpdate(void)
 {
-	ChVec3 tmpCamP,tmpVec;
-	ChLMat tmpMat;
-	tmpMat = *RobotsList->GetCamPos();
-
-	tmpCamP.MatPos(&tmpMat, &BaseCamPos);
-
-	Camera->SetCamPos(&tmpCamP);
-
-	tmpCamP.MatPos(RobotsList->GetCamLookPos(), &BaseCamLook);
-	
-	Camera->SetCamLook(&tmpCamP);
-
-	Camera->SetCamMat(RobotsList->GetCamLookPos());
-
-	Camera->SetLookMaxLen(4000.0f);
-
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::UpdateFunction()
-{
-
-	float tmpData = 0.0f;
-	switch (Pattern)
-	{
-	case 0:
-		if (RobotsList->IsEnemyLive())break;
-
-		ChDSound9.PlayBGM("Boss");
-		RobotsList->SetRobots(ChStd::True, &ChVec3(-150.0f, 200.0f, 100.0f), 1);
-		RobotsList->SetRobots(ChStd::True, &ChVec3(-150.0f, 200.0f, 150.0f), 1);
-		RobotsList->SetRobots(ChStd::True, &ChVec3(-100.0f, 200.0f, 100.0f), 1);
-		RobotsList->SetRobots(ChStd::True, &ChVec3(-100.0f, 200.0f, 150.0f), 1);
-		RobotsList->SetRobots(ChStd::False, &ChVec3(100.0f, 200.0f, -200.0f), 2);
-		RobotsList->SetRobots(ChStd::False, &ChVec3(100.0f, 200.0f, -250.0f), 2);
-		RobotsList->SetRobots(ChStd::False, &ChVec3(150.0f, 200.0f, -200.0f), 2);
-		Pattern = 1;
-
-		break;
-
-	case 1:
-		if (RobotsList->GetEnemyCnt() < 4)
-		{
-			EnemyBreakCnt++;
-			RobotsList->SetRobots(ChStd::True, &ChVec3(-100.0f, 200.0f, 150.0f), 1);
-		}
-
-		if (RobotsList->GetMemberCnt() < 4)
-		{
-			RobotsList->SetRobots(ChStd::False, &ChVec3(100.0f, 200.0f, -200.0f), 2);
-		}
-
-		if (EnemyBreakCnt > 2) {
-			RobotsList->DownDFlg();
-			Pattern = 2; 
-			FaidOutCnt = 0;
-		}
-
-		break;
-
-	case 2:
-
-		FOCUpDateCnt += 1;
-		FOCUpDateCnt %= 2;
-
-		if (FOCUpDateCnt == 0)FaidOutCnt += 1;
-
-		ChTexMa.SetBlendAlpha((unsigned char)FaidOutCnt, "Black");
-
-		if (FaidOutCnt >= 255)
-		{
-			ChTexMa.SetBlendAlpha(255, "Black");
-			FaidOutCnt = 0;
-			Pattern = 3;
-		}
-		break;
-	case 3:
-		FaidOutCnt += 1;
-
-		ChTexMa.SetBlendAlpha((unsigned char)FaidOutCnt, "Continue");
-		if (FaidOutCnt >= 255)
-		{
-			ChTexMa.SetBlendAlpha(255, "Continue");
-			FaidOutCnt = 0;
-			Pattern = 4;
-		}
-		break;
-	case 4:
-
-		if(ChWinAPID.IsPushKeyNoHold(VK_SPACE))Pattern = 5;
-		unsigned char tmpData;
-		tmpData = (FaidOutCnt <= 200 ? 55 + FaidOutCnt : 55 + 400 - FaidOutCnt);
-		ChTexMa.SetBlendAlpha(tmpData, "Space");
-		FaidOutCnt += 4;
-
-
-		FaidOutCnt %= 400;
-
-		break;
-
-	case 5:
-		ChTexMa.SetBlendAlpha(255 - FaidOutCnt, "Continue");
-		FaidOutCnt += 3;
-		if (FaidOutCnt >= 255) {
-			NextFrame = 'T';
-		}
-		break;
-	default:
-		break;
-
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::DrawFunction()
-{
-	ChLMat tmpMat;
-	tmpMat.Identity();
-
-	ChVec3 tmpVec;
-	tmpVec = 0.0f;
-	switch (Pattern)
-	{
-	case 2:
-
-		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black")
-			, &tmpMat
-			, &tmpVec 
-			,nullptr);
-
-		break;
-	case 3:
-		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black" ), &tmpMat, &tmpVec, nullptr);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &tmpMat, &tmpVec, nullptr);
-
-		break;
-
-	case 4:
-		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black"), &tmpMat, &tmpVec, nullptr);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &tmpMat, &tmpVec, nullptr);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Space"), &tmpMat, &tmpVec, nullptr);
-
-		break;
-
-	case 5:
-		tmpMat = ChVec3(ChWinAPID.GetWindWidth() / 2.0f, ChWinAPID.GetWindHeight() / 2.0f, 0.0f);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Black"), &tmpMat, &tmpVec, nullptr);
-
-		ChSp9.DrawSprite(ChTexMa.GetTexture("Continue"), &tmpMat, &tmpVec, nullptr);
-
-		break;
-	default:
-
-		break;
-
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::Draw()
-{
-
-
-	ChDevice.DrawStart(D3DCOLOR_XRGB(0, 0, 0));
-
-	Camera->SetView();
-
-	ChEffectDraw.SetCam(Camera);
-	
-	if (Pattern < 3)
-	{
-		Render3D();
-
-		Render2D();
-
-	}
-	SqriptDraw();
-
-
-	ChDevice.DrawEnd();
-
-	DFlg = ChStd::False;
-
-}
