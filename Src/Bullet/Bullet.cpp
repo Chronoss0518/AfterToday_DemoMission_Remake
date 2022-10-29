@@ -2,6 +2,7 @@
 
 #include"../AllStruct.h"
 #include"Bullet.h"
+#include"../BaseMecha/WeaponObject.h"
 
 
 ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()
@@ -11,7 +12,6 @@ ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()
 	[]()->ChPtr::Shared<BulletData> {return ChPtr::Make_S<HighExplosiveBulletData>(); },
 	[]()->ChPtr::Shared<BulletData> {return ChPtr::Make_S<MissileData>(); }
 };
-
 
 void BulletData::CreateBullet(const std::string& _fileName)
 {

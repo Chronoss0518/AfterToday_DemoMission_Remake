@@ -1,6 +1,7 @@
 #pragma once
 
 class BaseMecha;
+class BulletObject;
 
 //’Êí’e‘S”Ê//
 class BulletData
