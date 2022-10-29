@@ -1,10 +1,11 @@
 #ifndef _BaseRobot
 #define _BaseRobot
 
-class MechaParts;
+class MechaPartsObject;
+class CameraObject;
+class WeaponObject;
 
-class Scope;
-class Weapon;
+
 
 class BaseMecha :public ChCpp::BaseObject
 {
@@ -14,28 +15,63 @@ public://Inner Struct Class Enum//
 
 	~BaseMecha();
 
-	//à⁄ìÆèÓïÒ//
-	struct MoveData
+	enum class InputName : unsigned char
 	{
-		ChVec3 moveV;//à⁄ìÆó //
-		ChVec3 tmpRot;//âºÇÃâÒì]ó //
-		float movePow;//à⁄ìÆóÕ//
-		
+		Front, Back, Left, Right, Jump,
+		LeftRotation, RightRotation,
+		CameraUpRotation, CameraDownRotation, CameraLeftRotation, CameraRightRotation,
+		Avo, FrontAvo, BackAvo, LeftAvo, RightAvo, UpAvo, DownAvo,
+		Boost, FrontBoost, BackBoost, LeftBoost, RightBoost, UpBoost, DownBoost,
+		Attack, RAttack, LAttack, MSChange,
+		Reload, RReload, LReload,
+		WeaponChange, LWChange, RWChange,
+		MagnificationUp, MagnificationDown,
+		OverBoost, Release, OnSubKey, SetCameraCenter,
+		MapOnOff ,None
 	};
 
-	enum class InputName :ChStd::DataNo
+	struct BoostData
 	{
-		Up, Down, Left, Right, Jump,
-		Avo, RAttack, LAttack, MSChange, 
-		MagnificationUp, MagnificationDown,
-		OverBoost, Release
+
+		float boostPow = 0.0f;
+		unsigned long useBoostEnelgy = 0;
+		float avoidPow = 0.0f;
+		unsigned long useAvoidEnelgy = 0; 
+		unsigned long avoidWait = 0;
+
+		bool boostStartFlg = false;
+		bool boostUseFlg = false;
+		
+		bool avoidUseFlg = false;
+		bool avoidStartFlg = false;
+		unsigned long nowAvoidWaitTime = 0;
+
+		float nowBoostPow = 0.0f;
+
+		std::vector<ChPtr::Shared<ChCpp::FrameObject>>boostObject;
+	};
+
+	enum class BoostDirection : unsigned char
+	{
+		Front, Back, Left, Right, Up, Down, None
+	};
+
+	struct WeaponData
+	{
+		unsigned long useWeaponNo = 0;
+		std::vector<ChPtr::Shared<WeaponObject>>weapon;
+	};
+
+	enum class PartsPosNames : unsigned char
+	{
+		Head, RArm, LArm, Foot, Boost, RWeapons, LWeapons, None
 	};
 
 public://Override Functions//
 
 	void Release()override;
 
-	void Update()override;
+	void UpdateEnd()override;
 
 	void Move()override;
 
@@ -43,15 +79,109 @@ public://Override Functions//
 
 	void Draw3D()override;
 
+public:
+
+	void NormalMoveUpdate(unsigned char _inputName, float _movePow,const ChLMat& _nowPosMatrix);
+
+	void BoostMoveUpdate(unsigned char _boostDirection, const ChLMat& _nowPosMatrix);
+
+	void AvoidMoveUpdate(unsigned char _boostDirection, const ChLMat& _nowPosMatrix);
+
+	void BaseMove();
+
+	void BoostMove();
+
 public://SerializeDeserialize//
 
-	void Deserialize(const std::string& _desirialize);
+	void Deserialize(const std::string& _fileName);
 
 	std::string Serialize();
 	
 public://Create Function//
 
-	void Create(ID3D11Device* _device,unsigned long _w,unsigned long _h);
+	void Create(const ChVec2& _viewSize,MeshDrawer& _drawer);
+
+public:
+
+	void Load(ID3D11Device* _device, const std::string& _fileName);
+
+	void LoadParts(ID3D11Device* _device, const std::string& _fileName);
+
+	void Save(const std::string& _fileName);
+
+public:
+
+	inline void AddCamera(ChPtr::Shared<CameraObject> _camera)
+	{
+		cameraList.push_back(_camera); 
+	}
+
+	inline void AddLeftWeappon(ChPtr::Shared<WeaponObject> _weapon)
+	{
+		leftWeapom.weapon.push_back(_weapon); 
+	}
+
+	inline void AddRightWeappon(ChPtr::Shared<WeaponObject> _weapon)
+	{
+		rightWeapon.weapon.push_back(_weapon); 
+	}
+
+	inline void AddBoost(ChPtr::Shared<ChCpp::FrameObject> _boost, BoostDirection _direction)
+	{
+		if (_direction == BoostDirection::None)return;
+		boostData[ChStd::EnumCast(_direction)].boostObject.push_back(_boost);
+	}
+
+	inline void AddBoostPow(const float _boostPow, BoostDirection _direction)
+	{
+		if (_direction == BoostDirection::None)return;
+		boostData[ChStd::EnumCast(_direction)].boostPow += _boostPow;
+	}
+
+	inline void AddBoostUseEnelgy(const unsigned long _boostUseEnelgy, BoostDirection _direction)
+	{
+		if (_direction == BoostDirection::None)return;
+		boostData[ChStd::EnumCast(_direction)].useBoostEnelgy += _boostUseEnelgy;
+	}
+
+	inline void AddBoostAvoidPow(const float _avoidPow, BoostDirection _direction)
+	{
+		if (_direction == BoostDirection::None)return;
+		boostData[ChStd::EnumCast(_direction)].avoidPow += _avoidPow;
+	}
+
+	inline void AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, BoostDirection _direction)
+	{
+		if (_direction == BoostDirection::None)return;
+		boostData[ChStd::EnumCast(_direction)].useAvoidEnelgy += _avoidUseEnelgy;
+	}
+
+	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj)
+	{
+		mechaParts.push_back(_obj);
+	}
+
+	void AddMass(const float _mass) { mass += _mass; }
+
+	void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy += _maxEnelgy; }
+
+	void AddChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy += _chargeEnelgy; }
+
+	inline bool AddWeaponPos(ChPtr::Shared<ChCpp::FrameObject> _posObject, PartsPosNames _name)
+	{
+		if (_name != PartsPosNames::LWeapons && _name != PartsPosNames::RWeapons)return false;
+		unsigned long num = ChStd::EnumCast(_name) - ChStd::EnumCast(PartsPosNames::RWeapons);
+		weaponsPoss[num].push_back(_posObject);
+		return true;
+	}
+
+public:
+
+	void SubMass(const float _mass) { mass -= _mass; }
+
+	void SubMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy -= _maxEnelgy; }
+
+	void SubChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy -= _chargeEnelgy; }
 
 public://Set Function//
 
@@ -63,73 +193,146 @@ public://Set Function//
 
 	void SetMass(const float _mass) { mass = _mass; }
 
-	void SetFovy(const float _fovy) { fovy = _fovy; }
+	void SetMovePow(const float _movePow) { movePow = _movePow; }
+	
+	void SetRotatePow(const float _rotatePow) { rotatePow = _rotatePow; }
 
-	void SetMovePower(const float _movePow) { movePow = _movePow; }
-
-	void SetBoostPower(const float _boostPow) { boostPow = _boostPow; }
-
-	void SetAvoidancePower(const float _avoidPow) { avoidPow = _avoidPow; }
+	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
 
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
 	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
 
-public://Get Function//
-
-	static BaseMecha& GetCameraFromMecha()
+	inline void SetBoostAvoidWait(const unsigned long _avoidWait, BoostDirection _direction)
 	{
-		return *GetList()[GetMechaCamNo()];
+		if (_direction == BoostDirection::None)return;
+		boostData[ChStd::EnumCast(_direction)].avoidWait = boostData[ChStd::EnumCast(_direction)].avoidWait < _avoidWait ? _avoidWait : boostData[ChStd::EnumCast(_direction)].avoidWait;
 	}
+
+
+	inline void SetPartsPos(ChPtr::Shared<ChCpp::FrameObject> _posObject,PartsPosNames _name)
+	{
+		if (_name == PartsPosNames::None)return;
+		if (AddWeaponPos(_posObject, _name))return;
+
+		positions[ChStd::EnumCast(_name)] = _posObject; 
+	}
+
+	inline void SetPushFlg(const InputName _inputFlgName)
+	{
+		inputFlgs.SetBitTrue(ChStd::EnumCast(_inputFlgName));
+	}
+
+public://Get Function//
 
 	inline ChVec3 GetPosition() { return pos; }
 
 	inline ChVec3 GetRotation() { return rot; }
 
-	inline float GetFovy() { return fovy; }
+	inline static BaseMecha& GetCameraFromMecha()
+	{
+		return *GetList()[GetMechaCamNo()];
+	}
 
-	inline float GetScopeFovy() { return scopeFovy; }
+	inline std::vector<BaseMecha*>& GetMechaList()
+	{
+		return GetList();
+	}
+
+	inline ChPtr::Shared<ChCpp::FrameObject> GetWeaponPos(PartsPosNames _name)
+	{
+		if (_name != PartsPosNames::RWeapons && _name != PartsPosNames::LWeapons)return nullptr;
+		return weaponsPoss[ChStd::EnumCast(_name)][0];
+	}
+
+	inline ChPtr::Shared<ChCpp::FrameObject> GetPartsPos(PartsPosNames _name)
+	{
+		if (_name == PartsPosNames::None)return nullptr;
+		ChPtr::Shared<ChCpp::FrameObject> res = GetWeaponPos(_name);
+		if (res == nullptr)
+		{
+			res = positions[ChStd::EnumCast(_name)];
+		}
+		return res;
+	}
+
+	inline unsigned long GetMechaNo() { return mechasNo; }
 
 protected:
 
-	long mechaNo = 0;
-
-	static long& GetMechaCamNo()
+	inline static long& GetMechaCamNo()
 	{
 		static long mechaCamNo = 0;
 		return mechaCamNo;
 	}
 
-	static std::vector<BaseMecha*>& GetList()
+	inline static std::vector<BaseMecha*>& GetList()
 	{
 		static std::vector<BaseMecha*>list;
 		return list;
 	}
 
+	inline ChVec3 GetDirectionVector(unsigned long _num)
+	{
+		if (_num >= 6)return ChVec3();
+		static ChVec3 direction[6]
+		{
+			ChVec3(0.0f,0.0f,1.0f),
+			ChVec3(0.0f,0.0f,-1.0f),
+			ChVec3(-1.0f,0.0f,0.0f),
+			ChVec3(1.0f,0.0f,0.0f),
+			ChVec3(0.0f,1.0f,0.0f),
+			ChVec3(0.0f,-1.0f,0.0f)
+		};
+
+		return direction[_num];
+	}
+
+	ChVec2 viewSize;
+
 	ChVec3 pos;
 	ChVec3 rot;
-	float mass = 1.0f;
-	float fovy = 60.0f;
-	float movePow = 0.0f;
-	float boostPow = 0.0f;
-	float avoidPow = 0.0f;
 
-	float scopeFovy = fovy;
+	ChVec3 rotateVec;
+	ChVec3 moveVec;//à⁄ìÆóÕ//
+
+	float movePow = 0.0f;
+	float jumpPow = 0.0f;
+	float rotatePow = 0.0f;
+
+	float mass = 1.0f;
+
+	float boostRotation = 0.0f;
+	BoostData boostData[ChStd::EnumCast(BoostDirection::None)];
+	
 	unsigned char team = 0;
-	unsigned char mechasNo = 0;
+	
+	unsigned long mechasNo = 0;
+
 	unsigned long maxEnelgy = 0;
 	unsigned long chargeEnelgy = 0;
+
 	unsigned long nowEnelgy = 0;
 
-	MoveData move;
+	float groundDistance = 0.0f;
 	
-	ChCpp::BitBool inputFlgs;
+	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
-	std::vector<ChPtr::Shared<Scope>>scopeList;
-	std::vector<ChPtr::Shared<Weapon>>rightWeapom;
-	std::vector<ChPtr::Shared<Weapon>>leftWeapom;
+	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts;
 
-	ChCpp::ObjectList partsList;
+	ChPtr::Shared<ChCpp::FrameObject> positions[ChStd::EnumCast(PartsPosNames::None)]{nullptr,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
+
+	std::vector<ChPtr::Shared<ChCpp::FrameObject>>weaponsPoss[2];
+
+	unsigned long useCameraNo = 0;
+	std::vector<ChPtr::Shared<CameraObject>>cameraList;
+
+	WeaponData rightWeapon;
+	WeaponData leftWeapom;
+
+	std::string mechaName = "";
+
+	MeshDrawer* drawer = nullptr;
 
 };
 

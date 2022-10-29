@@ -26,3 +26,9 @@ enum class FrameNo :unsigned long
 	Title,
 	Game,
 };
+
+struct MeshDrawer
+{
+	ID3D11DeviceContext* dc = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11 drawer;
+};

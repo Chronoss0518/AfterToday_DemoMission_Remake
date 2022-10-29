@@ -2,15 +2,10 @@
 #define _BRobParts
 
 class BaseMecha;
-
+class MechaPartsObject;
+class CameraObject;
+class WeaponObject;
 class PartsDataBase;
-class EnelgyTankData;
-class CameraData;
-class ScopeData;
-class NormalWorlData;
-class BoostData;
-class SwordData;
-class GunData;
 
 class MechaParts :public ChCpp::BaseObject
 {
@@ -28,6 +23,8 @@ private:
 
 public://Serialize Deserialize//
 
+	static void LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
+
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
 	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text);
@@ -40,6 +37,14 @@ public://Set Functions//
 
 	void SetParameters(BaseMecha& _base);
 
+	void SetPartsParameter(BaseMecha& _base);
+
+	void SetHardness(const float _hardness) { hardness = _hardness; }
+
+	void SetMass(const float _mass) { mass = _mass; }
+
+	ChStd::Bool SetPosition(BaseMecha& _base,MechaPartsObject& _obj);
+
 public://Get Function//
 
 	inline float GetHardness() { return hardness; }
@@ -47,6 +52,8 @@ public://Get Function//
 	inline float GetMass() { return mass; }
 
 	inline ChD3D11::Mesh11& GetMesh() { return *model; }
+
+	inline std::string GetThisFileName() { return thisFileName; }
 
 private:
 
@@ -56,8 +63,7 @@ private:
 	//パーツの重さ//
 	float mass = 1.0f;
 
-	//パーツの解除フラグ//
-	ChStd::Bool releaseFlg = false;
+	std::string thisFileName = "";
 
 	ChPtr::Shared<ChD3D11::Mesh11>model = ChPtr::Make_S<ChD3D11::Mesh11>();
 
@@ -75,7 +81,7 @@ class PartsDataBase :public ChCpp::BaseComponent
 {
 public://Serialize Deserialize//
 
-	virtual void Deserialize(const std::string& _text) = 0;
+	virtual unsigned long Deserialize(const ChCpp::TextObject& _text,const unsigned long _textPos = 0) = 0;
 
 	virtual std::string Serialize() = 0;
 
@@ -87,7 +93,10 @@ public://Get Functions//
 
 	virtual std::string GetPartsTypeTag() = 0;
 
-	virtual unsigned long GetPartsLineCount() = 0;
+public:
+
+	//virtual void ReleaseParts(BaseMecha& _base) = 0;
+
 };
 
 class EnelgyTankData : public PartsDataBase
@@ -95,7 +104,7 @@ class EnelgyTankData : public PartsDataBase
 
 public://Serialize Deserialize//
 
-	virtual void Deserialize(const std::string& _text)override;
+	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	virtual std::string Serialize()override;
 
@@ -110,8 +119,6 @@ public://Set Functions//
 public://Get Functions//
 
 	virtual std::string GetPartsTypeTag()override { return "EnelgyTank:"; }
-
-	unsigned long GetPartsLineCount() override{ return 2; };
 
 protected:
 
@@ -128,7 +135,7 @@ class CameraData : public PartsDataBase
 
 public://Serialize Deserialize//
 
-	virtual void Deserialize(const std::string& _text)override;
+	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	virtual std::string Serialize()override;
 
@@ -145,8 +152,6 @@ public://Set Functions//
 public://Get Functions//
 
 	virtual std::string GetPartsTypeTag()override{ return "Camera:"; }
-
-	virtual unsigned long GetPartsLineCount()override { return 3; };
 
 protected:
 
@@ -166,7 +171,7 @@ class ScopeData : public CameraData
 
 public://Serialize Deserialize//
 
-	void Deserialize(const std::string& _text)override;
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	std::string Serialize()override;
 
@@ -184,9 +189,6 @@ public://Get Functions//
 
 	std::string GetPartsTypeTag()override { return "Scope:"; }
 
-	unsigned long GetPartsLineCount()override { return 3 + CameraData::GetPartsLineCount(); };
-
-
 protected:
 
 	//最小の視野角//
@@ -200,12 +202,12 @@ protected:
 
 };
 
-class NormalWorkData :public PartsDataBase
+class WalkData :public PartsDataBase
 {
 
 public://Serialize Deserialize//
 
-	virtual void Deserialize(const std::string& _text)override;
+	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	virtual std::string Serialize()override;
 
@@ -221,9 +223,9 @@ public://Set Functions//
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "NormalWork:"; }
+	float GetGroundNearPos() { return 0.0f; };
 
-	unsigned long GetPartsLineCount()override { return 3; };
+	std::string GetPartsTypeTag()override { return "Walk:"; }
 
 protected:
 	
@@ -238,51 +240,11 @@ protected:
 
 };
 
-class BoostData : public PartsDataBase
-{
-
-public://Serialize Deserialize//
-
-	void Deserialize(const std::string& _text)override;
-
-	std::string Serialize()override;
-
-public://Set Functions//
-
-	void SetPartsParameter(BaseMecha& _base)override;
-
-	void SetUseEnelgy(const unsigned long _useEnelgy) { useEnelgy = _useEnelgy; }
-
-	void SetBoostPower(const float _boostPower) { boostPower = _boostPower; }
-	
-	void SetAvoidUseEnelgy(const unsigned long _avoidUseEnelgy) { avoidUseEnelgy = _avoidUseEnelgy; }
-
-	void SetAvoidPower(const float _avoidPow) { avoidPow = _avoidPow; }
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag() override { return "Boost:"; }
-
-	unsigned long GetPartsLineCount()override { return 4; };
-
-protected:
-
-	//Boost使用時のエネルギー消費量//
-	unsigned long useEnelgy = 0;
-	//Boost使用時の前方方向における移動力//
-	float boostPower = 0.0f;
-	//回避時のエネルギー消費量//
-	unsigned long avoidUseEnelgy = 0;
-	//回避する際の移動力//
-	float avoidPow = 0.0f;
-
-};
-
 class WeaponData : public PartsDataBase
 {
 public://Serialize Deserialize//
 
-	virtual void Deserialize(const std::string& _text)override;
+	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	virtual std::string Serialize()override;
 
@@ -291,8 +253,6 @@ public:
 	void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
 
 public:
-
-	virtual unsigned long GetPartsLineCount()override { return 1; };
 
 	std::string GetPartsTypeTag() override { return "WeaponData:"; }
 
@@ -307,7 +267,7 @@ class SwordData :public WeaponData
 {
 public://Serialize Deserialize//
 
-	void Deserialize(const std::string& _text)override;
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	std::string Serialize()override;
 
@@ -321,8 +281,6 @@ public://Get Functions//
 
 	std::string GetPartsTypeTag() override { return "Sword:"; }
 
-	unsigned long GetPartsLineCount()override { return 1 + WeaponData::GetPartsLineCount(); };
-
 protected:
 
 	unsigned long attackTime = 0;
@@ -334,7 +292,7 @@ class GunData :public WeaponData
 
 public://Serialize Deserialize//
 
-	void Deserialize(const std::string& _text)override;
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
 	std::string Serialize()override;
 
@@ -356,8 +314,6 @@ public://Get Functions//
 
 	std::string GetPartsTypeTag() override { return "Gun:"; }
 
-	unsigned long GetPartsLineCount()override { return 5 + WeaponData::GetPartsLineCount(); };
-
 protected:
 
 	//射撃時の弾の数//
@@ -370,6 +326,308 @@ protected:
 	unsigned long reloadTime = 0;
 
 	std::string bulletFile = "";
+
+};
+
+
+class NextPosBase : public PartsDataBase
+{
+public://Serialize Deserialize//
+
+	inline unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
+	{
+
+		SetParamName(_text.GetTextLine(_textPos));
+
+		return _textPos + 1;
+	}
+
+	inline std::string Serialize()override
+	{
+
+		std::string res = "";
+		res += nextPosName + "\n";
+
+		return res;
+	}
+
+public://Set Functions//
+
+	void SetPartsParameter(BaseMecha& _base)override;
+
+	virtual void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
+
+	inline void SetParamName(const std::string& _objectName)
+	{
+		nextPosName = _objectName;
+	}
+
+public://Get Functions//
+
+	inline std::string GetObjectName() { return nextPosName; }
+
+protected:
+
+	std::string nextPosName = "";
+
+};
+
+class RightArmPos:public NextPosBase
+{
+public:
+
+	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "RightArmPos:"; }
+
+};
+
+class LeftArmPos :public NextPosBase 
+{
+public:
+
+	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "LeftArmPos:"; }
+
+};
+
+class FootPos :public NextPosBase 
+{
+public:
+
+	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "FootPos:"; }
+
+};
+
+class HeadPos :public NextPosBase 
+{
+public:
+
+	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "HeadPos:"; }
+
+};
+
+class BoostPos :public NextPosBase 
+{
+public:
+
+	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "BoostPos:"; }
+
+};
+
+class BoostBrust :public PartsDataBase
+{
+
+public://Serialize Deserialize//
+
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
+
+	std::string Serialize()override;
+
+public://Set Functions//
+
+	void SetPartsParameter(BaseMecha& _base)override;
+
+	inline void SetParamName(const std::string& _objectName)
+	{
+		objectName = _objectName;
+	}
+
+	void SetUseEnelgy(const unsigned long _useEnelgy) { useEnelgy = _useEnelgy; }
+
+	void SetBoostPower(const float _boostPower) { boostPower = _boostPower; }
+
+	void SetAvoidUseEnelgy(const unsigned long _avoidUseEnelgy) { avoidUseEnelgy = _avoidUseEnelgy; }
+
+	void SetAvoidPower(const float _avoidPow) { avoidPow = _avoidPow; }
+
+	virtual void SetPartsObject(BaseMecha& _base , ChPtr::Shared<ChCpp::FrameObject> _boostObject) = 0;
+
+public://Get Functions//
+
+	inline std::string GetObjectNameList() { return objectName; }
+
+public:
+
+protected:
+
+	std::string objectName;
+
+	//Boost使用時のエネルギー消費量//
+	unsigned long useEnelgy = 0;
+	//Boost使用時における移動力//
+	float boostPower = 0.0f;
+	//回避時のエネルギー消費量//
+	unsigned long avoidUseEnelgy = 0;
+	//回避する際の移動力//
+	float avoidPow = 0.0f;
+	//回避する際の再使用時間//
+	unsigned long avoidWait = 0;
+
+};
+
+class RightBoostBrust :public BoostBrust
+{
+
+public:
+
+	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "RightBoostBrust:"; }
+
+
+};
+
+class LeftBoostBrust :public BoostBrust
+{
+
+public:
+
+	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "LeftBoostBrust:"; }
+
+
+};
+
+class FrontBoostBrust :public BoostBrust
+{
+
+public:
+
+	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "FrontBoostBrust:"; }
+
+};
+
+class BackBoostBrust :public BoostBrust
+{
+
+public:
+
+	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "BackBoostBrust:"; }
+
+};
+
+class UpBoostBrust :public BoostBrust
+{
+public:
+
+	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "UpBoostBrust:"; }
+
+};
+
+class DownBoostBrust :public BoostBrust
+{
+public:
+
+	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "DownBoostBrust:"; }
+
+};
+
+class WeaponPosBase : public PartsDataBase
+{
+public://Serialize Deserialize//
+
+	inline unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
+	{
+
+		SetParamName(_text.GetTextLine(_textPos));
+
+		return _textPos + 1;
+	}
+
+	inline std::string Serialize()override
+	{
+
+		std::string res = "";
+		res += nextPosName + "\n";
+
+		return res;
+	}
+
+public://Set Functions//
+
+	void SetPartsParameter(BaseMecha& _base)override;
+
+	inline void SetParamName(const std::string& _objectName)
+	{
+		nextPosName = _objectName;
+	}
+
+public://Get Functions//
+
+	inline std::string GetObjectName() { return nextPosName; }
+
+protected:
+
+	std::string nextPosName = "";
+
+};
+
+class HaveRightWeaponPos :public WeaponPosBase
+{
+public:
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "HaveRightWeaponPos:"; }
+
+};
+
+class HaveLeftWeaponPos :public WeaponPosBase
+{
+public:
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "HaveLeftWeaponPos:"; }
+
+};
+
+class ShotPos :public WeaponPosBase
+{
+public:
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "ShotPos:"; }
 
 };
 

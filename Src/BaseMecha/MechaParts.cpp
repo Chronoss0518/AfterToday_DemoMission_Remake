@@ -2,6 +2,8 @@
 
 #include"../AllStruct.h"
 #include"../Bullet/Bullet.h"
+#include"CaneraObject.h"
+#include"MechaPartsObject.h"
 #include"BaseMecha.h"
 #include"MechaParts.h"
 
@@ -14,22 +16,47 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	{"EnelgyTank:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<EnelgyTankData>(); }},
 	{"Camera:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<CameraData>(); }},
 	{"Scope:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ScopeData>(); }},
-	{"NormalWork:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<NormalWorkData>(); }},
-	{"Boost:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BoostData>(); }},
+	{"Walk:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WalkData>(); }},
 	{"Sword:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<SwordData>(); }},
-	{"Gun:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }}
+	{"Gun:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }},
+	{"RightArmPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightArmPos>(); }},
+	{"LeftArmPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftArmPos>(); }},
+	{"FootPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FootPos>(); }},
+	{"HeadPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<HeadPos>(); }},
+	{"BoostPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BoostPos>(); }},
+	{"RightBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightBoostBrust>(); }},
+	{"LeftBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftBoostBrust>(); }},
+	{"FrontBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FrontBoostBrust>(); }},
+	{"BackBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BackBoostBrust>(); }},
+	{"UpBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<UpBoostBrust>(); }},
+	{"DownBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<DownBoostBrust>(); }},
+	{"HaveRightWeaponPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<HaveRightWeaponPos>(); }},
+	{"HaveLeftWeaponPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<HaveLeftWeaponPos>(); }},
+	{"ShotPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ShotPos>(); }},
 };
 
-void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
 {
+
 	auto&& loadPartss = LoadPartsList();
-	if (loadPartss.find(_fileName) != loadPartss.end())
+	auto it = loadPartss.find(_fileName);
+	if (it != loadPartss.end())
 	{
-		SetParameters(_base);
+		(*it).second->SetParameters(_base);
 		return;
 	}
 
+	auto mechaParts = ChPtr::Make_S<MechaParts>();
+	mechaParts->Load(_base, _device, _fileName);
 
+	if (mechaParts->GetThisFileName().empty())return;
+
+	loadPartss[_fileName] = mechaParts;
+
+}
+
+void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+{
 	std::string text = "";
 
 	{
@@ -38,9 +65,13 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string
 		text = file.FileReadText();
 	}
 
-	Deserialize(_base, _device, text);
+	if (text.empty())return;
 
+	thisFileName = _fileName;
+
+	Deserialize(_base, _device, text);
 }
+
 
 void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::string& _text)
 {
@@ -53,11 +84,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 	{
 		ChCpp::ModelLoader::XFile loader;
 		model->Init(_device);
-		char test[1024];
-		GetCurrentDirectory(1024, test);
-		OutputDebugString(test);
-		std::string tmp = MESH_DIRECTORY("RobotsParts/" + textObject.GetTextLine(0));
-		//tmp = "/" + tmp;
+		std::string tmp = textObject.GetTextLine(0);
 		loader.CreateModel(model, tmp);
 	}
 
@@ -68,6 +95,8 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 	{
 		i = CreateDatas(_base,textObject, i);
 	}
+
+	SetPartsParameter(_base);
 }
 
 
@@ -80,16 +109,7 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	auto createFunction = createFunctions.find(typeName);
 	if (createFunction == createFunctions.end())return _linePos + 1;
 	auto parts = (*createFunction).second(*this);
-	unsigned long linePos = _linePos + 1;
-	std::string text = "";
-	unsigned long outCount = 0;
-	for (unsigned long i = 0; i < parts->GetPartsLineCount(); i++)
-	{
-		text += _textObject.GetTextLine(linePos + i) + "\n";
-		outCount = i;
-	}
-	linePos = linePos + outCount + 1;
-	parts->Deserialize(text);
+	unsigned long linePos = parts->Deserialize(_textObject,_linePos + 1);
 	parts->SetPartsParameter(_base);
 	return linePos;
 }
@@ -100,6 +120,73 @@ void MechaParts::SetParameters(BaseMecha& _base)
 	{
 		com->SetPartsParameter(_base);
 	}
+
+	SetPartsParameter(_base);
+}
+
+void MechaParts::SetPartsParameter(BaseMecha& _base)
+{
+
+	auto partsObject = ChPtr::Make_S<MechaPartsObject>();
+
+	partsObject->baseParts = this;
+
+	if (SetPosition(_base, *partsObject))
+	{
+		this->GetMesh().SetFrameTransform(ChLMat());
+	}
+
+	_base.AddMechaParts(partsObject);
+	
+	_base.AddMass(mass);
+}
+
+ChStd::Bool MechaParts::SetPosition(BaseMecha& _base, MechaPartsObject& _obj)
+{
+	unsigned long tmpPos = std::string::npos;
+
+	auto partsType = BaseMecha::PartsPosNames::None;
+
+	unsigned long testPos = 0;
+
+	testPos = thisFileName.find("Head/");
+
+	if(testPos < tmpPos) {
+		partsType = BaseMecha::PartsPosNames::Head;
+		tmpPos = testPos;
+	}
+
+	testPos = thisFileName.find("Foot/");
+	if (testPos < tmpPos) {
+		partsType = BaseMecha::PartsPosNames::Foot;
+		tmpPos = testPos;
+	}
+
+	testPos = thisFileName.find("RArm/");
+	if (testPos < tmpPos) {
+		partsType = BaseMecha::PartsPosNames::RArm;
+		tmpPos = testPos;
+	}
+
+	testPos = thisFileName.find("LArm/");
+	if (testPos < tmpPos) {
+		partsType = BaseMecha::PartsPosNames::LArm;
+		tmpPos = testPos;
+	}
+
+	testPos = thisFileName.find("Boost/");
+	if (testPos < tmpPos) {
+		partsType = BaseMecha::PartsPosNames::Boost;
+		tmpPos = testPos;
+	}
+
+	if (tmpPos == std::string::npos)return false;
+
+	auto frame = _base.GetPartsPos(partsType);
+
+	_obj.SetPositoinObject(frame);
+
+	return true;
 }
 
 std::string MechaParts::Save(const std::string& _fileName)
@@ -139,12 +226,12 @@ std::string MechaParts::Serialize()
 	return res;
 }
 
-void EnelgyTankData::Deserialize(const std::string& _text)
+unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	maxEnelgy = std::atol(text.GetTextLine(0).c_str());
-	createEnelgy = std::atol(text.GetTextLine(1).c_str());
+	maxEnelgy = std::atol(_text.GetTextLine(_textPos).c_str());
+	createEnelgy = std::atol(_text.GetTextLine(_textPos + 1).c_str());
+
+	return _textPos + 2;
 }
 
 std::string EnelgyTankData::Serialize()
@@ -160,15 +247,15 @@ std::string EnelgyTankData::Serialize()
 void EnelgyTankData::SetPartsParameter(BaseMecha& _base)
 {
 	_base.SetMaxEnelgy(maxEnelgy);
+	_base.SetChargeEnelgy(createEnelgy);
 }
 
-void CameraData::Deserialize(const std::string& _text)
+unsigned long CameraData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	fovy = static_cast<float>(std::atof(text.GetTextLine(0).c_str()));
-	cameraCount = std::atol(text.GetTextLine(1).c_str());
-	cameraObject = text.GetTextLine(2);
+	fovy = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
+	cameraCount = std::atol(_text.GetTextLine(_textPos + 1).c_str());
+	cameraObject = _text.GetTextLine(_textPos + 2);
+	return _textPos + 3;
 }
 
 std::string CameraData::Serialize()
@@ -183,17 +270,18 @@ std::string CameraData::Serialize()
 
 void CameraData::SetPartsParameter(BaseMecha& _base)
 {
+	auto camera = ChPtr::Make_S<CameraObject>();
 
+	_base.AddCamera(camera);
 }
 
-void ScopeData::Deserialize(const std::string& _text)
+unsigned long ScopeData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	CameraData::Deserialize(_text);
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	minFovy = static_cast<float>(std::atof(text.GetTextLine(CameraData::GetPartsLineCount()).c_str()));
-	maxFovy = static_cast<float>(std::atof(text.GetTextLine(CameraData::GetPartsLineCount() + 1).c_str()));
-	fovySlideSpeed = static_cast<float>(std::atof(text.GetTextLine(CameraData::GetPartsLineCount() + 2).c_str()));
+	unsigned long textPos = CameraData::Deserialize(_text,_textPos);
+	minFovy = static_cast<float>(std::atof(_text.GetTextLine(textPos).c_str()));
+	maxFovy = static_cast<float>(std::atof(_text.GetTextLine(textPos + 1).c_str()));
+	fovySlideSpeed = static_cast<float>(std::atof(_text.GetTextLine(textPos + 2).c_str()));
+	return textPos + 3;
 }
 
 std::string ScopeData::Serialize()
@@ -209,19 +297,20 @@ std::string ScopeData::Serialize()
 
 void ScopeData::SetPartsParameter(BaseMecha& _base)
 {
+	auto camera = ChPtr::Make_S<CameraObject>();
 
+	_base.AddCamera(camera);
 }
 
-void NormalWorkData::Deserialize(const std::string& _text)
+unsigned long WalkData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	movePow = static_cast<float>(std::atof(text.GetTextLine(0).c_str()));
-	rotatePow = static_cast<float>(std::atof(text.GetTextLine(1).c_str()));
-	jumpPow = static_cast<float>(std::atof(text.GetTextLine(2).c_str()));
+	movePow = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
+	rotatePow = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 1).c_str()));
+	jumpPow = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 2).c_str()));
+	return _textPos + 3;
 }
 
-std::string NormalWorkData::Serialize()
+std::string WalkData::Serialize()
 {
 	std::string res = "";
 
@@ -232,43 +321,17 @@ std::string NormalWorkData::Serialize()
 	return res;
 }
 
-void NormalWorkData::SetPartsParameter(BaseMecha& _base)
+void WalkData::SetPartsParameter(BaseMecha& _base)
 {
-
+	_base.SetMovePow(movePow);
+	_base.SetRotatePow(rotatePow);
+	_base.SetJumpPow(jumpPow);
 }
 
-void BoostData::Deserialize(const std::string& _text)
+unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	useEnelgy = std::atol(text.GetTextLine(0).c_str());
-	boostPower = static_cast<float>(std::atof(text.GetTextLine(1).c_str()));
-	avoidUseEnelgy = std::atol(text.GetTextLine(2).c_str());
-	avoidPow = static_cast<float>(std::atof(text.GetTextLine(3).c_str()));
-}
-
-std::string BoostData::Serialize()
-{
-	std::string res = "";
-
-	res += std::to_string(useEnelgy) + "\n";
-	res += std::to_string(boostPower) + "\n";
-	res += std::to_string(avoidUseEnelgy) + "\n";
-	res += std::to_string(avoidPow) + "\n";
-
-	return res;
-}
-
-void BoostData::SetPartsParameter(BaseMecha& _base)
-{
-
-}
-
-void WeaponData::Deserialize(const std::string& _text)
-{
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	weatTime = std::atol(text.GetTextLine(0).c_str());
+	weatTime = std::atol(_text.GetTextLine(_textPos).c_str());
+	return _textPos + 1;
 }
 
 std::string WeaponData::Serialize()
@@ -280,12 +343,11 @@ std::string WeaponData::Serialize()
 	return res;
 }
 
-void SwordData::Deserialize(const std::string& _text)
+unsigned long SwordData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	WeaponData::Deserialize(_text);
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	attackTime = std::atol(text.GetTextLine(WeaponData::GetPartsLineCount()).c_str());
+	unsigned long textPos = WeaponData::Deserialize(_text,_textPos);
+	attackTime = std::atol(_text.GetTextLine(textPos).c_str());
+	return textPos + 1;
 }
 
 std::string SwordData::Serialize()
@@ -303,28 +365,16 @@ void SwordData::SetPartsParameter(BaseMecha& _base)
 
 }
 
-void GunData::Deserialize(const std::string& _text)
+unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	WeaponData::Deserialize(_text);
-	ChCpp::TextObject text;
-	text.SetText(_text);
-	fireNum = std::atol(text.GetTextLine(WeaponData::GetPartsLineCount()).c_str());
-	bulletNum = std::atol(text.GetTextLine(WeaponData::GetPartsLineCount() + 1).c_str());
-	magazineNum = std::atol(text.GetTextLine(WeaponData::GetPartsLineCount() + 2).c_str());
-	reloadTime = std::atol(text.GetTextLine(WeaponData::GetPartsLineCount() + 3).c_str());
-	bulletFile = text.GetTextLine(WeaponData::GetPartsLineCount() + 4).c_str();
+	unsigned long textPos = WeaponData::Deserialize(_text, _textPos);
+	fireNum = std::atol(_text.GetTextLine(textPos).c_str());
+	bulletNum = std::atol(_text.GetTextLine(textPos + 1).c_str());
+	magazineNum = std::atol(_text.GetTextLine(textPos + 2).c_str());
+	reloadTime = std::atol(_text.GetTextLine(textPos + 3).c_str());
+	bulletFile = _text.GetTextLine(textPos + 4).c_str();
 	
-	return;
-
-	unsigned long bulletType = std::atol(text.GetTextLine(5).c_str());
-
-	std::string bulletData = "";
-
-	for (unsigned long i = 6; i < text.Count(); i++)
-	{
-		if (i > 6)bulletData += "\n";
-		bulletData += text.GetTextLine(i);
-	}
+	return textPos + 5;
 
 }
 
@@ -343,6 +393,158 @@ std::string GunData::Serialize()
 }
 
 void GunData::SetPartsParameter(BaseMecha& _base)
+{
+
+}
+
+void NextPosBase::SetPartsParameter(BaseMecha& _base)
+{
+	auto target = LookObj<MechaParts>();
+
+	if (ChPtr::NullCheck(target))return;
+
+	auto&& posObjects = target->GetMesh().GetAllChildlenForName<ChCpp::FrameObject>(nextPosName);
+
+	if (posObjects.empty())return;
+
+	ChPtr::Shared<ChCpp::FrameObject> posObject = posObjects[0].lock();
+
+	SetObjectPos(_base, posObject);
+}
+
+void RightArmPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::RArm);
+}
+
+void LeftArmPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::LArm);
+}
+
+void FootPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::Foot);
+}
+
+void HeadPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::Head);
+}
+
+void BoostPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::Boost);
+}
+
+unsigned long BoostBrust::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+{
+	objectName = _text.GetTextLine(_textPos);
+	useEnelgy = std::atol(_text.GetTextLine(_textPos + 1).c_str());
+	boostPower = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 2).c_str()));
+	avoidUseEnelgy = std::atol(_text.GetTextLine(_textPos + 3).c_str());
+	avoidPow = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 4).c_str()));
+	avoidWait = std::atol(_text.GetTextLine(_textPos + 5).c_str());
+	return _textPos + 6;
+}
+
+std::string BoostBrust::Serialize()
+{
+
+	std::string res = "";
+
+	res = objectName;
+	res += std::to_string(useEnelgy) + "\n";
+	res += std::to_string(boostPower) + "\n";
+	res += std::to_string(avoidUseEnelgy) + "\n";
+	res += std::to_string(avoidPow) + "\n";
+
+	return res;
+}
+
+void BoostBrust::SetPartsParameter(BaseMecha& _base)
+{
+	auto&& base = *LookObj<MechaParts>();
+	if (ChPtr::NullCheck(&base))return;
+
+	auto&& mesh = base.GetMesh();
+
+	auto&& boostList = mesh.GetAllChildlenForName<ChCpp::FrameObject>(objectName);
+
+	if (boostList.empty())return;
+
+	auto obj = boostList[0].lock();
+
+	SetPartsObject(_base, obj);
+}
+
+void RightBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
+{
+	_base.AddBoostPow(boostPower,BaseMecha::BoostDirection::Right);
+	_base.AddBoostUseEnelgy(useEnelgy, BaseMecha::BoostDirection::Right);
+	_base.AddBoostAvoidPow(avoidPow, BaseMecha::BoostDirection::Right);
+	_base.AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::BoostDirection::Right);
+	_base.SetBoostAvoidWait(avoidWait, BaseMecha::BoostDirection::Right);
+
+	_base.AddBoost(_boostObject, BaseMecha::BoostDirection::Right);
+}
+
+void LeftBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
+{
+	_base.AddBoostPow(boostPower, BaseMecha::BoostDirection::Left);
+	_base.AddBoostUseEnelgy(useEnelgy, BaseMecha::BoostDirection::Left);
+	_base.AddBoostAvoidPow(avoidPow, BaseMecha::BoostDirection::Left);
+	_base.AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::BoostDirection::Left);
+	_base.SetBoostAvoidWait(avoidWait, BaseMecha::BoostDirection::Left);
+
+	_base.AddBoost(_boostObject, BaseMecha::BoostDirection::Left);
+}
+
+void FrontBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
+{
+	_base.AddBoostPow(boostPower, BaseMecha::BoostDirection::Front);
+	_base.AddBoostUseEnelgy(useEnelgy, BaseMecha::BoostDirection::Front);
+	_base.AddBoostAvoidPow(avoidPow, BaseMecha::BoostDirection::Front);
+	_base.AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::BoostDirection::Front);
+	_base.SetBoostAvoidWait(avoidWait, BaseMecha::BoostDirection::Front);
+
+	_base.AddBoost(_boostObject, BaseMecha::BoostDirection::Front);
+}
+
+void BackBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
+{
+	_base.AddBoostPow(boostPower, BaseMecha::BoostDirection::Back);
+	_base.AddBoostUseEnelgy(useEnelgy, BaseMecha::BoostDirection::Back);
+	_base.AddBoostAvoidPow(avoidPow, BaseMecha::BoostDirection::Back);
+	_base.AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::BoostDirection::Back);
+	_base.SetBoostAvoidWait(avoidWait, BaseMecha::BoostDirection::Back);
+
+	_base.AddBoost(_boostObject, BaseMecha::BoostDirection::Back);
+}
+
+void UpBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
+{
+	_base.AddBoostPow(boostPower, BaseMecha::BoostDirection::Up);
+	_base.AddBoostUseEnelgy(useEnelgy, BaseMecha::BoostDirection::Up);
+	_base.AddBoostAvoidPow(avoidPow, BaseMecha::BoostDirection::Up);
+	_base.AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::BoostDirection::Up);
+	_base.SetBoostAvoidWait(avoidWait, BaseMecha::BoostDirection::Up);
+
+	_base.AddBoost(_boostObject, BaseMecha::BoostDirection::Up);
+}
+
+void DownBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
+{
+	_base.AddBoostPow(boostPower, BaseMecha::BoostDirection::Down);
+	_base.AddBoostUseEnelgy(useEnelgy, BaseMecha::BoostDirection::Down);
+	_base.AddBoostAvoidPow(avoidPow, BaseMecha::BoostDirection::Down);
+	_base.AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::BoostDirection::Down);
+	_base.SetBoostAvoidWait(avoidWait, BaseMecha::BoostDirection::Down);
+
+	_base.AddBoost(_boostObject, BaseMecha::BoostDirection::Down);
+}
+
+void WeaponPosBase::SetPartsParameter(BaseMecha& _base)
 {
 
 }
