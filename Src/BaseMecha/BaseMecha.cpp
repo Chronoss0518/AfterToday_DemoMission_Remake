@@ -101,28 +101,6 @@ void BaseMecha::UpdateEnd()
 		rotateVec.y += rotatePow;
 	}
 
-	for (unsigned char i = 0; i <= ChStd::EnumCast(InputName::DownBoost) - ChStd::EnumCast(InputName::FrontBoost); i++)
-	{
-		if (!inputFlgs.GetBitFlg(i + ChStd::EnumCast(InputName::FrontBoost)))continue;
-		BoostMoveUpdate(i, tmp);
-	}
-
-	for (unsigned char i = 0; i <= ChStd::EnumCast(InputName::DownAvo) - ChStd::EnumCast(InputName::FrontAvo); i++)
-	{
-		unsigned long longMax = -1;
-		boostData[i].nowAvoidWaitTime = (boostData[i].nowAvoidWaitTime - 1) % longMax;
-
-		if (!inputFlgs.GetBitFlg(i + ChStd::EnumCast(InputName::FrontAvo)))
-		{
-			boostData[i].avoidUseFlg = false;
-			boostData[i].avoidStartFlg = false;
-			continue;
-		}
-
-		AvoidMoveUpdate(i, tmp);
-	}
-
-	inputFlgs.SetAllDownFlg();
 }
 
 void BaseMecha::NormalMoveUpdate(unsigned char _inputName, float _movePow, const ChLMat& _nowPosMatrix)
@@ -137,41 +115,11 @@ void BaseMecha::NormalMoveUpdate(unsigned char _inputName, float _movePow, const
 
 }
 
-void BaseMecha::BoostMoveUpdate(unsigned char _boostDirection, const ChLMat& _nowPosMatrix)
-{
-
-	if (_boostDirection >= ChStd::EnumCast(BoostDirection::None))return;
-	if (boostData[_boostDirection].useBoostEnelgy >= nowEnelgy)return;
-
-	boostData[_boostDirection].boostUseFlg = true;
-	moveVec += _nowPosMatrix.TransformCoord(GetDirectionVector(_boostDirection)) *
-		boostData[_boostDirection].boostPow;
-}
-
-void BaseMecha::AvoidMoveUpdate(unsigned char _boostDirection, const ChLMat& _nowPosMatrix)
-{
-
-	if (_boostDirection >= ChStd::EnumCast(BoostDirection::None))return;
-
-	auto&& boost = boostData[_boostDirection];
-	if (boost.nowAvoidWaitTime > 0)return;
-	if (boost.avoidUseFlg)return;
-	if (boost.useAvoidEnelgy >= nowEnelgy)return;
-
-	boost.nowAvoidWaitTime = boost.avoidWait;
-
-	boost.avoidUseFlg = true;
-	boost.avoidStartFlg = true;
-
-	moveVec += _nowPosMatrix.TransformCoord(GetDirectionVector(_boostDirection)) *
-		boost.avoidPow;
-}
-
 void BaseMecha::Move()
 {
 	BaseMove();
 
-	BoostMove();
+	inputFlgs.SetAllDownFlg();
 
 	//return;
 
@@ -183,20 +131,11 @@ void BaseMecha::Move()
 
 		tmpMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
 		tmpMat.SetPosition(pos + ChVec3(0.0f, 5.0f, 0.0f));
-		auto lookPos = tmpMat.Transform(ChVec3(0.0f, -1.0f, 5.0f));
+		auto lookPos = tmpMat.Transform(ChVec3(0.0f, -5.0f, 5.0f));
 		auto camPos = tmpMat.Transform(ChVec3(0.0f, 0.0f,-10.0f));
 
 		camMat.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
-
 	}
-	/*
-	camMat.SetPosition(pos + ChVec3(0.0f, 5.0f, -10.0f));
-
-	camMat.SetRotation(rot);
-
-	camMat.Inverse();
-	*/
-
 
 	drawer->drawer.SetViewMatrix(camMat);
 
@@ -208,56 +147,8 @@ void BaseMecha::BaseMove()
 	pos += moveVec;
 	rot -= rotateVec;
 
-	moveVec *= 0.5f;
+	moveVec *= 0.9f;
 	rotateVec *= 0.5f;
-}
-
-void BaseMecha::BoostMove()
-{
-
-	boostRotation += 5;
-	boostRotation = boostRotation < 360.0f ? boostRotation : boostRotation - 360.0f;
-
-
-	for (auto&& boost : boostData)
-	{
-		if (boost.avoidUseFlg && boost.avoidStartFlg)
-		{
-			boost.avoidStartFlg = false;
-			boost.nowBoostPow = 1.0f;
-			boost.boostUseFlg = false;
-		}
-		else if (boost.boostStartFlg == boost.boostUseFlg)
-		{
-			boost.nowBoostPow = 0.5f;
-			boost.boostStartFlg = false;
-		}
-
-		if (boost.boostUseFlg)
-		{
-			float tmp = 1.0f - boost.nowBoostPow;
-			boost.nowBoostPow += tmp * tmp * 0.1f;
-			boost.nowBoostPow = boost.nowBoostPow > 1.0f ? 1.0f : boost.nowBoostPow;
-		}
-		else
-		{
-			float tmp = boost.nowBoostPow;
-			boost.nowBoostPow -= tmp * tmp * 0.1f * 2.0f;
-			boost.nowBoostPow = boost.nowBoostPow < 0.0f ? 0.0f : boost.nowBoostPow;
-			boost.boostStartFlg = true;
-		}
-
-		ChLMat tmp;
-		tmp.SetRotationYAxis(boostRotation);
-		tmp.SetScalling(ChVec3(boost.nowBoostPow));
-
-		for (auto&& boostObject : boost.boostObject)
-		{
-			boostObject->SetOutSizdTransform(tmp);
-		}
-
-		boost.boostUseFlg = false;
-	}
 }
 
 void BaseMecha::Draw2D()

@@ -4,12 +4,14 @@
 class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
-
+class MoveComponent;
 
 
 class BaseMecha :public ChCpp::BaseObject
 {
 public://Inner Struct Class Enum//
+
+	friend MoveComponent;
 
 	BaseMecha();
 
@@ -28,32 +30,6 @@ public://Inner Struct Class Enum//
 		MagnificationUp, MagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
 		MapOnOff ,None
-	};
-
-	struct BoostData
-	{
-
-		float boostPow = 0.0f;
-		unsigned long useBoostEnelgy = 0;
-		float avoidPow = 0.0f;
-		unsigned long useAvoidEnelgy = 0; 
-		unsigned long avoidWait = 0;
-
-		bool boostStartFlg = false;
-		bool boostUseFlg = false;
-		
-		bool avoidUseFlg = false;
-		bool avoidStartFlg = false;
-		unsigned long nowAvoidWaitTime = 0;
-
-		float nowBoostPow = 0.0f;
-
-		std::vector<ChPtr::Shared<ChCpp::FrameObject>>boostObject;
-	};
-
-	enum class BoostDirection : unsigned char
-	{
-		Front, Back, Left, Right, Up, Down, None
 	};
 
 	struct WeaponData
@@ -83,13 +59,7 @@ public:
 
 	void NormalMoveUpdate(unsigned char _inputName, float _movePow,const ChLMat& _nowPosMatrix);
 
-	void BoostMoveUpdate(unsigned char _boostDirection, const ChLMat& _nowPosMatrix);
-
-	void AvoidMoveUpdate(unsigned char _boostDirection, const ChLMat& _nowPosMatrix);
-
 	void BaseMove();
-
-	void BoostMove();
 
 public://SerializeDeserialize//
 
@@ -111,6 +81,10 @@ public:
 
 public:
 
+	inline void AddMoveVector(const ChVec3& _moveVecAdd) { moveVec += _moveVecAdd; }
+
+	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { rotateVec += _rotateVecAdd; }
+
 	inline void AddCamera(ChPtr::Shared<CameraObject> _camera)
 	{
 		cameraList.push_back(_camera); 
@@ -124,36 +98,6 @@ public:
 	inline void AddRightWeappon(ChPtr::Shared<WeaponObject> _weapon)
 	{
 		rightWeapon.weapon.push_back(_weapon); 
-	}
-
-	inline void AddBoost(ChPtr::Shared<ChCpp::FrameObject> _boost, BoostDirection _direction)
-	{
-		if (_direction == BoostDirection::None)return;
-		boostData[ChStd::EnumCast(_direction)].boostObject.push_back(_boost);
-	}
-
-	inline void AddBoostPow(const float _boostPow, BoostDirection _direction)
-	{
-		if (_direction == BoostDirection::None)return;
-		boostData[ChStd::EnumCast(_direction)].boostPow += _boostPow;
-	}
-
-	inline void AddBoostUseEnelgy(const unsigned long _boostUseEnelgy, BoostDirection _direction)
-	{
-		if (_direction == BoostDirection::None)return;
-		boostData[ChStd::EnumCast(_direction)].useBoostEnelgy += _boostUseEnelgy;
-	}
-
-	inline void AddBoostAvoidPow(const float _avoidPow, BoostDirection _direction)
-	{
-		if (_direction == BoostDirection::None)return;
-		boostData[ChStd::EnumCast(_direction)].avoidPow += _avoidPow;
-	}
-
-	inline void AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, BoostDirection _direction)
-	{
-		if (_direction == BoostDirection::None)return;
-		boostData[ChStd::EnumCast(_direction)].useAvoidEnelgy += _avoidUseEnelgy;
 	}
 
 	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj)
@@ -174,6 +118,7 @@ public:
 		weaponsPoss[num].push_back(_posObject);
 		return true;
 	}
+
 
 public:
 
@@ -202,13 +147,6 @@ public://Set Function//
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
 	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
-
-	inline void SetBoostAvoidWait(const unsigned long _avoidWait, BoostDirection _direction)
-	{
-		if (_direction == BoostDirection::None)return;
-		boostData[ChStd::EnumCast(_direction)].avoidWait = boostData[ChStd::EnumCast(_direction)].avoidWait < _avoidWait ? _avoidWait : boostData[ChStd::EnumCast(_direction)].avoidWait;
-	}
-
 
 	inline void SetPartsPos(ChPtr::Shared<ChCpp::FrameObject> _posObject,PartsPosNames _name)
 	{
@@ -256,6 +194,8 @@ public://Get Function//
 		return res;
 	}
 
+	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
+
 	inline unsigned long GetMechaNo() { return mechasNo; }
 
 protected:
@@ -302,9 +242,6 @@ protected:
 
 	float mass = 1.0f;
 
-	float boostRotation = 0.0f;
-	BoostData boostData[ChStd::EnumCast(BoostDirection::None)];
-	
 	unsigned char team = 0;
 	
 	unsigned long mechasNo = 0;

@@ -464,6 +464,18 @@ public://Get Functions//
 
 	inline std::string GetObjectNameList() { return objectName; }
 
+	template<class T>
+	ChPtr::Shared<T> GetBoostComponent(ChCpp::BaseObject& _base)
+	{
+		auto&& boostComList = _base.GetComponents<T>();
+		if (!boostComList.empty())
+		{
+			return boostComList[0];
+		}
+
+		return _base.SetComponent<T>();
+	}
+
 public:
 
 protected:

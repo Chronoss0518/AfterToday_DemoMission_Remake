@@ -17,6 +17,10 @@
 #define FPS 60
 #define DEBUG_FLG 1
 
+#ifndef PARTS_DIRECTORY
+#define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
+#endif
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Gameƒƒ\ƒbƒh
@@ -177,7 +181,8 @@ void GameFrame::LoadMechas()
 
 	mecha->SetComponent<PlayerController>();
 
-	mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+	mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -314,6 +319,8 @@ void GameFrame::DrawFunction()
 	Render2D();
 
 	ChD3D11::Shader11().DrawEnd();
+
+	mechaList.ObjectDrawEnd();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
