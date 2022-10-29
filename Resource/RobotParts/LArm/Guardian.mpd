@@ -1,0 +1,6 @@
+Resource/XFile/RobotsParts/LArm/Guardian.x
+2.000000
+2.000000
+HaveLeftWeaponPos:{
+LeftArm_WeaponPos
+}
