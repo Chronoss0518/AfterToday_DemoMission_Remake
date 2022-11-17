@@ -5,4 +5,8 @@ Resource/RobotParts/Foot/Air.mpd
 Resource/RobotParts/LArm/Air.mpd
 Resource/RobotParts/RArm/Air.mpd
 Resource/RobotParts/Boost/Air.mpd
+RightWeapon
+1
 Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd
+LeftWeapon
+0

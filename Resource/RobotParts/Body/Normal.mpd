@@ -2,8 +2,8 @@ Resource/XFile/RobotsParts/Body/Normal.x
 1.000000
 1.000000
 EnelgyTank:{
-300
-5
+1000
+20
 }
 HeadPos:{
 Armature_HeadPos
