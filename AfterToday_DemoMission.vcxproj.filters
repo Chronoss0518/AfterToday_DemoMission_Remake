@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="FunctionComponent">
+      <UniqueIdentifier>{640e7351-2299-44ff-9206-eb641e8c09c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PhysicsLibrary">
+      <UniqueIdentifier>{5c3f3a0d-cec2-41ed-80ab-5adbab042eaa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\AllStruct.h">
@@ -42,6 +48,63 @@
     <ClInclude Include="Src\Bullet\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\GameScript\GameScript.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\CaneraObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Application.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\WeaponObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGameLoop.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponent.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponents.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\FunctionComponent.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\MoveComponent.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\PhysicsMachine.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\Physics_Gravity.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\Physics_MaterialPower.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\Physics_AirPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\Physics_WaterPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\Physics_GroundPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponent.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h">
+      <Filter>FunctionComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\CloudObj\CloudObj.cpp">
@@ -67,6 +130,54 @@
     </ClCompile>
     <ClCompile Include="Src\Bullet\Bullet.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameScript\GameScript.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\ControllerBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\CameraObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Application.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\WeaponObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\BoostComponent.cpp">
+      <Filter>FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\FunctionComponent.cpp">
+      <Filter>FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\MoveComponent.cpp">
+      <Filter>FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\PhysicsMachine.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\Physics_Gravity.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\Physics_MaterialPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\Physics_AirPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\Physics_WaterPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\Physics_GroundPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\WeaponComponent.cpp">
+      <Filter>FunctionComponent</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

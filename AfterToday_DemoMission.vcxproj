@@ -20,24 +20,59 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\AllStruct.h" />
+    <ClInclude Include="Src\Application\Application.h" />
     <ClInclude Include="Src\BaseIncluder.h" />
     <ClInclude Include="Src\BaseMecha\BaseMecha.h" />
+    <ClInclude Include="Src\BaseMecha\CaneraObject.h" />
+    <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponent.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponents.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\FunctionComponent.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\MoveComponent.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponent.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h" />
     <ClInclude Include="Src\BaseMecha\MechaParts.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsObject.h" />
+    <ClInclude Include="Src\BaseMecha\WeaponObject.h" />
     <ClInclude Include="Src\Bullet\Bullet.h" />
     <ClInclude Include="Src\CloudObj\CloudObj.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
     <ClInclude Include="Src\Frames\TitleFrame.h" />
     <ClInclude Include="Src\GameFrameScript\GameFrameScript.h" />
+    <ClInclude Include="Src\GameScript\GameScript.h" />
+    <ClInclude Include="Src\Physics\PhysicsMachine.h" />
+    <ClInclude Include="Src\Physics\Physics_AirPower.h" />
+    <ClInclude Include="Src\Physics\Physics_Gravity.h" />
+    <ClInclude Include="Src\Physics\Physics_GroundPower.h" />
+    <ClInclude Include="Src\Physics\Physics_MaterialPower.h" />
+    <ClInclude Include="Src\Physics\Physics_WaterPower.h" />
+    <ClInclude Include="TestGameLoop.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\BaseMecha\BaseMecha.cpp" />
+    <ClCompile Include="Src\BaseMecha\CameraObject.cpp" />
+    <ClCompile Include="Src\BaseMecha\Controller\ControllerBase.cpp" />
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\BoostComponent.cpp" />
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\FunctionComponent.cpp" />
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\MoveComponent.cpp" />
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\WeaponComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp" />
+    <ClCompile Include="Src\BaseMecha\WeaponObject.cpp" />
     <ClCompile Include="Src\Bullet\Bullet.cpp" />
     <ClCompile Include="Src\CloudObj\CloudObj.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
     <ClCompile Include="Src\Frames\TitleFrame.cpp" />
     <ClCompile Include="Src\GameFrameScript\GameFrameScript.cpp" />
+    <ClCompile Include="Src\GameScript\GameScript.cpp" />
+    <ClCompile Include="Src\Physics\PhysicsMachine.cpp" />
+    <ClCompile Include="Src\Physics\Physics_AirPower.cpp" />
+    <ClCompile Include="Src\Physics\Physics_Gravity.cpp" />
+    <ClCompile Include="Src\Physics\Physics_GroundPower.cpp" />
+    <ClCompile Include="Src\Physics\Physics_MaterialPower.cpp" />
+    <ClCompile Include="Src\Physics\Physics_WaterPower.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -92,11 +127,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
