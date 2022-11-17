@@ -26,8 +26,6 @@ public://Serialize Deserialize//
 
 	static void LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
-	static void LoadWeaponParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
-
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
 	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text);
@@ -81,16 +79,6 @@ private:
 	constexpr static const char* GetHardnessTag() { return "Hardness:\n"; }
 
 	constexpr static const char* GetMassTag() { return "Mass:\n"; }
-
-};
-
-class WeaponParts :public MechaParts
-{
-public:
-
-	void SetPartsParameter(BaseMecha& _base)override;
-
-	//ChStd::Bool SetPosition(BaseMecha& _base, WeaponObject& _obj,unsigned char _weaponType);
 
 };
 

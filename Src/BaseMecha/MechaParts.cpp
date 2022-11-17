@@ -56,26 +56,10 @@ void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::s
 
 	loadPartss[_fileName] = mechaParts;
 
-}
-
-void MechaParts::LoadWeaponParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
-{
-	auto&& loadPartss = LoadPartsList();
-	auto it = loadPartss.find(_fileName);
-	if (it != loadPartss.end())
-	{
-		(*it).second->SetParameters(_base);
-		return;
-	}
-
-	auto mechaParts = ChPtr::Make_S<WeaponParts>();
-	mechaParts->Load(_base, _device, _fileName);
-
-	if (mechaParts->GetThisFileName().empty())return;
-
-	loadPartss[_fileName] = mechaParts;
+	mechaParts->SetParameters(_base);
 
 }
+
 
 void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
 {
@@ -133,7 +117,6 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		i = CreateDatas(_base,textObject, i);
 	}
 
-	SetPartsParameter(_base);
 }
 
 
@@ -147,7 +130,6 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	if (createFunction == createFunctions.end())return _linePos + 1;
 	auto parts = (*createFunction).second(*this);
 	unsigned long linePos = parts->Deserialize(_textObject,_linePos + 1);
-	parts->SetPartsParameter(_base);
 	return linePos;
 }
 
@@ -264,26 +246,6 @@ std::string MechaParts::Serialize()
 	}
 
 	return res;
-}
-
-void WeaponParts::SetPartsParameter(BaseMecha& _base)
-{
-
-	auto partsObject = ChPtr::Make_S<WeaponObject>();
-
-	partsObject->baseParts = this;
-
-	if (SetPosition(_base, *partsObject))
-	{
-		this->GetMesh().SetFrameTransform(ChLMat());
-	}
-
-	_base.AddMechaParts(partsObject);
-
-	_base.AddMass(GetMass());
-
-	_base.SetGroundHeight(GetGroundHeight());
-
 }
 
 unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
