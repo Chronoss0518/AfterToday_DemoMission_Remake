@@ -16,11 +16,17 @@ public:
 
 	inline bool IsPushFlg(InputName _name) { return target->inputFlgs.GetBitFlg(ChStd::EnumCast(_name)); }
 
+	bool IsGround();
+
 public:
 
 	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->AddMoveVector(_moveVecAdd); }
 	
 	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->AddRotateVector(_rotateVecAdd); }
+
+public:
+
+	inline void SubNowEnelgy(unsigned long _use) { target->nowEnelgy -= (target->nowEnelgy - _use) > 0 ? _use : target->nowEnelgy; }
 
 public:
 

@@ -18,21 +18,6 @@ private:
 
 	void UpdateFunction();
 
-	enum class Mesh :ChStd::DataNo
-	{
-		MSD
-		, Desk
-		, Room
-	};
-
-	enum class Tex :ChStd::DataNo
-	{
-		Title1
-		, Title2
-		, TitleName
-		, Push_Space
-	};
-
 	unsigned char BackCol;
 	const unsigned char MoveCol = 5;
 	ChStd::Bool UpDownFlg = false;
@@ -40,13 +25,13 @@ private:
 	unsigned char DeviceTexChenge = 0;
 	unsigned char ChengeCount = 20;
 
-	ChCpp::ChScCon Script;
+	ChCpp::ChScCon script;
 
 	//ChAnimationObject9 Animations;
 
-	ChPtr::Shared<ChD3D11::Mesh11> msd = nullptr;
-	ChPtr::Shared<ChD3D11::Mesh11> desk = nullptr;
-	ChPtr::Shared<ChD3D11::Mesh11> room = nullptr;
+	ChPtr::Shared<ChD3D11::Mesh11> msd = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11> desk = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11> room = ChPtr::Make_S<ChD3D11::Mesh11>();
 
 	ChD3D11::Texture11 title_name;
 	ChD3D11::Texture11 title;
@@ -55,12 +40,16 @@ private:
 	ChD3D11::Texture11 blackTex;
 	float blendPow = 0;
 
+	ChLMat startAniMatrix;
+	ChLMat endAniMatrix;
+	float animationTime = 0.0f;
+	const float animationSpeed = 1.0f / 60.0f * 5;
 
 	ChPtr::Shared<ChD3D11::RenderTarget11> renderTarget = ChPtr::Make_S<ChD3D11::RenderTarget11>();
 
-	ChGame::Camera Cam;
+	//ChGame::Camera Cam;
 
-	ChPtr::Shared<ChD3D11::CB::CBLight11> Light;
+	ChD3D11::CB::CBLight11 light;
 
-
+	ChVec2 mousePos;
 };

@@ -6,7 +6,7 @@ class MoveComponent :public FunctionComponent
 {
 public:
 
-	void UpdateEnd()override;
+	void Update()override;
 
 public:
 

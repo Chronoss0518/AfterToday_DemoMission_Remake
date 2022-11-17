@@ -6,7 +6,7 @@ class BoostComponent:public FunctionComponent
 {
 public:
 
-	void UpdateEnd()override;
+	void Update()override;
 
 	void Move()override;
 

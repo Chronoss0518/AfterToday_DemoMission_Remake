@@ -28,7 +28,6 @@ private:
 
 	struct CloudObject
 	{
-
 		float scl = 1.0f;
 		ChVec3 pos;
 	};

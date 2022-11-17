@@ -2,11 +2,11 @@
 
 #include"Physics_Gravity.h"
 
-class Physics_MaterialPower :public Physics_Gravity
+class Physics_MaterialPower :public PhysicsFunction
 {
 public:
 
-	void Update()override;
+	void AddMove()override final;
 
 	virtual void Test() = 0;
 
@@ -14,8 +14,14 @@ public:
 
 	virtual void AddPower() = 0;
 
+	void AddRegist()override final;
+
+	virtual void AddMoveRegist() = 0;
+
+	virtual void AddRotateRegist() = 0;
+
 private:
 
-	float mass = 0.0f;
+
 
 };

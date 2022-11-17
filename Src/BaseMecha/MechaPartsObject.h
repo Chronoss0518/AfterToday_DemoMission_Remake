@@ -20,7 +20,7 @@ public:
 
 public:
 
-	void Draw(MeshDrawer& _meshDrawer,const ChLMat& _drawMat);
+	virtual void Draw(MeshDrawer& _meshDrawer,const ChLMat& _drawMat);
 
 public:
 
@@ -29,6 +29,8 @@ public:
 protected:
 
 	MechaParts* baseParts;
+
+	ChLMat lastDrawMat;
 
 private:
 

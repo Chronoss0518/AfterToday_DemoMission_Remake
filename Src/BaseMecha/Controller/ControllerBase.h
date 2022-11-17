@@ -21,7 +21,7 @@ public:
 
 	void Init()override;
 
-	void Update()override;
+	void UpdateBegin()override;
 
 	void XInputUpdate();
 

@@ -4,7 +4,6 @@
 
 #include"../Bullet/Bullet.h"
 #include"MechaPartsObject.h"
-#include"BaseMecha.h"
 #include"MechaParts.h"
 
 void MechaPartsObject::Draw(MeshDrawer& _meshDrawer, const ChLMat& _drawMat)
@@ -24,4 +23,6 @@ void MechaPartsObject::Draw(MeshDrawer& _meshDrawer, const ChLMat& _drawMat)
 	drawMat = _drawMat;
 
 	_meshDrawer.drawer.Draw(_meshDrawer.dc, mesh, drawMat);
+
+	//lastDrawMat = positionObject->GetDrawLHandMatrix();
 }

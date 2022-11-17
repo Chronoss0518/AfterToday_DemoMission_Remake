@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include"Physics_MaterialPower.h"
 
@@ -11,5 +12,10 @@ public:
 	void CreateMap()override;
 
 	void AddPower()override;
-	
+
+	void AddMoveRegist()override;
+
+	void AddRotateRegist()override;
+
+
 };

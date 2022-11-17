@@ -6,6 +6,7 @@ class CameraObject;
 class WeaponObject;
 class FunctionComponent;
 
+class PhysicsMachine;
 
 class BaseMecha :public ChCpp::BaseObject
 {
@@ -24,8 +25,9 @@ public://Inner Struct Class Enum//
 		CameraUpRotation, CameraDownRotation, CameraLeftRotation, CameraRightRotation,
 		Avo, FrontAvo, BackAvo, LeftAvo, RightAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, LeftBoost, RightBoost, UpBoost, DownBoost,
-		Attack, RAttack, LAttack, MSChange,
-		Reload, RReload, LReload,
+		Attack, RAttack, LAttack, 
+		MSChange, RMSChange, LMSChange,
+		Reload, RReload, LReload, CReload,
 		WeaponChange, LWChange, RWChange,
 		MagnificationUp, MagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
@@ -90,7 +92,7 @@ public:
 
 	inline void AddLeftWeappon(ChPtr::Shared<WeaponObject> _weapon)
 	{
-		leftWeapom.weapon.push_back(_weapon); 
+		leftWeapon.weapon.push_back(_weapon); 
 	}
 
 	inline void AddRightWeappon(ChPtr::Shared<WeaponObject> _weapon)
@@ -153,6 +155,8 @@ public://Set Function//
 		inputFlgs.SetBitTrue(ChStd::EnumCast(_inputFlgName));
 	}
 
+	void SetGroundHeight(const float _height);
+
 public://Get Function//
 
 	inline ChVec3 GetPosition() { return pos; }
@@ -212,6 +216,7 @@ protected:
 	ChVec3 rotateVec;
 	ChVec3 moveVec;//ˆÚ“®—Í//
 
+	ChPtr::Shared<PhysicsMachine>physics = ChPtr::Make_S<PhysicsMachine>();
 
 	float mass = 1.0f;
 
@@ -238,7 +243,7 @@ protected:
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;
 
 	WeaponData rightWeapon;
-	WeaponData leftWeapom;
+	WeaponData leftWeapon;
 
 	std::string mechaName = "";
 

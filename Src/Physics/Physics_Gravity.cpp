@@ -3,7 +3,7 @@
 
 #include"Physics_Gravity.h"
 
-void Physics_Gravity::Update()
+void Physics_Gravity::AddMove()
 {
-	nowPower += acceleration;
+	AddMovePowerVector(ChVec3(0.0f, -(GetGravityAcceleration() * GetMass())/ GetFPS(), 0.0f));
 }

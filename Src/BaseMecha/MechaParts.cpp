@@ -4,6 +4,7 @@
 #include"../Bullet/Bullet.h"
 #include"CaneraObject.h"
 #include"MechaPartsObject.h"
+#include"WeaponObject.h"
 #include"BaseMecha.h"
 #include"MechaParts.h"
 #include"FunctionComponent/BoostComponents.h"
@@ -57,6 +58,25 @@ void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::s
 
 }
 
+void MechaParts::LoadWeaponParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+{
+	auto&& loadPartss = LoadPartsList();
+	auto it = loadPartss.find(_fileName);
+	if (it != loadPartss.end())
+	{
+		(*it).second->SetParameters(_base);
+		return;
+	}
+
+	auto mechaParts = ChPtr::Make_S<WeaponParts>();
+	mechaParts->Load(_base, _device, _fileName);
+
+	if (mechaParts->GetThisFileName().empty())return;
+
+	loadPartss[_fileName] = mechaParts;
+
+}
+
 void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
 {
 	std::string text = "";
@@ -88,6 +108,21 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		model->Init(_device);
 		std::string tmp = textObject.GetTextLine(0);
 		loader.CreateModel(model, tmp);
+		if (thisFileName.find("Foot/") != thisFileName.find("Body/"))
+		{
+			for (auto&& child : model->GetAllChildlen<ChCpp::FrameObject>())
+			{
+				auto childObj = child.lock();
+				if (childObj == nullptr)continue;
+				auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
+				if (frameCom == nullptr)continue;
+
+				childObj->UpdateAllDrawTransform();
+				float test = childObj->GetDrawLHandMatrix().Transform(frameCom->minPos).y;
+				if (groundHeight < test)continue;
+				groundHeight = test;
+			}
+		}
 	}
 
 	hardness = static_cast<float>(std::atof(textObject.GetTextLine(1).c_str()));
@@ -141,6 +176,9 @@ void MechaParts::SetPartsParameter(BaseMecha& _base)
 	_base.AddMechaParts(partsObject);
 	
 	_base.AddMass(mass);
+
+	_base.SetGroundHeight(groundHeight);
+
 }
 
 ChStd::Bool MechaParts::SetPosition(BaseMecha& _base, MechaPartsObject& _obj)
@@ -226,6 +264,26 @@ std::string MechaParts::Serialize()
 	}
 
 	return res;
+}
+
+void WeaponParts::SetPartsParameter(BaseMecha& _base)
+{
+
+	auto partsObject = ChPtr::Make_S<WeaponObject>();
+
+	partsObject->baseParts = this;
+
+	if (SetPosition(_base, *partsObject))
+	{
+		this->GetMesh().SetFrameTransform(ChLMat());
+	}
+
+	_base.AddMechaParts(partsObject);
+
+	_base.AddMass(GetMass());
+
+	_base.SetGroundHeight(GetGroundHeight());
+
 }
 
 unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -560,7 +618,59 @@ void DownBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Frame
 	com->AddBoost(_boostObject);
 }
 
-void WeaponPosBase::SetPartsParameter(BaseMecha& _base)
+void HaveRightWeaponPos::SetPartsParameter(BaseMecha& _base)
 {
 
+	auto target = LookObj<MechaParts>();
+
+	if (ChPtr::NullCheck(target))return;
+
+	auto&& posObjects = target->GetMesh().GetAllChildlenForName<ChCpp::FrameObject>(nextPosName);
+
+	if (posObjects.empty())return;
+
+	ChPtr::Shared<ChCpp::FrameObject> posObject = posObjects[0].lock();
+
+	if (posObject == nullptr)return;
+
+	_base.AddWeaponPos(posObject, BaseMecha::PartsPosNames::RWeapons);
+
 }
+
+void HaveLeftWeaponPos::SetPartsParameter(BaseMecha& _base)
+{
+
+	auto target = LookObj<MechaParts>();
+
+	if (ChPtr::NullCheck(target))return;
+
+	auto&& posObjects = target->GetMesh().GetAllChildlenForName<ChCpp::FrameObject>(nextPosName);
+
+	if (posObjects.empty())return;
+
+	ChPtr::Shared<ChCpp::FrameObject> posObject = posObjects[0].lock();
+
+	if (posObject == nullptr)return;
+
+	_base.AddWeaponPos(posObject, BaseMecha::PartsPosNames::LWeapons);
+}
+
+
+void ShotPos::SetPartsParameter(BaseMecha& _base)
+{
+
+	auto target = LookObj<MechaParts>();
+
+	if (ChPtr::NullCheck(target))return;
+
+	auto&& posObjects = target->GetMesh().GetAllChildlenForName<ChCpp::FrameObject>(nextPosName);
+
+	if (posObjects.empty())return;
+
+	ChPtr::Shared<ChCpp::FrameObject> posObject = posObjects[0].lock();
+
+	if (posObject == nullptr)return;
+
+	_base.AddWeaponPos(posObject, BaseMecha::PartsPosNames::LWeapons);
+}
+

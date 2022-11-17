@@ -12,8 +12,8 @@ public:
 
 	void AddPower()override;
 
-private:
+	void AddMoveRegist()override;
 
-	float waterHeifht = 0.0f;
+	void AddRotateRegist()override;
 
 };

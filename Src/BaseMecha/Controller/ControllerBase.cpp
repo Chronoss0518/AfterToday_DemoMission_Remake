@@ -15,7 +15,6 @@ void ControllerBase::Input(const InputName _inputFlgName)
 
 }
 
-
 void PlayerController::Init()
 {
 	keyTypes[VK_SPACE] = InputName::Jump;
@@ -60,7 +59,7 @@ void PlayerController::Init()
 
 }
 
-void PlayerController::Update()
+void PlayerController::UpdateBegin()
 {
 	auto targetMecha = LookObj<BaseMecha>();
 	if (ChPtr::NullCheck(targetMecha))

@@ -6,7 +6,7 @@
 #include"BoostComponent.h"
 #include"BoostComponents.h"
 
-void BoostComponent::UpdateEnd()
+void BoostComponent::Update()
 {
 
 	ChLMat tmp;
@@ -22,13 +22,17 @@ void BoostComponent::UpdateEnd()
 void BoostComponent::Move()
 {
 
+	unsigned long fps = ChSystem::SysManager().GetFPS();
+
 	boostRotation += 5;
 	boostRotation = boostRotation < 360.0f ? boostRotation : boostRotation - 360.0f;
 
 	if (avoidUseFlg && avoidStartFlg)
 	{
+		SubNowEnelgy(useAvoidEnelgy);
+
 		avoidStartFlg = false;
-		nowBoostPow = 1.0f;
+		nowBoostPow = 3.0f;
 		boostUseFlg = false;
 	}
 	else if (boostStartFlg == boostUseFlg)
@@ -39,6 +43,8 @@ void BoostComponent::Move()
 
 	if (boostUseFlg)
 	{
+		SubNowEnelgy(useBoostEnelgy);
+
 		float tmp = 1.0f - nowBoostPow;
 		nowBoostPow += tmp * tmp * 0.1f;
 		nowBoostPow = nowBoostPow > 1.0f ? 1.0f : nowBoostPow;
@@ -72,7 +78,10 @@ void BoostComponent::UpdateBoost(const ChLMat& _nowTargetPoster)
 
 	boostUseFlg = true;
 
-	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * boostPow);
+	unsigned long fps = ChSystem::SysManager().GetFPS();
+
+	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * boostPow / fps);
+
 }
 
 void BoostComponent::DrawEnd()
@@ -113,5 +122,8 @@ void BoostComponent::UpdateAvoid(const ChLMat& _nowTargetPoster)
 	avoidUseFlg = true;
 	avoidStartFlg = true;
 
-	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * avoidPow);
+	unsigned long fps = ChSystem::SysManager().GetFPS();
+
+	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * avoidPow / fps);
+
 }

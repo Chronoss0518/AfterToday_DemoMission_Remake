@@ -6,9 +6,12 @@
 #include"../Bullet/Bullet.h"
 #include"MechaParts.h"
 #include"MechaPartsObject.h"
+#include"WeaponObject.h"
 #include"BaseMecha.h"
+#include"../Physics/PhysicsMachine.h"
 
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
+
 
 BaseMecha::BaseMecha()
 {
@@ -27,6 +30,7 @@ void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer)
 {
 	viewSize = _viewSize;
 	drawer = &_drawer;
+	physics->Init();
 }
 
 void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
@@ -49,8 +53,22 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 		LoadParts(_device, textObject.GetTextLine(i + 1));
 	}
 
-	nowEnelgy = maxEnelgy;
+	unsigned long rWeaponCount = std::atol(textObject.GetTextLine(count + 1).c_str());
 
+	for (unsigned long i = 0; i < rWeaponCount; i++)
+	{
+		LoadParts(_device, textObject.GetTextLine(i + count + 2));
+	}
+
+	unsigned long lWeaponCount = std::atol(textObject.GetTextLine(count + rWeaponCount + 2).c_str());
+
+	for (unsigned long i = 0; i < lWeaponCount; i++)
+	{
+		LoadParts(_device, textObject.GetTextLine(i + count + rWeaponCount + 3));
+	}
+
+	nowEnelgy = maxEnelgy;
+	physics->SetMass(mass);
 }
 
 void BaseMecha::LoadParts(ID3D11Device* _device, const std::string& _fileName)
@@ -64,6 +82,18 @@ void BaseMecha::Save(const std::string& _fileName)
 	res += std::to_string(mechaParts.size()) + "\n";
 
 	for (auto&& parts : mechaParts)
+	{
+		res += parts->GetBaseObject()->GetThisFileName() + "\n";
+	}
+	res += "RightWeapon\n";
+	res += std::to_string(rightWeapon.weapon.size()) + "\n";
+	for (auto&& parts : rightWeapon.weapon)
+	{
+		res += parts->GetBaseObject()->GetThisFileName() + "\n";
+	}
+	res += "LeftWeapon\n";
+	res += std::to_string(leftWeapon.weapon.size()) + "\n";
+	for (auto&& parts : leftWeapon.weapon)
 	{
 		res += parts->GetBaseObject()->GetThisFileName() + "\n";
 	}
@@ -82,7 +112,11 @@ void BaseMecha::Release()
 
 void BaseMecha::UpdateEnd()
 {
+	unsigned long fps = ChSystem::SysManager().GetFPS();
 
+	nowEnelgy += (chargeEnelgy * (120 / fps));
+
+	nowEnelgy = nowEnelgy > maxEnelgy ? maxEnelgy : nowEnelgy;
 }
 
 void BaseMecha::Move()
@@ -99,8 +133,8 @@ void BaseMecha::Move()
 
 		tmpMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
 		tmpMat.SetPosition(pos + ChVec3(0.0f, 5.0f, 0.0f));
-		auto lookPos = tmpMat.Transform(ChVec3(0.0f, -5.0f, 5.0f));
-		auto camPos = tmpMat.Transform(ChVec3(0.0f, 0.0f,-10.0f));
+		auto lookPos = tmpMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
+		auto camPos = tmpMat.Transform(ChVec3(0.0f, 0.0f,-15.0f));
 
 		camMat.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
 	}
@@ -111,12 +145,19 @@ void BaseMecha::Move()
 
 void BaseMecha::BaseMove()
 {
+	physics->SetPosition(pos);
+	physics->SetRotation(rot);
+	physics->SetAddMovePowerVector(moveVec);
+	physics->SetAddRotatePowerVector(rotateVec);
+	physics->Update();
+	moveVec = physics->GetAddMovePowerVector();
+	rotateVec = physics->GetAddRotatePowerVector();
 
 	pos += moveVec;
+	
 	rot -= rotateVec;
 
-	moveVec *= 0.9f;
-	rotateVec *= 0.5f;
+
 }
 
 void BaseMecha::Draw2D()
@@ -148,4 +189,11 @@ void BaseMecha::Deserialize(const std::string& _fileName)
 std::string BaseMecha::Serialize()
 {
 	return "";
+}
+
+void BaseMecha::SetGroundHeight(const float _height)
+{
+	if (physics->GetGroundHeight() < _height)return;
+
+	physics->SetGroundHeight(_height);
 }

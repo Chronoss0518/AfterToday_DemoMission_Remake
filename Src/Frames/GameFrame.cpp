@@ -9,12 +9,13 @@
 #include"../BaseMecha/Controller/ControllerBase.h"
 
 #include"../CloudObj/CloudObj.h"
+#include"../Physics/PhysicsMachine.h"
 
 #define PLAYER_MECHA_FILE_NAME ""
 
 #define GAME_WINDOW_WITDH 3840
 #define GAME_WINDOW_HEIGHT 2160
-#define FPS 60
+#define BASE_FPS 60
 #define DEBUG_FLG 1
 
 #ifndef PARTS_DIRECTORY
@@ -93,7 +94,14 @@ void GameFrame::Init()
 	
 	//InitScriptFunction();
 
-	ChSystem::SysManager().SetFPS(FPS);
+	ChSystem::SysManager().SetFPS(BASE_FPS);
+
+	PhysicsMachine::SetFPS(BASE_FPS);
+	PhysicsMachine::SetGravityAcceleration(9.8f);
+	PhysicsMachine::SetAirRegist(0.1f);
+
+
+	
 
 	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 
@@ -175,13 +183,34 @@ void GameFrame::LoadScript(const std::string& _text)
 
 void GameFrame::LoadMechas()
 {
-	auto&& mecha = mechaList.SetObject<BaseMecha>("player");
+	{
 
-	mecha->Create(windSize, meshDrawer);
+		auto&& mecha = mechaList.SetObject<BaseMecha>("enemyTest");
 
-	mecha->SetComponent<PlayerController>();
+		mecha->Create(windSize, meshDrawer);
 
-	mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		//mecha->SetComponent<PlayerController>();
+
+		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
+	}
+
+	{
+
+		auto&& mecha = mechaList.SetObject<BaseMecha>("player");
+
+		mecha->Create(windSize, meshDrawer);
+
+		mecha->SetComponent<PlayerController>();
+
+		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+		mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
+
+	}
 
 }
 
@@ -207,6 +236,33 @@ void GameFrame::LoadMaps()
 	}
 	map.push_back(mainMap);
 
+	ChMat_11 mapSizeMatrix;
+	mapSizeMatrix.SetScaleSize(ChVec3(100.0f));
+	mapSizeMatrix.SetPosition(ChVec3(0.0f, 10.0f, 0.0f));
+	for (auto mapModel : map)
+	{
+		ChVec3 fieldSize;
+
+		for (auto&& child : mapModel->GetAllChildlen<ChCpp::FrameObject>())
+		{
+			auto childObj = child.lock();
+			if (childObj == nullptr)continue;
+			auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
+			if (frameCom == nullptr)continue;
+			childObj->UpdateAllDrawTransform();
+			ChLMat tmpMat = childObj->GetDrawLHandMatrix() * mapSizeMatrix;
+			ChVec3 tmp = tmpMat.TransformCoord(frameCom->boxSize);
+			fieldSize = fieldSize.x > tmp.x ? fieldSize.x : tmp.x;
+			fieldSize = fieldSize.y > tmp.y ? fieldSize.y : tmp.y;
+			fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
+		}
+
+		PhysicsMachine::AddField(mapModel, mapSizeMatrix);
+		PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
+	}
+
+	return;
+
 	auto subMap = ChPtr::Make_S<ChD3D11::Mesh11>();
 	subMap->Init(ChD3D11::D3D11Device());
 	{
@@ -214,6 +270,7 @@ void GameFrame::LoadMaps()
 		loader.CreateModel(subMap, MESH_DIRECTORY("TestField2.x"));
 	}
 	map.push_back(subMap);
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -335,8 +392,8 @@ void GameFrame::Render3D(void)
 
 
 	ChMat_11 mapSizeMatrix;
-	mapSizeMatrix.SetPosition(ChVec3(0.0f, -10.0f, 0.0f));
 	mapSizeMatrix.SetScaleSize(ChVec3(100.0f));
+	mapSizeMatrix.SetPosition(ChVec3(0.0f, 10.0f, 0.0f));
 	for (auto mapModel : map)
 	{
 		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel, mapSizeMatrix);

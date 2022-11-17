@@ -5,7 +5,7 @@
 
 #include"MoveComponent.h"
 
-void MoveComponent::UpdateEnd()
+void MoveComponent::Update()
 {
 	ChLMat tmp;
 
@@ -19,6 +19,7 @@ void MoveComponent::UpdateEnd()
 
 	RotateUpdate(InputName::LeftRotation, ChVec3(0.0f, -1.0f, 0.0f));
 	RotateUpdate(InputName::RightRotation, ChVec3(0.0f, 1.0f, 0.0f));
+
 }
 
 void MoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
@@ -30,14 +31,19 @@ void MoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, I
 
 	else if (IsPushFlg(InputName::Boost)) SetPushFlg(_boost);
 
-	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow);
+	if (!IsGround())return;
+
+	unsigned long fps = ChSystem::SysManager().GetFPS();
+
+	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow / fps);
 
 }
 
 void MoveComponent::RotateUpdate(InputName _input, const ChVec3& _direction)
 {
-
 	if (!IsPushFlg(_input))return;
 
-	AddRotateVector(_direction * rotatePow);
+	unsigned long fps = ChSystem::SysManager().GetFPS();
+
+	AddRotateVector(_direction * rotatePow / fps);
 }

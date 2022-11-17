@@ -6,14 +6,14 @@ class Physics_AirPower :public Physics_MaterialPower
 {
 public:
 
-	void Update()override;
+	void Test()override;
 
-	virtual void Test();
+	void CreateMap()override;
 
-	virtual void CreateMap();
+	void AddPower()override;
 
-	virtual void AddPower();
+	void AddMoveRegist()override;
 
-private:
+	void AddRotateRegist()override;
 
 };

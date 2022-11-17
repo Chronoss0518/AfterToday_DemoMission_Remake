@@ -6,6 +6,7 @@ class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
 class PartsDataBase;
+class WeaponObject;
 
 class MechaParts :public ChCpp::BaseObject
 {
@@ -25,6 +26,8 @@ public://Serialize Deserialize//
 
 	static void LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
+	static void LoadWeaponParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
+
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
 	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text);
@@ -37,7 +40,7 @@ public://Set Functions//
 
 	void SetParameters(BaseMecha& _base);
 
-	void SetPartsParameter(BaseMecha& _base);
+	virtual void SetPartsParameter(BaseMecha& _base);
 
 	void SetHardness(const float _hardness) { hardness = _hardness; }
 
@@ -50,6 +53,8 @@ public://Get Function//
 	inline float GetHardness() { return hardness; }
 
 	inline float GetMass() { return mass; }
+
+	inline float GetGroundHeight() { return groundHeight; }
 
 	inline ChD3D11::Mesh11& GetMesh() { return *model; }
 
@@ -65,6 +70,8 @@ private:
 
 	std::string thisFileName = "";
 
+	float groundHeight = 0.0f;
+
 	ChPtr::Shared<ChD3D11::Mesh11>model = ChPtr::Make_S<ChD3D11::Mesh11>();
 
 	static std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
@@ -74,6 +81,16 @@ private:
 	constexpr static const char* GetHardnessTag() { return "Hardness:\n"; }
 
 	constexpr static const char* GetMassTag() { return "Mass:\n"; }
+
+};
+
+class WeaponParts :public MechaParts
+{
+public:
+
+	void SetPartsParameter(BaseMecha& _base)override;
+
+	//ChStd::Bool SetPosition(BaseMecha& _base, WeaponObject& _obj,unsigned char _weaponType);
 
 };
 
@@ -596,8 +613,6 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
-
 	inline void SetParamName(const std::string& _objectName)
 	{
 		nextPosName = _objectName;
@@ -617,6 +632,8 @@ class HaveRightWeaponPos :public WeaponPosBase
 {
 public:
 
+	void SetPartsParameter(BaseMecha& _base)override;
+
 public://Get Functions//
 
 	std::string GetPartsTypeTag()override { return "HaveRightWeaponPos:"; }
@@ -627,6 +644,8 @@ class HaveLeftWeaponPos :public WeaponPosBase
 {
 public:
 
+	void SetPartsParameter(BaseMecha& _base)override;
+
 public://Get Functions//
 
 	std::string GetPartsTypeTag()override { return "HaveLeftWeaponPos:"; }
@@ -636,6 +655,8 @@ public://Get Functions//
 class ShotPos :public WeaponPosBase
 {
 public:
+
+	void SetPartsParameter(BaseMecha& _base)override;
 
 public://Get Functions//
 
