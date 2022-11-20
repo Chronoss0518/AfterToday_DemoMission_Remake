@@ -5,7 +5,6 @@
 #include"CaneraObject.h"
 #include"MechaPartsObject.h"
 #include"WeaponObject.h"
-#include"BaseMecha.h"
 #include"MechaParts.h"
 #include"FunctionComponent/BoostComponents.h"
 #include"FunctionComponent/MoveComponent.h"
@@ -38,14 +37,14 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	{"ShotPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ShotPos>(); }},
 };
 
-void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName, BaseMecha::PartsPosNames _name)
 {
 
 	auto&& loadPartss = LoadPartsList();
 	auto it = loadPartss.find(_fileName);
 	if (it != loadPartss.end())
 	{
-		(*it).second->SetParameters(_base);
+		(*it).second->SetParameters(_base, _name);
 		return;
 	}
 
@@ -56,7 +55,7 @@ void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::s
 
 	loadPartss[_fileName] = mechaParts;
 
-	mechaParts->SetParameters(_base);
+	mechaParts->SetParameters(_base, _name);
 
 }
 
@@ -133,29 +132,37 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	return linePos;
 }
 
-void MechaParts::SetParameters(BaseMecha& _base)
+void MechaParts::SetParameters(BaseMecha& _base, BaseMecha::PartsPosNames _name)
 {
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
 		com->SetPartsParameter(_base);
 	}
 
-	SetPartsParameter(_base);
+	SetPartsParameter(_base, _name);
 }
 
-void MechaParts::SetPartsParameter(BaseMecha& _base)
+void MechaParts::SetPartsParameter(BaseMecha& _base, BaseMecha::PartsPosNames _name)
 {
+	if (_name == BaseMecha::PartsPosNames::None)return;
 
-	auto partsObject = ChPtr::Make_S<MechaPartsObject>();
+	ChPtr::Shared<MechaPartsObject> partsObject = nullptr;
+	
+	if (_name != BaseMecha::PartsPosNames::RWeapons && _name != BaseMecha::PartsPosNames::LWeapons)
+	{
+		partsObject = ChPtr::Make_S<MechaPartsObject>();
+	}
+	else
+	{
+		partsObject = ChPtr::Make_S<WeaponObject>();
+	}
 
 	partsObject->baseParts = this;
 
-	if (SetPosition(_base, *partsObject))
+	if (SetPosition(_base, partsObject, _name))
 	{
 		this->GetMesh().SetFrameTransform(ChLMat());
 	}
-
-	_base.AddMechaParts(partsObject);
 	
 	_base.AddMass(mass);
 
@@ -163,50 +170,31 @@ void MechaParts::SetPartsParameter(BaseMecha& _base)
 
 }
 
-ChStd::Bool MechaParts::SetPosition(BaseMecha& _base, MechaPartsObject& _obj)
+ChStd::Bool MechaParts::SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, BaseMecha::PartsPosNames _name)
 {
-	unsigned long tmpPos = std::string::npos;
 
-	auto partsType = BaseMecha::PartsPosNames::None;
+	if (_name == BaseMecha::PartsPosNames::None)return false;
 
-	unsigned long testPos = 0;
+	_base.AddMechaParts(_obj, _name);
 
-	testPos = thisFileName.find("Head/");
+	auto mechaPartsPosList = _base.GetMechaPartsPosList(_name);
+	auto mechaPartsList = _base.GetMechaPartsList(_name);
 
-	if(testPos < tmpPos) {
-		partsType = BaseMecha::PartsPosNames::Head;
-		tmpPos = testPos;
+	if (mechaPartsList.size() > mechaPartsPosList.size())return false;
+
+	_obj->SetPositoinObject(mechaPartsPosList[mechaPartsList.size() - 1]);
+
+	if (_name == BaseMecha::PartsPosNames::RWeapons)
+	{
+		auto weapon = ChPtr::SharedSafeCast<WeaponObject>(_obj);
+		_base.AddRightWeappon(weapon);
 	}
-
-	testPos = thisFileName.find("Foot/");
-	if (testPos < tmpPos) {
-		partsType = BaseMecha::PartsPosNames::Foot;
-		tmpPos = testPos;
+	
+	if (_name == BaseMecha::PartsPosNames::LWeapons)
+	{
+		auto weapon = ChPtr::SharedSafeCast<WeaponObject>(_obj);
+		_base.AddLeftWeappon(weapon);
 	}
-
-	testPos = thisFileName.find("RArm/");
-	if (testPos < tmpPos) {
-		partsType = BaseMecha::PartsPosNames::RArm;
-		tmpPos = testPos;
-	}
-
-	testPos = thisFileName.find("LArm/");
-	if (testPos < tmpPos) {
-		partsType = BaseMecha::PartsPosNames::LArm;
-		tmpPos = testPos;
-	}
-
-	testPos = thisFileName.find("Boost/");
-	if (testPos < tmpPos) {
-		partsType = BaseMecha::PartsPosNames::Boost;
-		tmpPos = testPos;
-	}
-
-	if (tmpPos == std::string::npos)return false;
-
-	auto frame = _base.GetPartsPos(partsType);
-
-	_obj.SetPositoinObject(frame);
 
 	return true;
 }
@@ -438,27 +426,27 @@ void NextPosBase::SetPartsParameter(BaseMecha& _base)
 
 void RightArmPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::RArm);
+	_base.AddMechaPartsPos(_targetObject, BaseMecha::PartsPosNames::RArm);
 }
 
 void LeftArmPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::LArm);
+	_base.AddMechaPartsPos(_targetObject, BaseMecha::PartsPosNames::LArm);
 }
 
 void FootPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::Foot);
+	_base.AddMechaPartsPos(_targetObject, BaseMecha::PartsPosNames::Foot);
 }
 
 void HeadPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::Head);
+	_base.AddMechaPartsPos(_targetObject, BaseMecha::PartsPosNames::Head);
 }
 
 void BoostPos::SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	_base.SetPartsPos(_targetObject, BaseMecha::PartsPosNames::Boost);
+	_base.AddMechaPartsPos(_targetObject, BaseMecha::PartsPosNames::Boost);
 }
 
 unsigned long BoostBrust::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -595,7 +583,7 @@ void HaveRightWeaponPos::SetPartsParameter(BaseMecha& _base)
 
 	if (posObject == nullptr)return;
 
-	_base.AddWeaponPos(posObject, BaseMecha::PartsPosNames::RWeapons);
+	_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::RWeapons);
 
 }
 
@@ -614,9 +602,8 @@ void HaveLeftWeaponPos::SetPartsParameter(BaseMecha& _base)
 
 	if (posObject == nullptr)return;
 
-	_base.AddWeaponPos(posObject, BaseMecha::PartsPosNames::LWeapons);
+	_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::LWeapons);
 }
-
 
 void ShotPos::SetPartsParameter(BaseMecha& _base)
 {
@@ -633,6 +620,6 @@ void ShotPos::SetPartsParameter(BaseMecha& _base)
 
 	if (posObject == nullptr)return;
 
-	_base.AddWeaponPos(posObject, BaseMecha::PartsPosNames::LWeapons);
+	//_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::LWeapons);
 }
 

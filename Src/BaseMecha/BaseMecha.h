@@ -42,7 +42,7 @@ public://Inner Struct Class Enum//
 
 	enum class PartsPosNames : unsigned char
 	{
-		Head, RArm, LArm, Foot, Boost, RWeapons, LWeapons, None
+		Body ,Head, Foot, RArm, LArm, Boost, RWeapons, LWeapons, None
 	};
 
 public://Override Functions//
@@ -75,9 +75,11 @@ public:
 
 	void Load(ID3D11Device* _device, const std::string& _fileName);
 
-	void LoadParts(ID3D11Device* _device, const std::string& _fileName);
+	unsigned long LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject, const unsigned long _pos, const BaseMecha::PartsPosNames _name);
 
 	void Save(const std::string& _fileName);
+
+	std::string SavePartsList(const BaseMecha::PartsPosNames _name);
 
 public:
 
@@ -100,9 +102,14 @@ public:
 		rightWeapon.weapon.push_back(_weapon); 
 	}
 
-	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj)
+	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name)
 	{
-		mechaParts.push_back(_obj);
+		mechaParts[ChStd::EnumCast(_name)].push_back(_obj);
+	}
+
+	inline void AddMechaPartsPos(ChPtr::Shared<ChCpp::FrameObject> _posObject, const BaseMecha::PartsPosNames _name)
+	{
+		positions[ChStd::EnumCast(_name)].push_back(_posObject);
 	}
 
 	void AddMass(const float _mass) { mass += _mass; }
@@ -110,15 +117,6 @@ public:
 	void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy += _maxEnelgy; }
 
 	void AddChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy += _chargeEnelgy; }
-
-	inline bool AddWeaponPos(ChPtr::Shared<ChCpp::FrameObject> _posObject, PartsPosNames _name)
-	{
-		if (_name != PartsPosNames::LWeapons && _name != PartsPosNames::RWeapons)return false;
-		unsigned long num = ChStd::EnumCast(_name) - ChStd::EnumCast(PartsPosNames::RWeapons);
-		weaponsPoss[num].push_back(_posObject);
-		return true;
-	}
-
 
 public:
 
@@ -141,14 +139,6 @@ public://Set Function//
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
 	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
-
-	inline void SetPartsPos(ChPtr::Shared<ChCpp::FrameObject> _posObject,PartsPosNames _name)
-	{
-		if (_name == PartsPosNames::None)return;
-		if (AddWeaponPos(_posObject, _name))return;
-
-		positions[ChStd::EnumCast(_name)] = _posObject; 
-	}
 
 	inline void SetPushFlg(const InputName _inputFlgName)
 	{
@@ -173,21 +163,19 @@ public://Get Function//
 		return GetList();
 	}
 
-	inline ChPtr::Shared<ChCpp::FrameObject> GetWeaponPos(PartsPosNames _name)
+	inline std::vector<ChPtr::Shared<MechaPartsObject>> GetMechaPartsList(PartsPosNames _name)
 	{
-		if (_name != PartsPosNames::RWeapons && _name != PartsPosNames::LWeapons)return nullptr;
-		return weaponsPoss[ChStd::EnumCast(_name)][0];
+		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<MechaPartsObject>>();
+
+		return mechaParts[ChStd::EnumCast(_name)];
 	}
 
-	inline ChPtr::Shared<ChCpp::FrameObject> GetPartsPos(PartsPosNames _name)
+	inline std::vector<ChPtr::Shared<ChCpp::FrameObject>> GetMechaPartsPosList(PartsPosNames _name)
 	{
-		if (_name == PartsPosNames::None)return nullptr;
-		ChPtr::Shared<ChCpp::FrameObject> res = GetWeaponPos(_name);
-		if (res == nullptr)
-		{
-			res = positions[ChStd::EnumCast(_name)];
-		}
-		return res;
+		
+		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<ChCpp::FrameObject>>();
+		
+		return positions[ChStd::EnumCast(_name)];
 	}
 
 	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
@@ -233,11 +221,8 @@ protected:
 	
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
-	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts;
-
-	ChPtr::Shared<ChCpp::FrameObject> positions[ChStd::EnumCast(PartsPosNames::None)]{nullptr,nullptr ,nullptr ,nullptr ,nullptr ,nullptr ,nullptr };
-
-	std::vector<ChPtr::Shared<ChCpp::FrameObject>>weaponsPoss[2];
+	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts[ChStd::EnumCast(PartsPosNames::None)];
+	std::vector<ChPtr::Shared<ChCpp::FrameObject>> positions[ChStd::EnumCast(PartsPosNames::None)];
 
 	unsigned long useCameraNo = 0;
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;

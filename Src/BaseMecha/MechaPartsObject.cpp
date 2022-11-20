@@ -9,20 +9,19 @@
 void MechaPartsObject::Draw(MeshDrawer& _meshDrawer, const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
-	ChLMat tmp = ChLMat();
+	lastDrawMat.Identity();
 
 	if (positionObject != nullptr)
 	{
 		positionObject->UpdateAllDrawTransform();
-		tmp = positionObject->GetDrawLHandMatrix();
+		lastDrawMat = positionObject->GetDrawLHandMatrix();
 	}
 
-	mesh.SetOutSizdTransform(tmp);
+	mesh.SetOutSizdTransform(lastDrawMat);
 
 	ChMat_11 drawMat;
 	drawMat = _drawMat;
 
 	_meshDrawer.drawer.Draw(_meshDrawer.dc, mesh, drawMat);
 
-	//lastDrawMat = positionObject->GetDrawLHandMatrix();
 }

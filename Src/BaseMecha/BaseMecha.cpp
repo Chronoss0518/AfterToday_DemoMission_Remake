@@ -12,6 +12,10 @@
 
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
 
+static const std::string partsTypeName[]
+{
+	"Body","Head","Foot","RightArm","LeftArm","Boost","RightWeapon","LeftWeapon"
+};
 
 BaseMecha::BaseMecha()
 {
@@ -46,56 +50,37 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 	ChCpp::TextObject textObject;
 	textObject.SetText(text);
 
-	unsigned long count = std::atol(textObject.GetTextLine(0).c_str());
+	unsigned long pos = 0;
 
-	for (unsigned long i = 0; i < count; i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(PartsPosNames::None); i++)
 	{
-		LoadParts(_device, textObject.GetTextLine(i + 1));
-	}
-
-	unsigned long rWeaponCount = std::atol(textObject.GetTextLine(count + 1).c_str());
-
-	for (unsigned long i = 0; i < rWeaponCount; i++)
-	{
-		LoadParts(_device, textObject.GetTextLine(i + count + 2));
-	}
-
-	unsigned long lWeaponCount = std::atol(textObject.GetTextLine(count + rWeaponCount + 2).c_str());
-
-	for (unsigned long i = 0; i < lWeaponCount; i++)
-	{
-		LoadParts(_device, textObject.GetTextLine(i + count + rWeaponCount + 3));
+		pos = LoadPartsList(_device, textObject, pos,static_cast<PartsPosNames>(i));
 	}
 
 	nowEnelgy = maxEnelgy;
 	physics->SetMass(mass);
 }
 
-void BaseMecha::LoadParts(ID3D11Device* _device, const std::string& _fileName)
+unsigned long BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject, const unsigned long _pos, const BaseMecha::PartsPosNames _name)
 {
-	MechaParts::LoadParts(*this, _device, _fileName);
+
+	unsigned long count = std::atol(_textObject.GetTextLine(_pos + 1).c_str());
+
+	for (unsigned long i = 0; i < count; i++)
+	{
+		MechaParts::LoadParts(*this, _device, _textObject.GetTextLine(i + _pos + 2), _name);
+	}
+
+	return _pos + 2 + count;
 }
 
 void BaseMecha::Save(const std::string& _fileName)
 {
 	std::string res = "";
-	res += std::to_string(mechaParts.size()) + "\n";
 
-	for (auto&& parts : mechaParts)
+	for (unsigned char i = 0; i < ChStd::EnumCast(PartsPosNames::None); i++)
 	{
-		res += parts->GetBaseObject()->GetThisFileName() + "\n";
-	}
-	res += "RightWeapon\n";
-	res += std::to_string(rightWeapon.weapon.size()) + "\n";
-	for (auto&& parts : rightWeapon.weapon)
-	{
-		res += parts->GetBaseObject()->GetThisFileName() + "\n";
-	}
-	res += "LeftWeapon\n";
-	res += std::to_string(leftWeapon.weapon.size()) + "\n";
-	for (auto&& parts : leftWeapon.weapon)
-	{
-		res += parts->GetBaseObject()->GetThisFileName() + "\n";
+		res += SavePartsList(static_cast<PartsPosNames>(i));
 	}
 
 	ChCpp::File<> file;
@@ -103,6 +88,17 @@ void BaseMecha::Save(const std::string& _fileName)
 	file.FileWriteText(res);
 	file.FileClose();
 
+}
+
+std::string BaseMecha::SavePartsList(const BaseMecha::PartsPosNames _name)
+{
+	std::string res = partsTypeName[ChStd::EnumCast(_name)] + "\n";
+	res += std::to_string(mechaParts[ChStd::EnumCast(_name)].size()) + "\n";
+	for (auto&& parts : mechaParts[ChStd::EnumCast(_name)])
+	{
+		res += parts->GetBaseObject()->GetThisFileName() + "\n";
+	}
+	return res;
 }
 
 void BaseMecha::Release()
@@ -174,9 +170,12 @@ void BaseMecha::Draw3D()
 	drawMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
 	drawMat.SetPosition(pos);
 
-	for (auto&& parts : mechaParts)
+	for (auto&& partsList : mechaParts)
 	{
-		parts->Draw(*drawer, drawMat);
+		for (auto&& parts : partsList)
+		{
+			parts->Draw(*drawer, drawMat);
+		}
 	}
 
 }

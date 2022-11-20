@@ -1,7 +1,8 @@
 #ifndef _BRobParts
 #define _BRobParts
 
-class BaseMecha;
+#include"BaseMecha.h"
+
 class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
@@ -24,7 +25,7 @@ private:
 
 public://Serialize Deserialize//
 
-	static void LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
+	static void LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName,const BaseMecha::PartsPosNames _name);
 
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
@@ -36,15 +37,15 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetParameters(BaseMecha& _base);
+	void SetParameters(BaseMecha& _base, const BaseMecha::PartsPosNames _name);
 
-	virtual void SetPartsParameter(BaseMecha& _base);
+	virtual void SetPartsParameter(BaseMecha& _base, const BaseMecha::PartsPosNames _name);
 
 	void SetHardness(const float _hardness) { hardness = _hardness; }
 
 	void SetMass(const float _mass) { mass = _mass; }
 
-	ChStd::Bool SetPosition(BaseMecha& _base,MechaPartsObject& _obj);
+	ChStd::Bool SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name);
 
 public://Get Function//
 
