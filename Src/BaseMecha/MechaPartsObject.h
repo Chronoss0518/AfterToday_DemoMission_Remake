@@ -2,7 +2,7 @@
 
 class MechaParts;
 
-class MechaPartsObject
+class MechaPartsObject:public ChCpp::BaseObject
 {
 public:
 
@@ -42,4 +42,5 @@ private:
 	//パーツの耐久地//
 	short durableValue = 10000;
 
+	 
 };

@@ -21,6 +21,8 @@ BaseMecha::BaseMecha()
 {
 	mechasNo = GetList().size();
 	GetList().push_back(this);
+	physics->SetLeftRightWallLen(3.0f);
+	physics->SetFrontBackWallLen(3.0f);
 }
 
 BaseMecha::~BaseMecha()

@@ -26,7 +26,7 @@ public://Inner Struct Class Enum//
 		Avo, FrontAvo, BackAvo, LeftAvo, RightAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, LeftBoost, RightBoost, UpBoost, DownBoost,
 		Attack, RAttack, LAttack, 
-		MSChange, RMSChange, LMSChange,
+		AttackTypeChange, RATChange, LATChange,
 		Reload, RReload, LReload, CReload,
 		WeaponChange, LWChange, RWChange,
 		MagnificationUp, MagnificationDown,

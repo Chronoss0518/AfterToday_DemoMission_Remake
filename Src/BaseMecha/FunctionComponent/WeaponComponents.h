@@ -8,7 +8,7 @@ public:
 
 	RightWeaponComponent() {
 		attack = InputName::RAttack;
-		msChange = InputName::RMSChange;
+		msChange = InputName::RATChange;
 		mwChange = InputName::RWChange;
 	}
 };
@@ -17,7 +17,7 @@ class LeftWeaponComponent :public WeaponComponent
 {
 	LeftWeaponComponent() {
 		attack = InputName::LAttack;
-		msChange = InputName::LMSChange;
+		msChange = InputName::LATChange;
 		mwChange = InputName::LWChange;
 	}
 };

@@ -268,11 +268,13 @@ public://Serialize Deserialize//
 
 public:
 
-	void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
+	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
 
 public:
 
-	std::string GetPartsTypeTag() override { return "WeaponData:"; }
+	inline std::string GetPartsTypeTag() override { return "WeaponData:"; }
+
+	inline unsigned long GetWeatTime() { return weatTime; }
 
 protected:
 
@@ -293,11 +295,13 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base)override;
 
-	void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
+	inline void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag() override { return "Sword:"; }
+	inline std::string GetPartsTypeTag() override { return "Sword:"; }
+
+	inline unsigned long GetWeatTime() { return attackTime; }
 
 protected:
 
@@ -318,19 +322,29 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base)override;
 
-	void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
+	inline void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
 
-	void SetBulletNum(const unsigned long _bulletNum) { bulletNum = _bulletNum; }
+	inline void SetBulletNum(const unsigned long _bulletNum) { bulletNum = _bulletNum; }
 
-	void SetMagazineNum(const unsigned long _magazineNum) { magazineNum = _magazineNum; }
+	inline void SetMagazineNum(const unsigned long _magazineNum) { magazineNum = _magazineNum; }
 
-	void SetReloadTime(const unsigned long _reloadTime) { reloadTime = _reloadTime; }
+	inline void SetReloadTime(const unsigned long _reloadTime) { reloadTime = _reloadTime; }
 
-	void SetBulletFile(const std::string& _bulletFile) { bulletFile = _bulletFile; }
+	inline void SetBulletFile(const std::string& _bulletFile) { bulletFile = _bulletFile; }
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag() override { return "Gun:"; }
+	inline std::string GetPartsTypeTag() override { return "Gun:"; }
+
+	inline unsigned long GetFireNum() { return fireNum; }
+
+	inline unsigned long GetBulletNum() { return bulletNum; }
+
+	inline unsigned long GetMagazineNum() { return magazineNum; }
+
+	inline unsigned long GetReloadTime() { return reloadTime; }
+
+	inline std::string GetUseBulletFile() { return bulletFile; }
 
 protected:
 

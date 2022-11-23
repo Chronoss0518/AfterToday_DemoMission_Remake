@@ -165,13 +165,14 @@ void PhysicsMachine::UpdateHitTest()
 		std::vector<ChPtr::Shared<ChCpp::ChMultiThread>>threadList;
 
 		ChVec3 testPos = position + addMovePowerVector;
-		testPos.y +=  groundHeight;
+		testPos.y += groundHeight;
+		
 
 		{
 			xRay.SetInversFlg(addMovePowerVector.x < 0.0f);
 			xRay.SetBaseDirection(ChVec3(-1.0f, 0.0f, 0.0f));
-			xRay.SetMaxLength(std::abs(addMovePowerVector.x) + 5.0f);
-			xRay.SetPosition(ChVec3(testPos.x, position.y, testPos.z));
+			xRay.SetMaxLength(std::abs(addMovePowerVector.x) + leftRightWallLen);
+			xRay.SetPosition(ChVec3(testPos.x + (addMovePowerVector.x < 0.0f ? -leftRightWallLen : leftRightWallLen), position.y, testPos.z));
 		}
 
 		{
@@ -179,15 +180,13 @@ void PhysicsMachine::UpdateHitTest()
 			yRay.SetBaseDirection(ChVec3(0.0f, -1.0f, 0.0f));
 			yRay.SetMaxLength(std::abs(addMovePowerVector.y) + 5.0f);
 			yRay.SetPosition(ChVec3(position.x, testPos.y, position.z));
-
 		}
 
 		{
-
 			zRay.SetInversFlg(addMovePowerVector.z < 0.0f);
 			zRay.SetBaseDirection(ChVec3(0.0f, 0.0f, -1.0f));
-			zRay.SetMaxLength(std::abs(addMovePowerVector.z) + 5.0f);
-			zRay.SetPosition(ChVec3(testPos.x, position.y, testPos.z));
+			zRay.SetMaxLength(std::abs(addMovePowerVector.z) + frontBackWallLen);
+			zRay.SetPosition(ChVec3(testPos.x, position.y, testPos.z + (addMovePowerVector.z < 0.0f ? -frontBackWallLen : frontBackWallLen)));
 
 		}
 

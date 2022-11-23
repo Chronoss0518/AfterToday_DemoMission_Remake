@@ -87,6 +87,10 @@ public:
 
 	inline void SetGroundHeight(const float _height) { groundHeight = _height; }
 
+	inline void SetLeftRightWallLen(const float _len) { if(_len > 0.0f)leftRightWallLen = _len; }
+
+	inline void SetFrontBackWallLen(const float _len) { if (_len > 0.0f)frontBackWallLen = _len; }
+
 	static inline void SetElevation(const float _elevation) { Elevation() = _elevation; }
 
 	static inline void SetAirRegist(const float _regist) { AirRegist() = _regist; }
@@ -146,6 +150,8 @@ private:
 	ChVec3 scalling = ChVec3(1.0f);
 
 	float groundHeight = 0.0f;
+	float leftRightWallLen = 5.0f;
+	float frontBackWallLen = 5.0f;
 
 	ChLMat nowTransform;
 

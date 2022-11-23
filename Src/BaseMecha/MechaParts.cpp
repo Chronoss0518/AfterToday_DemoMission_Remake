@@ -134,12 +134,13 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 
 void MechaParts::SetParameters(BaseMecha& _base, BaseMecha::PartsPosNames _name)
 {
+	SetPartsParameter(_base, _name);
+
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
 		com->SetPartsParameter(_base);
 	}
 
-	SetPartsParameter(_base, _name);
 }
 
 void MechaParts::SetPartsParameter(BaseMecha& _base, BaseMecha::PartsPosNames _name)
@@ -158,6 +159,8 @@ void MechaParts::SetPartsParameter(BaseMecha& _base, BaseMecha::PartsPosNames _n
 	}
 
 	partsObject->baseParts = this;
+
+	partsObject->Init();
 
 	if (SetPosition(_base, partsObject, _name))
 	{
