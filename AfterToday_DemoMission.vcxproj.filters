@@ -63,9 +63,6 @@
     <ClInclude Include="Src\Application\Application.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseMecha\WeaponObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="TestGameLoop.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -87,9 +84,6 @@
     <ClInclude Include="Src\Physics\Physics_Gravity.h">
       <Filter>PhysicsLibrary</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Physics\Physics_MaterialPower.h">
-      <Filter>FunctionComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Physics\Physics_AirPower.h">
       <Filter>PhysicsLibrary</Filter>
     </ClInclude>
@@ -104,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h">
       <Filter>FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\Physics_MaterialPower.h">
+      <Filter>PhysicsLibrary</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +141,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\Application.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BaseMecha\WeaponObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\FunctionComponent\BoostComponent.cpp">

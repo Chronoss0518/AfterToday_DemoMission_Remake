@@ -33,7 +33,6 @@
     <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h" />
     <ClInclude Include="Src\BaseMecha\MechaParts.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObject.h" />
-    <ClInclude Include="Src\BaseMecha\WeaponObject.h" />
     <ClInclude Include="Src\Bullet\Bullet.h" />
     <ClInclude Include="Src\CloudObj\CloudObj.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
@@ -60,7 +59,6 @@
     <ClCompile Include="Src\BaseMecha\FunctionComponent\WeaponComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp" />
-    <ClCompile Include="Src\BaseMecha\WeaponObject.cpp" />
     <ClCompile Include="Src\Bullet\Bullet.cpp" />
     <ClCompile Include="Src\CloudObj\CloudObj.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
