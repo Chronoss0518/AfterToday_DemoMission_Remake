@@ -28,10 +28,7 @@ int WINAPI WinMain(
 
 	auto s_screen = ChWin::GetScreenSize();
 	{
-
-
 		{
-
 			ChWin::WindCreater creater(hInst);
 
 			{

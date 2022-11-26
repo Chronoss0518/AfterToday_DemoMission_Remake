@@ -2,7 +2,6 @@
 
 #include"../AllStruct.h"
 #include"Bullet.h"
-#include"../BaseMecha/WeaponObject.h"
 
 
 ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()

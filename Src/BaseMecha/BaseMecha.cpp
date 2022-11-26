@@ -6,7 +6,6 @@
 #include"../Bullet/Bullet.h"
 #include"MechaParts.h"
 #include"MechaPartsObject.h"
-#include"WeaponObject.h"
 #include"BaseMecha.h"
 #include"../Physics/PhysicsMachine.h"
 
@@ -14,7 +13,12 @@
 
 static const std::string partsTypeName[]
 {
-	"Body","Head","Foot","RightArm","LeftArm","Boost","RightWeapon","LeftWeapon"
+	"Body","Head","Foot","RightArm","LeftArm","Boost","Holder","Weapon"
+};
+
+static const std::string weaponTypeName[]
+{
+	"","R*","L*"
 };
 
 BaseMecha::BaseMecha()
@@ -52,38 +56,71 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 	ChCpp::TextObject textObject;
 	textObject.SetText(text);
 
-	unsigned long pos = 0;
-
-	for (unsigned char i = 0; i < ChStd::EnumCast(PartsPosNames::None); i++)
-	{
-		pos = LoadPartsList(_device, textObject, pos,static_cast<PartsPosNames>(i));
-	}
+	LoadPartsList(_device, textObject);
 
 	nowEnelgy = maxEnelgy;
 	physics->SetMass(mass);
 }
 
-unsigned long BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject, const unsigned long _pos, const BaseMecha::PartsPosNames _name)
+void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject)
 {
 
-	unsigned long count = std::atol(_textObject.GetTextLine(_pos + 1).c_str());
+	unsigned long count = std::atol(_textObject.GetTextLine(0).c_str());
 
 	for (unsigned long i = 0; i < count; i++)
 	{
-		MechaParts::LoadParts(*this, _device, _textObject.GetTextLine(i + _pos + 2), _name);
+		auto texts = ChStr::Split(_textObject.GetTextLine(i + 1)," ");
+
+		auto parts = MechaParts::LoadParts(*this, _device, texts[0]);
+
+		AddMechaParts(parts);
+
+		if (texts.size() <= 1)continue;
+
+		for (auto&& text : texts)
+		{
+
+			bool findFlg = false;
+
+			for (unsigned char j = 0; j < ChStd::EnumCast(PartsPosNames::None); j++)
+			{
+				if (text.find(partsTypeName[j]) == std::string::npos)continue;
+
+				unsigned long no = std::atol(text.substr(partsTypeName[j].size()).c_str());
+				SetPartsPos(*parts, static_cast<PartsPosNames>(j), no);
+				findFlg = true;
+				break;
+			}
+
+			if (findFlg)continue;
+
+
+			if (text.find("R*") != std::string::npos)
+			{
+				AddRightWeappon(parts);
+				break;
+			}
+
+			if (text.find("L*") != std::string::npos)
+			{
+				AddRightWeappon(parts);
+				break;
+			}
+
+
+		}
+
+
 	}
 
-	return _pos + 2 + count;
+	return;
 }
 
 void BaseMecha::Save(const std::string& _fileName)
 {
 	std::string res = "";
 
-	for (unsigned char i = 0; i < ChStd::EnumCast(PartsPosNames::None); i++)
-	{
-		res += SavePartsList(static_cast<PartsPosNames>(i));
-	}
+	res += SavePartsList();
 
 	ChCpp::File<> file;
 	file.FileOpen(SAVE_PATH(+_fileName));
@@ -92,13 +129,27 @@ void BaseMecha::Save(const std::string& _fileName)
 
 }
 
-std::string BaseMecha::SavePartsList(const BaseMecha::PartsPosNames _name)
+std::string BaseMecha::SavePartsList()
 {
-	std::string res = partsTypeName[ChStd::EnumCast(_name)] + "\n";
-	res += std::to_string(mechaParts[ChStd::EnumCast(_name)].size()) + "\n";
-	for (auto&& parts : mechaParts[ChStd::EnumCast(_name)])
+	std::string res = std::to_string(mechaParts.size()) + "\n";
+	for (auto&& parts : mechaParts)
 	{
-		res += parts->GetBaseObject()->GetThisFileName() + "\n";
+		std::string positionName = "";
+
+		if (parts->GetPartsPosName() < ChStd::EnumCast(BaseMecha::PartsPosNames::None))
+		{
+			positionName = " " + partsTypeName[parts->GetPartsPosName()];
+			positionName += std::to_string(parts->GetPartsPosNo());
+		}
+
+		std::string weaponName = "";
+
+		if (parts->GetWeaponType() < 2)
+		{
+			weaponName = " " + weaponTypeName[parts->GetWeaponType()];
+		}
+
+		res += parts->GetBaseObject()->GetThisFileName() +  positionName + weaponName + "\n";
 	}
 	return res;
 }
@@ -172,12 +223,9 @@ void BaseMecha::Draw3D()
 	drawMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
 	drawMat.SetPosition(pos);
 
-	for (auto&& partsList : mechaParts)
+	for (auto&& parts : mechaParts)
 	{
-		for (auto&& parts : partsList)
-		{
-			parts->Draw(*drawer, drawMat);
-		}
+		parts->Draw(*drawer, drawMat);
 	}
 
 }
@@ -197,4 +245,15 @@ void BaseMecha::SetGroundHeight(const float _height)
 	if (physics->GetGroundHeight() < _height)return;
 
 	physics->SetGroundHeight(_height);
+}
+
+void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,unsigned long _no)
+{
+
+	if (_name  == PartsPosNames::None)return;
+
+	auto mechaPartsPosList = GetMechaPartsPosList(_name);
+
+	_parts.SetPositoinObject(mechaPartsPosList[_no]);
+	_parts.GetBaseObject()->GetMesh().SetFrameTransform(ChLMat());
 }

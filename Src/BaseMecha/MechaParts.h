@@ -7,7 +7,6 @@ class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
 class PartsDataBase;
-class WeaponObject;
 
 class MechaParts :public ChCpp::BaseObject
 {
@@ -25,7 +24,7 @@ private:
 
 public://Serialize Deserialize//
 
-	static void LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName,const BaseMecha::PartsPosNames _name);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
@@ -37,9 +36,9 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetParameters(BaseMecha& _base, const BaseMecha::PartsPosNames _name);
+	ChPtr::Shared<MechaPartsObject>  SetParameters(BaseMecha& _base);
 
-	virtual void SetPartsParameter(BaseMecha& _base, const BaseMecha::PartsPosNames _name);
+	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
 
 	void SetHardness(const float _hardness) { hardness = _hardness; }
 
@@ -93,7 +92,8 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	virtual void SetPartsParameter(BaseMecha& _base) = 0;
+	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts) = 0;
+
 
 public://Get Functions//
 
@@ -128,7 +128,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
@@ -159,7 +159,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	virtual void SetPartsParameter(BaseMecha& _base)override;
+	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	void SetFovy(const float _fovy) { fovy = _fovy; }
 
@@ -195,7 +195,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	void SetMinFovy(const float _minFovy) { minFovy = _minFovy; }
 	
@@ -231,7 +231,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	void SetMovePow(const float _movePow) { movePow = _movePow; }
 	
@@ -293,7 +293,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	inline void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
 
@@ -320,7 +320,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	inline void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
 
@@ -385,7 +385,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	virtual void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
 
@@ -475,7 +475,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 	inline void SetParamName(const std::string& _objectName)
 	{
@@ -635,7 +635,7 @@ class HaveRightWeaponPos :public WeaponPosBase
 {
 public:
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 public://Get Functions//
 
@@ -647,7 +647,7 @@ class HaveLeftWeaponPos :public WeaponPosBase
 {
 public:
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 public://Get Functions//
 
@@ -659,7 +659,7 @@ class ShotPos :public WeaponPosBase
 {
 public:
 
-	void SetPartsParameter(BaseMecha& _base)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
 public://Get Functions//
 

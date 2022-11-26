@@ -4,7 +4,6 @@
 #include"../Bullet/Bullet.h"
 #include"CaneraObject.h"
 #include"MechaPartsObject.h"
-#include"WeaponObject.h"
 #include"MechaParts.h"
 #include"FunctionComponent/BoostComponents.h"
 #include"FunctionComponent/MoveComponent.h"
@@ -37,26 +36,24 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	{"ShotPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ShotPos>(); }},
 };
 
-void MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName, BaseMecha::PartsPosNames _name)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
 {
 
 	auto&& loadPartss = LoadPartsList();
 	auto it = loadPartss.find(_fileName);
 	if (it != loadPartss.end())
 	{
-		(*it).second->SetParameters(_base, _name);
-		return;
+		return (*it).second->SetParameters(_base);
 	}
 
 	auto mechaParts = ChPtr::Make_S<MechaParts>();
 	mechaParts->Load(_base, _device, _fileName);
 
-	if (mechaParts->GetThisFileName().empty())return;
+	if (mechaParts->GetThisFileName().empty())return nullptr;
 
 	loadPartss[_fileName] = mechaParts;
 
-	mechaParts->SetParameters(_base, _name);
-
+	return mechaParts->SetParameters(_base);
 }
 
 
@@ -132,74 +129,31 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	return linePos;
 }
 
-void MechaParts::SetParameters(BaseMecha& _base, BaseMecha::PartsPosNames _name)
+ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base)
 {
-	SetPartsParameter(_base, _name);
+	auto parts = SetPartsParameter(_base);
 
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		com->SetPartsParameter(_base);
+		com->SetPartsParameter(_base,*parts);
 	}
 
+	return parts;
 }
 
-void MechaParts::SetPartsParameter(BaseMecha& _base, BaseMecha::PartsPosNames _name)
+ChPtr::Shared<MechaPartsObject>  MechaParts::SetPartsParameter(BaseMecha& _base)
 {
-	if (_name == BaseMecha::PartsPosNames::None)return;
-
-	ChPtr::Shared<MechaPartsObject> partsObject = nullptr;
-	
-	if (_name != BaseMecha::PartsPosNames::RWeapons && _name != BaseMecha::PartsPosNames::LWeapons)
-	{
-		partsObject = ChPtr::Make_S<MechaPartsObject>();
-	}
-	else
-	{
-		partsObject = ChPtr::Make_S<WeaponObject>();
-	}
+	auto partsObject = ChPtr::Make_S<MechaPartsObject>();;
 
 	partsObject->baseParts = this;
 
 	partsObject->Init();
-
-	if (SetPosition(_base, partsObject, _name))
-	{
-		this->GetMesh().SetFrameTransform(ChLMat());
-	}
 	
 	_base.AddMass(mass);
 
 	_base.SetGroundHeight(groundHeight);
 
-}
-
-ChStd::Bool MechaParts::SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, BaseMecha::PartsPosNames _name)
-{
-
-	if (_name == BaseMecha::PartsPosNames::None)return false;
-
-	_base.AddMechaParts(_obj, _name);
-
-	auto mechaPartsPosList = _base.GetMechaPartsPosList(_name);
-	auto mechaPartsList = _base.GetMechaPartsList(_name);
-
-	if (mechaPartsList.size() > mechaPartsPosList.size())return false;
-
-	_obj->SetPositoinObject(mechaPartsPosList[mechaPartsList.size() - 1]);
-
-	if (_name == BaseMecha::PartsPosNames::RWeapons)
-	{
-		auto weapon = ChPtr::SharedSafeCast<WeaponObject>(_obj);
-		_base.AddRightWeappon(weapon);
-	}
-	
-	if (_name == BaseMecha::PartsPosNames::LWeapons)
-	{
-		auto weapon = ChPtr::SharedSafeCast<WeaponObject>(_obj);
-		_base.AddLeftWeappon(weapon);
-	}
-
-	return true;
+	return partsObject;
 }
 
 std::string MechaParts::Save(const std::string& _fileName)
@@ -257,10 +211,10 @@ std::string EnelgyTankData::Serialize()
 	return res;
 }
 
-void EnelgyTankData::SetPartsParameter(BaseMecha& _base)
+void EnelgyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
-	_base.SetMaxEnelgy(maxEnelgy);
-	_base.SetChargeEnelgy(createEnelgy);
+	_base.AddMaxEnelgy(maxEnelgy);
+	_base.AddChargeEnelgy(createEnelgy);
 }
 
 unsigned long CameraData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -281,7 +235,7 @@ std::string CameraData::Serialize()
 	return res;
 }
 
-void CameraData::SetPartsParameter(BaseMecha& _base)
+void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 	auto camera = ChPtr::Make_S<CameraObject>();
 
@@ -308,7 +262,7 @@ std::string ScopeData::Serialize()
 	return res;
 }
 
-void ScopeData::SetPartsParameter(BaseMecha& _base)
+void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 	auto camera = ChPtr::Make_S<CameraObject>();
 
@@ -334,7 +288,7 @@ std::string WalkData::Serialize()
 	return res;
 }
 
-void WalkData::SetPartsParameter(BaseMecha& _base)
+void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 	auto&& walk = GetComponent<MoveComponent>(_base);
 
@@ -375,7 +329,7 @@ std::string SwordData::Serialize()
 	return res;
 }
 
-void SwordData::SetPartsParameter(BaseMecha& _base)
+void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 
 }
@@ -407,12 +361,12 @@ std::string GunData::Serialize()
 	return res;
 }
 
-void GunData::SetPartsParameter(BaseMecha& _base)
+void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 
 }
 
-void NextPosBase::SetPartsParameter(BaseMecha& _base)
+void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 	auto target = LookObj<MechaParts>();
 
@@ -477,7 +431,7 @@ std::string BoostBrust::Serialize()
 	return res;
 }
 
-void BoostBrust::SetPartsParameter(BaseMecha& _base)
+void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 	auto&& base = *LookObj<MechaParts>();
 	if (ChPtr::NullCheck(&base))return;
@@ -571,7 +525,7 @@ void DownBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Frame
 	com->AddBoost(_boostObject);
 }
 
-void HaveRightWeaponPos::SetPartsParameter(BaseMecha& _base)
+void HaveRightWeaponPos::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 
 	auto target = LookObj<MechaParts>();
@@ -586,11 +540,11 @@ void HaveRightWeaponPos::SetPartsParameter(BaseMecha& _base)
 
 	if (posObject == nullptr)return;
 
-	_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::RWeapons);
+	_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::Weapons);
 
 }
 
-void HaveLeftWeaponPos::SetPartsParameter(BaseMecha& _base)
+void HaveLeftWeaponPos::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 
 	auto target = LookObj<MechaParts>();
@@ -605,10 +559,10 @@ void HaveLeftWeaponPos::SetPartsParameter(BaseMecha& _base)
 
 	if (posObject == nullptr)return;
 
-	_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::LWeapons);
+	_base.AddMechaPartsPos(posObject, BaseMecha::PartsPosNames::Weapons);
 }
 
-void ShotPos::SetPartsParameter(BaseMecha& _base)
+void ShotPos::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 {
 
 	auto target = LookObj<MechaParts>();

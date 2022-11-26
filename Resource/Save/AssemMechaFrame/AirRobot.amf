@@ -1,23 +1,8 @@
-Body
-1
+7
 Resource/RobotParts/Body/Air.mpd
-Head
-1
-Resource/RobotParts/Head/Air.mpd
-Foot
-1
-Resource/RobotParts/Foot/Air.mpd
-RightArm
-1
-Resource/RobotParts/RArm/Air.mpd
-LeftArm
-1
-Resource/RobotParts/LArm/Air.mpd
-Boost
-1
-Resource/RobotParts/Boost/Air.mpd
-RightWeapon
-1
-Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd
-LeftWeapon
-0
+Resource/RobotParts/Head/Air.mpd Head0
+Resource/RobotParts/Foot/Air.mpd Foot0
+Resource/RobotParts/RArm/Air.mpd RightArm0
+Resource/RobotParts/LArm/Air.mpd LeftArm0
+Resource/RobotParts/Boost/Air.mpd Boost0
+Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon0 R*

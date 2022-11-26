@@ -206,8 +206,8 @@ void GameFrame::LoadMechas()
 		mecha->SetComponent<PlayerController>();
 
 		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
-		mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
 		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
 
 	}
