@@ -18,7 +18,7 @@ static const std::string partsTypeName[]
 
 static const std::string weaponTypeName[]
 {
-	"","R*","L*"
+	"R*","L*"
 };
 
 BaseMecha::BaseMecha()
@@ -88,28 +88,29 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 
 				unsigned long no = std::atol(text.substr(partsTypeName[j].size()).c_str());
 				SetPartsPos(*parts, static_cast<PartsPosNames>(j), no);
+				parts->SetPartsPosData(j, no);
 				findFlg = true;
 				break;
 			}
 
 			if (findFlg)continue;
 
-
 			if (text.find("R*") != std::string::npos)
 			{
+				
 				AddRightWeappon(parts);
-				break;
+				parts->SetRWeapon(true);
+				continue;
 			}
 
 			if (text.find("L*") != std::string::npos)
 			{
 				AddRightWeappon(parts);
-				break;
+				parts->SetLWeapon(true);
+				continue;
 			}
 
-
 		}
-
 
 	}
 
@@ -144,9 +145,14 @@ std::string BaseMecha::SavePartsList()
 
 		std::string weaponName = "";
 
-		if (parts->GetWeaponType() < 2)
+		if (parts->GetRWeapon())
 		{
-			weaponName = " " + weaponTypeName[parts->GetWeaponType()];
+			weaponName = " " + weaponTypeName[0];
+		}
+
+		if (parts->GetLWeapon())
+		{
+			weaponName = " " + weaponTypeName[1];
 		}
 
 		res += parts->GetBaseObject()->GetThisFileName() +  positionName + weaponName + "\n";
@@ -223,10 +229,18 @@ void BaseMecha::Draw3D()
 	drawMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
 	drawMat.SetPosition(pos);
 
+	ChLMat tmp;
+	tmp.SetRotation(ChVec3(ChMath::ToRadian(-90.0f), 0.0f, 0.0f));
+	positions[ChStd::EnumCast(PartsPosNames::RArm)][0]->positionObject->SetOutSizdTransform(tmp);
+
+	DrawBeginFunction();
+
 	for (auto&& parts : mechaParts)
 	{
 		parts->Draw(*drawer, drawMat);
 	}
+
+	DrawEndFunction();
 
 }
 

@@ -1,6 +1,6 @@
 Resource/XFile/RobotsParts/LArm/Air.x
 0.500000
 0.500000
-HaveLeftWeaponPos:{
+WeaponPos:{
 LeftArm_WeaponPos
 }

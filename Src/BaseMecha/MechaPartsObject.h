@@ -6,7 +6,9 @@ class WeaponData;
 class SwordData;
 class GunData;
 
-class MechaPartsObject:public ChCpp::BaseObject
+struct PositionObject;
+
+class MechaPartsObject
 {
 public:
 
@@ -14,17 +16,32 @@ public:
 
 public:
 
-	void SetPositoinObject(ChPtr::Shared<ChCpp::FrameObject>_positionObject) { positionObject = _positionObject; }
+	void AddWeaponFunction(ChPtr::Shared<WeaponFunction> _weapon)
+	{
+		weaponFunc.push_back(_weapon);
+	}
+
+public:
+
+	void SetPositoinObject(ChPtr::Shared<PositionObject>_positionObject) { positionObject = _positionObject; }
 
 	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
 
-	void SetWeaponType(unsigned char _type) { weaponType = _type; }
+	void SetRotation(const ChVec3& _rot) { baseRot = _rot; }
+
+	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
+
+	void SetLWeapon(const bool _flg) { weaponType.SetBitFlg(1, _flg); }
+
+	void SetSwordHitObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
+
+	void SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
 
 public:
 
 	MechaParts* GetBaseObject() { return baseParts; }
 
-	ChPtr::Shared<ChCpp::FrameObject> GetPositionObject() { return positionObject; }
+	ChPtr::Shared<PositionObject> GetPositionObject() { return positionObject; }
 
 	short GetDurableValue() { return durableValue; }
 
@@ -32,7 +49,9 @@ public:
 
 	unsigned long GetPartsPosNo() { return partsPosNo; }
 
-	unsigned char GetWeaponType() { return weaponType; }
+	bool GetRWeapon() { return weaponType.GetBitFlg(0); }
+
+	bool GetLWeapon() { return weaponType.GetBitFlg(1); }
 
 public:
 
@@ -67,7 +86,9 @@ private:
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunc;
 	unsigned long useAttackType = 0;
 
-	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
+	ChPtr::Shared<PositionObject>positionObject = nullptr;
+
+	ChVec3 baseRot = ChVec3();
 
 	//パーツの解除フラグ//
 	ChStd::Bool releaseFlg = false;
@@ -77,7 +98,7 @@ private:
 
 	unsigned char partsPosName = -1;
 	unsigned long partsPosNo = 0;
-	unsigned char weaponType = -1;
+	ChCpp::BitBool weaponType;
 	 
 };
 
@@ -85,13 +106,31 @@ class WeaponFunction
 {
 public:
 
+	virtual void Init() = 0;
+
 	void Attack();
 
 	virtual void SubFunction() {}
 
 	virtual void Update() {}
 
-	void SetBaseData(WeaponData* _data);
+	inline void SetPartsObject(MechaPartsObject* _obj)
+	{
+		if (_obj == nullptr)return;
+
+		obj = _obj;
+	}
+
+	inline void SetBaseData(WeaponData* _data)
+	{
+		if (_data == nullptr)return;
+
+		data = _data;
+
+		SetData(_data);
+	}
+
+	virtual void PosUpdate() {};
 
 protected:
 
@@ -99,11 +138,12 @@ protected:
 
 	virtual void SetData(WeaponData* _data) = 0;
 
-	virtual void Init() = 0;
-
 protected:
 
 	WeaponData* data = nullptr;
+
+	MechaPartsObject* obj = nullptr;
+
 
 	//次の攻撃可能までの時間//
 	unsigned long nowWeatTime = 0;
@@ -115,17 +155,21 @@ class SwordFunction : public WeaponFunction
 {
 public:
 
+	void Init()override;
+
 	void AttackFunction()override;
+
+	inline void SetHitObjectStart(ChPtr::Shared<ChCpp::FrameObject> _hitStart) { hitObjectStart = _hitStart; }
 
 private:
 
 	void SetData(WeaponData* _data)override;
 
-	void Init()override;
-
 private:
 
 	SwordData* swordData = nullptr;
+
+	ChPtr::Shared<ChCpp::FrameObject>hitObjectStart = nullptr;
 
 	//攻撃開始から現在までの時間//
 	unsigned long nowAttackTime = 0;
@@ -137,17 +181,21 @@ class GunFunction : public WeaponFunction
 {
 public:
 
+	void Init()override;
+
 	void AttackFunction()override;
 
 	void SubFunction()override;
 
 	void Update()override;
 
+	void PosUpdate()override;
+
+	inline void SetShotPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }
+
 private:
-
+	
 	void SetData(WeaponData* _data)override;
-
-	void Init()override;
 
 private:
 

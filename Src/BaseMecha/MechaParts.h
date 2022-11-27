@@ -258,109 +258,6 @@ protected:
 
 };
 
-class WeaponData : public PartsDataBase
-{
-public://Serialize Deserialize//
-
-	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
-
-	virtual std::string Serialize()override;
-
-public:
-
-	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
-
-public:
-
-	inline std::string GetPartsTypeTag() override { return "WeaponData:"; }
-
-	inline unsigned long GetWeatTime() { return weatTime; }
-
-protected:
-
-
-	//次の攻撃可能時間//
-	unsigned long weatTime = 0;
-};
-
-class SwordData :public WeaponData
-{
-public://Serialize Deserialize//
-
-	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
-
-	std::string Serialize()override;
-
-public://Set Functions//
-
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
-
-	inline void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
-
-public://Get Functions//
-
-	inline std::string GetPartsTypeTag() override { return "Sword:"; }
-
-	inline unsigned long GetWeatTime() { return attackTime; }
-
-protected:
-
-	unsigned long attackTime = 0;
-
-};
-
-class GunData :public WeaponData
-{
-
-public://Serialize Deserialize//
-
-	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
-
-	std::string Serialize()override;
-
-public://Set Functions//
-
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
-
-	inline void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
-
-	inline void SetBulletNum(const unsigned long _bulletNum) { bulletNum = _bulletNum; }
-
-	inline void SetMagazineNum(const unsigned long _magazineNum) { magazineNum = _magazineNum; }
-
-	inline void SetReloadTime(const unsigned long _reloadTime) { reloadTime = _reloadTime; }
-
-	inline void SetBulletFile(const std::string& _bulletFile) { bulletFile = _bulletFile; }
-
-public://Get Functions//
-
-	inline std::string GetPartsTypeTag() override { return "Gun:"; }
-
-	inline unsigned long GetFireNum() { return fireNum; }
-
-	inline unsigned long GetBulletNum() { return bulletNum; }
-
-	inline unsigned long GetMagazineNum() { return magazineNum; }
-
-	inline unsigned long GetReloadTime() { return reloadTime; }
-
-	inline std::string GetUseBulletFile() { return bulletFile; }
-
-protected:
-
-	//射撃時の弾の数//
-	unsigned long fireNum = 1;
-	//一回のリロードで打てる球の数//
-	unsigned long bulletNum = 0;
-	//リロードできる回数//
-	unsigned long magazineNum = 0;
-	//リロードのかかる時間//
-	unsigned long reloadTime = 0;
-
-	std::string bulletFile = "";
-
-};
-
 
 class NextPosBase : public PartsDataBase
 {
@@ -387,7 +284,7 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
-	virtual void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
+	virtual void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
 
 	inline void SetParamName(const std::string& _objectName)
 	{
@@ -408,7 +305,7 @@ class RightArmPos:public NextPosBase
 {
 public:
 
-	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 public://Get Functions//
 
@@ -420,7 +317,7 @@ class LeftArmPos :public NextPosBase
 {
 public:
 
-	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 public://Get Functions//
 
@@ -432,7 +329,7 @@ class FootPos :public NextPosBase
 {
 public:
 
-	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 public://Get Functions//
 
@@ -444,7 +341,7 @@ class HeadPos :public NextPosBase
 {
 public:
 
-	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 public://Get Functions//
 
@@ -456,7 +353,7 @@ class BoostPos :public NextPosBase
 {
 public:
 
-	void SetObjectPos(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 public://Get Functions//
 
@@ -593,78 +490,121 @@ public://Get Functions//
 
 };
 
-class WeaponPosBase : public PartsDataBase
+class WeaponPos : public NextPosBase
+{
+
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "WeaponPos:"; }
+
+};
+
+class WeaponData : public NextPosBase
 {
 public://Serialize Deserialize//
 
-	inline unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
-	{
+	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
 
-		SetParamName(_text.GetTextLine(_textPos));
+	virtual std::string Serialize()override;
 
-		return _textPos + 1;
-	}
+public:
 
-	inline std::string Serialize()override
-	{
+	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
 
-		std::string res = "";
-		res += nextPosName + "\n";
+public:
 
-		return res;
-	}
+	inline std::string GetPartsTypeTag() override { return "WeaponData:"; }
 
-public://Set Functions//
-
-	inline void SetParamName(const std::string& _objectName)
-	{
-		nextPosName = _objectName;
-	}
-
-public://Get Functions//
-
-	inline std::string GetObjectName() { return nextPosName; }
+	inline unsigned long GetWeatTime() { return weatTime; }
 
 protected:
 
-	std::string nextPosName = "";
 
+	//次の攻撃可能時間//
+	unsigned long weatTime = 0;
 };
 
-class HaveRightWeaponPos :public WeaponPosBase
+class SwordData :public WeaponData
 {
-public:
+public://Serialize Deserialize//
+
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
+
+	std::string Serialize()override;
+
+public://Set Functions//
+
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
+	inline void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
+
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "HaveRightWeaponPos:"; }
+	inline std::string GetPartsTypeTag() override { return "Sword:"; }
+
+	inline unsigned long GetWeatTime() { return attackTime; }
+
+protected:
+
+	unsigned long attackTime = 0;
 
 };
 
-class HaveLeftWeaponPos :public WeaponPosBase
+class GunData :public WeaponData
 {
-public:
+
+public://Serialize Deserialize//
+
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
+
+	std::string Serialize()override;
+
+public://Set Functions//
+
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
 
-public://Get Functions//
+	inline void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
 
-	std::string GetPartsTypeTag()override { return "HaveLeftWeaponPos:"; }
+	inline void SetBulletNum(const unsigned long _bulletNum) { bulletNum = _bulletNum; }
 
-};
+	inline void SetMagazineNum(const unsigned long _magazineNum) { magazineNum = _magazineNum; }
 
-class ShotPos :public WeaponPosBase
-{
-public:
+	inline void SetReloadTime(const unsigned long _reloadTime) { reloadTime = _reloadTime; }
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	inline void SetBulletFile(const std::string& _bulletFile) { bulletFile = _bulletFile; }
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "ShotPos:"; }
+	inline std::string GetPartsTypeTag() override { return "Gun:"; }
 
+	inline unsigned long GetFireNum() { return fireNum; }
+
+	inline unsigned long GetBulletNum() { return bulletNum; }
+
+	inline unsigned long GetMagazineNum() { return magazineNum; }
+
+	inline unsigned long GetReloadTime() { return reloadTime; }
+
+	inline std::string GetUseBulletFile() { return bulletFile; }
+
+protected:
+
+	//射撃時の弾の数//
+	unsigned long fireNum = 1;
+	//一回のリロードで打てる球の数//
+	unsigned long bulletNum = 0;
+	//リロードできる回数//
+	unsigned long magazineNum = 0;
+	//リロードのかかる時間//
+	unsigned long reloadTime = 0;
+
+	std::string bulletFile = "";
 };
 
 #endif

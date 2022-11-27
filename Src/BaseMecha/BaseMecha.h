@@ -8,6 +8,12 @@ class FunctionComponent;
 
 class PhysicsMachine;
 
+struct PositionObject
+{
+	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
+	MechaPartsObject* haveObject = nullptr;
+};
+
 class BaseMecha :public ChCpp::BaseObject
 {
 public://Inner Struct Class Enum//
@@ -107,7 +113,7 @@ public:
 		mechaParts.push_back(_obj);
 	}
 
-	inline void AddMechaPartsPos(ChPtr::Shared<ChCpp::FrameObject> _posObject, const PartsPosNames _name)
+	inline void AddMechaPartsPos(ChPtr::Shared<PositionObject> _posObject, const PartsPosNames _name)
 	{
 		positions[ChStd::EnumCast(_name)].push_back(_posObject);
 	}
@@ -170,10 +176,10 @@ public://Get Function//
 		return mechaParts;
 	}
 
-	inline std::vector<ChPtr::Shared<ChCpp::FrameObject>> GetMechaPartsPosList(PartsPosNames _name)
+	inline std::vector<ChPtr::Shared<PositionObject>> GetMechaPartsPosList(PartsPosNames _name)
 	{
 		
-		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<ChCpp::FrameObject>>();
+		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<PositionObject>>();
 		
 		return positions[ChStd::EnumCast(_name)];
 	}
@@ -222,7 +228,7 @@ protected:
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
 	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts;
-	std::vector<ChPtr::Shared<ChCpp::FrameObject>> positions[ChStd::EnumCast(PartsPosNames::None)];
+	std::vector<ChPtr::Shared<PositionObject>> positions[ChStd::EnumCast(PartsPosNames::None)];
 
 	unsigned long useCameraNo = 0;
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;
