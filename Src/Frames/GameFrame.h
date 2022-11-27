@@ -7,6 +7,14 @@ class BaseRobotsList;
 class CloudList;
 class GameScript;
 
+struct MapObject
+{
+	ChD3D11::Mesh11 model;
+	ChVec3 position;
+	ChVec3 rotation;
+	ChVec3 scalling;
+};
+
 class GameFrame:public ChCpp::BaseFrame
 {
 public:
@@ -51,7 +59,7 @@ private:
 
 	void TestUpdate();
 
-	std::vector<ChPtr::Shared<ChD3D11::Mesh11>> map;
+	std::vector<ChPtr::Shared<MapObject>> map;
 
 	ChPtr::Shared<ChD3D11::Mesh11> sky_sphere = ChPtr::Make_S<ChD3D11::Mesh11>();
 
@@ -59,8 +67,6 @@ private:
 
 	ChStd::Bool startFlg = false;
 	
-	//LpChFileCon FileCon;
-
 	ChCpp::ObjectList mechaList;
 	ChCpp::ObjectList mapObjects;
 
@@ -69,7 +75,6 @@ private:
 
 	ChD3D11::RenderTarget11 enemyMarker;
 	ChD3D11::RenderTarget11 baseMarker;
-
 
 	ChD3D11::CB::CBLight11 light;
 	MeshDrawer meshDrawer;

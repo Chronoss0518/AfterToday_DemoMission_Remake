@@ -92,7 +92,7 @@ void GameFrame::Init()
 {
 	script = ChPtr::Make_S<GameScript>();
 	
-	//InitScriptFunction();
+	InitScriptFunction();
 
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
@@ -152,23 +152,19 @@ void GameFrame::Init()
 
 void GameFrame::InitScriptFunction()
 {
-	script->SetFunction("Load", [&](const std::string _text)
+	script->SetFunction("LoadMap", [&](const std::string _text)
 		{
-			unsigned long nowPos = 0;
-			unsigned long nextPos = 0;
-			std::vector<std::string>argment;
-
-			while (1)
+			auto argment = ChStr::Split(_text," ");
+			
+			auto mainMap = ChPtr::Make_S<MapObject>();
+			mainMap->model->Init(ChD3D11::D3D11Device());
 			{
-				nextPos = _text.find(" ", nowPos + 1);
-				argment.push_back(_text.substr(nowPos, nextPos - nowPos));
-				if (nextPos >= _text.size())break;
-				nowPos = _text.find(" ", nextPos + 1);
+				ChCpp::ModelLoader::XFile loader;
+				loader.CreateModel(mainMap->model, MESH_DIRECTORY() + argment[0]);
 			}
+			map.push_back(mainMap);
 
 			
-
-
 		});
 }
 
@@ -209,6 +205,7 @@ void GameFrame::LoadMechas()
 		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
 		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
 		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
+		//mecha->Save("TestAsm.amf");
 
 	}
 

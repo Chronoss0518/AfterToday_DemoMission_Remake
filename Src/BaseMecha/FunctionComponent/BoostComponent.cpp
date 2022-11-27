@@ -19,7 +19,7 @@ void BoostComponent::Update()
 
 }
 
-void BoostComponent::Move()
+void BoostComponent::DrawBegin()
 {
 
 	unsigned long fps = ChSystem::SysManager().GetFPS();

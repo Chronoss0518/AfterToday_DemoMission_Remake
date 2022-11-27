@@ -8,7 +8,7 @@ public:
 
 	void Update()override;
 
-	void Move()override;
+	void DrawBegin()override;
 
 	void DrawEnd()override;
 
