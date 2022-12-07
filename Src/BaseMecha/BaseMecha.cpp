@@ -7,7 +7,9 @@
 #include"MechaParts.h"
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
+#include"../Frames/GameFrame.h"
 #include"../Physics/PhysicsMachine.h"
+#include"FunctionComponent/WeaponComponents.h"
 
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
 
@@ -23,24 +25,24 @@ static const std::string weaponTypeName[]
 
 BaseMecha::BaseMecha()
 {
-	mechasNo = GetList().size();
-	GetList().push_back(this);
 	physics->SetLeftRightWallLen(3.0f);
 	physics->SetFrontBackWallLen(3.0f);
 }
 
 BaseMecha::~BaseMecha()
 {
-	auto&& list = GetList();
-	auto&& it = std::find(list.begin(), list.end(), this);
-	list.erase(it);
+
 }
 
-void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer)
+void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer,GameFrame* _frame)
 {
 	viewSize = _viewSize;
 	drawer = &_drawer;
+	frame = _frame;
 	physics->Init();
+	mechasNo = frame->GetMechaList().GetObjectCount();
+	
+
 }
 
 void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
@@ -71,8 +73,9 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 	{
 		auto texts = ChStr::Split(_textObject.GetTextLine(i + 1)," ");
 
-		auto parts = MechaParts::LoadParts(*this, _device, texts[0]);
-
+		auto parts = MechaParts::LoadParts(*this, _device, drawer, frame, texts[0]);
+		parts->SetFrame(frame);
+		parts->SetBaseMecha(this);
 		AddMechaParts(parts);
 
 		if (texts.size() <= 1)continue;
@@ -97,16 +100,19 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 
 			if (text.find("R*") != std::string::npos)
 			{
-				
-				AddRightWeappon(parts);
+				auto&& weap = GetComponentObject<RightWeaponComponent>();
+
+				weap->AddWeapon(parts);
 				parts->SetRWeapon(true);
 				continue;
 			}
 
 			if (text.find("L*") != std::string::npos)
 			{
-				AddRightWeappon(parts);
-				parts->SetLWeapon(true);
+				auto&& weap = GetComponentObject<LeftWeaponComponent>();
+
+				weap->AddWeapon(parts);
+				parts->SetRWeapon(true);
 				continue;
 			}
 
@@ -165,6 +171,14 @@ void BaseMecha::Release()
 
 }
 
+void BaseMecha::Update()
+{
+	for (auto&& parts : mechaParts)
+	{
+		//parts->SubFunction();
+	}
+}
+
 void BaseMecha::UpdateEnd()
 {
 	unsigned long fps = ChSystem::SysManager().GetFPS();
@@ -186,8 +200,8 @@ void BaseMecha::Move()
 	{
 		ChLMat tmpMat;
 
-		tmpMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
-		tmpMat.SetPosition(pos + ChVec3(0.0f, 5.0f, 0.0f));
+		tmpMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+		tmpMat.SetPosition(physics->GetPosition() + ChVec3(0.0f, 5.0f, 0.0f));
 		auto lookPos = tmpMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
 		auto camPos = tmpMat.Transform(ChVec3(0.0f, 0.0f,-15.0f));
 
@@ -200,24 +214,13 @@ void BaseMecha::Move()
 
 void BaseMecha::BaseMove()
 {
-	physics->SetPosition(pos);
-	physics->SetRotation(rot);
-	physics->SetAddMovePowerVector(moveVec);
-	physics->SetAddRotatePowerVector(rotateVec);
 	physics->Update();
-	moveVec = physics->GetAddMovePowerVector();
-	rotateVec = physics->GetAddRotatePowerVector();
-
-	pos += moveVec;
-	
-	rot -= rotateVec;
-
-
+	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
+	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
 }
 
 void BaseMecha::Draw2D()
 {
-	if (mechasNo != GetMechaCamNo())return;
 
 
 
@@ -226,8 +229,8 @@ void BaseMecha::Draw2D()
 void BaseMecha::Draw3D()
 {
 	ChLMat drawMat;
-	drawMat.SetRotationYAxis(ChMath::ToRadian(rot.y));
-	drawMat.SetPosition(pos);
+	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	drawMat.SetPosition(physics->GetPosition());
 
 	ChLMat tmp;
 	tmp.SetRotation(ChVec3(ChMath::ToRadian(-90.0f), 0.0f, 0.0f));
@@ -237,7 +240,7 @@ void BaseMecha::Draw3D()
 
 	for (auto&& parts : mechaParts)
 	{
-		parts->Draw(*drawer, drawMat);
+		parts->Draw(drawMat);
 	}
 
 	DrawEndFunction();
@@ -270,4 +273,39 @@ void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,
 
 	_parts.SetPositoinObject(mechaPartsPosList[_no]);
 	_parts.GetBaseObject()->GetMesh().SetFrameTransform(ChLMat());
+}
+
+ChCpp::ObjectList& BaseMecha::GetMechaList()
+{
+	return frame->GetMechaList();
+}
+
+void BaseMecha::AddMoveVector(const ChVec3& _moveVecAdd)
+{
+	physics->AddMovePowerVector(_moveVecAdd);
+}
+
+void BaseMecha::AddRotateVector(const ChVec3& _rotateVecAdd)
+{
+	physics->AddRotatePowerVector(_rotateVecAdd);
+}
+
+void BaseMecha::SetPosition(const ChVec3& _pos)
+{
+	physics->SetPosition(_pos);
+}
+
+void BaseMecha::SetRotation(const ChVec3& _rot)
+{ 
+	physics->SetRotation(_rot);
+}
+
+ChVec3 BaseMecha::GetPosition()
+{
+	return physics->GetPosition();
+}
+
+ChVec3 BaseMecha::GetRotation()
+{
+	return physics->GetRotation();
 }

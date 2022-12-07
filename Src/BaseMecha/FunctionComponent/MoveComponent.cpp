@@ -17,8 +17,8 @@ void MoveComponent::Update()
 	MoveUpdate(movePow, InputName::Right, InputName::RightBoost, InputName::RightAvo, ChVec3(1.0f, 0.0f, 0.0f), tmp);
 	MoveUpdate(jumpPow, InputName::Jump, InputName::UpBoost, InputName::UpAvo, ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	RotateUpdate(InputName::LeftRotation, ChVec3(0.0f, -1.0f, 0.0f));
-	RotateUpdate(InputName::RightRotation, ChVec3(0.0f, 1.0f, 0.0f));
+	RotateUpdate(InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
+	RotateUpdate(InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
 
 }
 

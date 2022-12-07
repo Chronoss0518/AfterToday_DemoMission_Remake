@@ -39,6 +39,10 @@ private:
 
 public:
 
+	inline void AddMovePowerVector(const ChVec3& _addPowerVector) { addMovePowerVector += _addPowerVector; }
+
+	inline void AddRotatePowerVector(const ChVec3& _addPowerVector) { addRotatePowerVector += _addPowerVector; }
+
 	static inline void AddField(ChPtr::Shared<ChCpp::FrameObject> _fieldModel,const ChLMat& _mat)
 	{
 		if (_fieldModel == nullptr)return;
@@ -103,6 +107,10 @@ public:
 
 	inline ChVec3 GetAddRotatePowerVector() { return addRotatePowerVector; }
 
+	inline ChVec3 GetPosition() { return position; }
+
+	inline ChVec3 GetRotation() { return rotation; }
+
 	inline float GetMass() { return mass; }
 
 	inline float GetGroundHeight() { return groundHeight; }
@@ -112,6 +120,8 @@ public:
 	inline ChStd::Bool IsGround() { return isGroundFlg; }
 
 	inline ChStd::Bool IsWall() { return isWallFlg; }
+
+	inline ChStd::Bool IsOutSide() { return isOutSide; }
 
 public:
 
@@ -157,6 +167,7 @@ private:
 
 	ChStd::Bool isGroundFlg = false;
 	ChStd::Bool isWallFlg = false;
+	ChStd::Bool isOutSide = false;
 
 	float mass = 0.0f;
 

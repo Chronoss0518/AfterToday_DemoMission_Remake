@@ -19,6 +19,9 @@
     <Filter Include="PhysicsLibrary">
       <UniqueIdentifier>{5c3f3a0d-cec2-41ed-80ab-5adbab042eaa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Bullet">
+      <UniqueIdentifier>{0173f0bf-b253-4b11-bc71-33891fb16cdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\AllStruct.h">
@@ -43,9 +46,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\MechaParts.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Bullet\Bullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\GameScript\GameScript.h">
@@ -102,6 +102,12 @@
     <ClInclude Include="Src\Physics\Physics_MaterialPower.h">
       <Filter>PhysicsLibrary</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Bullet\Bullet.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Bullet\BulletObject.h">
+      <Filter>Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\CloudObj\CloudObj.cpp">
@@ -123,9 +129,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Bullet\Bullet.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\GameScript\GameScript.cpp">
@@ -172,6 +175,12 @@
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\FunctionComponent\WeaponComponent.cpp">
       <Filter>FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Bullet\Bullet.cpp">
+      <Filter>Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Bullet\BulletObject.cpp">
+      <Filter>Bullet</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

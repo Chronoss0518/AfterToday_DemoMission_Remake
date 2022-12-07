@@ -3,6 +3,8 @@
 
 #include"../AllStruct.h"
 #include"../BaseMecha/BaseMecha.h"
+#include"../BaseMecha/MechaPartsObject.h"
+#include"../Bullet/BulletObject.h"
 #include"../GameScript/GameScript.h"
 #include"GameFrame.h"
 
@@ -91,8 +93,7 @@ void GameFrame::TestUpdate()
 void GameFrame::Init()
 {
 	script = ChPtr::Make_S<GameScript>();
-	
-	InitScriptFunction();
+	//InitScriptFunction();
 
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
@@ -127,8 +128,9 @@ void GameFrame::Init()
 
 	//windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 	
-	ChCpp::ChMultiThread thread;
-	thread.Init([&]() { LoadMechas(); }) ;
+	//ChCpp::ChMultiThread thread;
+	//thread.Init([&]() {  }) ;
+	LoadMechas();
 	LoadMaps();
 	LoadBGMs();
 
@@ -145,27 +147,266 @@ void GameFrame::Init()
 		ChD3D11::D3D11Device(),
 		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
 
-	thread.Join();
+	//thread.Join();
 
 
 }
 
 void GameFrame::InitScriptFunction()
 {
-	script->SetFunction("LoadMap", [&](const std::string _text)
-		{
-			auto argment = ChStr::Split(_text," ");
-			
-			auto mainMap = ChPtr::Make_S<MapObject>();
-			mainMap->model->Init(ChD3D11::D3D11Device());
-			{
-				ChCpp::ModelLoader::XFile loader;
-				loader.CreateModel(mainMap->model, MESH_DIRECTORY() + argment[0]);
-			}
-			map.push_back(mainMap);
 
-			
+	script->SetFunction("LoadBGM", [&](const std::string& _text) {
+		auto argment = ChStr::Split(_text, " ");
+		auto audio = ChPtr::Make_S< ChD3D::AudioObject>();
+
+		std::string audioName = argment[0];
+
+		ChD3D::XAudioManager().CreateSound(audio.get(), SOUND_DIRECTORY() + audioName);
+		audio->SetLoopFlg(false);
+
+		for (unsigned long i = 1; i < argment.size(); i++)
+		{
+			if (argment[i] == "-l" || argment[i] == "--loop")
+			{
+				audio->SetLoopFlg(true);
+				continue;
+			}
+			if (argment[i] == "-ls" || argment[i] == "--loopstart")
+			{
+				i++;
+				float start = ChStr::GetFloatingFromText<float>(argment[i]);
+				audio->SetLoopStartPos(start);
+				audio->SetPlayTime(start);
+				continue;
+			}
+			if (argment[i] == "-le" || argment[i] == "--loopend")
+			{
+				i++;
+				float end = ChStr::GetFloatingFromText<float>(argment[i]);
+				audio->SetLoopEndPos(end);
+				continue;
+			}
+			if (argment[i] == "-v" || argment[i] == "--volume")
+			{
+				i++;
+				float vol = ChStr::GetFloatingFromText<float>(argment[i]);
+				audio->SetVolume(vol);
+				continue;
+			}
+
+		}
+		audios[audioName] = audio;
 		});
+
+	script->SetFunction("Play", [&](const std::string& _text) {
+
+		auto argment = ChStr::Split(_text, " ");
+
+		audios[nowPlayAudio]->Stop();
+
+		audios[argment[0]]->Play();
+		nowPlayAudio = argment[0];
+		});
+
+	script->SetFunction("Stop", [&](const std::string& _text) {
+		audios[nowPlayAudio]->Stop();
+		});
+
+	script->SetFunction("Pause", [&](const std::string& _text) {
+		audios[nowPlayAudio]->Pause();
+		});
+
+	script->SetFunction("LoadMap", [&](const std::string& _text) {
+		auto argment = ChStr::Split(_text, " ");
+
+		auto mainMap = ChPtr::Make_S<MapObject>();
+		mainMap->model->Init(ChD3D11::D3D11Device());
+		{
+			ChCpp::ModelLoader::XFile loader;
+			loader.CreateModel(mainMap->model, MESH_DIRECTORY() + argment[0]);
+		}
+		map.push_back(mainMap);
+
+		for (unsigned long i = 1; i < argment.size(); i++)
+		{
+			if (argment[i] == "-p" || argment[i] == "--position")
+			{
+				i++;
+				mainMap->position.Deserialize(argment[i], 0, ",", "\0");
+				continue;
+			}
+			if (argment[i] == "-r" || argment[i] == "--rotation")
+			{
+				i++;
+				mainMap->rotation.Deserialize(argment[i], 0, ",", "\0");
+				continue;
+			}
+			if (argment[i] == "-s" || argment[i] == "--scalling")
+			{
+				i++;
+				mainMap->scalling.Deserialize(argment[i], 0, ",", "\0");
+				continue;
+			}
+			if (argment[i] == "-h" || argment[i] == "--hit")
+			{
+				SetHitMap(mainMap);
+				continue;
+			}
+		}
+
+		});
+
+	script->SetFunction("LoadMecha", [&](const std::string& _text)
+		{
+
+			auto argment = ChStr::Split(_text, " ");
+
+			auto&& mecha = mechaList.SetObject<BaseMecha>(argment[0]);
+
+			mecha->Create(windSize, meshDrawer,this);
+
+			mecha->Load(ChD3D11::D3D11Device(), argment[1]);
+
+			for (unsigned long i = 1; i < argment.size(); i++)
+			{
+				if (argment[i] == "-p" || argment[i] == "--position")
+				{
+					i++;
+					ChVec3 position;
+					position.Deserialize(argment[i], 0, ",", "\0");
+					mecha->SetPosition(position);
+					continue;
+				}
+				if (argment[i] == "-r" || argment[i] == "--rotation")
+				{
+					i++;
+					ChVec3 rotation;
+					rotation.Deserialize(argment[i], 0, ",", "\0");
+					mecha->SetRotation(rotation);
+					continue;
+				}
+				if (argment[i] == "-pc" || argment[i] == "--playercontroller")
+				{
+					mecha->SetComponent<PlayerController>();
+					continue;
+				}
+				if (argment[i] == "-cc" || argment[i] == "--cpucontroller")
+				{
+					mecha->SetComponent<CPUController>();
+					continue;
+				}
+				if (argment[i] == "-t" || argment[i] == "--team")
+				{
+					i++;
+					mecha->SetTeam(ChStr::GetIntegialFromText<unsigned char>(argment[i]));
+					continue;
+				}
+			}
+		});
+
+	script->SetFunction("Loop", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text," ");
+			loopPos[args[0]] = script->GetScriptCount();
+		});
+
+	script->SetFunction("End", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text, " ");
+			script->SetNowScriptCount(loopPos[args[0]]);
+		});
+
+	script->SetFunction("SkipIfMany", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text, " ");
+
+			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long targetNum = 0;
+			
+			for (unsigned long i = 2; i < args.size(); i++)
+			{
+				if (args[i] == "-p" || args[i] == "--party")
+				{
+					i++;
+					targetNum += mechaPartyCounter[ChStr::GetIntegialFromText<unsigned char>(args[i])];
+				}
+				if (args[i] == "-m" || args[i] == "--memberAll")
+				{
+					targetNum = mechaPartyCounter[playerParty];
+				}
+				if (args[i] == "-e" || args[i] == "--enemyAll")
+				{
+					for (auto count : mechaPartyCounter)
+					{
+						if (playerParty == count.first)continue;
+						targetNum += count.second;
+					}
+				}
+			}
+			if (targetNum <= base)return;
+
+			script->SetNowScriptCount(script->GetScriptCount() + skip);
+		});
+
+	script->SetFunction("SkipIfFew", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text, " ");
+			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long targetNum = 0;
+
+			for (unsigned long i = 2; i < args.size(); i++)
+			{
+				if (args[i] == "-p" || args[i] == "--party")
+				{
+					i++;
+					targetNum += mechaPartyCounter[ChStr::GetIntegialFromText<unsigned char>(args[i])];
+				}
+				if (args[i] == "-e" || args[i] == "--enemyAll")
+				{
+					for (auto count : mechaPartyCounter)
+					{
+						if (playerParty == count.first)continue;
+						targetNum += count.second;
+					}
+				}
+				if (args[i] == "-m" || args[i] == "--memberAll")
+				{
+					targetNum = mechaPartyCounter[playerParty];
+				}
+			}
+			if (targetNum >= base)return;
+
+			script->SetNowScriptCount(script->GetScriptCount() + skip);
+		});
+}
+
+void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
+{
+
+	ChMat_11 mapSizeMatrix;
+	mapSizeMatrix.SetPosition(_map->position);
+	mapSizeMatrix.SetRotation(_map->rotation);
+	mapSizeMatrix.SetScaleSize(_map->scalling);
+	ChVec3 fieldSize;
+
+	for (auto&& child : _map->model->GetAllChildlen<ChCpp::FrameObject>())
+	{
+		auto childObj = child.lock();
+		if (childObj == nullptr)continue;
+		auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
+		if (frameCom == nullptr)continue;
+		childObj->UpdateAllDrawTransform();
+		ChLMat tmpMat = childObj->GetDrawLHandMatrix() * mapSizeMatrix;
+		ChVec3 tmp = tmpMat.TransformCoord(frameCom->boxSize);
+		fieldSize = fieldSize.x > tmp.x ? fieldSize.x : tmp.x;
+		fieldSize = fieldSize.y > tmp.y ? fieldSize.y : tmp.y;
+		fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
+	}
+
+	PhysicsMachine::AddField(_map->model, mapSizeMatrix);
+	PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
 }
 
 void GameFrame::LoadScript(const std::string& _text)
@@ -183,7 +424,7 @@ void GameFrame::LoadMechas()
 
 		auto&& mecha = mechaList.SetObject<BaseMecha>("enemyTest");
 
-		mecha->Create(windSize, meshDrawer);
+		mecha->Create(windSize, meshDrawer, this);
 
 		//mecha->SetComponent<PlayerController>();
 
@@ -197,7 +438,7 @@ void GameFrame::LoadMechas()
 
 		auto&& mecha = mechaList.SetObject<BaseMecha>("player");
 
-		mecha->Create(windSize, meshDrawer);
+		mecha->Create(windSize, meshDrawer, this);
 
 		mecha->SetComponent<PlayerController>();
 
@@ -225,46 +466,22 @@ void GameFrame::LoadBGMs()
 
 void GameFrame::LoadMaps()
 {
-	auto mainMap = ChPtr::Make_S<ChD3D11::Mesh11>();
-	mainMap->Init(ChD3D11::D3D11Device());
+	auto mainMap = ChPtr::Make_S<MapObject>();
+	mainMap->model->Init(ChD3D11::D3D11Device());
 	{
 		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(mainMap, MESH_DIRECTORY("TestField.x"));
+		loader.CreateModel(mainMap->model, MESH_DIRECTORY("TestField.x"));
+		mainMap->scalling = 100.0f;
 	}
-	map.push_back(mainMap);
+	map.push_back(mainMap); 
+	SetHitMap(mainMap);
 
-	ChMat_11 mapSizeMatrix;
-	mapSizeMatrix.SetScaleSize(ChVec3(100.0f));
-	mapSizeMatrix.SetPosition(ChVec3(0.0f, 10.0f, 0.0f));
-	for (auto mapModel : map)
-	{
-		ChVec3 fieldSize;
 
-		for (auto&& child : mapModel->GetAllChildlen<ChCpp::FrameObject>())
-		{
-			auto childObj = child.lock();
-			if (childObj == nullptr)continue;
-			auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
-			if (frameCom == nullptr)continue;
-			childObj->UpdateAllDrawTransform();
-			ChLMat tmpMat = childObj->GetDrawLHandMatrix() * mapSizeMatrix;
-			ChVec3 tmp = tmpMat.TransformCoord(frameCom->boxSize);
-			fieldSize = fieldSize.x > tmp.x ? fieldSize.x : tmp.x;
-			fieldSize = fieldSize.y > tmp.y ? fieldSize.y : tmp.y;
-			fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
-		}
-
-		PhysicsMachine::AddField(mapModel, mapSizeMatrix);
-		PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
-	}
-
-	return;
-
-	auto subMap = ChPtr::Make_S<ChD3D11::Mesh11>();
-	subMap->Init(ChD3D11::D3D11Device());
+	auto subMap = ChPtr::Make_S<MapObject>();
+	subMap->model->Init(ChD3D11::D3D11Device());
 	{
 		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(subMap, MESH_DIRECTORY("TestField2.x"));
+		loader.CreateModel(subMap->model, MESH_DIRECTORY("TestField2.x"));
 	}
 	map.push_back(subMap);
 
@@ -328,31 +545,6 @@ void GameFrame::UpdateFunction()
 
 	mechaList.ObjectMoveEnd();
 
-	return;
-
-	{
-		auto&& rob = BaseMecha::GetCameraFromMecha();
-
-		ChLMat tmpMat;
-		tmpMat.SetRotationYAxis(rob.GetRotation().y);
-		tmpMat.SetRotationXAxis(rob.GetRotation().x);
-
-		ChVec3 dir = tmpMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
-
-		ChVec3 up = tmpMat.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f));
-
-		/*
-		viewMat.CreateViewMat(rob.GetPosition(), dir, up);
-
-		proMat.CreateProjectionMat(
-			60.0f,//rob.GetFovy(),
-			GAME_WINDOW_WITDH,
-			GAME_WINDOW_HEIGHT,
-			0.1f,
-			10000.0f);
-		*/
-	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -388,15 +580,26 @@ void GameFrame::Render3D(void)
 	mechaList.ObjectDraw3D();
 
 
-	ChMat_11 mapSizeMatrix;
-	mapSizeMatrix.SetScaleSize(ChVec3(100.0f));
-	mapSizeMatrix.SetPosition(ChVec3(0.0f, 10.0f, 0.0f));
 	for (auto mapModel : map)
 	{
-		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel, mapSizeMatrix);
+		ChMat_11 mapSizeMatrix;
+		mapSizeMatrix.SetPosition(mapModel->position);
+		mapSizeMatrix.SetRotation(mapModel->rotation);
+		mapSizeMatrix.SetScaleSize(mapModel->scalling);
+		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel->model, mapSizeMatrix);
 	}
 
 	meshDrawer.drawer.DrawEnd();
+}
+
+void GameFrame::AddMecha(ChPtr::Shared<BaseMecha> _mecha)
+{
+	mechaList.SetObject(_mecha);
+}
+
+void GameFrame::AddBullet(ChPtr::Shared<BulletObject> _bullet)
+{
+	bulletList.SetObject(_bullet);
 }
 
 //////////////////////////////////////////////////////////////////////////////////

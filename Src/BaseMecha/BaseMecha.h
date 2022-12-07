@@ -1,6 +1,7 @@
 #ifndef _BaseRobot
 #define _BaseRobot
 
+class GameFrame;
 class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
@@ -26,34 +27,32 @@ public://Inner Struct Class Enum//
 
 	enum class InputName : unsigned char
 	{
-		Front, Back, Left, Right, Jump,
-		LeftRotation, RightRotation,
+		Front, Back, Right, Left, Jump,
+		RightRotation, LeftRotation,
 		CameraUpRotation, CameraDownRotation, CameraLeftRotation, CameraRightRotation,
-		Avo, FrontAvo, BackAvo, LeftAvo, RightAvo, UpAvo, DownAvo,
-		Boost, FrontBoost, BackBoost, LeftBoost, RightBoost, UpBoost, DownBoost,
-		Attack, RAttack, LAttack, 
-		AttackTypeChange, RATChange, LATChange,
-		Reload, RReload, LReload, CReload,
-		WeaponChange, LWChange, RWChange,
+		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
+		Boost, FrontBoost, BackBoost, RightBoost, LeftBoost, UpBoost, DownBoost,
+		Attack, RAttack, LAttack,
+		AttackTypeUpChange, RATUChange, LATUChange,
+		AttackTypeDownChange, RATDChange, LATDChange,
+		Reload, RReload, LReload,
+		WeaponUpChange, RWUChange, LWUChange,
+		WeaponDownChange, RWDChange, LWDChange,
 		MagnificationUp, MagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
-		MapOnOff ,None
-	};
-
-	struct WeaponData
-	{
-		unsigned long useWeaponNo = 0;
-		std::vector<ChPtr::Shared<MechaPartsObject>>weapon;
+		MapOnOff, None
 	};
 
 	enum class PartsPosNames : unsigned char
 	{
-		Body ,Head, Foot, RArm, LArm, Boost, Holder, Weapons, None
+		Body, Head, Foot, RArm, LArm, Boost, Holder, Weapons, None
 	};
 
 public://Override Functions//
 
 	void Release()override;
+
+	void Update()override;
 
 	void UpdateEnd()override;
 
@@ -72,10 +71,10 @@ public://SerializeDeserialize//
 	void Deserialize(const std::string& _fileName);
 
 	std::string Serialize();
-	
+
 public://Create Function//
 
-	void Create(const ChVec2& _viewSize,MeshDrawer& _drawer);
+	void Create(const ChVec2& _viewSize, MeshDrawer& _drawer, GameFrame* _frame);
 
 public:
 
@@ -89,24 +88,20 @@ public:
 
 public:
 
-	inline void AddMoveVector(const ChVec3& _moveVecAdd) { moveVec += _moveVecAdd; }
+	void AddMoveVector(const ChVec3& _moveVecAdd);
 
-	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { rotateVec += _rotateVecAdd; }
+	void AddRotateVector(const ChVec3& _rotateVecAdd);
 
 	inline void AddCamera(ChPtr::Shared<CameraObject> _camera)
 	{
-		cameraList.push_back(_camera); 
+		cameraList.push_back(_camera);
 	}
 
-	inline void AddLeftWeappon(ChPtr::Shared<MechaPartsObject> _weapon)
-	{
-		leftWeapon.weapon.push_back(_weapon); 
-	}
 
-	inline void AddRightWeappon(ChPtr::Shared<MechaPartsObject> _weapon)
-	{
-		rightWeapon.weapon.push_back(_weapon); 
-	}
+
+	void AddLeftWeappon(ChPtr::Shared<MechaPartsObject> _weapon);
+
+	void AddRightWeappon(ChPtr::Shared<MechaPartsObject> _weapon);
 
 	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj)
 	{
@@ -136,9 +131,9 @@ public://Set Function//
 
 	void SetTeam(const unsigned char _team) { team = _team; }
 
-	void SetPosition(const ChVec3& _pos) { pos = _pos; }
+	void SetPosition(const ChVec3& _pos);
 
-	void SetRotation(const ChVec3& _rot) { rot = _rot; }
+	void SetRotation(const ChVec3& _rot);
 
 	void SetMass(const float _mass) { mass = _mass; }
 
@@ -157,19 +152,11 @@ public://Set Function//
 
 public://Get Function//
 
-	inline ChVec3 GetPosition() { return pos; }
+	ChVec3 GetPosition();
 
-	inline ChVec3 GetRotation() { return rot; }
+	ChVec3 GetRotation();
 
-	inline static BaseMecha& GetCameraFromMecha()
-	{
-		return *GetList()[GetMechaCamNo()];
-	}
-
-	inline std::vector<BaseMecha*>& GetMechaList()
-	{
-		return GetList();
-	}
+	ChCpp::ObjectList& GetMechaList();
 
 	inline std::vector<ChPtr::Shared<MechaPartsObject>> GetMechaPartsList()
 	{
@@ -178,9 +165,9 @@ public://Get Function//
 
 	inline std::vector<ChPtr::Shared<PositionObject>> GetMechaPartsPosList(PartsPosNames _name)
 	{
-		
+
 		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<PositionObject>>();
-		
+
 		return positions[ChStd::EnumCast(_name)];
 	}
 
@@ -188,34 +175,30 @@ public://Get Function//
 
 	inline unsigned long GetMechaNo() { return mechasNo; }
 
+private:
+
+	template<class T>
+	ChPtr::Shared<T> GetComponentObject()
+	{
+		auto&& ComList = GetComponents<T>();
+		if (!ComList.empty())
+		{
+			return ComList[0];
+		}
+
+		return SetComponent<T>();
+	}
+
 protected:
-
-	inline static long& GetMechaCamNo()
-	{
-		static long mechaCamNo = 0;
-		return mechaCamNo;
-	}
-
-	inline static std::vector<BaseMecha*>& GetList()
-	{
-		static std::vector<BaseMecha*>list;
-		return list;
-	}
 
 	ChVec2 viewSize;
 
-	ChVec3 pos;
-	ChVec3 rot;
-
-	ChVec3 rotateVec;
-	ChVec3 moveVec;//ˆÚ“®—Í//
-
-	ChPtr::Shared<PhysicsMachine>physics = ChPtr::Make_S<PhysicsMachine>();
+	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
 
 	float mass = 1.0f;
 
 	unsigned char team = 0;
-	
+
 	unsigned long mechasNo = 0;
 
 	unsigned long maxEnelgy = 0;
@@ -224,7 +207,7 @@ protected:
 	unsigned long nowEnelgy = 0;
 
 	float groundDistance = 0.0f;
-	
+
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
 	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts;
@@ -233,13 +216,10 @@ protected:
 	unsigned long useCameraNo = 0;
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;
 
-	WeaponData rightWeapon;
-	WeaponData leftWeapon;
-
 	std::string mechaName = "";
 
 	MeshDrawer* drawer = nullptr;
-
+	GameFrame* frame = nullptr;
 };
 
 #endif

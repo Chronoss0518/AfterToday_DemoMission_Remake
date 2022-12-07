@@ -1,8 +1,9 @@
 #include"../BaseIncluder.h"
 
 #include"../AllStruct.h"
-
+#include"../Frames/GameFrame.h"
 #include"../Bullet/Bullet.h"
+#include"../Bullet/BulletObject.h"
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
 
@@ -16,7 +17,7 @@ void MechaPartsObject::Update()
 	}
 }
 
-void MechaPartsObject::Draw(MeshDrawer& _meshDrawer, const ChLMat& _drawMat)
+void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
 	lastDrawMat.Identity();
@@ -36,7 +37,7 @@ void MechaPartsObject::Draw(MeshDrawer& _meshDrawer, const ChLMat& _drawMat)
 	drawMat = _drawMat;
 	drawMat = rot * drawMat;
 
-	_meshDrawer.drawer.Draw(_meshDrawer.dc, mesh, drawMat);
+	baseParts->Draw(drawMat);
 
 	for (auto func : weaponFunc)
 	{
@@ -95,7 +96,7 @@ void SwordFunction::AttackFunction()
 
 }
 
-void SwordFunction::Init()
+void SwordFunction::Init(MeshDrawer* _drawer)
 {
 
 }
@@ -105,22 +106,42 @@ void GunFunction::AttackFunction()
 	if (reloadFlg)return;
 	if (nowBulletNum <= 0)return;
 
+	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
+	{
+
+		auto bullet = ChPtr::Make_S<BulletObject>();
+
+		bullet->SetBulletData(createBulletData.get());
+		bullet->SetPosition(lastShotPos.GetPosition());
+		bullet->SetRotation(lastShotPos.GetRotation());
+
+		bullet->Init();
+
+		frame->AddBullet(bullet);
+
+		nowBulletNum--;
+		if (nowBulletNum <= 0)break;
+	}
+
+	if (nowMagazineNum <= 0)return;
+	if (nowBulletNum > 0)return;
 
 
 }
 
-void GunFunction::Init()
+void GunFunction::Init(MeshDrawer* _drawer)
 {
 	nowBulletNum = gunData->GetBulletNum();
 
 	nowMagazineNum = gunData->GetMagazineNum();
 
-	createBulletData = BulletData::CreateBullet(gunData->GetUseBulletFile());
+	createBulletData = BulletData::CreateBullet(_drawer,gunData->GetUseBulletFile());
 
 }
 
 void GunFunction::SubFunction()
 {
+	if (!reloadFlg)return;
 
 }
 

@@ -48,6 +48,10 @@ class CPUController :public ControllerBase
 {
 public:
 
-	void Update()override;
+	void UpdateBegin()override;
+
+public:
+
+
 
 };

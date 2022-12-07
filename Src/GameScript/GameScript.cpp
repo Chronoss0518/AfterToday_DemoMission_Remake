@@ -17,19 +17,12 @@ void GameScript::CreateAllScript(const std::string& _text)
 
 void GameScript::SetScript(const std::string& _text)
 {
-	unsigned long spacePos = _text.find(" ");
-	auto script = ChPtr::Make_S<Script>();
-	script->type = _text.substr(0, spacePos);
-	script->text = _text.substr(spacePos);
-	scripts.push_back(script);
+	scripts.SetTextLine(_text);
 }
 
 void GameScript::SetScript(const std::string& _type, const std::string& _text)
 {
-	auto script = ChPtr::Make_S<Script>();
-	script->type =_type;
-	script->text = _text;
-	scripts.push_back(script);
+	scripts.SetTextLine(_type + " " + _text);
 }
 
 void GameScript::SetFunction(const std::string& _type,const std::function<void(const std::string&)>& _function)
@@ -39,7 +32,10 @@ void GameScript::SetFunction(const std::string& _type,const std::function<void(c
 
 void GameScript::UpdateScript()
 {
-	if (nowScriptCount >= scripts.size())return;
+	if (IsStop())return;
 
-	scriptFunctions[scripts[nowScriptCount]->type](scripts[nowScriptCount]->text);
+	auto scriptArgs = ChStr::Split(scripts[nowScriptCount], " ");
+	unsigned long argsPos = scripts[nowScriptCount].find(scriptArgs[0]);
+	argsPos += scriptArgs[0].size() + 1;
+	scriptFunctions[scriptArgs[0]](scripts[nowScriptCount].substr(argsPos));
 }

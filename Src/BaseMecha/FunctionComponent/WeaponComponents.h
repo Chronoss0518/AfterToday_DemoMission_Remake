@@ -8,16 +8,25 @@ public:
 
 	RightWeaponComponent() {
 		attack = InputName::RAttack;
-		msChange = InputName::RATChange;
-		mwChange = InputName::RWChange;
+
+		attackTypeUpChange = InputName::RATUChange;
+		attackTypeDownChange = InputName::RATDChange;
+
+		weaponUpChange = InputName::RWUChange;
+		weaponDownChange = InputName::RWDChange;
 	}
 };
 
 class LeftWeaponComponent :public WeaponComponent
 {
+public:
 	LeftWeaponComponent() {
 		attack = InputName::LAttack;
-		msChange = InputName::LATChange;
-		mwChange = InputName::LWChange;
+
+		attackTypeUpChange = InputName::LATUChange;
+		attackTypeDownChange = InputName::LATDChange;
+
+		weaponUpChange = InputName::LWUChange;
+		weaponDownChange = InputName::LWDChange;
 	}
 };

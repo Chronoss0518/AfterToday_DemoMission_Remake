@@ -16,25 +16,21 @@ public:
 
 	void SetFunction(const std::string& _type,const std::function<void(const std::string&)>& _function);
 
+	void SetNowScriptCount(unsigned long _scriptCount) { nowScriptCount = _scriptCount; }
+
+	ChCpp::TextObject GetScripts() { return scripts; }
+
+	unsigned long GetScriptCount() { return nowScriptCount; }
+
 	void UpdateScript();
 
-	ChStd::Bool IsStop() { return nowScriptCount >= scripts.size(); };
+	ChStd::Bool IsStop() { return nowScriptCount >= scripts.Count(); };
 
 private:
 
-	struct Script
-	{
-		std::string type = "";
-		std::string text = "";
-	};
-
 	unsigned long nowScriptCount = 0;
-
-	std::stack<unsigned long>loopStartPos;
 	
-	std::vector<ChPtr::Shared<Script>>scripts;
+	ChCpp::TextObject scripts;
 
 	std::map<std::string, std::function<void(const std::string&)>>scriptFunctions;
-
-
 };

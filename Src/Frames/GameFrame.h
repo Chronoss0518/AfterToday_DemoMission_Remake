@@ -2,14 +2,14 @@
 #ifndef _GameFrame
 #define _GameFrame
 
-class HitPosList;
-class BaseRobotsList;
+class BulletObject;
+class BaseMecha;
 class CloudList;
 class GameScript;
 
 struct MapObject
 {
-	ChD3D11::Mesh11 model;
+	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
 	ChVec3 position;
 	ChVec3 rotation;
 	ChVec3 scalling;
@@ -27,6 +27,8 @@ public:
 
 	void InitScriptFunction();
 
+	void SetHitMap(ChPtr::Shared<MapObject> _map);
+
 	void LoadScript(const std::string& _text);
 
 	void LoadMechas();
@@ -38,6 +40,18 @@ public:
 	void Release()override;
 
 	void Update()override;
+
+public:
+
+	void AddMecha(ChPtr::Shared<BaseMecha> _mecha);
+
+	void AddBullet(ChPtr::Shared<BulletObject> _bullet);
+
+public:
+
+	ChCpp::ObjectList& GetMechaList() { return mechaList; }
+
+	ChCpp::ObjectList& GetBulletList() { return bulletList; }
 
 private:
 
@@ -63,11 +77,15 @@ private:
 
 	ChPtr::Shared<ChD3D11::Mesh11> sky_sphere = ChPtr::Make_S<ChD3D11::Mesh11>();
 
-	std::vector<ChPtr::Shared<ChD3D::AudioObject>>audios;
+	std::map<std::string,ChPtr::Shared<ChD3D::AudioObject>>audios;
+	std::string nowPlayAudio = "";
 
 	ChStd::Bool startFlg = false;
 	
 	ChCpp::ObjectList mechaList;
+	std::map<unsigned char, unsigned long>mechaPartyCounter;
+	unsigned char playerParty = 0;
+	ChCpp::ObjectList bulletList;
 	ChCpp::ObjectList mapObjects;
 
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
@@ -85,9 +103,8 @@ private:
 	// 2D•`‰æ
 	void Render2D(void);
 
-
 	ChPtr::Shared<GameScript> script = nullptr;
-
+	std::map<std::string, unsigned long>loopPos;
 };
 
 #endif

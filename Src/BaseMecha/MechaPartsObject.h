@@ -1,11 +1,14 @@
 #pragma once
 
+class GameFrame;
+class BaseMecha;
 class MechaParts;
 class WeaponFunction;
 class WeaponData;
 class SwordData;
 class GunData;
 
+class BulletData;
 struct PositionObject;
 
 class MechaPartsObject
@@ -37,6 +40,10 @@ public:
 
 	void SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
 
+	void SetFrame(GameFrame* _frame) { frame = _frame; }
+
+	void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
+
 public:
 
 	MechaParts* GetBaseObject() { return baseParts; }
@@ -59,7 +66,7 @@ public:
 
 public:
 
-	virtual void Draw(MeshDrawer& _meshDrawer,const ChLMat& _drawMat);
+	virtual void Draw(const ChLMat& _drawMat);
 
 public:
 
@@ -83,11 +90,12 @@ protected:
 
 private:
 
+	GameFrame* frame = nullptr;
+
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunc;
 	unsigned long useAttackType = 0;
 
 	ChPtr::Shared<PositionObject>positionObject = nullptr;
-
 	ChVec3 baseRot = ChVec3();
 
 	//パーツの解除フラグ//
@@ -100,13 +108,16 @@ private:
 	unsigned long partsPosNo = 0;
 	ChCpp::BitBool weaponType;
 	 
+	BaseMecha* mecha = nullptr;
 };
 
 class WeaponFunction
 {
 public:
 
-	virtual void Init() = 0;
+	virtual void Init(MeshDrawer* _drawer) = 0;
+
+	inline void SetFrmae(GameFrame* _frame) { frame = _frame; }
 
 	void Attack();
 
@@ -140,6 +151,10 @@ protected:
 
 protected:
 
+	GameFrame* frame = nullptr;
+
+	BaseMecha* mecha = nullptr;
+
 	WeaponData* data = nullptr;
 
 	MechaPartsObject* obj = nullptr;
@@ -155,7 +170,7 @@ class SwordFunction : public WeaponFunction
 {
 public:
 
-	void Init()override;
+	void Init(MeshDrawer* _drawer)override;
 
 	void AttackFunction()override;
 
@@ -181,7 +196,7 @@ class GunFunction : public WeaponFunction
 {
 public:
 
-	void Init()override;
+	void Init(MeshDrawer* _drawer)override;
 
 	void AttackFunction()override;
 
@@ -215,14 +230,6 @@ private:
 	unsigned long nowMagazineNum = 0;
 	//残りのリロード時間//
 	unsigned long nowReloadTime = 0;
-
-
-};
-
-class BulletObject :public ChCpp::BaseObject
-{
-public:
-
 
 
 };

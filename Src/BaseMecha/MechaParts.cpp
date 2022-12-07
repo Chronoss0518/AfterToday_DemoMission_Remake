@@ -34,14 +34,14 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	{"Gun:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }},
 };
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName)
 {
 
 	auto&& loadPartss = LoadPartsList();
 	auto it = loadPartss.find(_fileName);
 	if (it != loadPartss.end())
 	{
-		return (*it).second->SetParameters(_base);
+		return (*it).second->SetParameters(_base, _frame);
 	}
 
 	auto mechaParts = ChPtr::Make_S<MechaParts>();
@@ -50,8 +50,8 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	if (mechaParts->GetThisFileName().empty())return nullptr;
 
 	loadPartss[_fileName] = mechaParts;
-
-	return mechaParts->SetParameters(_base);
+	mechaParts->SetMeshDrawer(_drawer);
+	return mechaParts->SetParameters(_base,_frame);
 }
 
 
@@ -127,13 +127,13 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	return linePos;
 }
 
-ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base)
+ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame)
 {
 	auto parts = SetPartsParameter(_base);
-
+	parts->SetFrame(_frame);
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		com->SetPartsParameter(_base,*parts);
+		com->SetPartsParameter(_base,*parts,_frame);
 	}
 
 	return parts;
@@ -189,6 +189,12 @@ std::string MechaParts::Serialize()
 	return res;
 }
 
+void MechaParts::Draw(const ChMat_11& _mat)
+{
+	if (model == nullptr)return;
+	drawer->drawer.Draw(drawer->dc, *model, _mat);
+}
+
 unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
 	maxEnelgy = std::atol(_text.GetTextLine(_textPos).c_str());
@@ -207,7 +213,7 @@ std::string EnelgyTankData::Serialize()
 	return res;
 }
 
-void EnelgyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void EnelgyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	_base.AddMaxEnelgy(maxEnelgy);
 	_base.AddChargeEnelgy(createEnelgy);
@@ -231,7 +237,7 @@ std::string CameraData::Serialize()
 	return res;
 }
 
-void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	auto camera = ChPtr::Make_S<CameraObject>();
 
@@ -258,7 +264,7 @@ std::string ScopeData::Serialize()
 	return res;
 }
 
-void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	auto camera = ChPtr::Make_S<CameraObject>();
 
@@ -284,7 +290,7 @@ std::string WalkData::Serialize()
 	return res;
 }
 
-void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	auto&& walk = GetComponent<MoveComponent>(_base);
 
@@ -293,7 +299,7 @@ void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
 	walk->SetJumpPow(jumpPow);
 }
 
-void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	auto target = LookObj<MechaParts>();
 
@@ -374,7 +380,7 @@ std::string BoostBrust::Serialize()
 	return res;
 }
 
-void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	auto&& base = *LookObj<MechaParts>();
 	if (ChPtr::NullCheck(&base))return;
@@ -509,19 +515,23 @@ std::string SwordData::Serialize()
 	return res;
 }
 
-void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
+	auto& thisParts = *LookObj<MechaParts>();
+
 	auto function = ChPtr::Make_S<SwordFunction>();
 
 	function->SetPartsObject(&_parts);
 
 	function->SetBaseData(this);
 
-	function->Init();
+	function->Init(thisParts.GetMeshDrawer());
+
+	function->SetFrmae(_frame);
 
 	_parts.AddWeaponFunction(function);
 
-	NextPosBase::SetPartsParameter(_base, _parts);
+	NextPosBase::SetPartsParameter(_base, _parts,_frame);
 }
 
 void SwordData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
@@ -556,19 +566,23 @@ std::string GunData::Serialize()
 	return res;
 }
 
-void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)
+void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
+	auto& thisParts = *LookObj<MechaParts>();
+
 	auto function = ChPtr::Make_S<GunFunction>();
 
 	function->SetPartsObject(&_parts);
 
 	function->SetBaseData(this);
 
-	function->Init();
+	function->Init(thisParts.GetMeshDrawer());
+
+	function->SetFrmae(_frame);
 
 	_parts.AddWeaponFunction(function);
 
-	NextPosBase::SetPartsParameter(_base, _parts);
+	NextPosBase::SetPartsParameter(_base, _parts,_frame);
 }
 
 void GunData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)

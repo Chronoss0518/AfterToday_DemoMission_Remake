@@ -35,7 +35,7 @@ void PlayerController::Init()
 	keyTypes[VK_RBUTTON] = InputName::RAttack;
 
 	//keyTypes[VK_CONTROL] = InputName::MSChange;
-	keyTypes[VK_MBUTTON] = InputName::WeaponChange;
+	keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
 	keyTypes[VK_SCROLL] = InputName::MagnificationUp;
 	
 	controllerTypes[XInputTypeNames::A] = InputName::Attack;
@@ -51,10 +51,10 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::RDown] = InputName::None;
 	controllerTypes[XInputTypeNames::RRight] = InputName::None;
 	controllerTypes[XInputTypeNames::L1] = InputName::LAttack;
-	controllerTypes[XInputTypeNames::L2] = InputName::LWChange;
+	controllerTypes[XInputTypeNames::L2] = InputName::LWDChange;
 	controllerTypes[XInputTypeNames::L3] = InputName::LReload;
 	controllerTypes[XInputTypeNames::R1] = InputName::RAttack;
-	controllerTypes[XInputTypeNames::R2] = InputName::RWChange;
+	controllerTypes[XInputTypeNames::R2] = InputName::RWDChange;
 	controllerTypes[XInputTypeNames::R3] = InputName::RReload;
 
 }
@@ -94,5 +94,10 @@ void PlayerController::XInputUpdate()
 	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
 	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
 	
+
+}
+
+void CPUController::UpdateBegin()
+{
 
 }

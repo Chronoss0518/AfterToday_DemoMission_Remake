@@ -24,7 +24,7 @@ private:
 
 public://Serialize Deserialize//
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName);
 
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
@@ -36,7 +36,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	ChPtr::Shared<MechaPartsObject>  SetParameters(BaseMecha& _base);
+	ChPtr::Shared<MechaPartsObject>  SetParameters(BaseMecha& _base, GameFrame* _frame);
 
 	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
 
@@ -45,6 +45,8 @@ public://Set Functions//
 	void SetMass(const float _mass) { mass = _mass; }
 
 	ChStd::Bool SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name);
+
+	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
 
 public://Get Function//
 
@@ -58,6 +60,12 @@ public://Get Function//
 
 	inline std::string GetThisFileName() { return thisFileName; }
 
+	inline MeshDrawer* GetMeshDrawer() { return drawer; }
+
+public:
+
+	void Draw(const ChMat_11& _mat);
+
 private:
 
 	//ÉpÅ[ÉcÇÃçdÇ≥//
@@ -70,7 +78,9 @@ private:
 
 	float groundHeight = 0.0f;
 
-	ChPtr::Shared<ChD3D11::Mesh11>model = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
+
+	MeshDrawer* drawer = nullptr;
 
 	static std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 
@@ -92,7 +102,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts) = 0;
+	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame) = 0;
 
 
 public://Get Functions//
@@ -128,7 +138,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
@@ -159,7 +169,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	void SetFovy(const float _fovy) { fovy = _fovy; }
 
@@ -195,7 +205,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	void SetMinFovy(const float _minFovy) { minFovy = _minFovy; }
 	
@@ -231,7 +241,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	void SetMovePow(const float _movePow) { movePow = _movePow; }
 	
@@ -282,7 +292,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	virtual void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
 
@@ -372,7 +382,7 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	inline void SetParamName(const std::string& _objectName)
 	{
@@ -538,7 +548,7 @@ public://Set Functions//
 
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	inline void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
 
@@ -567,7 +577,7 @@ public://Set Functions//
 
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts)override;
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
 	inline void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
 

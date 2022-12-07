@@ -286,6 +286,7 @@ void PhysicsMachine::TestFieldRange()
 
 	if (FieldSize().ElementsLen() <= 0.0f)return;
 
+	isOutSide = false;
 	ChVec3 testPos = position + addMovePowerVector;
 	testPos.y += groundHeight;
 
@@ -307,6 +308,8 @@ void PhysicsMachine::RangeTest(float& _addMovePowerVectorElement, const float _t
 		_addMovePowerVectorElement += _addMovePowerVectorElement > 0.0f ?
 			-(testPosElement - testFieldSizeElement) :
 			(testPosElement - testFieldSizeElement);
+
+		isOutSide = true;
 	}
 }
 

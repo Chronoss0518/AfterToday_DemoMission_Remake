@@ -34,11 +34,16 @@ public:
 
 public:
 
-	ChVec3 GetPosition() { return target->pos; }
+	ChVec3 GetPosition() { return target->GetPosition(); }
 
-	ChVec3 GetRotation() { return target->rot; }
+	ChVec3 GetRotation() { return target->GetRotation(); }
+
+	ChVec3 GetMoveVector() { return target->physics->GetAddMovePowerVector(); }
+
+	ChVec3 GetRotateVector() { return target->physics->GetAddRotatePowerVector(); }
 
 	unsigned long GetNowEnelgy() { return target->nowEnelgy; }
+
 
 private:
 

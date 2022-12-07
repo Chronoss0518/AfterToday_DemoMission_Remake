@@ -34,6 +34,7 @@
     <ClInclude Include="Src\BaseMecha\MechaParts.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObject.h" />
     <ClInclude Include="Src\Bullet\Bullet.h" />
+    <ClInclude Include="Src\Bullet\BulletObject.h" />
     <ClInclude Include="Src\CloudObj\CloudObj.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
     <ClInclude Include="Src\Frames\TitleFrame.h" />
@@ -60,6 +61,7 @@
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp" />
     <ClCompile Include="Src\Bullet\Bullet.cpp" />
+    <ClCompile Include="Src\Bullet\BulletObject.cpp" />
     <ClCompile Include="Src\CloudObj\CloudObj.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
     <ClCompile Include="Src\Frames\TitleFrame.cpp" />
