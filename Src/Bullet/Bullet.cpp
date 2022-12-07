@@ -2,6 +2,7 @@
 
 #include"../AllStruct.h"
 #include"Bullet.h"
+#include"BulletObject.h"
 
 
 ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()
@@ -12,7 +13,7 @@ ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()
 	[]()->ChPtr::Shared<BulletData> {return ChPtr::Make_S<MissileData>(); }
 };
 
-void BulletData::CreateBullet(const std::string& _fileName)
+ChPtr::Shared<BulletData> BulletData::CreateBullet(MeshDrawer* _drawer, const std::string& _fileName)
 {
 	auto&& bulletList = LoadBulletList();
 
@@ -20,7 +21,7 @@ void BulletData::CreateBullet(const std::string& _fileName)
 		auto bulletIns = bulletList.find(_fileName);
 		if (bulletIns != bulletList.end())
 		{
-			return;
+			return (*bulletIns).second;
 		}
 	}
 
@@ -35,12 +36,14 @@ void BulletData::CreateBullet(const std::string& _fileName)
 		file.FileClose();
 	}
 	
-	if (textObject.LineCount() <= 2)return;
+	if (textObject.LineCount() <= 2)return nullptr;
 
 	unsigned char bulletType = std::atoi(textObject.GetTextLine(0).c_str());
 
 	auto bullet = CreateBulletFunction[bulletType]();
 
+	bullet->SetMeshDrawer(_drawer);
+	
 	{
 		unsigned long pos = text.find_first_of("\n") + 1;
 		text = text.substr(pos);
@@ -49,9 +52,16 @@ void BulletData::CreateBullet(const std::string& _fileName)
 	bullet->Deserialize(text);
 
 	bulletList[_fileName] = bullet;
+	
+	bullet->SetMeshDrawer(_drawer);
 
-	return;
+	return bullet;
 
+}
+
+void BulletData::AllRelease()
+{
+	LoadBulletList().clear();
 }
 
 void BulletData::Deserialize(const std::string& _text)
@@ -60,6 +70,7 @@ void BulletData::Deserialize(const std::string& _text)
 	textObject.SetText(_text);
 	firstSpeed = static_cast<float>(std::atof(textObject.GetTextLine(0).c_str()));
 	penetration = static_cast<float>(std::atof(textObject.GetTextLine(1).c_str()));
+
 
 	{
 		ChCpp::ModelLoader::XFile loader;
@@ -77,6 +88,46 @@ std::string BulletData::Serialize()
 	res += bullet->GetModelName() + "\n";
 
 	return res;
+}
+
+void BulletData::InitBulletObject(BulletObject& _bullet)
+{
+	ChLMat tmpMat;
+	tmpMat.SetRotation(_bullet.physics->GetRotation());
+	ChVec3 dir = tmpMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+
+	dir.val.SetLen(firstSpeed);
+	_bullet.physics->AddMovePowerVector(dir);
+}
+
+void BulletData::UpdateBulletObject(BulletObject& _bullet)
+{
+	if (_bullet.physics->IsOutSide())
+	{
+		_bullet.Destroy();
+		return;
+	}
+
+	if (_bullet.physics->IsGround() || _bullet.physics->IsWall())
+	{
+		_bullet.Destroy();
+		return;
+	}
+	
+}
+
+void BulletData::MoveBulletObject(BulletObject& _bullet)
+{
+	_bullet.physics->Update();
+
+	_bullet.physics->SetPosition(_bullet.physics->GetPosition() + _bullet.physics->GetAddMovePowerVector());
+	_bullet.physics->SetRotation(_bullet.physics->GetRotation() + _bullet.physics->GetAddRotatePowerVector());
+}
+
+void BulletData::Draw(const ChMat_11& _mat)
+{
+	if (bullet == nullptr)return;
+	drawer->drawer.Draw(drawer->dc, *bullet, _mat);
 }
 
 void BoostBulletData::Deserialize(const std::string& _text)
@@ -99,6 +150,11 @@ std::string BoostBulletData::Serialize()
 	return res;
 }
 
+void BoostBulletData::UpdateBulletObject(BulletObject& _bullet)
+{
+
+}
+
 void HighExplosiveBulletData::Deserialize(const std::string& _text)
 {
 	BoostBulletData::Deserialize(_text);
@@ -115,6 +171,11 @@ std::string HighExplosiveBulletData::Serialize()
 	res += std::to_string(blastRange) + "\n";
 
 	return res;
+}
+
+void HighExplosiveBulletData::UpdateBulletObject(BulletObject& _bullet)
+{
+
 }
 
 void MissileData::Deserialize(const std::string& _text)
@@ -135,4 +196,9 @@ std::string MissileData::Serialize()
 	res += std::to_string(lostRange) + "\n";
 
 	return res;
+}
+
+void MissileData::UpdateBulletObject(BulletObject& _bullet)
+{
+
 }

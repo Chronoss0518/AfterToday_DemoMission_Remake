@@ -6,7 +6,11 @@ class BulletObject;
 //í èÌíeëSî //
 class BulletData
 {
-	static void CreateBullet(const std::string& _fileName);
+public:
+
+	static ChPtr::Shared<BulletData> CreateBullet(MeshDrawer* _drawer, const std::string& _fileName);
+
+	static void AllRelease();
 
 public://Serialize Deserialize\\
 
@@ -16,7 +20,21 @@ public://Serialize Deserialize\\
 
 public:
 
+	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
+
+public:
+
 	virtual std::string GetBulletType() { return "0\n"; }
+
+public:
+
+	virtual void InitBulletObject(BulletObject& _bullet);
+
+	virtual void UpdateBulletObject(BulletObject& _bullet);
+
+	virtual void MoveBulletObject(BulletObject& _bullet);
+
+	void Draw(const ChMat_11& _mat);
 
 public:
 
@@ -35,8 +53,10 @@ protected:
 	float penetration = 0.0f;
 
 	//íeÇÃÉÇÉfÉã//
-	ChPtr::Shared<ChD3D11::Mesh11>bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
-	
+	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
+
+	MeshDrawer* drawer = nullptr;
+
 private:
 
 	static ChPtr::Shared<BulletData>(*CreateBulletFunction[4])();
@@ -53,6 +73,8 @@ public:
 	virtual std::string Serialize()override;
 
 public:
+
+	void UpdateBulletObject(BulletObject& _bullet)override;
 
 	virtual std::string GetBulletType()override { return "1\n"; }
 
@@ -77,6 +99,8 @@ public:
 	virtual std::string Serialize()override;
 
 public:
+	
+	void UpdateBulletObject(BulletObject& _bullet)override;
 
 	virtual std::string GetBulletType()override { return "2\n"; }
 
@@ -97,6 +121,8 @@ public://Serialize Deserialize\\
 	std::string Serialize()override;
 
 public:
+
+	void UpdateBulletObject(BulletObject& _bullet)override;
 
 	virtual std::string GetBulletType()override { return "3\n"; }
 
