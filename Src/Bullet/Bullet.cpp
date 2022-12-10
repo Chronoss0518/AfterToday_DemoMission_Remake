@@ -13,7 +13,7 @@ ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()
 	[]()->ChPtr::Shared<BulletData> {return ChPtr::Make_S<MissileData>(); }
 };
 
-ChPtr::Shared<BulletData> BulletData::CreateBullet(MeshDrawer* _drawer, const std::string& _fileName)
+ChPtr::Shared<BulletData> BulletData::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
 {
 	auto&& bulletList = LoadBulletList();
 
@@ -49,7 +49,7 @@ ChPtr::Shared<BulletData> BulletData::CreateBullet(MeshDrawer* _drawer, const st
 		text = text.substr(pos);
 	}
 
-	bullet->Deserialize(text);
+	bullet->Deserialize(_device,text);
 
 	bulletList[_fileName] = bullet;
 	
@@ -64,7 +64,7 @@ void BulletData::AllRelease()
 	LoadBulletList().clear();
 }
 
-void BulletData::Deserialize(const std::string& _text)
+void BulletData::Deserialize(ID3D11Device* _device, const std::string& _text)
 {
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
@@ -74,6 +74,7 @@ void BulletData::Deserialize(const std::string& _text)
 
 	{
 		ChCpp::ModelLoader::XFile loader;
+		bullet->Init(_device);
 		loader.CreateModel(bullet, textObject.GetTextLine(2));
 	}
 
@@ -130,9 +131,9 @@ void BulletData::Draw(const ChMat_11& _mat)
 	drawer->drawer.Draw(drawer->dc, *bullet, _mat);
 }
 
-void BoostBulletData::Deserialize(const std::string& _text)
+void BoostBulletData::Deserialize(ID3D11Device* _device, const std::string& _text)
 {
-	BulletData::Deserialize(_text);
+	BulletData::Deserialize(_device,_text);
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
 	startBoostTime = std::atol(textObject.GetTextLine(3).c_str());
@@ -155,9 +156,9 @@ void BoostBulletData::UpdateBulletObject(BulletObject& _bullet)
 
 }
 
-void HighExplosiveBulletData::Deserialize(const std::string& _text)
+void HighExplosiveBulletData::Deserialize(ID3D11Device* _device, const std::string& _text)
 {
-	BoostBulletData::Deserialize(_text);
+	BoostBulletData::Deserialize(_device,_text);
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
 	blastRange = static_cast<float>(std::atof(textObject.GetTextLine(5).c_str()));
@@ -178,9 +179,9 @@ void HighExplosiveBulletData::UpdateBulletObject(BulletObject& _bullet)
 
 }
 
-void MissileData::Deserialize(const std::string& _text)
+void MissileData::Deserialize(ID3D11Device* _device, const std::string& _text)
 {
-	HighExplosiveBulletData::Deserialize(_text);
+	HighExplosiveBulletData::Deserialize(_device,_text);
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
 	rotateSpeed = static_cast<float>(std::atof(textObject.GetTextLine(6).c_str()));

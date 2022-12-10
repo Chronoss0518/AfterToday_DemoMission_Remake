@@ -525,7 +525,7 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 
 	function->SetBaseData(this);
 
-	function->Init(thisParts.GetMeshDrawer());
+	function->Init(thisParts.GetMeshDrawer(),ChD3D11::D3D11Device());
 
 	function->SetFrmae(_frame);
 
@@ -576,7 +576,7 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 
 	function->SetBaseData(this);
 
-	function->Init(thisParts.GetMeshDrawer());
+	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
 
 	function->SetFrmae(_frame);
 

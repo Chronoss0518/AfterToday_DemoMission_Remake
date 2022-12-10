@@ -539,9 +539,13 @@ void GameFrame::UpdateFunction()
 
 	mechaList.ObjectUpdate();
 
+	bulletList.ObjectUpdate();
+
 	mechaList.ObjectUpdateEnd();
 
 	mechaList.ObjectMove();
+
+	bulletList.ObjectMove();
 
 	mechaList.ObjectMoveEnd();
 
@@ -579,6 +583,7 @@ void GameFrame::Render3D(void)
 
 	mechaList.ObjectDraw3D();
 
+	bulletList.ObjectDraw3D();
 
 	for (auto mapModel : map)
 	{

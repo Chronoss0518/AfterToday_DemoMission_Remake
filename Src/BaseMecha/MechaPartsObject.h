@@ -115,7 +115,7 @@ class WeaponFunction
 {
 public:
 
-	virtual void Init(MeshDrawer* _drawer) = 0;
+	virtual void Init(MeshDrawer* _drawer, ID3D11Device* _device) = 0;
 
 	inline void SetFrmae(GameFrame* _frame) { frame = _frame; }
 
@@ -170,7 +170,7 @@ class SwordFunction : public WeaponFunction
 {
 public:
 
-	void Init(MeshDrawer* _drawer)override;
+	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 
@@ -196,7 +196,7 @@ class GunFunction : public WeaponFunction
 {
 public:
 
-	void Init(MeshDrawer* _drawer)override;
+	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 

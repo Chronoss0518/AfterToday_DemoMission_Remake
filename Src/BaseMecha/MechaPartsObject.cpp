@@ -53,7 +53,7 @@ void MechaPartsObject::Damage()
 
 void MechaPartsObject::Attack()
 {
-
+	weaponFunc[useAttackType]->Attack();
 }
 
 void MechaPartsObject::StartSubFunction()
@@ -82,7 +82,6 @@ void MechaPartsObject::SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetOb
 
 void WeaponFunction::Attack()
 {
-
 	AttackFunction();
 }
 
@@ -96,15 +95,15 @@ void SwordFunction::AttackFunction()
 
 }
 
-void SwordFunction::Init(MeshDrawer* _drawer)
+void SwordFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
 {
 
 }
 
 void GunFunction::AttackFunction()
 {
-	if (reloadFlg)return;
-	if (nowBulletNum <= 0)return;
+	//if (reloadFlg)return;
+	//if (nowBulletNum <= 0)return;
 
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
@@ -129,13 +128,13 @@ void GunFunction::AttackFunction()
 
 }
 
-void GunFunction::Init(MeshDrawer* _drawer)
+void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
 {
 	nowBulletNum = gunData->GetBulletNum();
 
 	nowMagazineNum = gunData->GetMagazineNum();
 
-	createBulletData = BulletData::CreateBullet(_drawer,gunData->GetUseBulletFile());
+	createBulletData = BulletData::CreateBullet(_drawer, _device, gunData->GetUseBulletFile());
 
 }
 
@@ -160,7 +159,5 @@ void GunFunction::PosUpdate()
 {
 	if (shotPos == nullptr)return;
 	
-	shotPos->UpdateAllDrawTransform();
-
 	lastShotPos = shotPos->GetDrawLHandMatrix();
 }

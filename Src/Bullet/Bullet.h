@@ -8,13 +8,13 @@ class BulletData
 {
 public:
 
-	static ChPtr::Shared<BulletData> CreateBullet(MeshDrawer* _drawer, const std::string& _fileName);
+	static ChPtr::Shared<BulletData> CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
 
 	static void AllRelease();
 
 public://Serialize Deserialize\\
 
-	virtual void Deserialize(const std::string& _text);
+	virtual void Deserialize(ID3D11Device* _device, const std::string& _text);
 
 	virtual std::string Serialize();
 
@@ -68,7 +68,7 @@ class BoostBulletData :public BulletData
 {
 public:
 
-	virtual void Deserialize(const std::string& _text)override;
+	virtual void Deserialize(ID3D11Device* _device, const std::string& _text)override;
 
 	virtual std::string Serialize()override;
 
@@ -94,7 +94,7 @@ class HighExplosiveBulletData :public BoostBulletData
 {
 public:
 
-	virtual void Deserialize(const std::string& _text)override;
+	virtual void Deserialize(ID3D11Device* _device, const std::string& _text)override;
 
 	virtual std::string Serialize()override;
 
@@ -116,7 +116,7 @@ class  MissileData :public HighExplosiveBulletData
 {
 public://Serialize Deserialize\\
 
-	void Deserialize(const std::string& _text)override;
+	void Deserialize(ID3D11Device* _device, const std::string& _text)override;
 
 	std::string Serialize()override;
 
