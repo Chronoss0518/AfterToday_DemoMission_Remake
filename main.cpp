@@ -34,6 +34,7 @@ int WINAPI WinMain(
 			{
 				ChWin::WindStyle style;
 				style.AddOverlappedWindow();
+				style.AddClipChildren();
 				creater.SetWindStyle(&style);
 			}
 
