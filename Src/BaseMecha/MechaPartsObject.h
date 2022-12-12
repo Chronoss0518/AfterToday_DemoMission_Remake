@@ -50,6 +50,8 @@ public:
 
 	ChPtr::Shared<PositionObject> GetPositionObject() { return positionObject; }
 
+	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
+
 	short GetDurableValue() { return durableValue; }
 
 	unsigned char GetPartsPosName() { return partsPosName; }

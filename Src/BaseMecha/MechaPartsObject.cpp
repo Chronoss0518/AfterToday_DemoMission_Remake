@@ -105,14 +105,18 @@ void GunFunction::AttackFunction()
 	//if (reloadFlg)return;
 	//if (nowBulletNum <= 0)return;
 
+	ChLMat tmpMat = obj->GetLastDrawMat();
+
+	tmpMat = lastShotPos * tmpMat;
+
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
 
 		auto bullet = ChPtr::Make_S<BulletObject>();
 
 		bullet->SetBulletData(createBulletData.get());
-		bullet->SetPosition(lastShotPos.GetPosition());
-		bullet->SetRotation(lastShotPos.GetRotation());
+		bullet->SetPosition(tmpMat.GetPosition());
+		bullet->SetRotation(tmpMat.GetRotation());
 
 		bullet->Init();
 
