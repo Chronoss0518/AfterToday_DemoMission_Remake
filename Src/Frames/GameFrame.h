@@ -105,6 +105,10 @@ private:
 
 	ChPtr::Shared<GameScript> script = nullptr;
 	std::map<std::string, unsigned long>loopPos;
+
+
+	ChWin::TextBox box;
+
 };
 
 #endif

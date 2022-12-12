@@ -111,7 +111,7 @@ void BulletData::UpdateBulletObject(BulletObject& _bullet)
 
 	if (_bullet.physics->IsGround() || _bullet.physics->IsWall())
 	{
-		_bullet.Destroy();
+		//_bullet.Destroy();
 		return;
 	}
 	
