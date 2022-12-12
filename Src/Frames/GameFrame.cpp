@@ -161,7 +161,7 @@ void GameFrame::InitScriptFunction()
 
 		std::string audioName = argment[0];
 
-		ChD3D::XAudioManager().CreateSound(audio.get(), SOUND_DIRECTORY() + audioName);
+		ChD3D::XAudioManager().CreateSound(audio.get(), SOUND_DIRECTORY(+audioName));
 		audio->SetLoopFlg(false);
 
 		for (unsigned long i = 1; i < argment.size(); i++)
@@ -223,7 +223,7 @@ void GameFrame::InitScriptFunction()
 		mainMap->model->Init(ChD3D11::D3D11Device());
 		{
 			ChCpp::ModelLoader::XFile loader;
-			loader.CreateModel(mainMap->model, MESH_DIRECTORY() + argment[0]);
+			loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
 		}
 		map.push_back(mainMap);
 
@@ -498,6 +498,7 @@ void GameFrame::Release()
 
 void GameFrame::Update()
 {
+
 	UpdateFunction();
 
 #if DEBUG_FLG
@@ -528,6 +529,7 @@ void GameFrame::Update()
 #endif
 
 	DrawFunction();
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
