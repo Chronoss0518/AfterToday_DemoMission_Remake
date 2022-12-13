@@ -119,7 +119,6 @@ void GunFunction::AttackFunction()
 		bullet->SetRotation(tmpMat.GetRotation());
 
 		bullet->Init();
-
 		frame->AddBullet(bullet);
 
 		nowBulletNum--;

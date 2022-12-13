@@ -584,10 +584,6 @@ void GameFrame::Render3D(void)
 
 	meshDrawer.drawer.DrawStart(ChD3D11::D3D11DC());
 
-	mechaList.ObjectDraw3D();
-
-	bulletList.ObjectDraw3D();
-
 	for (auto mapModel : map)
 	{
 		ChMat_11 mapSizeMatrix;
@@ -596,6 +592,10 @@ void GameFrame::Render3D(void)
 		mapSizeMatrix.SetScaleSize(mapModel->scalling);
 		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel->model, mapSizeMatrix);
 	}
+
+	mechaList.ObjectDraw3D();
+
+	bulletList.ObjectDraw3D();
 
 	meshDrawer.drawer.DrawEnd();
 }
