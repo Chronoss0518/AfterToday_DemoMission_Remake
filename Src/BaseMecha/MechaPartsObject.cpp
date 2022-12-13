@@ -20,26 +20,23 @@ void MechaPartsObject::Update()
 void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
-	lastDrawMat.Identity();
+	lastDrawMat = _drawMat;
+	ChLMat tmp;
 
 	if (positionObject != nullptr)
 	{
 		positionObject->positionObject->UpdateAllDrawTransform();
-		lastDrawMat = positionObject->positionObject->GetDrawLHandMatrix();
+		tmp = positionObject->positionObject->GetDrawLHandMatrix();
 	}
 
-	mesh.SetOutSizdTransform(lastDrawMat);
+	mesh.SetOutSizdTransform(tmp);
 
 	ChMat_11 drawMat;
-	ChMat_11 rot;
-	rot.SetRotation(baseRot);
+	drawMat.SetRotation(baseRot);
 
-	drawMat = _drawMat;
-	drawMat = rot * drawMat;
+	lastDrawMat = drawMat = drawMat * _drawMat;
 
 	baseParts->Draw(drawMat);
-
-	lastDrawMat = lastDrawMat * _drawMat;
 
 	for (auto func : weaponFunc)
 	{
