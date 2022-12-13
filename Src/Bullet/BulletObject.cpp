@@ -22,9 +22,11 @@ void BulletObject::Move()
 
 void BulletObject::Draw3D()
 {
-	ChMat_11 tmp;
+	ChLMat tmp = ChLMat();
+	tmp.SetScalling(ChVec3(10.0f));
 	tmp.SetPosition(physics->GetPosition());
 	tmp.SetRotation(physics->GetRotation());
-	tmp.SetScaleSize(ChVec3(10.0f));
-	data->Draw(tmp);
+	ChMat_11 draw;
+	draw = tmp;
+	data->Draw(draw);
 }
