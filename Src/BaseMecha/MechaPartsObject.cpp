@@ -22,6 +22,7 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 	auto&& mesh = baseParts->GetMesh();
 	lastDrawMat = _drawMat;
 	ChLMat tmp;
+	tmp.Identity();
 
 	if (positionObject != nullptr)
 	{
@@ -32,6 +33,7 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 	mesh.SetOutSizdTransform(tmp);
 
 	ChMat_11 drawMat;
+	drawMat.Identity();
 	drawMat.SetRotation(baseRot);
 
 	lastDrawMat = drawMat = drawMat * _drawMat;
@@ -161,5 +163,7 @@ void GunFunction::PosUpdate()
 {
 	if (shotPos == nullptr)return;
 	
+	//shotPos->UpdateAllDrawTransform();
+
 	lastShotPos = shotPos->GetDrawLHandMatrix();
 }

@@ -98,7 +98,7 @@ void BulletData::InitBulletObject(BulletObject& _bullet)
 	tmpMat.SetRotation(_bullet.physics->GetRotation());
 	ChVec3 dir = tmpMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
 
-	dir.val.SetLen(firstSpeed);
+	dir *= firstSpeed;
 	_bullet.physics->AddMovePowerVector(dir);
 }
 
