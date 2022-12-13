@@ -76,6 +76,7 @@ void BulletData::Deserialize(ID3D11Device* _device, const std::string& _text)
 		ChCpp::ModelLoader::XFile loader;
 		bullet->Init(_device);
 		loader.CreateModel(bullet, textObject.GetTextLine(2));
+
 	}
 
 }
@@ -111,7 +112,7 @@ void BulletData::UpdateBulletObject(BulletObject& _bullet)
 
 	if (_bullet.physics->IsGround() || _bullet.physics->IsWall())
 	{
-		//_bullet.Destroy();
+		_bullet.Destroy();
 		return;
 	}
 	

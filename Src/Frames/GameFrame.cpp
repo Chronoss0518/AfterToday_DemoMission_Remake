@@ -102,8 +102,8 @@ void GameFrame::Init()
 	PhysicsMachine::SetAirRegist(0.1f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-	box.Create("Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
-	box.SetEnableFlg(false);
+	//box.Create("Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
+	//box.SetEnableFlg(false);
 
 	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 
@@ -530,7 +530,7 @@ void GameFrame::Update()
 #endif
 
 	DrawFunction();
-	box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
+	//box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

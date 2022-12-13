@@ -39,6 +39,8 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	baseParts->Draw(drawMat);
 
+	lastDrawMat = lastDrawMat * _drawMat;
+
 	for (auto func : weaponFunc)
 	{
 		func->PosUpdate();
