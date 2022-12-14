@@ -94,9 +94,12 @@ std::string BulletData::Serialize()
 
 void BulletData::InitBulletObject(BulletObject& _bullet)
 {
+	ChVec3 dir = ChVec3(0.0f, 0.0f, 1.0f);
+
 	ChLMat tmpMat;
+
 	tmpMat.SetRotation(_bullet.physics->GetRotation());
-	ChVec3 dir = tmpMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+	dir = tmpMat.TransformCoord(dir);
 
 	dir *= firstSpeed;
 	_bullet.physics->AddMovePowerVector(dir);
