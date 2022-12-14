@@ -17,11 +17,6 @@ void BoostComponent::Update()
 
 	UpdateAvoid(tmp);
 
-}
-
-void BoostComponent::DrawBegin()
-{
-
 	unsigned long fps = ChSystem::SysManager().GetFPS();
 
 	boostRotation += 5;
@@ -57,6 +52,11 @@ void BoostComponent::DrawBegin()
 		boostStartFlg = true;
 	}
 
+}
+
+void BoostComponent::DrawBegin()
+{
+
 	ChLMat tmp;
 	tmp.SetRotationYAxis(boostRotation);
 
@@ -78,9 +78,7 @@ void BoostComponent::UpdateBoost(const ChLMat& _nowTargetPoster)
 
 	boostUseFlg = true;
 
-	unsigned long fps = ChSystem::SysManager().GetFPS();
-
-	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * boostPow / fps);
+	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * boostPow / PhysicsMachine::GetFPS());
 
 }
 
@@ -122,8 +120,6 @@ void BoostComponent::UpdateAvoid(const ChLMat& _nowTargetPoster)
 	avoidUseFlg = true;
 	avoidStartFlg = true;
 
-	unsigned long fps = ChSystem::SysManager().GetFPS();
-
-	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * avoidPow / fps);
+	AddMoveVector(_nowTargetPoster.TransformCoord(direction) * avoidPow / PhysicsMachine::GetFPS());
 
 }

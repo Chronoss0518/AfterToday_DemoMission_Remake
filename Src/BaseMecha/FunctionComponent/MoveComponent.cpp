@@ -33,17 +33,13 @@ void MoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, I
 
 	if (!IsGround())return;
 
-	unsigned long fps = ChSystem::SysManager().GetFPS();
-
-	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow / fps);
+	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow / PhysicsMachine::GetFPS());
 
 }
 
 void MoveComponent::RotateUpdate(InputName _input, const ChVec3& _direction)
 {
-	if (!IsPushFlg(_input))return;
+	if (!IsPushFlg(_input))return;;
 
-	unsigned long fps = ChSystem::SysManager().GetFPS();
-
-	AddRotateVector(_direction * rotatePow / fps);
+	AddRotateVector(_direction * rotatePow / PhysicsMachine::GetFPS());
 }

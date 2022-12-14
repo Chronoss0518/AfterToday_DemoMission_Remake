@@ -20,9 +20,9 @@ public:
 
 public:
 
-	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->AddMoveVector(_moveVecAdd); }
+	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->physics->AddMovePowerVector(_moveVecAdd); }
 	
-	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->AddRotateVector(_rotateVecAdd); }
+	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->physics->AddRotatePowerVector(_rotateVecAdd); }
 
 public:
 
