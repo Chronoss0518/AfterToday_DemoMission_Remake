@@ -162,7 +162,6 @@ void PhysicsMachine::UpdateHitTest()
 
 	if (baseModels.empty())
 	{
-		std::vector<ChPtr::Shared<ChCpp::ChMultiThread>>threadList;
 
 		ChVec3 testPos = position + addMovePowerVector;
 		testPos.y += groundHeight;
@@ -196,28 +195,17 @@ void PhysicsMachine::UpdateHitTest()
 
 		for (auto&& model : FieldList())
 		{
-			auto  tmpThread = ChPtr::Make_S< ChCpp::ChMultiThread>();
+			auto obj = model->model.lock();
+			if (obj == nullptr)return;
 
-			tmpThread->Init([&]() {
-				auto obj = model->model.lock();
-				if (obj == nullptr)return;
+			ChCpp::PolygonCollider polygon;
+			polygon.SetModel(*obj);
+			polygon.SetMatrix(model->transform);
+			polygon.SetRightHandFlg();
 
-				ChCpp::PolygonCollider polygon;
-				polygon.SetModel(*obj);
-				polygon.SetMatrix(model->transform);
-				polygon.SetRightHandFlg();
-
-				yRay.IsHitField(polygon);
-				xRay.IsHitField(polygon);
-				zRay.IsHitField(polygon);
-				
-			});
-			threadList.push_back(tmpThread);
-		}
-
-		for (auto&& thread : threadList)
-		{
-			thread->Join();
+			yRay.IsHitField(polygon);
+			xRay.IsHitField(polygon);
+			zRay.IsHitField(polygon);
 		}
 
 		if (yRay.IsHit())

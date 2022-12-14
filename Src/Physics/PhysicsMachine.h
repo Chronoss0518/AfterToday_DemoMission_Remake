@@ -77,8 +77,6 @@ public:
 
 	inline void SetMass(float _mass) { mass = _mass; }
 
-	static inline void SetFPS(unsigned long _fps) { FreamPerSeccond() = _fps; }
-
 	inline void SetAddMovePowerVector(const ChVec3& _addPowerVector) { addMovePowerVector = _addPowerVector; }
 
 	inline void SetAddRotatePowerVector(const ChVec3& _addPowerVector) { addRotatePowerVector = _addPowerVector; }
@@ -94,6 +92,8 @@ public:
 	inline void SetLeftRightWallLen(const float _len) { if(_len > 0.0f)leftRightWallLen = _len; }
 
 	inline void SetFrontBackWallLen(const float _len) { if (_len > 0.0f)frontBackWallLen = _len; }
+
+	static inline void SetFPS(unsigned long _fps) { FreamPerSeccond() = _fps; }
 
 	static inline void SetElevation(const float _elevation) { Elevation() = _elevation; }
 
@@ -114,6 +114,14 @@ public:
 	inline float GetMass() { return mass; }
 
 	inline float GetGroundHeight() { return groundHeight; }
+
+	static inline unsigned long GetFPS() { return FreamPerSeccond(); }
+
+	static inline float GetElevation() { return Elevation(); }
+
+	static inline float GetAirRegist() { return AirRegist(); }
+
+	static inline ChVec3 GetFieldSize() { return FieldSize(); }
 
 public:
 
