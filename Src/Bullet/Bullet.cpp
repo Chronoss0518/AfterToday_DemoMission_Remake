@@ -92,14 +92,11 @@ std::string BulletData::Serialize()
 	return res;
 }
 
-void BulletData::InitBulletObject(BulletObject& _bullet)
+void BulletData::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 {
 	ChVec3 dir = ChVec3(0.0f, 0.0f, 1.0f);
 
-	ChLMat tmpMat;
-
-	tmpMat.SetRotation(_bullet.physics->GetRotation());
-	dir = tmpMat.TransformCoord(dir);
+	dir = _startMat.TransformCoord(dir);
 
 	dir *= firstSpeed;
 	_bullet.physics->AddMovePowerVector(dir);

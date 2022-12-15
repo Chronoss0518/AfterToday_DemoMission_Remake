@@ -28,7 +28,7 @@ public:
 
 public:
 
-	virtual void InitBulletObject(BulletObject& _bullet);
+	virtual void InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet);
 
 	virtual void UpdateBulletObject(BulletObject& _bullet);
 

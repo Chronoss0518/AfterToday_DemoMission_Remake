@@ -5,9 +5,9 @@
 #include"BulletObject.h"
 #include"../BaseMecha/BaseMecha.h"
 
-void BulletObject::Init()
+void BulletObject::Init(const ChLMat& _startMat)
 {
-	data->InitBulletObject(*this);
+	data->InitBulletObject(_startMat ,*this);
 }
 
 void BulletObject::Update()

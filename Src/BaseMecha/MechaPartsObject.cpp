@@ -20,13 +20,11 @@ void MechaPartsObject::Update()
 void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
-	lastDrawMat = _drawMat;
 	ChLMat tmp;
 	tmp.Identity();
 
 	if (positionObject != nullptr)
 	{
-		positionObject->positionObject->UpdateAllDrawTransform();
 		tmp = positionObject->positionObject->GetDrawLHandMatrix();
 	}
 
@@ -106,7 +104,8 @@ void GunFunction::AttackFunction()
 	//if (reloadFlg)return;
 	//if (nowBulletNum <= 0)return;
 
-	ChLMat tmpMat = obj->GetLastDrawMat();
+	ChLMat tmpMat;
+	tmpMat = obj->GetLastDrawMat();
 
 	tmpMat = lastShotPos * tmpMat;
 
@@ -119,7 +118,7 @@ void GunFunction::AttackFunction()
 		bullet->SetPosition(tmpMat.GetPosition());
 		bullet->SetRotation(tmpMat.GetRotation());
 
-		bullet->Init();
+		bullet->Init(tmpMat);
 		frame->AddBullet(bullet);
 
 		nowBulletNum--;
@@ -162,8 +161,6 @@ void GunFunction::Update()
 void GunFunction::PosUpdate()
 {
 	if (shotPos == nullptr)return;
-	
-	//shotPos->UpdateAllDrawTransform();
 
 	lastShotPos = shotPos->GetDrawLHandMatrix();
 }

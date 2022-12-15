@@ -17,7 +17,7 @@ public:
 
 public:
 
-	void Init()override;
+	void Init(const ChLMat& _startMat);
 
 public:
 
