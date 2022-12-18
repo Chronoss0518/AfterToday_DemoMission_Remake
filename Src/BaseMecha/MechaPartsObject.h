@@ -121,11 +121,13 @@ public:
 
 	inline void SetFrmae(GameFrame* _frame) { frame = _frame; }
 
+	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
+
 	void Attack();
 
 	virtual void SubFunction() {}
 
-	virtual void Update() {}
+	void Update();
 
 	inline void SetPartsObject(MechaPartsObject* _obj)
 	{
@@ -148,6 +150,8 @@ public:
 protected:
 
 	virtual void AttackFunction() = 0;
+
+	virtual void UpdateFunction() = 0;
 
 	virtual void SetData(WeaponData* _data) = 0;
 
@@ -175,6 +179,8 @@ public:
 	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
+
+	void UpdateFunction()override {};
 
 	inline void SetHitObjectStart(ChPtr::Shared<ChCpp::FrameObject> _hitStart) { hitObjectStart = _hitStart; }
 
@@ -204,7 +210,7 @@ public:
 
 	void SubFunction()override;
 
-	void Update()override;
+	void UpdateFunction()override;
 
 	void PosUpdate()override;
 
@@ -232,6 +238,5 @@ private:
 	unsigned long nowMagazineNum = 0;
 	//écÇËÇÃÉäÉçÅ[Éhéûä‘//
 	unsigned long nowReloadTime = 0;
-
 
 };

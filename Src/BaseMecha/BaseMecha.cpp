@@ -175,7 +175,7 @@ void BaseMecha::Update()
 {
 	for (auto&& parts : mechaParts)
 	{
-		//parts->SubFunction();
+		parts->Update();
 	}
 }
 

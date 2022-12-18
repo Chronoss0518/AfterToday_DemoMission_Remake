@@ -171,6 +171,8 @@ public://Get Function//
 		return positions[ChStd::EnumCast(_name)];
 	}
 
+	inline float GetMass() { return mass; }
+
 	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
 
 	inline unsigned long GetMechaNo() { return mechasNo; }

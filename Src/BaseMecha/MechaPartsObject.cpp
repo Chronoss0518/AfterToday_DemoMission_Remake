@@ -30,12 +30,12 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	mesh.SetOutSizdTransform(tmp);
 
+	tmp.Identity();
+	tmp.SetRotation(baseRot);
+
 	ChMat_11 drawMat;
-	drawMat.Identity();
-	drawMat.SetRotation(baseRot);
-
-	lastDrawMat = drawMat = drawMat * _drawMat;
-
+	drawMat = tmp * _drawMat;
+	lastDrawMat = drawMat;
 	baseParts->Draw(drawMat);
 
 	for (auto func : weaponFunc)
@@ -81,7 +81,18 @@ void MechaPartsObject::SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetOb
 
 void WeaponFunction::Attack()
 {
+	if (nowWeatTime < data->GetWeatTime())return;;
+
 	AttackFunction();
+
+	nowWeatTime = 0;
+}
+
+void WeaponFunction::Update()
+{
+	nowWeatTime++;
+
+	UpdateFunction();
 }
 
 void SwordFunction::SetData(WeaponData* _data)
@@ -101,8 +112,8 @@ void SwordFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
 
 void GunFunction::AttackFunction()
 {
-	//if (reloadFlg)return;
-	//if (nowBulletNum <= 0)return;
+	if (reloadFlg)return;
+	if (nowBulletNum <= 0)return;
 
 	ChLMat tmpMat;
 	tmpMat = obj->GetLastDrawMat();
@@ -111,6 +122,19 @@ void GunFunction::AttackFunction()
 
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
+
+		{
+			ChVec3 tmp;
+
+			tmp.x = ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f);
+			tmp.y = ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f);
+
+			ChLMat rangeMat;
+			rangeMat.SetRotation(tmp);
+
+			tmpMat = rangeMat * tmpMat;
+
+		}
 
 		auto bullet = ChPtr::Make_S<BulletObject>();
 
@@ -121,14 +145,17 @@ void GunFunction::AttackFunction()
 		bullet->Init(tmpMat);
 		frame->AddBullet(bullet);
 
+		ChVec3 nockback = bullet->GetMovePower() * 0.01f / -mecha->GetMass();
+
+		mecha->AddMoveVector(nockback);
+
 		nowBulletNum--;
 		if (nowBulletNum <= 0)break;
 	}
 
-	if (nowMagazineNum <= 0)return;
 	if (nowBulletNum > 0)return;
 
-
+	SubFunction();
 }
 
 void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
@@ -137,14 +164,20 @@ void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
 
 	nowMagazineNum = gunData->GetMagazineNum();
 
+	reloadFlg = false;
+
 	createBulletData = BulletData::CreateBullet(_drawer, _device, gunData->GetUseBulletFile());
 
 }
 
 void GunFunction::SubFunction()
 {
-	if (!reloadFlg)return;
+	if (nowMagazineNum <= 0)return;
+	if (reloadFlg)return;
 
+	nowReloadTime = 0;
+
+	reloadFlg = true;
 }
 
 void GunFunction::SetData(WeaponData* _data)
@@ -152,9 +185,20 @@ void GunFunction::SetData(WeaponData* _data)
 	gunData = ChPtr::SafeCast<GunData>(_data);
 }
 
-void GunFunction::Update()
+void GunFunction::UpdateFunction()
 {
 	if (!reloadFlg)return;
+
+	nowReloadTime++;
+
+	if (gunData->GetReloadTime() > nowReloadTime)return;
+
+	nowBulletNum = gunData->GetBulletNum();
+
+	nowMagazineNum--;
+
+	reloadFlg = false;
+
 
 }
 
