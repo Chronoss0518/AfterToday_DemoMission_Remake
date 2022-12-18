@@ -1,6 +1,7 @@
 #include"../BaseIncluder.h"
 
 #include"../AllStruct.h"
+#include"../Frames/GameFrame.h"
 #include"Bullet.h"
 #include"BulletObject.h"
 
@@ -94,16 +95,26 @@ std::string BulletData::Serialize()
 
 void BulletData::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 {
-	ChVec3 dir = ChVec3(0.0f, 0.0f, 1.0f);
-
-	dir = _startMat.TransformCoord(dir);
+	ChVec3 dir = (bullet->GetDrawLHandMatrix() * _startMat).GetZAxisDirection();
 
 	dir *= firstSpeed;
+	dir.x = -dir.x;
 	_bullet.physics->AddMovePowerVector(dir);
 }
 
 void BulletData::UpdateBulletObject(BulletObject& _bullet)
 {
+	_bullet.physics->Update();
+
+	auto&& frame = _bullet.GetFrame();
+
+	auto&& mechaList = frame.GetMechaList();
+
+	for (unsigned long i = 0;i< mechaList.GetObjectCount();i++)
+	{
+
+	}
+
 	if (_bullet.physics->IsOutSide())
 	{
 		_bullet.Destroy();
@@ -115,13 +126,11 @@ void BulletData::UpdateBulletObject(BulletObject& _bullet)
 		_bullet.Destroy();
 		return;
 	}
-	
+
 }
 
 void BulletData::MoveBulletObject(BulletObject& _bullet)
 {
-	_bullet.physics->Update();
-
 	_bullet.physics->SetPosition(_bullet.physics->GetPosition() + _bullet.physics->GetAddMovePowerVector());
 	_bullet.physics->SetRotation(_bullet.physics->GetRotation() + _bullet.physics->GetAddRotatePowerVector());
 }

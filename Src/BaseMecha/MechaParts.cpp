@@ -54,7 +54,6 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	return mechaParts->SetParameters(_base,_frame);
 }
 
-
 void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
 {
 	std::string text = "";
@@ -523,6 +522,8 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 
 	function->SetPartsObject(&_parts);
 
+	function->SetBaseMecha(&_base);
+
 	function->SetBaseData(this);
 
 	function->Init(thisParts.GetMeshDrawer(),ChD3D11::D3D11Device());
@@ -546,9 +547,10 @@ unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigne
 	bulletNum = std::atol(_text.GetTextLine(textPos + 1).c_str());
 	magazineNum = std::atol(_text.GetTextLine(textPos + 2).c_str());
 	reloadTime = std::atol(_text.GetTextLine(textPos + 3).c_str());
-	bulletFile = _text.GetTextLine(textPos + 4).c_str();
+	range = std::atol(_text.GetTextLine(textPos + 4).c_str());
+	bulletFile = _text.GetTextLine(textPos + 5).c_str();
 
-	return textPos + 5;
+	return textPos + 6;
 
 }
 
@@ -561,6 +563,7 @@ std::string GunData::Serialize()
 	res += std::to_string(bulletNum) + "\n";
 	res += std::to_string(magazineNum) + "\n";
 	res += std::to_string(reloadTime) + "\n";
+	res += std::to_string(range) + "\n";
 	res += bulletFile + "\n";
 
 	return res;
@@ -573,6 +576,8 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 	auto function = ChPtr::Make_S<GunFunction>();
 
 	function->SetPartsObject(&_parts);
+
+	function->SetBaseMecha(&_base);
 
 	function->SetBaseData(this);
 

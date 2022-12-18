@@ -33,7 +33,11 @@ public:
 
 	inline ChVec3 GetPosition() { return physics->GetPosition(); }
 
-	inline ChVec3 GetROtation() { return physics->GetRotation(); }
+	inline ChVec3 GetRotation() { return physics->GetRotation(); }
+
+	inline ChVec3 GetMovePower() { return physics->GetAddMovePowerVector(); }
+
+	inline GameFrame& GetFrame() { return *frame; }
 
 public:
 

@@ -601,6 +601,8 @@ public://Get Functions//
 
 	inline unsigned long GetReloadTime() { return reloadTime; }
 
+	inline unsigned char GetRange() { return range; }
+
 	inline std::string GetUseBulletFile() { return bulletFile; }
 
 protected:
@@ -613,6 +615,9 @@ protected:
 	unsigned long magazineNum = 0;
 	//ƒŠƒ[ƒh‚Ì‚©‚©‚éŠÔ//
 	unsigned long reloadTime = 0;
+
+	//’e‚Ì”­Ë•ûŒü‚ÌŒë·//
+	unsigned char range = 0;
 
 	std::string bulletFile = "";
 };
