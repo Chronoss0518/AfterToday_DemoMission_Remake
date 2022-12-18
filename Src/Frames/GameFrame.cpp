@@ -94,7 +94,6 @@ void GameFrame::Init()
 {
 	script = ChPtr::Make_S<GameScript>();
 	//InitScriptFunction();
-
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
@@ -129,8 +128,6 @@ void GameFrame::Init()
 
 	//windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 	
-	//ChCpp::ChMultiThread thread;
-	//thread.Init([&]() {  }) ;
 	LoadMechas();
 	LoadMaps();
 	LoadBGMs();
@@ -147,9 +144,6 @@ void GameFrame::Init()
 	baseMarker.CreateRenderTarget(
 		ChD3D11::D3D11Device(),
 		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
-
-	//thread.Join();
-
 
 }
 
@@ -492,7 +486,7 @@ void GameFrame::LoadMaps()
 
 void GameFrame::Release()
 {
-
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -531,6 +525,7 @@ void GameFrame::Update()
 
 	DrawFunction();
 	//box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
+	//box.SetText("FPS:" + std::to_string(ChSystem::SysManager().GetNowFPSPoint()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
