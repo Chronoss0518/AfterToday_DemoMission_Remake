@@ -222,6 +222,9 @@ protected:
 
 	MeshDrawer* drawer = nullptr;
 	GameFrame* frame = nullptr;
+
+	ChVec3 centerPos;
+	float centerLen = 5.0f;
 };
 
 #endif

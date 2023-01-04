@@ -196,19 +196,18 @@ void BaseMecha::Move()
 
 	//return;
 
-	ChMat_11 camMat;
 	{
-		ChLMat tmpMat;
+		ChLMat camMat;
+		ChMat_11 tmpMat;
 
-		tmpMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-		tmpMat.SetPosition(physics->GetPosition() + ChVec3(0.0f, 5.0f, 0.0f));
-		auto lookPos = tmpMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
-		auto camPos = tmpMat.Transform(ChVec3(0.0f, 0.0f,-15.0f));
+		camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+		camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
+		auto lookPos = camMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
+		auto camPos = camMat.Transform(ChVec3(0.0f, 0.0f,-15.0f));
 
-		camMat.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
+		tmpMat.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
+		drawer->drawer.SetViewMatrix(tmpMat);
 	}
-
-	drawer->drawer.SetViewMatrix(camMat);
 
 }
 
@@ -217,6 +216,15 @@ void BaseMecha::BaseMove()
 	physics->Update();
 	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
 	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
+
+	ChVec3 pos = physics->GetPosition();
+	centerPos.y = pos.y;
+	ChVec3 normal = (pos - centerPos);
+	float tmp = normal.Len() - centerLen;
+	if (tmp < 0)return;
+	normal.Normalize();
+	normal.val.SetLen(tmp);
+	centerPos += normal;
 }
 
 void BaseMecha::Draw2D()
@@ -293,6 +301,7 @@ void BaseMecha::AddRotateVector(const ChVec3& _rotateVecAdd)
 void BaseMecha::SetPosition(const ChVec3& _pos)
 {
 	physics->SetPosition(_pos);
+	centerPos = _pos;
 }
 
 void BaseMecha::SetRotation(const ChVec3& _rot)
