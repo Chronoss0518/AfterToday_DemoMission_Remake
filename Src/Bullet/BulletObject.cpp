@@ -33,5 +33,8 @@ void BulletObject::Draw3D()
 	tmp.SetRotation(physics->GetRotation());
 	ChMat_11 draw;
 	draw = tmp;
+
+	collider.SetPosition(physics->GetPosition());
+	collider.SetRotation(physics->GetRotation());
 	data->Draw(draw);
 }

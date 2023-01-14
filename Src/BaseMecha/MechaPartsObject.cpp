@@ -38,6 +38,9 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 	lastDrawMat = drawMat;
 	baseParts->Draw(drawMat);
 
+	collider.SetPosition(lastDrawMat.GetPosition());
+	collider.SetRotation(lastDrawMat.GetRotation());
+
 	for (auto func : weaponFunc)
 	{
 		func->PosUpdate();
