@@ -102,7 +102,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		}
 	}
 
-	hardness = static_cast<float>(std::atof(textObject.GetTextLine(1).c_str()));
+	hardness = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(1).c_str()));
 	mass = static_cast<float>(std::atof(textObject.GetTextLine(2).c_str()));
 
 	for (unsigned long i = 3; i < lineCount; i++)
@@ -547,7 +547,7 @@ unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigne
 	bulletNum = std::atol(_text.GetTextLine(textPos + 1).c_str());
 	magazineNum = std::atol(_text.GetTextLine(textPos + 2).c_str());
 	reloadTime = std::atol(_text.GetTextLine(textPos + 3).c_str());
-	range = std::atol(_text.GetTextLine(textPos + 4).c_str());
+	range = static_cast<unsigned char>(std::atol(_text.GetTextLine(textPos + 4).c_str()));
 	bulletFile = _text.GetTextLine(textPos + 5).c_str();
 
 	return textPos + 6;

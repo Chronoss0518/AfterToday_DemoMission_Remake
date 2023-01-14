@@ -48,6 +48,8 @@ public:
 
 	MechaParts* GetBaseObject() { return baseParts; }
 
+	BaseMecha* GetBaseMecha() { return mecha; }
+
 	ChPtr::Shared<PositionObject> GetPositionObject() { return positionObject; }
 
 	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
@@ -62,9 +64,15 @@ public:
 
 	bool GetLWeapon() { return weaponType.GetBitFlg(1); }
 
+	unsigned long GetDamage(BulletObject& _bullet);
+
+	unsigned long GetDamage(ChCpp::BoxCollider& _collider);
+
 public:
 
 	void Update();
+
+public:
 
 public:
 
@@ -86,8 +94,8 @@ public:
 
 protected:
 
+	ChCpp::SphereCollider collider;
 	MechaParts* baseParts;
-
 	ChLMat lastDrawMat;
 
 private:

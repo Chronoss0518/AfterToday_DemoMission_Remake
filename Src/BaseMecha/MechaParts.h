@@ -40,7 +40,7 @@ public://Set Functions//
 
 	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
 
-	void SetHardness(const float _hardness) { hardness = _hardness; }
+	void SetHardness(const unsigned long _hardness) { hardness = _hardness; }
 
 	void SetMass(const float _mass) { mass = _mass; }
 
@@ -50,7 +50,7 @@ public://Set Functions//
 
 public://Get Function//
 
-	inline float GetHardness() { return hardness; }
+	inline unsigned long GetHardness() { return hardness; }
 
 	inline float GetMass() { return mass; }
 
@@ -69,7 +69,7 @@ public:
 private:
 
 	//パーツの硬さ//
-	float hardness = 1.0f;
+	unsigned long hardness = 1;
 
 	//パーツの重さ//
 	float mass = 1.0f;

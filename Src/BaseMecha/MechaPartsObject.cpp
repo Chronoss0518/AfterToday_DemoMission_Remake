@@ -79,6 +79,30 @@ void MechaPartsObject::SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetOb
 	func->SetShotPos(_targetObject);
 }
 
+unsigned long MechaPartsObject::GetDamage(BulletObject& _bullet)
+{
+	if (!collider.IsHit(&_bullet.GetCollider()))return 0;
+
+	unsigned long res = 0;
+
+	unsigned long tmp = baseParts->GetHardness() - _bullet.GetPenetration();
+
+	tmp = tmp < 0 ? 0 : tmp;
+
+	_bullet.SetIsHitTrue();
+
+	res = static_cast<unsigned long>(tmp) * 100;
+
+	return res;
+}
+
+unsigned long MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
+{
+	if (!collider.IsHit(&_collider))return 0;
+
+	return 0;
+}
+
 void WeaponFunction::Attack()
 {
 	if (nowWeatTime < data->GetWeatTime())return;;
@@ -139,9 +163,8 @@ void GunFunction::AttackFunction()
 		auto bullet = ChPtr::Make_S<BulletObject>();
 
 		bullet->SetBulletData(createBulletData.get());
-		bullet->SetPosition(tmpMat.GetPosition());
-		bullet->SetRotation(tmpMat.GetRotation());
-
+		bullet->SetFrame(frame);
+		bullet->SetBaseMecha(mecha);
 		bullet->Init(tmpMat);
 		frame->AddBullet(bullet);
 
