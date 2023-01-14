@@ -10,6 +10,11 @@ void BulletObject::Init(const ChLMat& _startMat)
 	data->InitBulletObject(_startMat ,*this);
 }
 
+unsigned long BulletObject::GetPenetration()
+{ 
+	return data->GetPenetration();
+}
+
 void BulletObject::Update()
 {
 	data->UpdateBulletObject(*this);

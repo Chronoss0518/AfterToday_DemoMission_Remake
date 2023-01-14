@@ -23,7 +23,11 @@ public:
 
 	virtual void SetBulletData(BulletData* _data) { data = _data; }
 
+	inline void SetIsHitTrue() { hitFlg = true; }
+
 	inline void SetFrame(GameFrame* _frame) { frame = _frame; }
+
+	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
 	inline void SetPosition(const ChVec3& _pos) { physics->SetPosition(_pos); }
 
@@ -37,7 +41,13 @@ public:
 
 	inline ChVec3 GetMovePower() { return physics->GetAddMovePowerVector(); }
 
+	unsigned long GetPenetration();
+
+	BaseMecha* GetBaseMecha() { return mecha; }
+
 	inline GameFrame& GetFrame() { return *frame; }
+
+	inline ChCpp::SphereCollider& GetCollider() { return collider; }
 
 public:
 
@@ -53,7 +63,11 @@ protected:
 
 private:
 
+	ChCpp::SphereCollider collider;
+
 	GameFrame* frame = nullptr;
 	BulletData* data = nullptr;
+	ChStd::Bool hitFlg = false;
+	BaseMecha* mecha = nullptr;
 
 };

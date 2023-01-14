@@ -26,6 +26,8 @@ public:
 
 	virtual std::string GetBulletType() { return "0\n"; }
 
+	inline unsigned long GetPenetration() { return penetration; }
+
 public:
 
 	virtual void InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet);
@@ -50,7 +52,10 @@ protected:
 	float firstSpeed = 0.0f;
 
 	//ŠÑ’Ê—Í//
-	float penetration = 0.0f;
+	unsigned long penetration = 0;
+
+	//Õ“Ë”»’è—p//
+	float hitSize = 0.0f;
 
 	//’e‚Ìƒ‚ƒfƒ‹//
 	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();

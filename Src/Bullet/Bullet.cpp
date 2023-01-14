@@ -5,7 +5,6 @@
 #include"Bullet.h"
 #include"BulletObject.h"
 
-
 ChPtr::Shared<BulletData>(*BulletData::CreateBulletFunction[4])()
 = {
 	[]()->ChPtr::Shared<BulletData> {return ChPtr::Make_S<BulletData>(); },
@@ -70,13 +69,14 @@ void BulletData::Deserialize(ID3D11Device* _device, const std::string& _text)
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
 	firstSpeed = static_cast<float>(std::atof(textObject.GetTextLine(0).c_str()));
-	penetration = static_cast<float>(std::atof(textObject.GetTextLine(1).c_str()));
+	penetration = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(1).c_str()));
+	hitSize = static_cast<float>(std::atof(textObject.GetTextLine(2).c_str()));
 
 
 	{
 		ChCpp::ModelLoader::XFile loader;
 		bullet->Init(_device);
-		loader.CreateModel(bullet, textObject.GetTextLine(2));
+		loader.CreateModel(bullet, textObject.GetTextLine(3));
 
 	}
 
@@ -88,6 +88,7 @@ std::string BulletData::Serialize()
 	
 	res += std::to_string(firstSpeed) + "\n";
 	res += std::to_string(penetration) + "\n";
+	res += std::to_string(hitSize) + "\n";
 	res += bullet->GetModelName() + "\n";
 
 	return res;
@@ -95,25 +96,29 @@ std::string BulletData::Serialize()
 
 void BulletData::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 {
-	ChVec3 dir = (bullet->GetDrawLHandMatrix() * _startMat).GetZAxisDirection();
+	ChLMat mat = (bullet->GetDrawLHandMatrix() * _startMat);
+
+	ChVec3 dir = mat.GetZAxisDirection();
+
+	_bullet.SetPosition(_startMat.GetPosition());
+	_bullet.SetRotation(mat.GetRotation());
 
 	dir *= firstSpeed;
 	dir.x = -dir.x;
 	_bullet.physics->AddMovePowerVector(dir);
+
+	_bullet.collider.SetScalling(hitSize);
 }
 
 void BulletData::UpdateBulletObject(BulletObject& _bullet)
 {
-	_bullet.physics->Update();
-
-	auto&& frame = _bullet.GetFrame();
-
-	auto&& mechaList = frame.GetMechaList();
-
-	for (unsigned long i = 0;i< mechaList.GetObjectCount();i++)
+	if (_bullet.hitFlg)
 	{
-
+		_bullet.Destroy();
+		return;
 	}
+
+	_bullet.physics->Update();
 
 	if (_bullet.physics->IsOutSide())
 	{
@@ -146,8 +151,8 @@ void BoostBulletData::Deserialize(ID3D11Device* _device, const std::string& _tex
 	BulletData::Deserialize(_device,_text);
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
-	startBoostTime = std::atol(textObject.GetTextLine(3).c_str());
-	penetration = static_cast<float>(std::atof(textObject.GetTextLine(4).c_str()));
+	startBoostTime = std::atol(textObject.GetTextLine(4).c_str());
+	boostPow = static_cast<float>(std::atof(textObject.GetTextLine(5).c_str()));
 
 }
 
@@ -171,7 +176,7 @@ void HighExplosiveBulletData::Deserialize(ID3D11Device* _device, const std::stri
 	BoostBulletData::Deserialize(_device,_text);
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
-	blastRange = static_cast<float>(std::atof(textObject.GetTextLine(5).c_str()));
+	blastRange = static_cast<float>(std::atof(textObject.GetTextLine(6).c_str()));
 
 }
 
@@ -194,8 +199,8 @@ void MissileData::Deserialize(ID3D11Device* _device, const std::string& _text)
 	HighExplosiveBulletData::Deserialize(_device,_text);
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
-	rotateSpeed = static_cast<float>(std::atof(textObject.GetTextLine(6).c_str()));
-	lostRange = static_cast<float>(std::atof(textObject.GetTextLine(7).c_str()));
+	rotateSpeed = static_cast<float>(std::atof(textObject.GetTextLine(7).c_str()));
+	lostRange = static_cast<float>(std::atof(textObject.GetTextLine(8).c_str()));
 
 }
 
