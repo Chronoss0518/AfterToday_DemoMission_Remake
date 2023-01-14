@@ -6,6 +6,7 @@ class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
 class FunctionComponent;
+class BulletObject;
 
 class PhysicsMachine;
 
@@ -97,12 +98,6 @@ public:
 		cameraList.push_back(_camera);
 	}
 
-
-
-	void AddLeftWeappon(ChPtr::Shared<MechaPartsObject> _weapon);
-
-	void AddRightWeappon(ChPtr::Shared<MechaPartsObject> _weapon);
-
 	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj)
 	{
 		mechaParts.push_back(_obj);
@@ -165,17 +160,26 @@ public://Get Function//
 
 	inline std::vector<ChPtr::Shared<PositionObject>> GetMechaPartsPosList(PartsPosNames _name)
 	{
-
 		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<PositionObject>>();
 
 		return positions[ChStd::EnumCast(_name)];
 	}
+
+	ChMat_11 GetViewMat();
+
+	ChVec3 GetViewPos();
+	
+	ChVec3 GetViewLookPos();
 
 	inline float GetMass() { return mass; }
 
 	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
 
 	inline unsigned long GetMechaNo() { return mechasNo; }
+
+public:
+
+	void TestBulletHit(BulletObject& _obj);
 
 private:
 
@@ -200,7 +204,6 @@ protected:
 	float mass = 1.0f;
 
 	unsigned char team = 0;
-
 	unsigned long mechasNo = 0;
 
 	unsigned long maxEnelgy = 0;
@@ -209,6 +212,8 @@ protected:
 	unsigned long nowEnelgy = 0;
 
 	float groundDistance = 0.0f;
+
+	unsigned long durable = 0;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
@@ -224,7 +229,6 @@ protected:
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;
-	float centerLen = 5.0f;
 };
 
 #endif

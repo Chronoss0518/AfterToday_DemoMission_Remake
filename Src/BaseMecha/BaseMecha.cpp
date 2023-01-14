@@ -10,8 +10,11 @@
 #include"../Frames/GameFrame.h"
 #include"../Physics/PhysicsMachine.h"
 #include"FunctionComponent/WeaponComponents.h"
+#include"../Bullet/BulletObject.h"
 
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
+
+#define CENTER_LEN 7.0f
 
 static const std::string partsTypeName[]
 {
@@ -194,21 +197,44 @@ void BaseMecha::Move()
 
 	inputFlgs.SetAllDownFlg();
 
-	//return;
+}
 
-	{
-		ChLMat camMat;
-		ChMat_11 tmpMat;
+ChMat_11 BaseMecha::GetViewMat()
+{
+	ChLMat camMat;
+	ChMat_11 res;
 
-		camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-		camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
-		auto lookPos = camMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
-		auto camPos = camMat.Transform(ChVec3(0.0f, 0.0f,-15.0f));
+	camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
+	auto lookPos = camMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
+	auto camPos = camMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
 
-		tmpMat.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
-		drawer->drawer.SetViewMatrix(tmpMat);
-	}
+	res.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
+	return res;
+}
 
+ChVec3 BaseMecha::GetViewPos()
+{
+
+	ChLMat camMat;
+
+	camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
+	auto res = camMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
+
+	return res;
+}
+
+ChVec3 BaseMecha::GetViewLookPos()
+{
+
+	ChLMat camMat;
+
+	camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
+	auto res = camMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
+
+	return res;
 }
 
 void BaseMecha::BaseMove()
@@ -218,9 +244,8 @@ void BaseMecha::BaseMove()
 	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
 
 	ChVec3 pos = physics->GetPosition();
-	centerPos.y = pos.y;
 	ChVec3 normal = (pos - centerPos);
-	float tmp = normal.Len() - centerLen;
+	float tmp = normal.Len() - CENTER_LEN;
 	if (tmp < 0)return;
 	normal.Normalize();
 	normal.val.SetLen(tmp);
@@ -317,4 +342,19 @@ ChVec3 BaseMecha::GetPosition()
 ChVec3 BaseMecha::GetRotation()
 {
 	return physics->GetRotation();
+}
+
+void BaseMecha::TestBulletHit(BulletObject& _obj)
+{
+	if (_obj.GetBaseMecha() == this)return;
+
+	for (auto&& parts : mechaParts)
+	{
+		unsigned long damage = parts->GetDamage(_obj);
+		if(damage == 0)continue;
+		durable -= durable < damage ? durable : damage;
+		break;
+	}
+
+	if (durable > 0)return;
 }
