@@ -6,6 +6,8 @@
 
 #include"ControllerBase.h"
 
+#define DEFAULT_CURSOL_MOVE_SIZE 0.5f
+
 void ControllerBase::Input(const InputName _inputFlgName)
 {
 	auto targetMecha = LookObj<BaseMecha>();
@@ -17,6 +19,14 @@ void ControllerBase::Input(const InputName _inputFlgName)
 
 void PlayerController::Init()
 {
+	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+	windSize.h = static_cast<float>(windows.GetWindHeight());
+	windSize.w = static_cast<float>(windows.GetWindWidth());
+	mouse->Init(windows);
+	
+	mouse->SetCenterFixedFlg(true);
+	mouse->SetVisibleFlg(true);
+
 	keyTypes[VK_SPACE] = InputName::Jump;
 	keyTypes[VK_SHIFT] = InputName::Avo;
 	keyTypes[VK_CONTROL] = InputName::Boost;
@@ -30,6 +40,9 @@ void PlayerController::Init()
 
 	keyTypes[VK_LEFT] = InputName::LeftRotation;
 	keyTypes[VK_RIGHT] = InputName::RightRotation;
+	
+	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::LeftRotation;
+	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
 
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
 	keyTypes[VK_RBUTTON] = InputName::RAttack;
@@ -76,6 +89,7 @@ void PlayerController::UpdateBegin()
 		targetMecha->SetPushFlg(key.second);
 	}
 
+	CursolUpdate();
 }
 
 void PlayerController::XInputUpdate()
@@ -95,6 +109,42 @@ void PlayerController::XInputUpdate()
 	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
 	
 
+}
+
+void PlayerController::CursolUpdate()
+{
+	mouse->Update();
+	
+	nowPos += mouse->GetMoveValueToChVec2();
+	
+	ChVec2 vector = nowPos;
+
+	CursolFunction(vector.x, windSize.w, CursolMoveTypeName::Right, CursolMoveTypeName::Left);
+	CursolFunction(vector.y, windSize.h, CursolMoveTypeName::Up, CursolMoveTypeName::Down);
+
+	nowPos -= vector;
+}
+
+void PlayerController::CursolFunction(float& _value, const float _windSize, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus)
+{
+	float mathMoveSencsitivility = 1.0f - moveSensitivility;
+
+	float mathWindSize = _windSize * mathMoveSencsitivility * DEFAULT_CURSOL_MOVE_SIZE;
+
+	auto targetMecha = LookObj<BaseMecha>();
+	if (std::abs(_value) > mathWindSize)
+	{
+		if (_value > 0)
+		{
+			targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
+			_value -= mathWindSize;
+		}
+		else
+		{
+			targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
+			_value += mathWindSize;
+		}
+	}
 }
 
 void CPUController::UpdateBegin()

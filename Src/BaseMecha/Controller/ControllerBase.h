@@ -23,11 +23,9 @@ public:
 
 	void UpdateBegin()override;
 
-	void XInputUpdate();
-
 private:
 
-	enum class XInputTypeNames
+	enum class XInputTypeNames : unsigned char
 	{
 		A, B, X, Y,
 		Up, Down, Left, Right,
@@ -37,11 +35,26 @@ private:
 		RTop, RLeft, RDown, RRight
 	};
 
+	enum class CursolMoveTypeName : unsigned char {
+		Up, Down, Left, Right, None
+	};
+
+	void XInputUpdate();
+
+	void CursolUpdate();
+
+	void CursolFunction(float& _value, const float _windSize, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus);
+
 	std::map<unsigned long, InputName> keyTypes;
 	std::map<XInputTypeNames, InputName>controllerTypes;
-
 	ChD3D::XInputController controller;
 
+	InputName cursolInput[ChStd::EnumCast(CursolMoveTypeName::None)] = {InputName::None,InputName::None,InputName::None,InputName::None};
+	InputName wheelInput[2]{ InputName::None,InputName::None };
+	ChWin::MouseController* mouse = &ChWin::Mouse();
+	float moveSensitivility = 0.3f;
+	ChVec2 nowPos = ChVec2();
+	ChVec2 windSize = ChVec2();
 };
 
 class CPUController :public ControllerBase
