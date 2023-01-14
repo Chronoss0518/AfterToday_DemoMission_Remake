@@ -172,10 +172,10 @@ std::string MechaParts::Serialize()
 	//モデル名//
 	res += model->GetModelName() + "\n";
 	
-	//モデルの硬さ//
+	//パーツの硬さ//
 	res += std::to_string(hardness) + "\n";
 
-	//モデルの重さ//
+	//パーツの重さ//
 	res += std::to_string(mass) + "\n";
 
 	for (auto&& com : GetComponents<PartsDataBase>())
