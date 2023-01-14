@@ -64,9 +64,9 @@ public:
 
 	bool GetLWeapon() { return weaponType.GetBitFlg(1); }
 
-	unsigned long GetDamage(BulletObject& _bullet);
+	float GetDamage(BulletObject& _bullet);
 
-	unsigned long GetDamage(ChCpp::BoxCollider& _collider);
+	float GetDamage(ChCpp::BoxCollider& _collider);
 
 public:
 
@@ -112,7 +112,7 @@ private:
 	ChStd::Bool releaseFlg = false;
 
 	//パーツの耐久地//
-	short durableValue = 10000;
+	float durableValue = 100.0f;
 
 	unsigned char partsPosName = -1;
 	unsigned long partsPosNo = 0;

@@ -350,11 +350,13 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 
 	for (auto&& parts : mechaParts)
 	{
-		unsigned long damage = parts->GetDamage(_obj);
-		if(damage == 0)continue;
-		durable -= durable < damage ? durable : damage;
+		float damage = parts->GetDamage(_obj);
+		if(damage == 0.0f)continue;
+		durable -= damage;
 		break;
 	}
 
 	if (durable > 0)return;
+
+
 }

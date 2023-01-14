@@ -82,28 +82,28 @@ void MechaPartsObject::SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetOb
 	func->SetShotPos(_targetObject);
 }
 
-unsigned long MechaPartsObject::GetDamage(BulletObject& _bullet)
+float MechaPartsObject::GetDamage(BulletObject& _bullet)
 {
-	if (!collider.IsHit(&_bullet.GetCollider()))return 0;
+	if (!collider.IsHit(&_bullet.GetCollider()))return 0.0f;
 
-	unsigned long res = 0;
+	float res = 0;
 
-	unsigned long tmp = baseParts->GetHardness() - _bullet.GetPenetration();
+	float tmp = baseParts->GetHardness() - _bullet.GetPenetration();
 
 	tmp = tmp < 0 ? 0 : tmp;
 
 	_bullet.SetIsHitTrue();
 
-	res = static_cast<unsigned long>(tmp) * 100;
+	res = static_cast<float>(tmp);
 
 	return res;
 }
 
-unsigned long MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
+float MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
 {
-	if (!collider.IsHit(&_collider))return 0;
+	if (!collider.IsHit(&_collider))return 0.0f;
 
-	return 0;
+	return 0.0f;
 }
 
 void WeaponFunction::Attack()

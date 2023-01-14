@@ -213,7 +213,7 @@ protected:
 
 	float groundDistance = 0.0f;
 
-	unsigned long durable = 0;
+	float durable = 100;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
