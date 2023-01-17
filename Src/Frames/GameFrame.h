@@ -71,8 +71,6 @@ private:
 
 	void CamUpdate();
 
-	void TestUpdate();
-
 	std::vector<ChPtr::Shared<MapObject>> map;
 
 	ChPtr::Shared<ChD3D11::Mesh11> sky_sphere = ChPtr::Make_S<ChD3D11::Mesh11>();
@@ -85,6 +83,7 @@ private:
 	ChCpp::ObjectList mechaList;
 	std::map<unsigned char, unsigned long>mechaPartyCounter;
 	unsigned char playerParty = 0;
+	unsigned long mechaView = 0;
 	ChCpp::ObjectList bulletList;
 	ChCpp::ObjectList mapObjects;
 

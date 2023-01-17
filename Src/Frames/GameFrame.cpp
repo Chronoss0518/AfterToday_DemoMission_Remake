@@ -14,81 +14,23 @@
 #include"../Physics/PhysicsMachine.h"
 
 #define PLAYER_MECHA_FILE_NAME ""
-
+#if 0
 #define GAME_WINDOW_WITDH 3840
 #define GAME_WINDOW_HEIGHT 2160
-#define BASE_FPS 60
+#endif
+#define GAME_WINDOW_WITDH 1280
+#define GAME_WINDOW_HEIGHT 720
+#define BASE_FPS 120
+#define GRAVITY_POWER 4.9f
 #define DEBUG_FLG 1
 
 #ifndef PARTS_DIRECTORY
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 //GameÉÅÉ\ÉbÉh
 ///////////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::TestUpdate()
-{
-
-	static ChVec3 testCamRotate = ChVec3(-60.0f, 0.0f, 0.0f);
-	static float testCamLen = 10.0f;
-
-	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-
-	if (windows->IsPushKey(VK_LEFT))
-	{
-		testCamRotate.y -= 5.0f;
-	}
-
-	if (windows->IsPushKey(VK_RIGHT))
-	{
-		testCamRotate.y += 5.0f;
-	}
-
-	if (windows->IsPushKey(VK_UP))
-	{
-		testCamLen -= 0.5f;
-	}
-
-	if (windows->IsPushKey(VK_DOWN))
-	{
-		testCamLen += 0.5f;
-	}
-
-	{
-
-
-		ChLMat tmpMat;
-
-		tmpMat.SetRotationXAxis(ChMath::ToRadian(testCamRotate.x));
-		tmpMat.SetRotationYAxis(ChMath::ToRadian(testCamRotate.y));
-
-		ChVec3 tmpVec = ChVec3(0.0f, 0.0f, -testCamLen);
-
-		tmpVec = tmpMat.Transform(tmpVec);
-
-		{
-
-			ChMat_11 camMat;
-
-			camMat.SetRotation(testCamRotate);
-
-			//camMat.CreateViewMatLookTarget(tmpVec, headPos->GetDrawLHandMatrix().GetPosition(), ChVec3(0.0f, 1.0f, 0.0f));
-			camMat.CreateViewMatLookTarget(tmpVec, 0.0f, ChVec3(0.0f, 1.0f, 0.0f));
-
-			meshDrawer.drawer.SetViewMatrix(camMat);
-
-			light.SetCamPos(tmpVec);
-		}
-
-		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
-
-	}
-
-
-}
 
 void GameFrame::Init()
 {
@@ -97,23 +39,16 @@ void GameFrame::Init()
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
-	PhysicsMachine::SetGravityAcceleration(9.8f);
+	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
 	PhysicsMachine::SetAirRegist(0.1f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-	//box.Create("Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
-	//box.SetEnableFlg(false);
+	box.Create("Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
+	box.SetEnableFlg(false);
 
 	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 
-#if DEBUG_FLG
-
-
-	//auto s_screen = ChWin::GetScreenSize();
-	//windSize = ChVec2(static_cast<float>(s_screen.w), static_cast<float>(s_screen.h));
-
 	{
-
 		ChMat_11 proMat;
 		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), windSize.w, windSize.h, 0.1f, 100000.0f);
 
@@ -121,13 +56,8 @@ void GameFrame::Init()
 		meshDrawer.drawer.SetProjectionMatrix(proMat);
 
 		light.Init(ChD3D11::D3D11Device());
-
 	}
 
-#endif
-
-	//windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
-	
 	LoadMechas();
 	LoadMaps();
 	LoadBGMs();
@@ -417,20 +347,6 @@ void GameFrame::LoadMechas()
 {
 	{
 
-		auto&& mecha = mechaList.SetObject<BaseMecha>("enemyTest");
-
-		mecha->Create(windSize, meshDrawer, this);
-
-		//mecha->SetComponent<PlayerController>();
-
-		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
-	}
-
-	{
-
 		auto&& mecha = mechaList.SetObject<BaseMecha>("player");
 
 		mecha->Create(windSize, meshDrawer, this);
@@ -444,6 +360,22 @@ void GameFrame::LoadMechas()
 		//mecha->Save("TestAsm.amf");
 
 	}
+
+	{
+#if 1
+		auto&& mecha = mechaList.SetObject<BaseMecha>("enemyTest");
+
+		mecha->Create(windSize, meshDrawer, this);
+
+		//mecha->SetComponent<PlayerController>();
+
+		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
+#endif
+	}
+
 
 }
 
@@ -505,27 +437,11 @@ void GameFrame::Update()
 		return;
 	}
 
-	//TestUpdate();
-
-	
-
-	{
-		auto tmpMat = meshDrawer.drawer.GetViewMatrix();
-		tmpMat.Inverse();
-
-		light.SetCamPos(tmpMat.GetPosition());
-
-		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
-
-
-	}
-
-
 #endif
 
 	DrawFunction();
 	//box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
-	//box.SetText("FPS:" + std::to_string(ChSystem::SysManager().GetNowFPSPoint()));
+	box.SetText("FPS:" + std::to_string(ChSystem::SysManager().GetNowFPSPoint()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -543,9 +459,37 @@ void GameFrame::UpdateFunction()
 
 	mechaList.ObjectMove();
 
+	mechaList.ObjectMoveEnd();
+
+	for (auto&& mecha : mechaList.GetObjectList<BaseMecha>())
+	{
+		auto mObj = mecha.lock();
+		for (auto&& bullet : bulletList.GetObjectList<BulletObject>())
+		{
+			auto bObj = bullet.lock();
+			mObj->TestBulletHit(*bObj);
+		}
+	}
+
 	bulletList.ObjectMove();
 
-	mechaList.ObjectMoveEnd();
+	{
+		auto targetMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
+
+		auto viewPos = targetMecha->GetViewPos();
+		auto viewLookPos = targetMecha->GetViewLookPos();
+
+		ChMat_11 tmpMat;
+		tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
+
+		meshDrawer.drawer.SetViewMatrix(tmpMat);
+
+		light.SetCamPos(viewPos);
+		
+		ChVec3 dir = ChVec3(0.0f, -0.5f, 0.5f);
+		dir.Normalize();
+		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), dir, 0.3f);
+	}
 
 }
 
