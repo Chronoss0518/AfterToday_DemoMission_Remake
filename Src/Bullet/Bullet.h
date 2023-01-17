@@ -28,6 +28,8 @@ public:
 
 	inline unsigned long GetPenetration() { return penetration; }
 
+	inline float GetHitSize() { return hitSize; }
+
 public:
 
 	virtual void InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet);

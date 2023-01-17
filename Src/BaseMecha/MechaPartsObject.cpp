@@ -82,9 +82,9 @@ void MechaPartsObject::SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetOb
 	func->SetShotPos(_targetObject);
 }
 
-float MechaPartsObject::GetDamage(BulletObject& _bullet)
+float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, BulletObject& _bullet)
 {
-	if (!collider.IsHit(&_bullet.GetCollider()))return 0.0f;
+	if (!collider.IsHit(&_sphereCollider))return 0.0f;
 
 	float res = 0;
 

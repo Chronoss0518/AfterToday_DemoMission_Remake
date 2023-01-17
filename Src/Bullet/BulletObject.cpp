@@ -15,6 +15,11 @@ unsigned long BulletObject::GetPenetration()
 	return data->GetPenetration();
 }
 
+float BulletObject::GetHitSize()
+{
+	return data->GetHitSize();
+}
+
 void BulletObject::Update()
 {
 	data->UpdateBulletObject(*this);

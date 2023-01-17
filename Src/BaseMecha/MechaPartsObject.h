@@ -54,7 +54,7 @@ public:
 
 	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
 
-	short GetDurableValue() { return durableValue; }
+	float GetDurableValue() { return durableValue; }
 
 	unsigned char GetPartsPosName() { return partsPosName; }
 
@@ -64,7 +64,7 @@ public:
 
 	bool GetLWeapon() { return weaponType.GetBitFlg(1); }
 
-	float GetDamage(BulletObject& _bullet);
+	float GetDamage(ChCpp::SphereCollider& _sphereCollider, BulletObject& _bullet);
 
 	float GetDamage(ChCpp::BoxCollider& _collider);
 

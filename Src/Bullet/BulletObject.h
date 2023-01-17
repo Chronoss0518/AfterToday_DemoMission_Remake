@@ -33,6 +33,8 @@ public:
 
 	inline void SetRotation(const ChVec3& _rot) { physics->SetRotation(_rot); }
 
+	inline void SetMovePower(const ChVec3 _pow) { physics->SetAddMovePowerVector(_pow); }
+
 public:
 
 	inline ChVec3 GetPosition() { return physics->GetPosition(); }
@@ -42,6 +44,8 @@ public:
 	inline ChVec3 GetMovePower() { return physics->GetAddMovePowerVector(); }
 
 	unsigned long GetPenetration();
+
+	float GetHitSize();
 
 	BaseMecha* GetBaseMecha() { return mecha; }
 

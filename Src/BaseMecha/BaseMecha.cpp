@@ -348,11 +348,54 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 {
 	if (_obj.GetBaseMecha() == this)return;
 
-	for (auto&& parts : mechaParts)
+	ChVec3 pos = _obj.GetPosition();
+
+	ChVec3 dir = _obj.GetMovePower();
+
+	float moveLen = dir.Len();
+
+	dir.Normalize();
+
+	float hitSize = _obj.GetHitSize();
+
+	std::vector<float> lenList;
+
+	float nowPos = 0;
+
+	for (nowPos = 0; nowPos < moveLen; nowPos += hitSize)
 	{
-		float damage = parts->GetDamage(_obj);
-		if(damage == 0.0f)continue;
-		durable -= damage;
+		lenList.push_back(nowPos);
+	}
+
+	nowPos = nowPos - hitSize + moveLen;
+
+	lenList.push_back(nowPos);
+
+	ChCpp::SphereCollider collider;
+
+	collider.SetScalling(hitSize);
+
+	ChStd::Bool isHitFlg = false;
+
+	for (float nowPos : lenList)
+	{
+		ChVec3 nowVector = dir;
+		nowVector.val.SetLen(nowPos);
+
+		collider.SetPosition(pos + nowVector);
+
+		for (auto&& parts : mechaParts)
+		{
+			float damage = parts->GetDamage(collider, _obj);
+			if (damage == 0.0f)continue;
+			durable -= damage;
+			isHitFlg = true;
+			break;
+		}
+
+		if (!isHitFlg)continue;
+		_obj.SetMovePower(nowVector);
+
 		break;
 	}
 
