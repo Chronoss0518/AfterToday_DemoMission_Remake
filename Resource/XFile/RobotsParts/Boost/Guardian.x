@@ -5507,11 +5507,11 @@ Frame Root {
           0,
           0;
           Material BoostBrust {
-             2.000000; 2.000000; 2.000000; 1.000000;;
-             0.000000;
+             2.000000; 2.000000; 2.000000; 0.500000;;
+             96.078431;
              0.000000; 0.000000; 0.000000;;
              0.000000; 0.000000; 0.000000;;
-            TextureFilename {"../BoostText.png";}
+            TextureFilename {"../BoostFire.png";}
           }
         } // End of FrontBoost material list
       } // End of FrontBoost mesh
@@ -9281,11 +9281,11 @@ Frame Root {
           0,
           0;
           Material BoostBrust {
-             2.000000; 2.000000; 2.000000; 1.000000;;
-             0.000000;
+             2.000000; 2.000000; 2.000000; 0.500000;;
+             96.078431;
              0.000000; 0.000000; 0.000000;;
              0.000000; 0.000000; 0.000000;;
-            TextureFilename {"../BoostText.png";}
+            TextureFilename {"../BoostFire.png";}
           }
         } // End of JumpBoost material list
       } // End of JumpBoost mesh
@@ -13055,11 +13055,11 @@ Frame Root {
           0,
           0;
           Material BoostBrust {
-             2.000000; 2.000000; 2.000000; 1.000000;;
-             0.000000;
+             2.000000; 2.000000; 2.000000; 0.500000;;
+             96.078431;
              0.000000; 0.000000; 0.000000;;
              0.000000; 0.000000; 0.000000;;
-            TextureFilename {"../BoostText.png";}
+            TextureFilename {"../BoostFire.png";}
           }
         } // End of LeftBoost material list
       } // End of LeftBoost mesh
@@ -16829,11 +16829,11 @@ Frame Root {
           0,
           0;
           Material BoostBrust {
-             2.000000; 2.000000; 2.000000; 1.000000;;
-             0.000000;
+             2.000000; 2.000000; 2.000000; 0.500000;;
+             96.078431;
              0.000000; 0.000000; 0.000000;;
              0.000000; 0.000000; 0.000000;;
-            TextureFilename {"../BoostText.png";}
+            TextureFilename {"../BoostFire.png";}
           }
         } // End of RightBoost material list
       } // End of RightBoost mesh

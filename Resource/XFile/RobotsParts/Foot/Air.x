@@ -5351,11 +5351,11 @@ Frame Root {
             0,
             0;
             Material BoostBrust {
-             2.000000; 2.000000; 2.000000; 1.000000;;
-             0.000000;
-             0.000000; 0.000000; 0.000000;;
-             0.000000; 0.000000; 0.000000;;
-              TextureFilename {"../BoostText.png";}
+               2.000000; 2.000000; 2.000000; 0.500000;;
+               96.078431;
+               0.000000; 0.000000; 0.000000;;
+               0.000000; 0.000000; 0.000000;;
+              TextureFilename {"../BoostFire.png";}
             }
           } // End of LeftFootJumpBoost material list
         } // End of LeftFootJumpBoost mesh
@@ -10218,11 +10218,11 @@ Frame Root {
             0,
             0;
             Material BoostBrust {
-             2.000000; 2.000000; 2.000000; 1.000000;;
-             0.000000;
-             0.000000; 0.000000; 0.000000;;
-             0.000000; 0.000000; 0.000000;;
-              TextureFilename {"../BoostText.png";}
+               2.000000; 2.000000; 2.000000; 0.500000;;
+               96.078431;
+               0.000000; 0.000000; 0.000000;;
+               0.000000; 0.000000; 0.000000;;
+              TextureFilename {"../BoostFire.png";}
             }
           } // End of RightFootJumpBoost material list
         } // End of RightFootJumpBoost mesh
