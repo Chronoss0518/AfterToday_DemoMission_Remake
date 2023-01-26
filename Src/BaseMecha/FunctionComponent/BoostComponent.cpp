@@ -65,6 +65,8 @@ void BoostComponent::DrawBegin()
 		auto testScl = boostObject->GetOutSizdTransformLMat().GetScalling().x;
 		tmp.SetScalling(ChVec3(testScl >= nowBoostPow ? testScl : nowBoostPow));
 		boostObject->SetOutSizdTransform(tmp);
+
+		auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11>()->GetPrimitives()[0]->textures[Ch3D::TextureType::Diffuse];
 	}
 
 	boostUseFlg = false;

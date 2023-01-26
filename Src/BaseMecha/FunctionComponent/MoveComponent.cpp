@@ -19,7 +19,8 @@ void MoveComponent::Update()
 
 	RotateUpdate(InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
 	RotateUpdate(InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
-
+	CamRotateUpdate(InputName::CameraUpRotation, rotatePow);
+	CamRotateUpdate(InputName::CameraDownRotation, -rotatePow);
 }
 
 void MoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
@@ -39,7 +40,15 @@ void MoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, I
 
 void MoveComponent::RotateUpdate(InputName _input, const ChVec3& _direction)
 {
-	if (!IsPushFlg(_input))return;;
+	if (!IsPushFlg(_input))return;
 
 	AddRotateVector(_direction * rotatePow / PhysicsMachine::GetFPS());
+}
+
+void MoveComponent::CamRotateUpdate(InputName _input, const float _camRot)
+{
+	if (!IsPushFlg(_input))return;
+
+	AddViewRotate(_camRot / PhysicsMachine::GetFPS());
+
 }

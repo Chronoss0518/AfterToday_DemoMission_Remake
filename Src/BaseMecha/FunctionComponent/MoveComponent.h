@@ -22,6 +22,8 @@ private:
 	
 	void RotateUpdate(InputName _input, const ChVec3& _direction);
 
+	void CamRotateUpdate(InputName _input, const float _camRot);
+
 private:
 
 	float movePow = 0.0f;

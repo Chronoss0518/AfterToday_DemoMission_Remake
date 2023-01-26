@@ -24,6 +24,8 @@ public:
 	
 	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->physics->AddRotatePowerVector(_rotateVecAdd); }
 
+	inline void AddViewRotate(const float& _viewRotate) { target->AddViewVertical(_viewRotate); }
+
 public:
 
 	inline void SubNowEnelgy(unsigned long _use) { target->nowEnelgy -= (target->nowEnelgy - _use) > 0 ? _use : target->nowEnelgy; }
