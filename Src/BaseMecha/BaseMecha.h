@@ -108,6 +108,8 @@ public:
 		positions[ChStd::EnumCast(_name)].push_back(_posObject);
 	}
 
+	inline void AddViewVertical(const float& _x) { if (std::abs(viewVertical) < maxViewVertical)viewVertical += _x; }
+
 	void AddMass(const float _mass) { mass += _mass; }
 
 	void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy += _maxEnelgy; }
@@ -124,7 +126,7 @@ public:
 
 public://Set Function//
 
-	void SetTeam(const unsigned char _team) { team = _team; }
+	void SetTeamNo(const unsigned char _team) { team = _team; }
 
 	void SetPosition(const ChVec3& _pos);
 
@@ -177,9 +179,15 @@ public://Get Function//
 
 	inline unsigned long GetMechaNo() { return mechasNo; }
 
+	inline unsigned char GetTeamNo() { return team; }
+
 public:
 
 	void TestBulletHit(BulletObject& _obj);
+
+public:
+
+	void Break();
 
 private:
 
@@ -229,6 +237,8 @@ protected:
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;
+	float viewVertical = 0.0f;
+	float maxViewVertical = 85.0f;
 };
 
 #endif

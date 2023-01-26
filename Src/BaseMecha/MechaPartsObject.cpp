@@ -88,7 +88,7 @@ float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, Bullet
 
 	float res = 0;
 
-	float tmp = baseParts->GetHardness() - _bullet.GetPenetration();
+	unsigned long tmp = baseParts->GetHardness() - _bullet.GetPenetration();
 
 	tmp = tmp < 0 ? 0 : tmp;
 

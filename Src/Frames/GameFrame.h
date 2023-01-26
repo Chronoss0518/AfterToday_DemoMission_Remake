@@ -6,6 +6,7 @@ class BulletObject;
 class BaseMecha;
 class CloudList;
 class GameScript;
+class EffectObjectShader;
 
 struct MapObject
 {
@@ -25,6 +26,12 @@ public:
 
 	void Init()override;
 
+	void Release()override;
+
+	void Update()override;
+
+private:
+
 	void InitScriptFunction();
 
 	void SetHitMap(ChPtr::Shared<MapObject> _map);
@@ -37,13 +44,9 @@ public:
 
 	void LoadMaps();
 
-	void Release()override;
-
-	void Update()override;
-
 public:
 
-	void AddMecha(ChPtr::Shared<BaseMecha> _mecha);
+	void AddMecha(ChPtr::Shared<BaseMecha> _mecha,unsigned char _mechaPartyNo,const ChStd::Bool _playerFlg = false);
 
 	void AddBullet(ChPtr::Shared<BulletObject> _bullet);
 
@@ -52,6 +55,10 @@ public:
 	ChCpp::ObjectList& GetMechaList() { return mechaList; }
 
 	ChCpp::ObjectList& GetBulletList() { return bulletList; }
+
+public:
+
+	void BreakMecha(BaseMecha* _mecha);
 
 private:
 
@@ -89,6 +96,11 @@ private:
 
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	ChPtr::Shared<ChD3D11::Texture11>baseMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
+
+	ChPtr::Shared<EffectObjectShader> shotEffectShader = nullptr;
+	ChPtr::Shared<EffectObjectShader> smokeEffectShader = nullptr;
+	ChPtr::Shared<EffectObjectShader> cloudEffectShader = nullptr;
+	ChPtr::Shared<EffectObjectShader> waterSplashEffectShader = nullptr;
 
 	ChD3D11::RenderTarget11 enemyMarker;
 	ChD3D11::RenderTarget11 baseMarker;

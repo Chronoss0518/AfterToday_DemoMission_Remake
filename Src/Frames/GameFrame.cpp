@@ -1,5 +1,6 @@
 #include"../BaseIncluder.h"
 
+#include"../Shader/EffectObject/EffectObjectShader.h"
 
 #include"../AllStruct.h"
 #include"../BaseMecha/BaseMecha.h"
@@ -18,9 +19,12 @@
 #define GAME_WINDOW_WITDH 3840
 #define GAME_WINDOW_HEIGHT 2160
 #endif
+
+//想定するメカオブジェクトの最大数//
+#define MAX_MECHA_OBJECT_COUNT 100
 #define GAME_WINDOW_WITDH 1280
 #define GAME_WINDOW_HEIGHT 720
-#define BASE_FPS 120
+#define BASE_FPS 60
 #define GRAVITY_POWER 4.9f
 #define DEBUG_FLG 1
 
@@ -56,11 +60,25 @@ void GameFrame::Init()
 		meshDrawer.drawer.SetProjectionMatrix(proMat);
 
 		light.Init(ChD3D11::D3D11Device());
+		light.SetUseLightFlg(true);
+		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 	}
 
 	LoadMechas();
 	LoadMaps();
 	LoadBGMs();
+
+	shotEffectShader = ChPtr::Make_S<EffectObjectShader>();
+
+	shotEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 6);
+
+	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
+
+	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
+
+	smokeEffectShader = ChPtr::Make_S<EffectObjectShader>();
+
+	smokeEffectShader->Init(ChD3D11::D3D11Device(), 10000);
 
 	light.Init(ChD3D11::D3D11Device());
 
@@ -223,7 +241,7 @@ void GameFrame::InitScriptFunction()
 				if (argment[i] == "-t" || argment[i] == "--team")
 				{
 					i++;
-					mecha->SetTeam(ChStr::GetIntegialFromText<unsigned char>(argment[i]));
+					mecha->SetTeamNo(ChStr::GetIntegialFromText<unsigned char>(argment[i]));
 					continue;
 				}
 			}
@@ -347,32 +365,33 @@ void GameFrame::LoadMechas()
 {
 	{
 
-		auto&& mecha = mechaList.SetObject<BaseMecha>("player");
+		auto&& mecha = ChPtr::Make_S<BaseMecha>();
+		mecha->SetMyName("player");
 
 		mecha->Create(windSize, meshDrawer, this);
 
-		mecha->SetComponent<PlayerController>();
-
-		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "GuardianRobot.amf");
 		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
 		//mecha->Save("TestAsm.amf");
 
+		AddMecha(mecha, 0, true);
 	}
 
 	{
 #if 1
-		auto&& mecha = mechaList.SetObject<BaseMecha>("enemyTest");
+		auto&& mecha = ChPtr::Make_S<BaseMecha>();
+		mecha->SetMyName("enemyTest");
 
 		mecha->Create(windSize, meshDrawer, this);
 
-		//mecha->SetComponent<PlayerController>();
-
 		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
+		//mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
+		mecha->Load(ChD3D11::D3D11Device(), "GuardianRobot.amf");
 		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
+
+		AddMecha(mecha, 1, false);
 #endif
 	}
 
@@ -418,7 +437,7 @@ void GameFrame::LoadMaps()
 
 void GameFrame::Release()
 {
-	
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -486,9 +505,9 @@ void GameFrame::UpdateFunction()
 
 		light.SetCamPos(viewPos);
 		
-		ChVec3 dir = ChVec3(0.0f, -0.5f, 0.5f);
+		ChVec3 dir = ChVec3(0.25f, -0.5f, 0.25f);
 		dir.Normalize();
-		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), dir, 0.3f);
+		light.SetLightDir(dir);
 	}
 
 }
@@ -497,12 +516,9 @@ void GameFrame::UpdateFunction()
 
 void GameFrame::DrawFunction()
 {
-
 	ChD3D11::Shader11().DrawStart();
 
 	ChD3D11::Shader11().DrawStart3D();
-
-	light.SetDrawData(ChD3D11::D3D11DC());
 
 	Render3D();
 
@@ -521,7 +537,9 @@ void GameFrame::Render3D(void)
 {
 	meshDrawer.dc = ChD3D11::D3D11DC();
 
-	meshDrawer.drawer.DrawStart(ChD3D11::D3D11DC());
+	meshDrawer.drawer.DrawStart(meshDrawer.dc);
+
+	light.SetPSDrawData(meshDrawer.dc);
 
 	for (auto mapModel : map)
 	{
@@ -539,14 +557,39 @@ void GameFrame::Render3D(void)
 	meshDrawer.drawer.DrawEnd();
 }
 
-void GameFrame::AddMecha(ChPtr::Shared<BaseMecha> _mecha)
+void GameFrame::AddMecha(ChPtr::Shared<BaseMecha> _mecha, unsigned char _mechaPartyNo, const ChStd::Bool _playerFlg)
 {
+	if (_playerFlg)
+	{
+		playerParty = _mechaPartyNo;
+		_mecha->SetComponent<PlayerController>();
+	}
+	else
+	{
+		auto controller = _mecha->SetComponent<CPUController>();
+		controller->SetGameFrame(this);
+	}
+
+	_mecha->SetTeamNo(_mechaPartyNo);
+
+	auto&& counter = mechaPartyCounter.find(_mechaPartyNo);
+	if (counter == mechaPartyCounter.end())
+	{
+		mechaPartyCounter[_mechaPartyNo] = 0;
+	}
+
 	mechaList.SetObject(_mecha);
+	mechaPartyCounter[_mechaPartyNo]++;
 }
 
 void GameFrame::AddBullet(ChPtr::Shared<BulletObject> _bullet)
 {
 	bulletList.SetObject(_bullet);
+}
+
+void GameFrame::BreakMecha(BaseMecha* _mecha)
+{
+	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

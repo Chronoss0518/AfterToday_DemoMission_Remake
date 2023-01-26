@@ -14,7 +14,9 @@
 
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
 
-#define CENTER_LEN 7.0f
+#define CAMERA_Y_POS 5.0f
+
+#define CENTER_LEN 5.0f
 
 static const std::string partsTypeName[]
 {
@@ -115,7 +117,7 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 				auto&& weap = GetComponentObject<LeftWeaponComponent>();
 
 				weap->AddWeapon(parts);
-				parts->SetRWeapon(true);
+				parts->SetLWeapon(true);
 				continue;
 			}
 
@@ -216,25 +218,27 @@ ChMat_11 BaseMecha::GetViewMat()
 ChVec3 BaseMecha::GetViewPos()
 {
 
-	ChLMat camMat;
+	ChLMat camYMat, camXMat;
 
-	camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-	camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
-	auto res = camMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
+	camYMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
+	camYMat = camXMat * camYMat;
+	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
 
-	return res;
+	return camYMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
 }
 
 ChVec3 BaseMecha::GetViewLookPos()
 {
 
-	ChLMat camMat;
+	ChLMat camYMat, camXMat;
 
-	camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-	camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
-	auto res = camMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
+	camYMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
+	camYMat = camXMat * camYMat;
+	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS - 2.0f, 0.0f));
 
-	return res;
+	return camYMat.Transform(ChVec3(0.0f, 0.0f, 5.0f));
 }
 
 void BaseMecha::BaseMove()
@@ -401,5 +405,10 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 
 	if (durable > 0)return;
 
+	Break();
+}
 
+void BaseMecha::Break()
+{
+	frame->BreakMecha(this);
 }
