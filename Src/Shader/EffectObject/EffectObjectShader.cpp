@@ -10,8 +10,8 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 
 	Release();
 
-	ChD3D11::Shader::SampleShaderBase11::Init(_device);
-	device = _device;
+	ChD3D11::Shader::SampleShaderBase11::Init(ChD3D11::Shader::SampleShaderBase11::GetDevice());
+
 	maxEffectCount = _maxEffectNum;
 	effectPosList = new In_Vertex[maxEffectCount];
 	indexNum = new unsigned long[maxEffectCount];
@@ -27,6 +27,21 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	gsBuf.CreateBuffer(_device, EFFECT_OBJECT_GEOMETRY_DATA);
 	psBuf.CreateBuffer(_device, EFFECT_OBJECT_PIXEL_DATA);
 
+	D3D11_RASTERIZER_DESC desc
+	{
+		D3D11_FILL_MODE::D3D11_FILL_SOLID,
+		D3D11_CULL_MODE::D3D11_CULL_NONE,
+		true,
+		0,
+		0.0f,
+		0.0f,
+		false,
+		false,
+		true,
+		false
+	};
+
+	ChD3D11::Shader::SampleShaderBase11::CreateRasteriser(desc);
 }
 
 void EffectObjectShader::Release()
@@ -137,7 +152,7 @@ void EffectObjectShader::SetEffectTexture(ChPtr::Shared<ChD3D11::TextureBase11> 
 void EffectObjectShader::SetEffectTexture(const std::string& _texturePath, const ChMath::Vector2Base<unsigned long>& _animationCount)
 {
 	ChPtr::Shared<ChD3D11::Texture11> texture = ChPtr::Make_S<ChD3D11::Texture11>();
-	texture->CreateTexture(_texturePath, device);
+	texture->CreateTexture(_texturePath, ChD3D11::Shader::SampleShaderBase11::GetDevice());
 
 	SetEffectTexture(texture, _animationCount);
 }
@@ -150,7 +165,7 @@ void EffectObjectShader::SetEffectTexture(const std::string& _texturePath, const
 void EffectObjectShader::SetEffectTexture(const std::wstring& _texturePath, const ChMath::Vector2Base<unsigned long>& _animationCount)
 {
 	ChPtr::Shared<ChD3D11::Texture11> texture = ChPtr::Make_S<ChD3D11::Texture11>();
-	texture->CreateTexture(_texturePath, device);
+	texture->CreateTexture(_texturePath, ChD3D11::Shader::SampleShaderBase11::GetDevice());
 
 	SetEffectTexture(texture, _animationCount);
 
@@ -209,8 +224,6 @@ void EffectObjectShader::SetEffectDisplayFlg(const ChStd::Bool& _flg, const unsi
 void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 {
 	if (ChPtr::NullCheck(_dc))return;
-
-	Update(_dc);
 
 	ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
 

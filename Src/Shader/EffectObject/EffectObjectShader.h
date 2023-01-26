@@ -59,11 +59,12 @@ public:
 
 	void Draw(ID3D11DeviceContext* _dc);
 
+protected:
+
+	void Update(ID3D11DeviceContext* _dc)override;
+
 private:
 
-	void Update(ID3D11DeviceContext* _dc);
-
-	ID3D11Device* device = nullptr;
 	ChStd::Bool vbUpdateFlg = true;
 	unsigned long maxEffectCount = 0;
 	In_Vertex *effectPosList = nullptr;
