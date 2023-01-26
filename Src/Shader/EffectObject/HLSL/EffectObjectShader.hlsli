@@ -43,6 +43,10 @@ struct In_Pixel
 #define EFFECT_OBJECT_GEOMETRY_DATA 0
 #endif
 
+#ifndef EFFECT_OBJECT_PIXEL_DATA
+#define EFFECT_OBJECT_PIXEL_DATA 1
+#endif
+
 #ifndef EFFECT_OBJECT_PIXEL_TEXTURE
 #define EFFECT_OBJECT_PIXEL_TEXTURE 0
 #endif
@@ -60,11 +64,9 @@ struct GSEffectObjectData
 	row_major float4x4 viewMatrix;
 	row_major float4x4 projectionMatrix;
 	float2 objectSize;
-
 	float2 animationSize;
 };
 
-#if 0
 #ifdef __SHADER__
 #ifdef _SM5_0_
 cbuffer PSEffectObjectData :register(CHANGE_CBUFFER_5(EFFECT_OBJECT_PIXEL_DATA))
@@ -75,9 +77,8 @@ cbuffer PSEffectObjectData : register(b[EFFECT_OBJECT_PIXEL_DATA])
 struct PSEffectObjectData
 #endif
 {
-
+	float4 luminescencePower;
 };
-#endif
 
 #ifdef __SHADER__
 
