@@ -16,7 +16,7 @@
 #define S_POSITION(no)
 #define S_TEXCOORD(no)
 #define S_BLENDINDICES(no)
-#define SV_POSITION :SV_Position
+#define SV_POSITION
 
 using uint2 = ChMath::Vector2Base<unsigned int>;
 
@@ -24,12 +24,19 @@ using uint2 = ChMath::Vector2Base<unsigned int>;
 
 struct In_Vertex
 {
-	float4 pos S_POSITION(0);
-	uint2 animationCount S_BLENDINDICES(0);
-	uint displayFlg  S_BLENDINDICES(1);
+	float3 pos S_POSITION(0);
+	uint2 animationCount S_TEXCOORD(0);
+	uint displayFlg  S_TEXCOORD(1);
 };
 
 #ifdef __SHADER__
+
+struct In_Geometry
+{
+	float4 pos SV_POSITION;
+	uint2 animationCount S_TEXCOORD(0);
+	uint displayFlg  S_TEXCOORD(1);
+};
 
 struct In_Pixel
 {

@@ -10,21 +10,22 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 
 	Release();
 
-	ChD3D11::Shader::SampleShaderBase11::Init(ChD3D11::Shader::SampleShaderBase11::GetDevice());
+	ChD3D11::Shader::SampleShaderBase11::Init(_device);
 
-	maxEffectCount = _maxEffectNum;
-	effectPosList = new In_Vertex[maxEffectCount];
-	indexNum = new unsigned long[maxEffectCount];
+	gsData.objectSize = ChVec2(1.0f);
+	psData.luminescencePower = ChVec3(1.0f);
+	effectPosList.resize(_maxEffectNum);
 
-	for (unsigned long i = 0; i < maxEffectCount; i++)
+	for (unsigned long i = 0; i < effectPosList.size(); i++)
 	{
 		effectPosList[i].displayFlg = false;
-		indexNum[i] = i;
 	}
 
-	vb.CreateBuffer(_device, effectPosList, maxEffectCount);
-	ib.CreateBuffer(_device, indexNum, maxEffectCount);
+	vb.Init();
+	vb.CreateBuffer(_device, &effectPosList[0], effectPosList.size());
+	gsBuf.Init();
 	gsBuf.CreateBuffer(_device, EFFECT_OBJECT_GEOMETRY_DATA);
+	psBuf.Init();
 	psBuf.CreateBuffer(_device, EFFECT_OBJECT_PIXEL_DATA);
 
 	D3D11_RASTERIZER_DESC desc
@@ -35,7 +36,7 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 		0,
 		0.0f,
 		0.0f,
-		false,
+		true,
 		false,
 		true,
 		false
@@ -48,14 +49,9 @@ void EffectObjectShader::Release()
 {
 	ChD3D11::Shader::SampleShaderBase11::Release();
 
-	if (ChPtr::NotNullCheck(effectPosList))
-	{
-		delete[] effectPosList;
-		effectPosList = nullptr;
-	}
+	effectPosList.clear();
 	effectTexture = nullptr;
 	vb.Release();
-	ib.Release();
 	gsBuf.Release();
 	psBuf.Release();
 	gsUpdateFlg = true;
@@ -70,8 +66,8 @@ void EffectObjectShader::InitVertexShader()
 	D3D11_INPUT_ELEMENT_DESC decl[3];
 
 	decl[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA };
-	decl[1] = { "BLENDINDICES", 0, DXGI_FORMAT_R32G32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
-	decl[2] = { "BLENDINDICES", 1, DXGI_FORMAT_R32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[2] = { "TEXCOORD", 1, DXGI_FORMAT_R32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
 
 	ChD3D11::Shader::SampleShaderBase11::CreateVertexShader(decl, sizeof(decl) / sizeof(D3D11_INPUT_ELEMENT_DESC), main, sizeof(main));
 }
@@ -95,16 +91,20 @@ void EffectObjectShader::InitGeometryShader()
 void EffectObjectShader::SetViewMatrix(const ChLMat& _viewMat)
 {
 	gsData.viewMatrix = _viewMat;
-	gsData.viewMatrix.SetPosition(0.0f);
-	gsData.viewMatrix.Inverse();
-	gsData.viewMatrix = _viewMat * gsData.viewMatrix;
 
 	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetProjectionMatrix(const ChLMat& _projectionMat)
 {
-	gsData.viewMatrix = _projectionMat;
+	gsData.projectionMatrix = _projectionMat;
+
+	gsUpdateFlg = true;
+}
+
+void EffectObjectShader::SetObjectSize(const ChVec2& _objectSize)
+{
+	gsData.objectSize = _objectSize;
 
 	gsUpdateFlg = true;
 }
@@ -178,7 +178,7 @@ void EffectObjectShader::SetEffectTexture(const std::wstring& _texturePath, cons
 
 void EffectObjectShader::SetEffectPosition(const ChVec3& _pos, const unsigned long _effectCount)
 {
-	if (maxEffectCount <= _effectCount)return;
+	if (effectPosList.size() <= _effectCount)return;
 
 	effectPosList[_effectCount].pos = _pos;
 
@@ -187,7 +187,7 @@ void EffectObjectShader::SetEffectPosition(const ChVec3& _pos, const unsigned lo
 
 void EffectObjectShader::SetEffectAnimationCount(const ChMath::Vector2Base<unsigned long>& _animationCount, const unsigned long _effectCount)
 {
-	if (maxEffectCount <= _effectCount)return;
+	if (effectPosList.size() <= _effectCount)return;
 
 	effectPosList[_effectCount].animationCount.val = _animationCount.val;
 
@@ -196,7 +196,7 @@ void EffectObjectShader::SetEffectAnimationCount(const ChMath::Vector2Base<unsig
 
 void EffectObjectShader::SetEffectHorizontalAnimationCount(const unsigned long _animationCount, const unsigned long _effectCount)
 {
-	if (maxEffectCount <= _effectCount)return;
+	if (effectPosList.size() <= _effectCount)return;
 
 	effectPosList[_effectCount].animationCount.x = _animationCount;
 
@@ -205,7 +205,7 @@ void EffectObjectShader::SetEffectHorizontalAnimationCount(const unsigned long _
 
 void EffectObjectShader::SetEffectVerticalAnimationCount(const unsigned long _animationCount, const unsigned long _effectCount)
 {
-	if (maxEffectCount <= _effectCount)return;
+	if (effectPosList.size() <= _effectCount)return;
 
 	effectPosList[_effectCount].animationCount.y = _animationCount;
 
@@ -214,7 +214,7 @@ void EffectObjectShader::SetEffectVerticalAnimationCount(const unsigned long _an
 
 void EffectObjectShader::SetEffectDisplayFlg(const ChStd::Bool& _flg, const unsigned long _effectCount)
 {
-	if (maxEffectCount <= _effectCount)return;
+	if (effectPosList.size() <= _effectCount)return;
 
 	effectPosList[_effectCount].displayFlg = _flg;
 
@@ -224,15 +224,18 @@ void EffectObjectShader::SetEffectDisplayFlg(const ChStd::Bool& _flg, const unsi
 void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 {
 	if (ChPtr::NullCheck(_dc))return;
+	if (effectTexture == nullptr)return;
+
+	_dc->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
 
-	gsBuf.SetToVertexShader(_dc);
+	gsBuf.SetToGeometryShader(_dc);
+	psBuf.SetToPixelShader(_dc);
 	effectTexture->SetDrawData(_dc, EFFECT_OBJECT_PIXEL_TEXTURE);
 
 	vb.SetVertexBuffer(_dc, 0);
-	ib.SetIndexBuffer(_dc);
-	_dc->DrawIndexed(maxEffectCount, 0, 0);
+	_dc->Draw(effectPosList.size(), 0);
 
 	ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultBlender(_dc);
 }
@@ -241,7 +244,7 @@ void EffectObjectShader::Update(ID3D11DeviceContext* _dc)
 {
 	if (vbUpdateFlg)
 	{
-		vb.UpdateResouce(_dc, effectPosList);
+		vb.UpdateResouce(_dc, &effectPosList[0]);
 		vbUpdateFlg = false;
 	}
 
@@ -254,7 +257,7 @@ void EffectObjectShader::Update(ID3D11DeviceContext* _dc)
 
 	if (psUpdateFlg)
 	{
-		gsBuf.UpdateResouce(_dc, &psData);
+		psBuf.UpdateResouce(_dc, &psData);
 
 		psUpdateFlg = false;
 	}

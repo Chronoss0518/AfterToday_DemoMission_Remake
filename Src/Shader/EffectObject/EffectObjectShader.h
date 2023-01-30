@@ -24,6 +24,8 @@ public:
 
 	void SetProjectionMatrix(const ChLMat& _projectionMat);
 
+	void SetObjectSize(const ChVec2& _objectSize);
+
 	void SetLuminescencePower(const float _power);
 
 	void SetLuminescencePower(const ChVec4& _power);
@@ -53,7 +55,20 @@ public:
 
 public:
 
-	unsigned long GetMaxEffectCount() { return maxEffectCount; }
+	unsigned long GetMaxEffectCount() { return effectPosList.size(); }
+
+	In_Vertex GetEffectPos(unsigned long _num)
+	{ 
+		In_Vertex res;
+		if (_num < effectPosList.size())
+		{
+			res.pos = effectPosList[_num].pos;
+			res.animationCount.val = effectPosList[_num].animationCount.val;
+			res.displayFlg = effectPosList[_num].displayFlg;
+		}
+
+		return res;
+	}
 
 public:
 
@@ -66,11 +81,8 @@ protected:
 private:
 
 	ChStd::Bool vbUpdateFlg = true;
-	unsigned long maxEffectCount = 0;
-	In_Vertex *effectPosList = nullptr;
-	unsigned long* indexNum = nullptr;
+	std::vector<In_Vertex> effectPosList;
 	ChD3D11::VertexBuffer11<In_Vertex> vb;
-	ChD3D11::IndexBuffer11 ib;
 
 	ChPtr::Shared<ChD3D11::TextureBase11> effectTexture = nullptr;
 
