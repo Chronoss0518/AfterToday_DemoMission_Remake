@@ -461,6 +461,7 @@ void GameFrame::Update()
 	if (windows->IsPushKey(VK_ESCAPE))
 	{
 		shotEffectList->Release();
+		smokeEffectList->Release();
 		windows->Release();
 		return;
 	}
