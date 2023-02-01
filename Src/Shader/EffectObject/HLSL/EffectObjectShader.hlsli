@@ -1,22 +1,31 @@
 #ifndef Effect_Object_Shader
 #define Effect_Object_Shader
 
-
 #include"../../../External/ChCppLibrary/ChCppLibrary/ShaderHeaderFiles/HLSL/ShaderPublicInclude.hlsli"
 
 #ifdef __SHADER__
 
-#define S_POSITION(no) :POSITION##no
-#define S_TEXCOORD(no) :TEXCOORD##no
-#define S_BLENDINDICES(no) :BLENDINDICES##no
+#define Se_POSITION(no) :POSITION##no
+#define Se_TEXCOORD(no) :TEXCOORD##no
+#define Se_BLENDINDICES(no) :BLENDINDICES##no
 #define SV_POSITION :SV_Position
+#define Se_COLOR(no) :COLOR##no
+
+#define Se_NORMAL(no) :NORMAL##no
+#define Se_TANGENT(no) :TANGENT##no
+#define Se_BINORMAL(no) :BINORMAL##no
 
 #else
 
-#define S_POSITION(no)
-#define S_TEXCOORD(no)
-#define S_BLENDINDICES(no)
+#define Se_POSITION(no)
+#define Se_TEXCOORD(no)
+#define Se_BLENDINDICES(no)
 #define SV_POSITION
+#define Se_COLOR(no)
+
+#define Se_NORMAL(no)
+#define Se_TANGENT(no)
+#define Se_BINORMAL(no)
 
 using uint2 = ChMath::Vector2Base<unsigned int>;
 
@@ -24,9 +33,13 @@ using uint2 = ChMath::Vector2Base<unsigned int>;
 
 struct In_Vertex
 {
-	float3 pos S_POSITION(0);
-	uint2 animationCount S_TEXCOORD(0);
-	uint displayFlg  S_TEXCOORD(1);
+	float3 pos Se_POSITION(0);
+	float3 v_normal Se_NORMAL(0);
+	float3 v_binormal Se_BINORMAL(0);
+	float3 v_tangent Se_TANGENT(0);
+	float4 color Se_COLOR(0);
+	uint2 animationCount Se_TEXCOORD(0);
+	uint displayFlg  Se_TEXCOORD(1);
 };
 
 #ifdef __SHADER__
@@ -34,14 +47,19 @@ struct In_Vertex
 struct In_Geometry
 {
 	float4 pos SV_POSITION;
-	uint2 animationCount S_TEXCOORD(0);
-	uint displayFlg  S_TEXCOORD(1);
+	float3 v_normal Se_NORMAL(0);
+	float3 v_binormal Se_BINORMAL(0);
+	float3 v_tangent Se_TANGENT(0);
+	float4 color Se_COLOR(0);
+	uint2 animationCount Se_TEXCOORD(0);
+	uint displayFlg  Se_TEXCOORD(1);
 };
 
 struct In_Pixel
 {
 	float4 pos SV_POSITION;
-	float2 uv S_TEXCOORD(0);
+	float4 color Se_COLOR(0);
+	float2 uv Se_TEXCOORD(0);
 };
 
 #endif

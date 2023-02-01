@@ -16,9 +16,18 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	psData.luminescencePower = ChVec3(1.0f);
 	effectPosList.resize(_maxEffectNum);
 
-	for (unsigned long i = 0; i < effectPosList.size(); i++)
 	{
-		effectPosList[i].displayFlg = false;
+		ChLMat mat = ChLMat();
+
+		for (unsigned long i = 0; i < effectPosList.size(); i++)
+		{
+			effectPosList[i].displayFlg = false;
+			effectPosList[i].v_normal = mat.GetZAxisDirection();
+			effectPosList[i].v_binormal = mat.GetYAxisDirection();
+			effectPosList[i].v_tangent = mat.GetXAxisDirection();
+			effectPosList[i].color = ChVec4(1.0f);
+
+		}
 	}
 
 	vb.Init();
@@ -27,6 +36,8 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	gsBuf.CreateBuffer(_device, EFFECT_OBJECT_GEOMETRY_DATA);
 	psBuf.Init();
 	psBuf.CreateBuffer(_device, EFFECT_OBJECT_PIXEL_DATA);
+
+	ChD3D11::Shader::SampleShaderBase11::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	D3D11_RASTERIZER_DESC desc
 	{
@@ -43,6 +54,8 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	};
 
 	ChD3D11::Shader::SampleShaderBase11::CreateRasteriser(desc);
+
+
 }
 
 void EffectObjectShader::Release()
@@ -62,12 +75,15 @@ void EffectObjectShader::InitVertexShader()
 {
 #include"VSEffectObject.inc"
 
-
-	D3D11_INPUT_ELEMENT_DESC decl[3];
+	D3D11_INPUT_ELEMENT_DESC decl[7];
 
 	decl[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA };
-	decl[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
-	decl[2] = { "TEXCOORD", 1, DXGI_FORMAT_R32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[2] = { "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[3] = { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[4] = { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[5] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
+	decl[6] = { "TEXCOORD", 1, DXGI_FORMAT_R32_UINT,0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA };
 
 	ChD3D11::Shader::SampleShaderBase11::CreateVertexShader(decl, sizeof(decl) / sizeof(D3D11_INPUT_ELEMENT_DESC), main, sizeof(main));
 }
@@ -185,6 +201,38 @@ void EffectObjectShader::SetEffectPosition(const ChVec3& _pos, const unsigned lo
 	vbUpdateFlg = true;
 }
 
+void EffectObjectShader::SetEffectVertexRotation(const ChLMat& _rotateMatrix, const unsigned long _effectCount)
+{
+	if (effectPosList.size() <= _effectCount)return;
+
+
+	effectPosList[_effectCount].v_normal = _rotateMatrix.GetZAxisDirection();
+	effectPosList[_effectCount].v_binormal = _rotateMatrix.GetYAxisDirection();
+	effectPosList[_effectCount].v_tangent = _rotateMatrix.GetXAxisDirection();
+}
+
+void EffectObjectShader::SetEffectColor(const ChVec4& _effectColor, const unsigned long _effectCount)
+{
+	if (effectPosList.size() <= _effectCount)return;
+
+	effectPosList[_effectCount].color.r = _effectColor.r;
+	effectPosList[_effectCount].color.g = _effectColor.g;
+	effectPosList[_effectCount].color.b = _effectColor.b;
+	effectPosList[_effectCount].color.a = _effectColor.a;
+
+	vbUpdateFlg = true;
+}
+
+void EffectObjectShader::SetEffectColor(const ChVec3& _effectColor, const unsigned long _effectCount)
+{
+	if (effectPosList.size() <= _effectCount)return;
+
+	ChVec4 color = _effectColor;
+	color.a = effectPosList[_effectCount].color.a;
+
+	SetEffectColor(color, _effectCount);
+}
+
 void EffectObjectShader::SetEffectAnimationCount(const ChMath::Vector2Base<unsigned long>& _animationCount, const unsigned long _effectCount)
 {
 	if (effectPosList.size() <= _effectCount)return;
@@ -225,8 +273,6 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 {
 	if (ChPtr::NullCheck(_dc))return;
 	if (effectTexture == nullptr)return;
-
-	_dc->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
 

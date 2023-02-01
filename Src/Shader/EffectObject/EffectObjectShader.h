@@ -45,6 +45,12 @@ public:
 
 	void SetEffectPosition(const ChVec3& _pos, const unsigned long _effectCount);
 
+	void SetEffectVertexRotation(const ChLMat& _rotateMatrix, const unsigned long _effectCount);
+
+	void SetEffectColor(const ChVec4& _effectColor, const unsigned long _effectCount);
+
+	void SetEffectColor(const ChVec3& _effectColor, const unsigned long _effectCount);
+
 	void SetEffectAnimationCount(const ChMath::Vector2Base<unsigned long>& _animationCount, const unsigned long _effectCount);
 
 	void SetEffectHorizontalAnimationCount(const unsigned long _animationCount, const unsigned long _effectCount);
@@ -57,14 +63,12 @@ public:
 
 	unsigned long GetMaxEffectCount() { return effectPosList.size(); }
 
-	In_Vertex GetEffectPos(unsigned long _num)
+	In_Vertex* GetEffectPos(unsigned long _num)
 	{ 
-		In_Vertex res;
+		In_Vertex* res = nullptr;
 		if (_num < effectPosList.size())
 		{
-			res.pos = effectPosList[_num].pos;
-			res.animationCount.val = effectPosList[_num].animationCount.val;
-			res.displayFlg = effectPosList[_num].displayFlg;
+			res = &effectPosList[_num];
 		}
 
 		return res;

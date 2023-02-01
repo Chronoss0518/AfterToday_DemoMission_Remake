@@ -4,6 +4,8 @@
 
 #include"EffectObjectShader.hlsli"
 
+float3 VertexRotation(float3 _pos, float3x3 _mat);
+
 [maxvertexcount(6)]
 void main(
 	point In_Geometry input[1],
@@ -11,6 +13,7 @@ void main(
 )
 {
 	if (input[0].displayFlg >= 1) 
+
 	{
 
 		In_Pixel vertex[4];
@@ -19,22 +22,32 @@ void main(
 		uint i = 0;
 		uint j = 0;
 
+		float3x3 vertexRotateMatrix = float3x3
+		(
+
+			input[0].v_tangent.x,input[0].v_binormal.x,input[0].v_normal.x,
+			input[0].v_tangent.y,input[0].v_binormal.y,input[0].v_normal.y,
+			input[0].v_tangent.z,input[0].v_binormal.z,input[0].v_normal.z
+		);
+
 #if 1
 
 		input[0].pos = mul(input[0].pos, viewMatrix);
 
-		vertex[0].pos = float4(-objectSize.x, objectSize.y, 0.0f, 0.0f);
-		vertex[1].pos = float4(objectSize.x, objectSize.y, 0.0f, 0.0f);
-		vertex[2].pos = float4(objectSize.x, -objectSize.y, 0.0f, 0.0f);
-		vertex[3].pos = float4(-objectSize.x, -objectSize.y, 0.0f, 0.0f);
+		vertex[0].pos = float4(VertexRotation(float3(-objectSize.x, objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
+		vertex[1].pos = float4(VertexRotation(float3(objectSize.x, objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
+		vertex[2].pos = float4(VertexRotation(float3(objectSize.x, -objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
+		vertex[3].pos = float4(VertexRotation(float3(-objectSize.x, -objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
 
 		[unroll]
 		for (i = 0; i < 4; i++)
 		{
 			num = i;
 			vertex[num].pos += input[0].pos;
-			//vertex[num].pos = mul(vertex[num].pos, viewMatrixInverse);
+
 			vertex[num].pos = mul(vertex[num].pos, projectionMatrix);
+			vertex[num].color = input[0].color;
+
 		}
 
 		vertex[0].uv = float2(animationSize.x * input[0].animationCount.x, animationSize.y * (input[0].animationCount.y + 1));
@@ -65,13 +78,14 @@ void main(
 			{
 				num = i + j + 1;
 				res.Append(vertex[num]);
-
 			}
-
 			res.RestartStrip();
-
 		}
-
 	}
 
+}
+
+float3 VertexRotation(float3 _pos, float3x3 _mat)
+{
+	return mul(_pos, _mat);
 }
