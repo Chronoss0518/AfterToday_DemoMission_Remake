@@ -8,6 +8,9 @@ class CloudList;
 class GameScript;
 class EffectObjectShader;
 
+class ShotEffectList;
+class SmokeEffectList;
+
 struct MapObject
 {
 	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
@@ -49,6 +52,10 @@ public:
 	void AddMecha(ChPtr::Shared<BaseMecha> _mecha,unsigned char _mechaPartyNo,const ChStd::Bool _playerFlg = false);
 
 	void AddBullet(ChPtr::Shared<BulletObject> _bullet);
+
+	void AddShotEffectObject(const ChVec3& _pos);
+
+	void AddSmokeEffectObject(const ChVec3& _pos,const ChVec3& _moveVector);
 
 public:
 
@@ -97,8 +104,13 @@ private:
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	ChPtr::Shared<ChD3D11::Texture11>baseMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 
-	ChPtr::Shared<EffectObjectShader> shotEffectShader = nullptr;
-	ChPtr::Shared<EffectObjectShader> smokeEffectShader = nullptr;
+	ChStd::Bool gameEndFlg = false;
+
+	ChLMat projectionMat;
+
+	ChPtr::Shared<ShotEffectList> shotEffectList = nullptr;
+	ChPtr::Shared<SmokeEffectList> smokeEffectList = nullptr;
+
 	ChPtr::Shared<EffectObjectShader> cloudEffectShader = nullptr;
 	ChPtr::Shared<EffectObjectShader> waterSplashEffectShader = nullptr;
 

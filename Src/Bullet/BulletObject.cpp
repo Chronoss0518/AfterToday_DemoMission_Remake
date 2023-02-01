@@ -28,6 +28,7 @@ void BulletObject::Update()
 void BulletObject::Move()
 {
 	data->MoveBulletObject(*this);
+	frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -1.0f);
 }
 
 void BulletObject::Draw3D()

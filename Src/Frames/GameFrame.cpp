@@ -14,6 +14,9 @@
 #include"../CloudObj/CloudObj.h"
 #include"../Physics/PhysicsMachine.h"
 
+#include"../EffectObjects/ShotEffectList/ShotEffectList.h"
+#include"../EffectObjects/SmokeEffectList/SmokeEffectList.h"
+
 #define PLAYER_MECHA_FILE_NAME ""
 #if 0
 #define GAME_WINDOW_WITDH 3840
@@ -52,12 +55,28 @@ void GameFrame::Init()
 
 	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 
+	meshDrawer.drawer.Init(ChD3D11::D3D11Device());
+	meshDrawer.drawer.SetCullMode(D3D11_CULL_BACK);
+
+	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
+
+	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
+
+	shotEffectList = ChPtr::Make_S<ShotEffectList>();
+
+	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 6);
+
+	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
+
+	smokeEffectList->Init(ChD3D11::D3D11Device(), 10000);
+
 	{
 		ChMat_11 proMat;
 		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), windSize.w, windSize.h, 0.1f, 100000.0f);
 
-		meshDrawer.drawer.Init(ChD3D11::D3D11Device());
 		meshDrawer.drawer.SetProjectionMatrix(proMat);
+		shotEffectList->SetProjectionMatrix(proMat);
+		smokeEffectList->SetProjectionMatrix(proMat);
 
 		light.Init(ChD3D11::D3D11Device());
 		light.SetUseLightFlg(true);
@@ -67,18 +86,6 @@ void GameFrame::Init()
 	LoadMechas();
 	LoadMaps();
 	LoadBGMs();
-
-	shotEffectShader = ChPtr::Make_S<EffectObjectShader>();
-
-	shotEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 6);
-
-	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
-
-	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
-
-	smokeEffectShader = ChPtr::Make_S<EffectObjectShader>();
-
-	smokeEffectShader->Init(ChD3D11::D3D11Device(), 10000);
 
 	light.Init(ChD3D11::D3D11Device());
 
@@ -92,6 +99,7 @@ void GameFrame::Init()
 	baseMarker.CreateRenderTarget(
 		ChD3D11::D3D11Device(),
 		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
+
 
 }
 
@@ -452,6 +460,7 @@ void GameFrame::Update()
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 	if (windows->IsPushKey(VK_ESCAPE))
 	{
+		shotEffectList->Release();
 		windows->Release();
 		return;
 	}
@@ -467,6 +476,9 @@ void GameFrame::Update()
 
 void GameFrame::UpdateFunction()
 {
+
+	shotEffectList->SetUpdateFlg(false);
+	smokeEffectList->SetUpdateFlg(false);
 
 	mechaList.ObjectUpdateBegin();
 
@@ -503,12 +515,20 @@ void GameFrame::UpdateFunction()
 
 		meshDrawer.drawer.SetViewMatrix(tmpMat);
 
+		shotEffectList->SetViewMatrix(tmpMat);
+
+		smokeEffectList->SetViewMatrix(tmpMat);
+
 		light.SetCamPos(viewPos);
 		
 		ChVec3 dir = ChVec3(0.25f, -0.5f, 0.25f);
 		dir.Normalize();
 		light.SetLightDir(dir);
+
 	}
+
+	while (!shotEffectList->IsUpdateFlg()) {}
+	while (!smokeEffectList->IsUpdateFlg()) {}
 
 }
 
@@ -555,6 +575,10 @@ void GameFrame::Render3D(void)
 	bulletList.ObjectDraw3D();
 
 	meshDrawer.drawer.DrawEnd();
+
+	shotEffectList->Draw(meshDrawer.dc);
+	smokeEffectList->Draw(meshDrawer.dc);
+
 }
 
 void GameFrame::AddMecha(ChPtr::Shared<BaseMecha> _mecha, unsigned char _mechaPartyNo, const ChStd::Bool _playerFlg)
@@ -587,9 +611,19 @@ void GameFrame::AddBullet(ChPtr::Shared<BulletObject> _bullet)
 	bulletList.SetObject(_bullet);
 }
 
+void GameFrame::AddShotEffectObject(const ChVec3& _pos)
+{
+	shotEffectList->AddShotEffect(_pos);
+}
+
 void GameFrame::BreakMecha(BaseMecha* _mecha)
 {
 	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
+}
+
+void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector)
+{
+	smokeEffectList->AddShotEffect(_pos,_moveVector);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
