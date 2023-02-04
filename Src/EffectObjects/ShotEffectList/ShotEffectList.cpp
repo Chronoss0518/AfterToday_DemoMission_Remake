@@ -22,7 +22,6 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 
-
 	updater.Init([&]() {
 		while (!gameEndFlg)
 		{
@@ -31,14 +30,14 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 			for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
 			{
 				auto effectObject = effectShader->GetEffectPos(i);
-				if (!effectObject->displayFlg)continue;
-				effectObject->animationCount.w += 1;
-				if (effectObject->animationCount.w > ANIMATION_COUNT) {
+				if (!effectObject.displayFlg)continue;
+				effectObject.animationCount.w += 1;
+				if (effectObject.animationCount.w > ANIMATION_COUNT) {
 					effectShader->SetEffectDisplayFlg(false, i);
 					effectShader->SetEffectHorizontalAnimationCount(0, i);
 					continue;
 				}
-				effectShader->SetEffectHorizontalAnimationCount(effectObject->animationCount.w, i);
+				effectShader->SetEffectHorizontalAnimationCount(effectObject.animationCount.w, i);
 			}
 			updateFlg = true;
 		}

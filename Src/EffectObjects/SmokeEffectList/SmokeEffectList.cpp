@@ -6,7 +6,7 @@
 #include"SmokeEffectList.h"
 
 
-#define OBJECT_SIZE 5.0f
+#define OBJECT_SIZE 1.0f
 #define RANDOM_ALPHA_POWER_SIZE 1000
 
 void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
@@ -17,17 +17,17 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
 	effectShader->Init(ChD3D11::D3D11Device(), _maxCount);
-	effectObjectList.resize(_maxCount);
+	effectMoveDataList.resize(_maxCount);
 
 	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("SircleTexture.png"), 1, 1);
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
+	effectShader->SetBlendFlg(true);
+	effectShader->SetLightFlg(true);
 
 	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
 	{
-		auto effectObject = ChPtr::Make_S<EffectObject>();
-		effectObject->object = effectShader->GetEffectPos(i);
-		effectObjectList[i] = effectObject;
+		effectMoveDataList[i] = ChPtr::Make_S<EffectMoveData>();
 	}
 
 
@@ -36,17 +36,25 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 		{
 			if (updateFlg)continue;
 
-			for (auto&& effectObject : effectObjectList)
+			for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
 			{
-
-				if (!effectObject->object->displayFlg)continue;
-				effectObject->object->color.a -= downSpeedOnAlphaValue;
-				if (effectObject->object->color.a <= 0.0f) {
-					effectObject->object->displayFlg = false;
-					effectObject->object->color.a = 1.0f;
+				auto effectObject = effectShader->GetEffectPos(i);
+				if (!effectObject.displayFlg)continue;
+				if (effectObject.color.a <= 0.0f) {
+					effectShader->SetEffectDisplayFlg(false, i);
+					effectShader->SetEffectColor(ChVec4(1.0f), i);
 					continue;
 				}
-				effectObject->object->pos += effectObject->moveVector;
+
+				ChLMat tmpMat;
+				effectObject.color.a -= downSpeedOnAlphaValue;
+				effectObject.pos += effectMoveDataList[i]->moveVector;
+				effectMoveDataList[i]->dispersal += dispersalPower;
+				tmpMat.SetScalling(ChVec3(effectMoveDataList[i]->dispersal));
+				effectShader->SetEffectColor(effectObject.color, i);
+				effectShader->SetEffectVertexRotation(tmpMat, i);
+				effectShader->SetEffectPosition(effectObject.pos, i);
+
 			}
 			updateFlg = true;
 		}
@@ -60,7 +68,7 @@ void SmokeEffectList::Release()
 	gameEndFlg = true;
 	updater.Release();
 	effectShader = nullptr;
-	if(!effectObjectList.empty())effectObjectList.clear();
+	if(!effectMoveDataList.empty())effectMoveDataList.clear();
 }
 
 void SmokeEffectList::SetProjectionMatrix(const ChLMat& _projection)
@@ -93,6 +101,11 @@ void SmokeEffectList::SetMinColorPower(const float _power)
 	minColPower = _power;
 }
 
+void SmokeEffectList::SetDispersalPower(const float _power)
+{
+	dispersalPower = _power;
+}
+
 void SmokeEffectList::SetDownSpeedOnAlphaValue(const float _speed)
 {
 	if (_speed > 1.0f)return;
@@ -101,7 +114,7 @@ void SmokeEffectList::SetDownSpeedOnAlphaValue(const float _speed)
 	downSpeedOnAlphaValue = _speed;
 }
 
-void SmokeEffectList::AddShotEffect(const ChVec3& _pos, const ChVec3& _moveVector)
+void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVector)
 {
 	if (effectShader == nullptr)return;
 
@@ -114,12 +127,13 @@ void SmokeEffectList::AddShotEffect(const ChVec3& _pos, const ChVec3& _moveVecto
 
 	color.a = 1.0f;
 
-	effectObjectList[nowCount]->object->color = color;
-	effectObjectList[nowCount]->object->pos = _pos;
-	effectObjectList[nowCount]->object->displayFlg = true;
-	effectObjectList[nowCount]->moveVector = _moveVector;
+	effectShader->SetEffectColor(color, nowCount);
+	effectShader->SetEffectPosition(_pos, nowCount);
+	effectShader->SetEffectDisplayFlg(true, nowCount);
+	effectMoveDataList[nowCount]->moveVector = _moveVector;
+	effectMoveDataList[nowCount]->dispersal = 1.0f;
 
-	nowCount = (1 + nowCount) % effectObjectList.size();
+	nowCount = (1 + nowCount) % effectShader->GetMaxEffectCount();
 }
 
 void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)

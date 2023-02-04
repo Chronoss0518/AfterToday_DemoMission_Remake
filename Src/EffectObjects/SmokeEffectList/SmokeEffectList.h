@@ -24,6 +24,8 @@ public:
 
 	void SetMinColorPower(const float _power);
 
+	void SetDispersalPower(const float power);
+
 	void SetDownSpeedOnAlphaValue(const float _speed);
 
 public:
@@ -32,7 +34,7 @@ public:
 
 public:
 
-	void AddShotEffect(const ChVec3& _pos,const ChVec3& _moveVector);
+	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector);
 
 public:
 
@@ -40,22 +42,26 @@ public:
 
 private:
 
-	struct EffectObject
+	struct EffectMoveData
 	{
-		In_Vertex* object;
-		ChVec3 moveVector;
+		float dispersal = 1.0f;
+		ChVec3 moveVector = 0.0f;
 	};
 
 	float maxColPower = 1.0f;
 	float minColPower = 0.0f;
 
+	//–¶ŽU—Í//
+	float dispersalPower = 0.0f;
+
 	float downSpeedOnAlphaValue = 0.05f;
 
 	ChStd::Bool gameEndFlg = false;
 	ChStd::Bool updateFlg = false;
+
 	ChCpp::MultiThread updater;
 	
-	std::vector<ChPtr::Shared<EffectObject>>effectObjectList;
+	std::vector<ChPtr::Shared<EffectMoveData>>effectMoveDataList;
 	ChPtr::Shared<EffectObjectShader> effectShader = nullptr;
 	unsigned long nowCount = 0;
 };
