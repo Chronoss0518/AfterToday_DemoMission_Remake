@@ -147,6 +147,8 @@ void GunFunction::AttackFunction()
 
 	tmpMat = lastShotPos * tmpMat;
 
+	frame->AddShotEffectObject(tmpMat.GetPosition());
+
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
 
