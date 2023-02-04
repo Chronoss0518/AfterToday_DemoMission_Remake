@@ -68,7 +68,13 @@ void GameFrame::Init()
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
 
-	smokeEffectList->Init(ChD3D11::D3D11Device(), 10000);
+	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100);
+
+	smokeEffectList->SetMaxColorPower(0.8f);
+	smokeEffectList->SetMinColorPower(0.3f);
+
+	smokeEffectList->SetDownSpeedOnAlphaValue(0.001f);
+	smokeEffectList->SetDispersalPower(0.05f);
 
 	{
 		ChMat_11 proMat;
@@ -112,7 +118,7 @@ void GameFrame::InitScriptFunction()
 
 		std::string audioName = argment[0];
 
-		ChD3D::XAudioManager().CreateSound(audio.get(), SOUND_DIRECTORY(+audioName));
+		ChD3D::XAudioManager().CreateSound(audio.get(), SOUND_DIRECTORY(+ audioName));
 		audio->SetLoopFlg(false);
 
 		for (unsigned long i = 1; i < argment.size(); i++)
@@ -147,113 +153,29 @@ void GameFrame::InitScriptFunction()
 
 		}
 		audios[audioName] = audio;
-		});
+	});
 
 	script->SetFunction("Play", [&](const std::string& _text) {
 
 		auto argment = ChStr::Split(_text, " ");
 
-		audios[nowPlayAudio]->Stop();
+		if(nowPlayAudio != "")audios[nowPlayAudio]->Stop();
 
-		audios[argment[0]]->Play();
 		nowPlayAudio = argment[0];
-		});
+		audios[nowPlayAudio]->Play();
+	});
 
 	script->SetFunction("Stop", [&](const std::string& _text) {
 		audios[nowPlayAudio]->Stop();
-		});
+	});
 
 	script->SetFunction("Pause", [&](const std::string& _text) {
 		audios[nowPlayAudio]->Pause();
-		});
+	});
 
-	script->SetFunction("LoadMap", [&](const std::string& _text) {
-		auto argment = ChStr::Split(_text, " ");
+	script->SetFunction("LoadMap", [&](const std::string& _text) {AddField(_text); });
 
-		auto mainMap = ChPtr::Make_S<MapObject>();
-		mainMap->model->Init(ChD3D11::D3D11Device());
-		{
-			ChCpp::ModelLoader::XFile loader;
-			loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
-		}
-		map.push_back(mainMap);
-
-		for (unsigned long i = 1; i < argment.size(); i++)
-		{
-			if (argment[i] == "-p" || argment[i] == "--position")
-			{
-				i++;
-				mainMap->position.Deserialize(argment[i], 0, ",", "\0");
-				continue;
-			}
-			if (argment[i] == "-r" || argment[i] == "--rotation")
-			{
-				i++;
-				mainMap->rotation.Deserialize(argment[i], 0, ",", "\0");
-				continue;
-			}
-			if (argment[i] == "-s" || argment[i] == "--scalling")
-			{
-				i++;
-				mainMap->scalling.Deserialize(argment[i], 0, ",", "\0");
-				continue;
-			}
-			if (argment[i] == "-h" || argment[i] == "--hit")
-			{
-				SetHitMap(mainMap);
-				continue;
-			}
-		}
-
-		});
-
-	script->SetFunction("LoadMecha", [&](const std::string& _text)
-		{
-
-			auto argment = ChStr::Split(_text, " ");
-
-			auto&& mecha = mechaList.SetObject<BaseMecha>(argment[0]);
-
-			mecha->Create(windSize, meshDrawer,this);
-
-			mecha->Load(ChD3D11::D3D11Device(), argment[1]);
-
-			for (unsigned long i = 1; i < argment.size(); i++)
-			{
-				if (argment[i] == "-p" || argment[i] == "--position")
-				{
-					i++;
-					ChVec3 position;
-					position.Deserialize(argment[i], 0, ",", "\0");
-					mecha->SetPosition(position);
-					continue;
-				}
-				if (argment[i] == "-r" || argment[i] == "--rotation")
-				{
-					i++;
-					ChVec3 rotation;
-					rotation.Deserialize(argment[i], 0, ",", "\0");
-					mecha->SetRotation(rotation);
-					continue;
-				}
-				if (argment[i] == "-pc" || argment[i] == "--playercontroller")
-				{
-					mecha->SetComponent<PlayerController>();
-					continue;
-				}
-				if (argment[i] == "-cc" || argment[i] == "--cpucontroller")
-				{
-					mecha->SetComponent<CPUController>();
-					continue;
-				}
-				if (argment[i] == "-t" || argment[i] == "--team")
-				{
-					i++;
-					mecha->SetTeamNo(ChStr::GetIntegialFromText<unsigned char>(argment[i]));
-					continue;
-				}
-			}
-		});
+	script->SetFunction("LoadMecha", [&](const std::string& _text) {AddMecha(_text); });
 
 	script->SetFunction("Loop", [&](const std::string& _text)
 		{
@@ -371,38 +293,11 @@ void GameFrame::LoadScript(const std::string& _text)
 
 void GameFrame::LoadMechas()
 {
-	{
+	//AddMecha("GuardianRobot.amf --u player -pc --position 0.0f,700.0f,0.0f; -t 0");
+	AddMecha("AirRobot.amf --u player -pc --position 0.0f,700.0f,0.0f; -t 0");
+	//AddMecha("NormalRobot.amf --u player -pc --position 0.0f,700.0f,0.0f; -t 0");
 
-		auto&& mecha = ChPtr::Make_S<BaseMecha>();
-		mecha->SetMyName("player");
-
-		mecha->Create(windSize, meshDrawer, this);
-
-		mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "GuardianRobot.amf");
-		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
-		//mecha->Save("TestAsm.amf");
-
-		AddMecha(mecha, 0, true);
-	}
-
-	{
-#if 1
-		auto&& mecha = ChPtr::Make_S<BaseMecha>();
-		mecha->SetMyName("enemyTest");
-
-		mecha->Create(windSize, meshDrawer, this);
-
-		//mecha->Load(ChD3D11::D3D11Device(), "AirRobot.amf");
-		//mecha->Load(ChD3D11::D3D11Device(), "NormalRobot.amf");
-		mecha->Load(ChD3D11::D3D11Device(), "GuardianRobot.amf");
-		mecha->SetPosition(ChVec3(0.0f, 700.0f, 0.0f));
-
-		AddMecha(mecha, 1, false);
-#endif
-	}
-
+	AddMecha("GuardianRobot.amf --u enemyTest -cc 1 --position 0.0f,700.0f,0.0f; -t 1");
 
 }
 
@@ -420,6 +315,12 @@ void GameFrame::LoadBGMs()
 
 void GameFrame::LoadMaps()
 {
+
+	AddField("TestField.x -s 100.0f,100.0f,100.0f; -h");
+	AddField("TestField2.x -s 100.0f,100.0f,100.0f;");
+
+#if 0 
+
 	auto mainMap = ChPtr::Make_S<MapObject>();
 	mainMap->model->Init(ChD3D11::D3D11Device());
 	{
@@ -438,7 +339,7 @@ void GameFrame::LoadMaps()
 		loader.CreateModel(subMap->model, MESH_DIRECTORY("TestField2.x"));
 	}
 	map.push_back(subMap);
-
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -519,6 +420,8 @@ void GameFrame::UpdateFunction()
 		shotEffectList->SetViewMatrix(tmpMat);
 
 		smokeEffectList->SetViewMatrix(tmpMat);
+		//AddSmokeEffectObject(targetMecha->GetPosition(), 0.0f);
+
 
 		light.SetCamPos(viewPos);
 		
@@ -582,30 +485,144 @@ void GameFrame::Render3D(void)
 
 }
 
-void GameFrame::AddMecha(ChPtr::Shared<BaseMecha> _mecha, unsigned char _mechaPartyNo, const ChStd::Bool _playerFlg)
+void GameFrame::AddMecha(const std::string& _text)
 {
-	if (_playerFlg)
+
+	auto argment = ChStr::Split(_text, " ");
+
+	auto&& mecha = mechaList.SetObject<BaseMecha>("");
+
+	mecha->Create(windSize, meshDrawer, this);
+
+	mecha->Load(ChD3D11::D3D11Device(), argment[0]);
+
+	unsigned char teamNo = 0;
+
+	ChStd::Bool playerFlg = false;
+	ChStd::Bool cpuFlg = false;
+
+	for (unsigned long i = 1; i < argment.size(); i++)
 	{
-		playerParty = _mechaPartyNo;
-		_mecha->SetComponent<PlayerController>();
+		if (argment[i] == "-u" || argment[i] == "--username")
+		{
+			i++;
+			mecha->SetMyName(argment[i]);
+			continue;
+		}
+		if (argment[i] == "-p" || argment[i] == "--position")
+		{
+			i++;
+			ChVec3 position;
+			position.Deserialize(argment[i], 0, ",", ";");
+			mecha->SetPosition(position);
+			continue;
+		}
+		if (argment[i] == "-r" || argment[i] == "--rotation")
+		{
+			i++;
+			ChVec3 rotation;
+			rotation.Deserialize(argment[i], 0, ",", ";");
+			mecha->SetRotation(rotation);
+			continue;
+		}
+		if (argment[i] == "-pc" || argment[i] == "--playercontroller")
+		{
+			if (!cpuFlg)
+			{
+				playerFlg = true;
+				mecha->SetComponent<PlayerController>();
+			}
+			continue;
+		}
+		if (argment[i] == "-cc" || argment[i] == "--cpucontroller")
+		{
+			if (!playerFlg)
+			{
+				cpuFlg = true;
+				i++;
+				auto cpuController = mecha->SetComponent<CPUController>();
+				cpuController->SetCPULevel(ChStr::GetIntegialFromText<unsigned char>(argment[i]));
+				cpuController->SetGameFrame(this);
+			}
+			continue;
+		}
+		if (argment[i] == "-t" || argment[i] == "--team")
+		{
+			i++;
+			teamNo = ChStr::GetIntegialFromText<unsigned char>(argment[i]);
+			mecha->SetTeamNo(teamNo);
+			continue;
+		}
+	}
+
+	auto&& counter = mechaPartyCounter.find(teamNo);
+	if (counter == mechaPartyCounter.end())
+	{
+		mechaPartyCounter[teamNo] = 0;
+	}
+
+	mechaList.SetObject(mecha);
+	mechaPartyCounter[teamNo]++;
+}
+
+void GameFrame::AddField(const std::string& _text)
+{
+	auto argment = ChStr::Split(_text, " ");
+
+	auto mainMap = ChPtr::Make_S<MapObject>();
+	mainMap->model->Init(ChD3D11::D3D11Device());
+	if (argment[0].substr(argment[0].find_last_of(".")) == ".x") {
+		ChCpp::ModelLoader::XFile loader;
+		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+ argment[0]));
+	}
+	else if (argment[0].substr(argment[0].find_last_of(".")) == ".obj") {
+		ChCpp::ModelLoader::ObjFile loader;
+		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+ argment[0]));
 	}
 	else
 	{
-		auto controller = _mecha->SetComponent<CPUController>();
-		controller->SetGameFrame(this);
+		return;
 	}
+	map.push_back(mainMap);
 
-	_mecha->SetTeamNo(_mechaPartyNo);
-
-	auto&& counter = mechaPartyCounter.find(_mechaPartyNo);
-	if (counter == mechaPartyCounter.end())
+	for (unsigned long i = 1; i < argment.size(); i++)
 	{
-		mechaPartyCounter[_mechaPartyNo] = 0;
+		if (argment[i] == "-p" || argment[i] == "--position")
+		{
+			i++;
+			mainMap->position.Deserialize(argment[i], 0, ",", ";");
+			continue;
+		}
+		if (argment[i] == "-r" || argment[i] == "--rotation")
+		{
+			i++;
+			mainMap->rotation.Deserialize(argment[i], 0, ",", ";");
+			continue;
+		}
+		if (argment[i] == "-s" || argment[i] == "--scalling")
+		{
+			i++;
+			mainMap->scalling.Deserialize(argment[i], 0, ",", ";");
+			continue;
+		}
+		if (argment[i] == "-h" || argment[i] == "--hit")
+		{
+			SetHitMap(mainMap);
+			continue;
+		}
 	}
-
-	mechaList.SetObject(_mecha);
-	mechaPartyCounter[_mechaPartyNo]++;
 }
+
+void GameFrame::AddBGM(const std::string& _text)
+{
+
+}
+
+void GameFrame::AddSE(const std::string& _text)
+{
+
+}
+
 
 void GameFrame::AddBullet(ChPtr::Shared<BulletObject> _bullet)
 {
@@ -624,7 +641,7 @@ void GameFrame::BreakMecha(BaseMecha* _mecha)
 
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector)
 {
-	smokeEffectList->AddShotEffect(_pos,_moveVector);
+	smokeEffectList->AddSmokeEffect(_pos,_moveVector);
 }
 
 //////////////////////////////////////////////////////////////////////////////////

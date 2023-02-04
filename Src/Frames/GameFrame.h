@@ -49,7 +49,13 @@ private:
 
 public:
 
-	void AddMecha(ChPtr::Shared<BaseMecha> _mecha,unsigned char _mechaPartyNo,const ChStd::Bool _playerFlg = false);
+	void AddMecha(const std::string& _text);
+
+	void AddField(const std::string& _text);
+
+	void AddBGM(const std::string& _text);
+
+	void AddSE(const std::string& _text);
 
 	void AddBullet(ChPtr::Shared<BulletObject> _bullet);
 
