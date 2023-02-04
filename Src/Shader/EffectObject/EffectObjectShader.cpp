@@ -37,6 +37,8 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	psBuf.Init();
 	psBuf.CreateBuffer(_device, EFFECT_OBJECT_PIXEL_DATA);
 
+	psData.blendFlg = false;
+
 	ChD3D11::Shader::SampleShaderBase11::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	D3D11_RASTERIZER_DESC desc
@@ -47,7 +49,7 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 		0,
 		0.0f,
 		0.0f,
-		true,
+		false,
 		false,
 		true,
 		false
@@ -67,8 +69,6 @@ void EffectObjectShader::Release()
 	vb.Release();
 	gsBuf.Release();
 	psBuf.Release();
-	gsUpdateFlg = true;
-
 }
 
 void EffectObjectShader::InitVertexShader()
@@ -108,21 +108,16 @@ void EffectObjectShader::SetViewMatrix(const ChLMat& _viewMat)
 {
 	gsData.viewMatrix = _viewMat;
 
-	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetProjectionMatrix(const ChLMat& _projectionMat)
 {
 	gsData.projectionMatrix = _projectionMat;
-
-	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetObjectSize(const ChVec2& _objectSize)
 {
 	gsData.objectSize = _objectSize;
-
-	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetLuminescencePower(const float _power)
@@ -130,11 +125,25 @@ void EffectObjectShader::SetLuminescencePower(const float _power)
 	SetLuminescencePower(ChVec4(_power));
 }
 
-void EffectObjectShader::SetLuminescencePower(const ChVec4& _power)
+void EffectObjectShader::SetLuminescencePower(const ChVec3& _power)
 {
 	psData.luminescencePower = _power;
 
-	psUpdateFlg = true;
+}
+
+void EffectObjectShader::SetBlendFlg(const ChStd::Bool& _flg)
+{
+	psData.blendFlg = _flg;
+}
+
+void EffectObjectShader::SetSpecularColor(const ChVec3& _color)
+{
+	psData.specularPower = _color;
+}
+
+void EffectObjectShader::SetLightFlg(const ChStd::Bool& _flg)
+{
+	psData.lightFlg = _flg;
 }
 
 void EffectObjectShader::SetEffectTexture(ChPtr::Shared<ChD3D11::TextureBase11> _effectTexture, const ChMath::Vector2Base<unsigned long>& _animationCount)
@@ -209,16 +218,15 @@ void EffectObjectShader::SetEffectVertexRotation(const ChLMat& _rotateMatrix, co
 	effectPosList[_effectCount].v_normal = _rotateMatrix.GetZAxisDirection();
 	effectPosList[_effectCount].v_binormal = _rotateMatrix.GetYAxisDirection();
 	effectPosList[_effectCount].v_tangent = _rotateMatrix.GetXAxisDirection();
+
+	vbUpdateFlg = true;
 }
 
 void EffectObjectShader::SetEffectColor(const ChVec4& _effectColor, const unsigned long _effectCount)
 {
 	if (effectPosList.size() <= _effectCount)return;
 
-	effectPosList[_effectCount].color.r = _effectColor.r;
-	effectPosList[_effectCount].color.g = _effectColor.g;
-	effectPosList[_effectCount].color.b = _effectColor.b;
-	effectPosList[_effectCount].color.a = _effectColor.a;
+	effectPosList[_effectCount].color = _effectColor;
 
 	vbUpdateFlg = true;
 }
@@ -283,6 +291,7 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 	vb.SetVertexBuffer(_dc, 0);
 	_dc->Draw(effectPosList.size(), 0);
 
+
 	ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultBlender(_dc);
 }
 
@@ -294,18 +303,8 @@ void EffectObjectShader::Update(ID3D11DeviceContext* _dc)
 		vbUpdateFlg = false;
 	}
 
-	if (gsUpdateFlg)
-	{
-		gsBuf.UpdateResouce(_dc, &gsData);
+	gsBuf.UpdateResouce(_dc, &gsData);
 
-		gsUpdateFlg = false;
-	}
-
-	if (psUpdateFlg)
-	{
-		psBuf.UpdateResouce(_dc, &psData);
-
-		psUpdateFlg = false;
-	}
+	psBuf.UpdateResouce(_dc, &psData);
 
 }

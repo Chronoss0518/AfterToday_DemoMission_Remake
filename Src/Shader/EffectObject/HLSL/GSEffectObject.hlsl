@@ -13,7 +13,6 @@ void main(
 )
 {
 	if (input[0].displayFlg >= 1) 
-
 	{
 
 		In_Pixel vertex[4];
@@ -24,50 +23,48 @@ void main(
 
 		float3x3 vertexRotateMatrix = float3x3
 		(
-
 			input[0].v_tangent.x,input[0].v_binormal.x,input[0].v_normal.x,
 			input[0].v_tangent.y,input[0].v_binormal.y,input[0].v_normal.y,
 			input[0].v_tangent.z,input[0].v_binormal.z,input[0].v_normal.z
 		);
 
-#if 1
+		float3 basePos[4] =
+		{
+			float3(-objectSize.x, objectSize.y, 0.0f),
+			float3(objectSize.x, objectSize.y, 0.0f),
+			float3(objectSize.x, -objectSize.y, 0.0f),
+			float3(-objectSize.x, -objectSize.y, 0.0f)
+		};
 
 		input[0].pos = mul(input[0].pos, viewMatrix);
 
-		vertex[0].pos = float4(VertexRotation(float3(-objectSize.x, objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
-		vertex[1].pos = float4(VertexRotation(float3(objectSize.x, objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
-		vertex[2].pos = float4(VertexRotation(float3(objectSize.x, -objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
-		vertex[3].pos = float4(VertexRotation(float3(-objectSize.x, -objectSize.y, 0.0f), vertexRotateMatrix), 0.0f);
 
 		[unroll]
 		for (i = 0; i < 4; i++)
 		{
 			num = i;
-			vertex[num].pos += input[0].pos;
-
-			vertex[num].pos = mul(vertex[num].pos, projectionMatrix);
+			vertex[num].worldPos = float4(VertexRotation(basePos[num], vertexRotateMatrix), 0.0f);
+			vertex[num].pos = vertex[num].worldPos += input[0].pos;
+			vertex[num].proPos = vertex[num].pos = mul(vertex[num].pos, projectionMatrix);
 			vertex[num].color = input[0].color;
+		}
 
+		int tmpNum1 = 0;
+		int tmpNum2 = 0;
+		[unroll]
+		for (i = 0; i < 4; i++)
+		{
+			num = i;
+			tmpNum1 = (num + 1) % 4;
+			tmpNum2 = (num + 3) % 4;
+			float3 normal = float3(vertex[tmpNum1].worldPos.xyz - vertex[num].worldPos.xyz) + float3(vertex[tmpNum2].worldPos.xyz - vertex[num].worldPos.xyz);
+			vertex[num].worldNormal = normalize(-normal) ;
 		}
 
 		vertex[0].uv = float2(animationSize.x * input[0].animationCount.x, animationSize.y * (input[0].animationCount.y + 1));
 		vertex[1].uv = float2(animationSize.x * (input[0].animationCount.x + 1), animationSize.y * (input[0].animationCount.y + 1));
 		vertex[2].uv = float2(animationSize.x * (input[0].animationCount.x + 1), animationSize.y * input[0].animationCount.y);
 		vertex[3].uv = float2(animationSize.x * input[0].animationCount.x, animationSize.y * input[0].animationCount.y);
-
-#else
-
-		vertex[0].pos = float4(-objectSize.x, objectSize.y, 0.0f, 1.0f);
-		vertex[1].pos = float4(objectSize.x, objectSize.y, 0.0f, 1.0f);
-		vertex[2].pos = float4(objectSize.x, -objectSize.y, 0.0f, 1.0f);
-		vertex[3].pos = float4(-objectSize.x, -objectSize.y, 0.0f, 1.0f);
-
-		vertex[0].uv = float2(0.0f, 1.0f);
-		vertex[1].uv = float2(1.0f, 1.0f);
-		vertex[2].uv = float2(1.0f, 0.0f);
-		vertex[3].uv = float2(0.0f, 0.0f);
-
-#endif
 
 		[unroll]
 		for (i = 0; i < 2; i++)

@@ -59,7 +59,10 @@ struct In_Pixel
 {
 	float4 pos SV_POSITION;
 	float4 color Se_COLOR(0);
+	float3 worldNormal Se_NORMAL(0);
 	float2 uv Se_TEXCOORD(0);
+	float4 worldPos Se_TEXCOORD(1);
+	float4 proPos Se_TEXCOORD(2);
 };
 
 #endif
@@ -102,7 +105,10 @@ cbuffer PSEffectObjectData : register(b[EFFECT_OBJECT_PIXEL_DATA])
 struct PSEffectObjectData
 #endif
 {
-	float4 luminescencePower;
+	float3 luminescencePower;
+	uint blendFlg = 0;
+	uint lightFlg = 0;
+	float3 specularPower = float3(0.0f, 0.0f, 0.0f);
 };
 
 #ifdef __SHADER__

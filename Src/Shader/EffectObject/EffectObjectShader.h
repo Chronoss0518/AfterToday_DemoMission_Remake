@@ -28,7 +28,13 @@ public:
 
 	void SetLuminescencePower(const float _power);
 
-	void SetLuminescencePower(const ChVec4& _power);
+	void SetLuminescencePower(const ChVec3& _power);
+
+	void SetBlendFlg(const ChStd::Bool& _flg);
+
+	void SetSpecularColor(const ChVec3& _color);
+
+	void SetLightFlg(const ChStd::Bool& _flg);
 
 	//animationCountÇÕ 1à»è„ÇÃêîílÇ≈Ç†ÇÈïKóvÇ™Ç†ÇÈ//
 	void SetEffectTexture(ChPtr::Shared<ChD3D11::TextureBase11> _effectTexture, const ChMath::Vector2Base<unsigned long>& _animationCount);
@@ -63,14 +69,19 @@ public:
 
 	unsigned long GetMaxEffectCount() { return effectPosList.size(); }
 
-	In_Vertex* GetEffectPos(unsigned long _num)
+	In_Vertex GetEffectPos(unsigned long _num)
 	{ 
-		In_Vertex* res = nullptr;
+		In_Vertex res;
 		if (_num < effectPosList.size())
 		{
-			res = &effectPosList[_num];
+			res.pos = effectPosList[_num].pos;
+			res.v_normal = effectPosList[_num].v_normal;
+			res.v_binormal = effectPosList[_num].v_binormal;
+			res.v_tangent = effectPosList[_num].v_tangent;
+			res.color = effectPosList[_num].color;
+			res.animationCount.val = effectPosList[_num].animationCount.val;
+			res.displayFlg = effectPosList[_num].displayFlg;
 		}
-
 		return res;
 	}
 
@@ -90,11 +101,9 @@ private:
 
 	ChPtr::Shared<ChD3D11::TextureBase11> effectTexture = nullptr;
 
-	ChStd::Bool gsUpdateFlg = true;
 	GSEffectObjectData gsData;
 	ChD3D11::ConstantBuffer11<GSEffectObjectData>gsBuf;
 
-	ChStd::Bool psUpdateFlg = true;
 	PSEffectObjectData psData;
 	ChD3D11::ConstantBuffer11<PSEffectObjectData>psBuf;
 };
