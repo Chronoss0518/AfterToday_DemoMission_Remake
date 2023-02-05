@@ -18,6 +18,10 @@ public:
 
 	void SetNowScriptCount(unsigned long _scriptCount) { nowScriptCount = _scriptCount; }
 
+	void SetLoopPos(const std::string& _name) { loopPosList[_name] = nowScriptCount; }
+
+	void SetPosToLoopStart(const std::string& _name);
+
 	ChCpp::TextObject GetScripts() { return scripts; }
 
 	unsigned long GetScriptCount() { return nowScriptCount; }
@@ -29,6 +33,7 @@ public:
 private:
 
 	unsigned long nowScriptCount = 0;
+	std::map<std::string, unsigned long>loopPosList;
 	
 	ChCpp::TextObject scripts;
 
