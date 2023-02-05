@@ -100,6 +100,8 @@ void BulletData::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 
 	ChVec3 dir = mat.GetZAxisDirection();
 
+	dir.Normalize();
+
 	_bullet.SetPosition(_startMat.GetPosition());
 	_bullet.SetRotation(mat.GetRotation());
 
