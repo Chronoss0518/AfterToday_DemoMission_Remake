@@ -26,7 +26,7 @@ OutColor main(In_Pixel _pixel)
 	clip(res.color.a - 0.01f);
 	res.color.rgb *= luminescencePower.rgb;
 
-	//res.color.rgb = GetLightColor(res, _pixel);
+	res.color.rgb = GetLightColor(res, _pixel);
 
 	//res.depth = Blending(res.color.a);
 	return res;
