@@ -41,6 +41,8 @@ private:
 
 	void LoadScript(const std::string& _text);
 
+	void LoadStage();
+
 	void LoadMechas();
 
 	void LoadBGMs();
@@ -52,6 +54,8 @@ public:
 	void AddMecha(const std::string& _text);
 
 	void AddField(const std::string& _text);
+
+	void AddSkyObject(const std::string& _text);
 
 	void AddBGM(const std::string& _text);
 
@@ -79,6 +83,8 @@ private:
 
 	void DrawFunction();
 
+	ChStd::Bool initFlg = false;
+
 	ChMat_11 viewMat;
 	ChMat_11 proMat;
 
@@ -93,7 +99,7 @@ private:
 
 	std::vector<ChPtr::Shared<MapObject>> map;
 
-	ChPtr::Shared<ChD3D11::Mesh11> sky_sphere = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11> skySphere = ChPtr::Make_S<ChD3D11::Mesh11>();
 
 	std::map<std::string,ChPtr::Shared<ChD3D::AudioObject>>audios;
 	std::string nowPlayAudio = "";
@@ -133,8 +139,6 @@ private:
 	void Render2D(void);
 
 	ChPtr::Shared<GameScript> script = nullptr;
-	std::map<std::string, unsigned long>loopPos;
-
 
 	ChWin::TextBox box;
 
