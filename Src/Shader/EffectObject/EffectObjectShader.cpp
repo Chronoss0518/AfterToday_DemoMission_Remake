@@ -40,24 +40,42 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	psData.blendFlg = false;
 
 	ChD3D11::Shader::SampleShaderBase11::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-	D3D11_RASTERIZER_DESC desc
+	
 	{
-		D3D11_FILL_MODE::D3D11_FILL_SOLID,
-		D3D11_CULL_MODE::D3D11_CULL_NONE,
-		true,
-		0,
-		0.0f,
-		0.0f,
-		false,
-		false,
-		true,
-		false
-	};
 
-	ChD3D11::Shader::SampleShaderBase11::CreateRasteriser(desc);
+		D3D11_RASTERIZER_DESC desc
+		{
+			D3D11_FILL_MODE::D3D11_FILL_SOLID,
+			D3D11_CULL_MODE::D3D11_CULL_NONE,
+			true,
+			0,
+			0.0f,
+			0.0f,
+			false,
+			false,
+			true,
+			false
+		};
 
+		ChD3D11::Shader::SampleShaderBase11::CreateRasteriser(desc);
 
+	}
+
+	{
+
+		D3D11_DEPTH_STENCIL_DESC desc = {
+			true,
+			D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO ,
+			D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS,
+			false,
+			D3D11_DEFAULT_STENCIL_READ_MASK,
+			D3D11_DEFAULT_STENCIL_WRITE_MASK,
+			D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP,
+			D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP
+		};
+
+		ChD3D11::Shader::SampleShaderBase11::CreateDepthStencilTester(desc);
+	}
 }
 
 void EffectObjectShader::Release()
@@ -107,17 +125,19 @@ void EffectObjectShader::InitGeometryShader()
 void EffectObjectShader::SetViewMatrix(const ChLMat& _viewMat)
 {
 	gsData.viewMatrix = _viewMat;
-
+	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetProjectionMatrix(const ChLMat& _projectionMat)
 {
 	gsData.projectionMatrix = _projectionMat;
+	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetObjectSize(const ChVec2& _objectSize)
 {
 	gsData.objectSize = _objectSize;
+	gsUpdateFlg = true;
 }
 
 void EffectObjectShader::SetLuminescencePower(const float _power)
@@ -128,22 +148,25 @@ void EffectObjectShader::SetLuminescencePower(const float _power)
 void EffectObjectShader::SetLuminescencePower(const ChVec3& _power)
 {
 	psData.luminescencePower = _power;
-
+	psUpdateFlg = true;
 }
 
 void EffectObjectShader::SetBlendFlg(const ChStd::Bool& _flg)
 {
 	psData.blendFlg = _flg;
+	psUpdateFlg = true;
 }
 
 void EffectObjectShader::SetSpecularColor(const ChVec3& _color)
 {
 	psData.specularPower = _color;
+	psUpdateFlg = true;
 }
 
 void EffectObjectShader::SetLightFlg(const ChStd::Bool& _flg)
 {
 	psData.lightFlg = _flg;
+	psUpdateFlg = true;
 }
 
 void EffectObjectShader::SetEffectTexture(ChPtr::Shared<ChD3D11::TextureBase11> _effectTexture, const ChMath::Vector2Base<unsigned long>& _animationCount)
@@ -284,6 +307,8 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 
 	ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
 
+	if (useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDepthStencilTester(_dc);
+
 	gsBuf.SetToGeometryShader(_dc);
 	psBuf.SetToPixelShader(_dc);
 	effectTexture->SetDrawData(_dc, EFFECT_OBJECT_PIXEL_TEXTURE);
@@ -291,8 +316,12 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 	vb.SetVertexBuffer(_dc, 0);
 	_dc->Draw(effectPosList.size(), 0);
 
+	_dc->OMSetBlendState(nullptr, nullptr, 1);
+
+	if (useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultDepthStencilTester(_dc);
 
 	ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultBlender(_dc);
+
 }
 
 void EffectObjectShader::Update(ID3D11DeviceContext* _dc)
@@ -303,8 +332,17 @@ void EffectObjectShader::Update(ID3D11DeviceContext* _dc)
 		vbUpdateFlg = false;
 	}
 
-	gsBuf.UpdateResouce(_dc, &gsData);
+	if (gsUpdateFlg)
+	{
+		gsBuf.UpdateResouce(_dc, &gsData);
+		gsUpdateFlg = false;
+	}
 
-	psBuf.UpdateResouce(_dc, &psData);
+	if (psUpdateFlg)
+	{
+		psBuf.UpdateResouce(_dc, &psData);
+		psUpdateFlg = false;
+	}
+
 
 }

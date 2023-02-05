@@ -20,6 +20,8 @@ protected:
 
 public:
 
+	void SetUnUseDepthStencilTestFlg(ChStd::Bool _flg) { unUseDepthStencilTestFlg = _flg; }
+
 	void SetViewMatrix(const ChLMat& _viewMat);
 
 	void SetProjectionMatrix(const ChLMat& _projectionMat);
@@ -95,15 +97,18 @@ protected:
 
 private:
 
+	ChStd::Bool unUseDepthStencilTestFlg = false;
 	ChStd::Bool vbUpdateFlg = true;
 	std::vector<In_Vertex> effectPosList;
 	ChD3D11::VertexBuffer11<In_Vertex> vb;
 
 	ChPtr::Shared<ChD3D11::TextureBase11> effectTexture = nullptr;
 
+	ChStd::Bool gsUpdateFlg = true;
 	GSEffectObjectData gsData;
 	ChD3D11::ConstantBuffer11<GSEffectObjectData>gsBuf;
 
+	ChStd::Bool psUpdateFlg = true;
 	PSEffectObjectData psData;
 	ChD3D11::ConstantBuffer11<PSEffectObjectData>psBuf;
 };
