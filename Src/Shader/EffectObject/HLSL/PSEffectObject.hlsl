@@ -23,7 +23,7 @@ OutColor main(In_Pixel _pixel)
 	//res.color = float4(test, test, test, 1.0f);
 
 	res.color = baseTex.Sample(baseSmp, _pixel.uv) * _pixel.color;
-	clip(res.color.a - 0.01f);
+	clip(res.color.a - ALPHA_TEST);
 	res.color.rgb *= luminescencePower.rgb;
 
 	res.color.rgb = GetLightColor(res, _pixel);

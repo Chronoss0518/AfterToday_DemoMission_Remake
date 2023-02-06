@@ -44,6 +44,10 @@ struct In_Vertex
 
 #ifdef __SHADER__
 
+#ifndef ALPHA_TEST
+#define ALPHA_TEST 0.01f
+#endif
+
 struct In_Geometry
 {
 	float4 pos SV_POSITION;
