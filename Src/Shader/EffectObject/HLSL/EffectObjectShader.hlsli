@@ -45,7 +45,7 @@ struct In_Vertex
 #ifdef __SHADER__
 
 #ifndef ALPHA_TEST
-#define ALPHA_TEST 0.01f
+#define ALPHA_TEST 0.1f
 #endif
 
 struct In_Geometry
@@ -98,6 +98,7 @@ struct GSEffectObjectData
 	float2 objectSize;
 	float2 animationSize;
 };
+
 
 #ifdef __SHADER__
 #ifdef _SM5_0_
