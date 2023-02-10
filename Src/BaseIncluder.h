@@ -22,6 +22,10 @@
 #define MESH_DIRECTORY(current_path) TARGET_DIRECTORY("XFile/" current_path) 
 #endif
 
+#ifndef STAGE_DIRECTORY
+#define STAGE_DIRECTORY(current_path) TARGET_DIRECTORY("StageScript/" current_path) 
+#endif
+
 enum class FrameNo :unsigned long
 {
 	Title,
@@ -32,4 +36,9 @@ struct MeshDrawer
 {
 	ID3D11DeviceContext* dc = nullptr;
 	ChD3D11::Shader::BaseDrawMesh11 drawer;
+};
+
+struct PlayerData
+{
+	std::string stageName;
 };
