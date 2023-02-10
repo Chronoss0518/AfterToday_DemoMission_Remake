@@ -20,7 +20,9 @@ protected:
 
 public:
 
-	void SetUnUseDepthStencilTestFlg(ChStd::Bool _flg) { unUseDepthStencilTestFlg = _flg; }
+	void SetUseDepthStencilTestFlg(ChStd::Bool _flg);
+
+	void SetAlphaBlendTestFlg(ChStd::Bool _flg);
 
 	void SetViewMatrix(const ChLMat& _viewMat);
 
@@ -97,7 +99,9 @@ protected:
 
 private:
 
-	ChStd::Bool unUseDepthStencilTestFlg = false;
+	ChStd::Bool rasterizerUpdateFlg = true;;
+	ChStd::Bool alphaBlendTestFlg = false;
+	ChStd::Bool useDepthStencilTestFlg = true;
 	ChStd::Bool vbUpdateFlg = true;
 	std::vector<In_Vertex> effectPosList;
 	ChD3D11::VertexBuffer11<In_Vertex> vb;

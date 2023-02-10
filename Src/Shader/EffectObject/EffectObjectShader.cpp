@@ -40,26 +40,6 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	psData.blendFlg = false;
 
 	ChD3D11::Shader::SampleShaderBase11::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	
-	{
-
-		D3D11_RASTERIZER_DESC desc
-		{
-			D3D11_FILL_MODE::D3D11_FILL_SOLID,
-			D3D11_CULL_MODE::D3D11_CULL_NONE,
-			true,
-			0,
-			0.0f,
-			0.0f,
-			false,
-			false,
-			true,
-			false
-		};
-
-		ChD3D11::Shader::SampleShaderBase11::CreateRasteriser(desc);
-
-	}
 
 	{
 
@@ -120,6 +100,17 @@ void EffectObjectShader::InitGeometryShader()
 
 	ChD3D11::Shader::SampleShaderBase11::CreateGeometryShader(main, sizeof(main));
 
+}
+
+void EffectObjectShader::SetUseDepthStencilTestFlg(ChStd::Bool _flg)
+{
+	useDepthStencilTestFlg = _flg;
+	rasterizerUpdateFlg = true;
+}
+
+void EffectObjectShader::SetAlphaBlendTestFlg(ChStd::Bool _flg)
+{
+	alphaBlendTestFlg = _flg;
 }
 
 void EffectObjectShader::SetViewMatrix(const ChLMat& _viewMat)
@@ -305,9 +296,9 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 	if (ChPtr::NullCheck(_dc))return;
 	if (effectTexture == nullptr)return;
 
-	ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
+	if(alphaBlendTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
 
-	if (useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDepthStencilTester(_dc);
+	if (!useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDepthStencilTester(_dc);
 
 	gsBuf.SetToGeometryShader(_dc);
 	psBuf.SetToPixelShader(_dc);
@@ -316,11 +307,9 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 	vb.SetVertexBuffer(_dc, 0);
 	_dc->Draw(effectPosList.size(), 0);
 
-	_dc->OMSetBlendState(nullptr, nullptr, 1);
+	if (!useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultDepthStencilTester(_dc);
 
-	if (useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultDepthStencilTester(_dc);
-
-	ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultBlender(_dc);
+	if (alphaBlendTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDefaultBlender(_dc);
 
 }
 
@@ -344,5 +333,25 @@ void EffectObjectShader::Update(ID3D11DeviceContext* _dc)
 		psUpdateFlg = false;
 	}
 
+
+	if(rasterizerUpdateFlg){
+
+		D3D11_RASTERIZER_DESC desc
+		{
+			D3D11_FILL_MODE::D3D11_FILL_SOLID,
+			D3D11_CULL_MODE::D3D11_CULL_NONE,
+			true,
+			0,
+			0.0f,
+			0.0f,
+			useDepthStencilTestFlg,
+			false,
+			true,
+			false
+		};
+
+		ChD3D11::Shader::SampleShaderBase11::CreateRasteriser(desc);
+		rasterizerUpdateFlg = false;
+	}
 
 }
