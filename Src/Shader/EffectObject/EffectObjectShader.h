@@ -32,7 +32,7 @@ public:
 
 	void SetLuminescencePower(const float _power);
 
-	void SetLuminescencePower(const ChVec3& _power);
+	void SetAlphaTestNum(const float _num);
 
 	void SetBlendFlg(const ChStd::Bool& _flg);
 
@@ -115,4 +115,5 @@ private:
 	ChStd::Bool psUpdateFlg = true;
 	PSEffectObjectData psData;
 	ChD3D11::ConstantBuffer11<PSEffectObjectData>psBuf;
+
 };

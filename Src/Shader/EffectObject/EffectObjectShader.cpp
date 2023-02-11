@@ -13,7 +13,7 @@ void EffectObjectShader::Init(ID3D11Device* _device, const unsigned long _maxEff
 	ChD3D11::Shader::SampleShaderBase11::Init(_device);
 
 	gsData.objectSize = ChVec2(1.0f);
-	psData.luminescencePower = ChVec3(1.0f);
+	psData.luminescencePower = 1.0f;
 	effectPosList.resize(_maxEffectNum);
 
 	{
@@ -133,12 +133,13 @@ void EffectObjectShader::SetObjectSize(const ChVec2& _objectSize)
 
 void EffectObjectShader::SetLuminescencePower(const float _power)
 {
-	SetLuminescencePower(ChVec4(_power));
+	psData.luminescencePower = _power;
+	psUpdateFlg = true;
 }
 
-void EffectObjectShader::SetLuminescencePower(const ChVec3& _power)
+void EffectObjectShader::SetAlphaTestNum(const float _num)
 {
-	psData.luminescencePower = _power;
+	psData.alphaTestNum = _num;
 	psUpdateFlg = true;
 }
 
