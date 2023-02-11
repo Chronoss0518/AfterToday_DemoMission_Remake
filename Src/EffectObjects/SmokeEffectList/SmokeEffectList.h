@@ -8,7 +8,7 @@ class SmokeEffectList
 
 public:
 
-	void Init(ID3D11Device* _device, const unsigned long _maxCount);
+	void Init(ID3D11Device* _device, const unsigned long _maxCount, const unsigned long _width, const unsigned long _height);
 
 	void Release();
 
@@ -60,6 +60,10 @@ private:
 	ChStd::Bool updateFlg = false;
 
 	ChCpp::MultiThread updater;
+
+	ChD3D11::RenderTarget11 renderTarget;
+	ChD3D11::Sprite11 sprite;
+	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 	
 	std::vector<ChPtr::Shared<EffectMoveData>>effectMoveDataList;
 	ChPtr::Shared<EffectObjectShader> effectShader = nullptr;

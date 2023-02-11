@@ -9,7 +9,7 @@
 #define OBJECT_SIZE 1.0f
 #define RANDOM_ALPHA_POWER_SIZE 1000
 
-void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
+void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount, const unsigned long _width, const unsigned long _height)
 {
 	Release();
 
@@ -22,9 +22,27 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("SircleTexture.png"), 1, 1);
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
-	effectShader->SetBlendFlg(true);
-	effectShader->SetLightFlg(false);
-	effectShader->SetUnUseDepthStencilTestFlg(true);
+	effectShader->SetBlendFlg(false);
+	effectShader->SetLightFlg(true);
+	effectShader->SetUseDepthStencilTestFlg(true);
+	effectShader->SetAlphaBlendTestFlg(false);
+	effectShader->SetAlphaTestNum(0.01f);
+
+	renderTarget.CreateRenderTarget(_device, _width, _height);
+	sprite.Init(_device);
+
+	sprite.SetPos(0, ChVec2(-1.0f, 1.0f));
+	sprite.SetPos(1, ChVec2(1.0f, 1.0f));
+	sprite.SetPos(2, ChVec2(1.0f, -1.0f));
+	sprite.SetPos(3, ChVec2(-1.0f, -1.0f));
+
+	sprite.SetUVPos(0, ChVec2(0.0f, 0.0f));
+	sprite.SetUVPos(1, ChVec2(1.0f, 0.0f));
+	sprite.SetUVPos(2, ChVec2(1.0f, 1.0f));
+	sprite.SetUVPos(3, ChVec2(0.0f, 1.0f));
+
+	spriteShader.Init(_device);
+	spriteShader.SetAlphaBlendFlg(true);
 
 	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
 	{
@@ -59,7 +77,7 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 			}
 			updateFlg = true;
 		}
-		});
+	});
 
 
 }
@@ -140,10 +158,32 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 {
 	if (effectShader == nullptr)return;
+	ID3D11RenderTargetView* tmpRTView = nullptr;
+	ID3D11DepthStencilView* tmpDSView = nullptr;
+
+	renderTarget.SetBackColor(_dc, ChVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+	ID3D11RenderTargetView* rtView = renderTarget.GetRTView();
+
+	_dc->OMGetRenderTargets(1, &tmpRTView, &tmpDSView);
+	_dc->OMSetRenderTargets(1, &rtView, tmpDSView);
 
 	effectShader->DrawStart(_dc);
 
 	effectShader->Draw(_dc);
 
 	effectShader->DrawEnd();
+
+	_dc->OMSetRenderTargets(1, &tmpRTView, nullptr);
+
+	spriteShader.DrawStart(_dc);
+
+	spriteShader.Draw(_dc, renderTarget, sprite);
+
+	spriteShader.DrawEnd();
+
+	_dc->OMSetRenderTargets(1, &tmpRTView, tmpDSView);
+
+	tmpRTView->Release();
+	tmpDSView->Release();
 }

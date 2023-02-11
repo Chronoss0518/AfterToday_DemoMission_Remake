@@ -20,7 +20,11 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 
 	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("ShotEffectTexture.png"), ANIMATION_COUNT, 1);
 
+	effectShader->SetAlphaBlendTestFlg(true);
+
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
+
+	effectShader->SetAlphaTestNum(0.2f);
 
 	updater.Init([&]() {
 		while (!gameEndFlg)
@@ -42,8 +46,6 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 			updateFlg = true;
 		}
 	});
-	
-
 }
 
 void ShotEffectList::Release()
