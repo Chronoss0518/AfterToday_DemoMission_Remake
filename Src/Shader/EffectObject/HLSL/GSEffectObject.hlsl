@@ -12,7 +12,13 @@ void main(
 	inout TriangleStream<In_Pixel> res
 )
 {
-	if (input[0].displayFlg < 1 || input[0].color.a <= ALPHA_TEST) {
+	if (input[0].displayFlg < 1) 
+	{
+		return;
+	}
+
+	if (input[0].color.a <= alphaTestNum)
+	{
 		return;
 	}
 
@@ -22,7 +28,7 @@ void main(
 	uint i = 0;
 	uint j = 0;
 
-	float3x3 vertexRotateMatrix = float3x3
+	row_major float3x3 vertexRotateMatrix = float3x3
 		(
 			input[0].v_tangent.x, input[0].v_binormal.x, input[0].v_normal.x,
 			input[0].v_tangent.y, input[0].v_binormal.y, input[0].v_normal.y,
@@ -38,7 +44,6 @@ void main(
 	};
 
 	input[0].pos = mul(input[0].pos, viewMatrix);
-
 
 	[unroll]
 	for (i = 0; i < 4; i++)

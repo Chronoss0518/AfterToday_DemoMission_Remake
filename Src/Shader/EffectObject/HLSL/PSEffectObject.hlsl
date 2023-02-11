@@ -13,6 +13,7 @@ struct OutColor
 };
 
 float Blending(float _alpha);
+
 float3 GetLightColor(OutColor _res, In_Pixel _pixel);
 
 OutColor main(In_Pixel _pixel)
@@ -23,8 +24,8 @@ OutColor main(In_Pixel _pixel)
 	//res.color = float4(test, test, test, 1.0f);
 
 	res.color = baseTex.Sample(baseSmp, _pixel.uv) * _pixel.color;
-	clip(res.color.a - ALPHA_TEST);
-	res.color.rgb *= luminescencePower.rgb;
+	clip(res.color.a - alphaTestNum);
+	res.color.rgb *= luminescencePower;
 
 	res.color.rgb = GetLightColor(res, _pixel);
 

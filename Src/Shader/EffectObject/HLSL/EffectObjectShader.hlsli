@@ -44,10 +44,6 @@ struct In_Vertex
 
 #ifdef __SHADER__
 
-#ifndef ALPHA_TEST
-#define ALPHA_TEST 0.1f
-#endif
-
 struct In_Geometry
 {
 	float4 pos SV_POSITION;
@@ -110,10 +106,12 @@ cbuffer PSEffectObjectData : register(b[EFFECT_OBJECT_PIXEL_DATA])
 struct PSEffectObjectData
 #endif
 {
-	float3 luminescencePower;
+	float luminescencePower = 1.0f;
+	float alphaTestNum = 0.01f;
 	uint blendFlg = 0;
 	uint lightFlg = 0;
 	float3 specularPower = float3(0.0f, 0.0f, 0.0f);
+	float tmp = 0.0f;
 };
 
 #ifdef __SHADER__
