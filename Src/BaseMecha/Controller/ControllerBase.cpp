@@ -4,9 +4,11 @@
 
 #include"../BaseMecha.h"
 
+#include"../../Frames/GameFrame.h"
+
 #include"ControllerBase.h"
 
-#define DEFAULT_CURSOL_MOVE_SIZE 0.5f
+#define DEFAULT_CURSOL_MOVE_SIZE 0.2f
 
 void ControllerBase::Input(const InputName _inputFlgName)
 {
@@ -44,6 +46,9 @@ void PlayerController::Init()
 	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::LeftRotation;
 	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
 
+	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Up)] = InputName::CameraUpRotation;
+	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Down)] = InputName::CameraDownRotation;
+
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
 	keyTypes[VK_RBUTTON] = InputName::RAttack;
 
@@ -51,6 +56,8 @@ void PlayerController::Init()
 	keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
 	keyTypes[VK_SCROLL] = InputName::MagnificationUp;
 	
+	controller.Init();
+
 	controllerTypes[XInputTypeNames::A] = InputName::Attack;
 	controllerTypes[XInputTypeNames::B] = InputName::Avo;
 	controllerTypes[XInputTypeNames::X] = InputName::MapOnOff;
@@ -149,5 +156,29 @@ void PlayerController::CursolFunction(float& _value, const float _windSize, cons
 
 void CPUController::UpdateBegin()
 {
+	if (ChPtr::NullCheck(frame))
+	{
+		LookObj()->Destroy();
+		return;
+	}
 
+	FindTarget();
+}
+
+void CPUController::FindTarget()
+{
+	auto mecha = LookObj<BaseMecha>();
+	if (ChPtr::NullCheck(mecha))
+	{
+		Destroy();
+		return;
+	}
+
+	for (auto&& otherMecha : frame->GetMechaList().GetObjectList<BaseMecha>()) 
+	{
+		auto otherMechaObject = otherMecha.lock();
+		if (otherMechaObject == nullptr)continue;
+		if (otherMechaObject.get() == mecha)continue;
+		if (otherMechaObject->GetTeamNo() == mecha->GetTeamNo())continue;
+	}
 }

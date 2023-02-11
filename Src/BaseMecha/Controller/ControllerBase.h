@@ -23,6 +23,14 @@ public:
 
 	void UpdateBegin()override;
 
+	void Save(const std::string& _fileName);
+
+	void Load(const std::string& _fileName);
+
+	void ChangeKey(const InputName _inputType);
+
+	void ChangeControllerKey(const InputName _inputType);
+
 private:
 
 	enum class XInputTypeNames : unsigned char
@@ -65,6 +73,18 @@ public:
 
 public:
 
+	inline void SetGameFrame(GameFrame* _frame) { frame = _frame; }
+
+	inline void SetCPULevel(const unsigned long _cpuLevel) { cpuLevel = _cpuLevel; }
+
+private:
+
+	void FindTarget();
+
+private:
 
 
+	unsigned long cpuLevel = 0;
+	GameFrame* frame = nullptr;
+	BaseMecha* target = nullptr;
 };
