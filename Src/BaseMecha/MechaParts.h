@@ -521,17 +521,21 @@ public://Serialize Deserialize//
 
 public:
 
+	inline void SetSE(const std::string& _seFile) { seFile = _seFile; }
+
 	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
 
 public:
 
 	inline std::string GetPartsTypeTag() override { return "WeaponData:"; }
 
+	inline std::string GetSEFileName() { return seFile; }
+
 	inline unsigned long GetWeatTime() { return weatTime; }
 
 protected:
 
-
+	std::string seFile = "";
 	//Ÿ‚ÌUŒ‚‰Â”\ŠÔ//
 	unsigned long weatTime = 0;
 };

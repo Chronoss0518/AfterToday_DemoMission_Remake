@@ -7,6 +7,8 @@
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
 
+#define SE_VOLUME_SIZE 0.5f
+
 using PositionObject = PositionObject;
 
 void MechaPartsObject::Update()
@@ -149,6 +151,11 @@ void GunFunction::AttackFunction()
 
 	frame->AddShotEffectObject(tmpMat.GetPosition());
 
+	se.Stop();
+	se.Play();
+
+	//se.SetPosition(tmpMat.GetPosition());
+
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
 
@@ -196,6 +203,9 @@ void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
 
 	createBulletData = BulletData::CreateBullet(_drawer, _device, gunData->GetUseBulletFile());
 
+	ChD3D::XAudioManager().LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
+
+	se.SetVolume(SE_VOLUME_SIZE);
 }
 
 void GunFunction::SubFunction()

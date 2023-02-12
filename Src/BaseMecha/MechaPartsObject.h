@@ -173,6 +173,7 @@ protected:
 
 	MechaPartsObject* obj = nullptr;
 
+	ChD3D::AudioObject se;
 
 	//Ÿ‚ÌUŒ‚‰Â”\‚Ü‚Å‚ÌŠÔ//
 	unsigned long nowWeatTime = 0;
