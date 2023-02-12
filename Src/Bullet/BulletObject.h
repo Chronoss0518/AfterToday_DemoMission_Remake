@@ -73,5 +73,5 @@ private:
 	BulletData* data = nullptr;
 	ChStd::Bool hitFlg = false;
 	BaseMecha* mecha = nullptr;
-
+	unsigned long createSmokeCount = 0;
 };

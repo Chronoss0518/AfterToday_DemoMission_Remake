@@ -5,6 +5,8 @@
 #include"BulletObject.h"
 #include"../BaseMecha/BaseMecha.h"
 
+#define CREATE_SMOKE_MAX_COUNT 1
+
 void BulletObject::Init(const ChLMat& _startMat)
 {
 	data->InitBulletObject(_startMat ,*this);
@@ -28,7 +30,10 @@ void BulletObject::Update()
 void BulletObject::Move()
 {
 	data->MoveBulletObject(*this);
-	frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -1.0f);
+
+	if(createSmokeCount <= 0)frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f);
+
+	createSmokeCount = (createSmokeCount + 1) % CREATE_SMOKE_MAX_COUNT;
 }
 
 void BulletObject::Draw3D()
