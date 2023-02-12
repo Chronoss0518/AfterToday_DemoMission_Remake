@@ -5,9 +5,12 @@
 
 #include"SmokeEffectList.h"
 
+#define USE_RENDER_TARGET 0
 
 #define OBJECT_SIZE 1.0f
 #define RANDOM_ALPHA_POWER_SIZE 1000
+
+#define DISPERSAL_POWER_DOWN_PARCEC 0.9f
 
 void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount, const unsigned long _width, const unsigned long _height)
 {
@@ -24,9 +27,11 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 	effectShader->SetBlendFlg(false);
 	effectShader->SetLightFlg(true);
-	effectShader->SetUseDepthStencilTestFlg(true);
-	effectShader->SetAlphaBlendTestFlg(false);
+	effectShader->SetUseDepthStencilTestFlg(USE_RENDER_TARGET);
+	effectShader->SetAlphaBlendTestFlg(!USE_RENDER_TARGET);
 	effectShader->SetAlphaTestNum(0.01f);
+
+#if USE_RENDER_TARGET
 
 	renderTarget.CreateRenderTarget(_device, _width, _height);
 	sprite.Init(_device);
@@ -43,6 +48,8 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 
 	spriteShader.Init(_device);
 	spriteShader.SetAlphaBlendFlg(true);
+
+#endif
 
 	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
 	{
@@ -68,7 +75,8 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 				ChLMat tmpMat;
 				effectObject.color.a -= downSpeedOnAlphaValue;
 				effectObject.pos += effectMoveDataList[i]->moveVector;
-				effectMoveDataList[i]->dispersal += dispersalPower;
+				effectMoveDataList[i]->dispersal += effectMoveDataList[i]->dispersalPower;
+				effectMoveDataList[i]->dispersalPower *= DISPERSAL_POWER_DOWN_PARCEC;
 				tmpMat.SetScalling(ChVec3(effectMoveDataList[i]->dispersal));
 				effectShader->SetEffectColor(effectObject.color, i);
 				effectShader->SetEffectVertexRotation(tmpMat, i);
@@ -120,9 +128,9 @@ void SmokeEffectList::SetMinColorPower(const float _power)
 	minColPower = _power;
 }
 
-void SmokeEffectList::SetDispersalPower(const float _power)
+void SmokeEffectList::SetInitialDispersalPower(const float _power)
 {
-	dispersalPower = _power;
+	initialDispersalPower = _power;
 }
 
 void SmokeEffectList::SetDownSpeedOnAlphaValue(const float _speed)
@@ -134,6 +142,11 @@ void SmokeEffectList::SetDownSpeedOnAlphaValue(const float _speed)
 }
 
 void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVector)
+{
+	AddSmokeEffect(_pos, _moveVector, initialDispersalPower);
+}
+
+void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower)
 {
 	if (effectShader == nullptr)return;
 
@@ -150,7 +163,8 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 	effectShader->SetEffectPosition(_pos, nowCount);
 	effectShader->SetEffectDisplayFlg(true, nowCount);
 	effectMoveDataList[nowCount]->moveVector = _moveVector;
-	effectMoveDataList[nowCount]->dispersal = 1.0f;
+	effectMoveDataList[nowCount]->dispersal = 0.0f;
+	effectMoveDataList[nowCount]->dispersalPower = _initDispersalpower;
 
 	nowCount = (1 + nowCount) % effectShader->GetMaxEffectCount();
 }
@@ -158,6 +172,9 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 {
 	if (effectShader == nullptr)return;
+
+#if USE_RENDER_TARGET
+
 	ID3D11RenderTargetView* tmpRTView = nullptr;
 	ID3D11DepthStencilView* tmpDSView = nullptr;
 
@@ -167,6 +184,7 @@ void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 
 	_dc->OMGetRenderTargets(1, &tmpRTView, &tmpDSView);
 	_dc->OMSetRenderTargets(1, &rtView, tmpDSView);
+#endif
 
 	effectShader->DrawStart(_dc);
 
@@ -174,6 +192,7 @@ void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 
 	effectShader->DrawEnd();
 
+#if USE_RENDER_TARGET
 	_dc->OMSetRenderTargets(1, &tmpRTView, nullptr);
 
 	spriteShader.DrawStart(_dc);
@@ -186,4 +205,5 @@ void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 
 	tmpRTView->Release();
 	tmpDSView->Release();
+#endif
 }

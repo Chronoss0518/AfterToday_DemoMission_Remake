@@ -24,7 +24,7 @@ public:
 
 	void SetMinColorPower(const float _power);
 
-	void SetDispersalPower(const float power);
+	void SetInitialDispersalPower(const float _power);
 
 	void SetDownSpeedOnAlphaValue(const float _speed);
 
@@ -36,6 +36,8 @@ public:
 
 	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector);
 
+	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower);
+
 public:
 
 	void Draw(ID3D11DeviceContext* _dc);
@@ -45,6 +47,7 @@ private:
 	struct EffectMoveData
 	{
 		float dispersal = 1.0f;
+		float dispersalPower = 0.0f;
 		ChVec3 moveVector = 0.0f;
 	};
 
@@ -52,7 +55,7 @@ private:
 	float minColPower = 0.0f;
 
 	//–¶ŽU—Í//
-	float dispersalPower = 0.0f;
+	float initialDispersalPower = 5.0f;
 
 	float downSpeedOnAlphaValue = 0.05f;
 
@@ -61,10 +64,13 @@ private:
 
 	ChCpp::MultiThread updater;
 
+#if 0
+
 	ChD3D11::RenderTarget11 renderTarget;
 	ChD3D11::Sprite11 sprite;
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
-	
+#endif
+
 	std::vector<ChPtr::Shared<EffectMoveData>>effectMoveDataList;
 	ChPtr::Shared<EffectObjectShader> effectShader = nullptr;
 	unsigned long nowCount = 0;
