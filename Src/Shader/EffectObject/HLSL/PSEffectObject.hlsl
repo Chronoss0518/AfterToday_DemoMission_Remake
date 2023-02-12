@@ -9,8 +9,9 @@
 struct OutColor
 {
 	float4 color : SV_Target0;
-	//float depth : SV_DepthGreaterEqual;
 };
+
+void FrustumCulling(float4 _pos);
 
 float Blending(float _alpha);
 
@@ -19,9 +20,16 @@ float3 GetLightColor(OutColor _res, In_Pixel _pixel);
 OutColor main(In_Pixel _pixel)
 {
 	OutColor res;
-	//float test = _pixel.proPos.z / _pixel.proPos.w;
 
-	//res.color = float4(test, test, test, 1.0f);
+#if 0
+	float test = _pixel.proPos.z / _pixel.proPos.w;
+
+	res.color = float4(test, test, test, 1.0f);
+
+	return res;
+#endif
+	
+	FrustumCulling(_pixel.proPos);
 
 	res.color = baseTex.Sample(baseSmp, _pixel.uv) * _pixel.color;
 	clip(res.color.a - alphaTestNum);
@@ -29,20 +37,7 @@ OutColor main(In_Pixel _pixel)
 
 	res.color.rgb = GetLightColor(res, _pixel);
 
-	//res.depth = Blending(res.color.a);
 	return res;
-}
-
-float Blending(float _alpha)
-{
-	float depth = 0.0f;
-
-	if (blendFlg > 0)
-	{
-		depth = _alpha > 0.99f ? 0.0f : 1.0f;
-	}
-
-	return depth;
 }
 
 float3 GetLightColor(OutColor _res, In_Pixel _pixel)
@@ -60,4 +55,14 @@ float3 GetLightColor(OutColor _res, In_Pixel _pixel)
 
 	return GetDirectionalLightColor(lightStruct);
 
+}
+
+void FrustumCulling(float4 _pos)
+{
+	float x = ((_pos.x / _pos.w) + 1.0f) * 0.5f;
+	float y = ((_pos.y / _pos.w) + 1.0f) * 0.5f;
+	float z = (_pos.z / _pos.w);
+	clip(1.0f - x);
+	clip(1.0f - y);
+	clip(1.0f - z);
 }

@@ -4,8 +4,6 @@
 
 #include"EffectObjectShader.hlsli"
 
-float3 VertexRotation(float3 _pos, float3x3 _mat);
-
 [maxvertexcount(6)]
 void main(
 	point In_Geometry input[1],
@@ -49,9 +47,12 @@ void main(
 	for (i = 0; i < 4; i++)
 	{
 		num = i;
-		vertex[num].worldPos = float4(VertexRotation(basePos[num], vertexRotateMatrix), 0.0f);
-		vertex[num].pos = vertex[num].worldPos += input[0].pos;
-		vertex[num].proPos = vertex[num].pos = mul(vertex[num].pos, projectionMatrix);
+		vertex[num].worldPos = float4(mul(basePos[num], vertexRotateMatrix), 0.0f);
+		vertex[num].worldPos += input[0].pos;
+		vertex[num].pos = vertex[num].worldPos;
+		vertex[num].worldPos.w = 1.0f;
+		vertex[num].pos = mul(vertex[num].pos, projectionMatrix);
+		vertex[num].proPos = vertex[num].pos;
 		vertex[num].color = input[0].color;
 	}
 
@@ -85,9 +86,4 @@ void main(
 		res.RestartStrip();
 	}
 
-}
-
-float3 VertexRotation(float3 _pos, float3x3 _mat)
-{
-	return mul(_pos, _mat);
 }
