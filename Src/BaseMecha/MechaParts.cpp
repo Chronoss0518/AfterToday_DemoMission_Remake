@@ -5,7 +5,7 @@
 #include"CaneraObject.h"
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
-#include"FunctionComponent/BoostComponents.h"
+#include"FunctionComponent/BoostComponent.h"
 #include"FunctionComponent/MoveComponent.h"
 
 #ifndef PARTS_DIRECTORY
@@ -397,80 +397,80 @@ void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 
 void RightBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetComponent<RightBoostComponent>(_base);
+	auto com = GetComponent<BoostComponent>(_base);
 	
-	com->AddBoostPow(boostPower);
-	com->AddBoostUseEnelgy(useEnelgy);
-	com->AddBoostAvoidPow(avoidPow);
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy);
-	com->SetBoostAvoidWait(avoidWait);
+	com->AddBoostPow(boostPower, BaseMecha::InputName::RightBoost);
+	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::RightBoost);
+	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::RightAvo);
+	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::InputName::RightAvo);
+	com->SetBoostAvoidWait(avoidWait, BaseMecha::InputName::RightAvo);
 
-	com->AddBoost(_boostObject);
+	com->AddBoostWhereBoostName(_boostObject, BaseMecha::InputName::RightBoost);
 }
 
 void LeftBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetComponent<LeftBoostComponent>(_base);
+	auto com = GetComponent<BoostComponent>(_base);
 
-	com->AddBoostPow(boostPower);
-	com->AddBoostUseEnelgy(useEnelgy);
-	com->AddBoostAvoidPow(avoidPow);
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy);
-	com->SetBoostAvoidWait(avoidWait);
+	com->AddBoostPow(boostPower, BaseMecha::InputName::LeftBoost);
+	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::LeftBoost);
+	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::LeftAvo);
+	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::InputName::LeftAvo);
+	com->SetBoostAvoidWait(avoidWait, BaseMecha::InputName::LeftAvo);
 
-	com->AddBoost(_boostObject);
+	com->AddBoostWhereBoostName(_boostObject, BaseMecha::InputName::LeftBoost);
 }
 
 void FrontBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetComponent<FrontBoostComponent>(_base);
+	auto com = GetComponent<BoostComponent>(_base);
 
-	com->AddBoostPow(boostPower);
-	com->AddBoostUseEnelgy(useEnelgy);
-	com->AddBoostAvoidPow(avoidPow);
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy);
-	com->SetBoostAvoidWait(avoidWait);
+	com->AddBoostPow(boostPower, BaseMecha::InputName::FrontBoost);
+	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::FrontBoost);
+	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::FrontAvo);
+	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::InputName::FrontAvo);
+	com->SetBoostAvoidWait(avoidWait, BaseMecha::InputName::FrontAvo);
 
-	com->AddBoost(_boostObject);
+	com->AddBoostWhereBoostName(_boostObject, BaseMecha::InputName::FrontBoost);
 }
 
 void BackBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetComponent<BackBoostComponent>(_base);
+	auto com = GetComponent<BoostComponent>(_base);
 
-	com->AddBoostPow(boostPower);
-	com->AddBoostUseEnelgy(useEnelgy);
-	com->AddBoostAvoidPow(avoidPow);
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy);
-	com->SetBoostAvoidWait(avoidWait);
+	com->AddBoostPow(boostPower, BaseMecha::InputName::BackBoost);
+	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::BackBoost);
+	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::BackAvo);
+	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::InputName::BackAvo);
+	com->SetBoostAvoidWait(avoidWait, BaseMecha::InputName::BackAvo);
 
-	com->AddBoost(_boostObject);
+	com->AddBoostWhereBoostName(_boostObject, BaseMecha::InputName::BackBoost);
 }
 
 void UpBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetComponent<UpBoostComponent>(_base);
+	auto com = GetComponent<BoostComponent>(_base);
 
-	com->AddBoostPow(boostPower);
-	com->AddBoostUseEnelgy(useEnelgy);
-	com->AddBoostAvoidPow(avoidPow);
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy);
-	com->SetBoostAvoidWait(avoidWait);
+	com->AddBoostPow(boostPower, BaseMecha::InputName::UpBoost);
+	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::UpBoost);
+	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::UpAvo);
+	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::InputName::UpAvo);
+	com->SetBoostAvoidWait(avoidWait, BaseMecha::InputName::UpAvo);
 
-	com->AddBoost(_boostObject);
+	com->AddBoostWhereBoostName(_boostObject, BaseMecha::InputName::UpBoost);
 }
 
 void DownBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
-	auto com = GetComponent<DownBoostComponent>(_base);
+	auto com = GetComponent<BoostComponent>(_base);
 
-	com->AddBoostPow(boostPower);
-	com->AddBoostUseEnelgy(useEnelgy);
-	com->AddBoostAvoidPow(avoidPow);
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy);
-	com->SetBoostAvoidWait(avoidWait);
+	com->AddBoostPow(boostPower, BaseMecha::InputName::DownBoost);
+	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::DownBoost);
+	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::DownAvo);
+	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, BaseMecha::InputName::DownAvo);
+	com->SetBoostAvoidWait(avoidWait, BaseMecha::InputName::DownAvo);
 
-	com->AddBoost(_boostObject);
+	com->AddBoostWhereBoostName(_boostObject, BaseMecha::InputName::DownBoost);
 }
 
 void WeaponPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
