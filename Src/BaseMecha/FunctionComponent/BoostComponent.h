@@ -4,82 +4,113 @@
 
 class BoostComponent:public FunctionComponent
 {
+private:
+
+	struct Data;
+	struct BoostData;
+	struct AvoidData;
+
+public:
+
+	BoostComponent();
+
 public:
 
 	void Update()override;
 
-	void DrawBegin()override;
+	void BoostDrawBegin();
 
-	void DrawEnd()override;
-
-private:
-
-	void UpdateBoost(const ChLMat& _nowTargetPoster);
-
-	void UpdateAvoid(const ChLMat& _nowTargetPoster);
-
-public:
-
-	inline void SetInputBoostName(const InputName _inputBoost) { boostName = _inputBoost; }
-
-	inline void SetInputAvoidName(const InputName _inputAvoid) { avoidName = _inputAvoid; }
-
-	void SetDirection(const ChVec3& _dir) { direction = _dir; }
-
-	inline void SetBoostAvoidWait(const unsigned long _avoidWait)
-	{
-		avoidWait = avoidWait < _avoidWait ? _avoidWait : avoidWait;
-	}
-
-public:
-
-	inline void AddBoost(ChPtr::Shared<ChCpp::FrameObject> _boost)
-	{
-		boostObject.push_back(_boost);
-	}
-
-	inline void AddBoostPow(const float _boostPow)
-	{
-		boostPow += _boostPow;
-	}
-
-	inline void AddBoostUseEnelgy(const unsigned long _boostUseEnelgy)
-	{
-		useBoostEnelgy += _boostUseEnelgy;
-	}
-
-	inline void AddBoostAvoidPow(const float _avoidPow)
-	{
-		avoidPow += _avoidPow;
-	}
-
-	inline void AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy)
-	{
-		useAvoidEnelgy += _avoidUseEnelgy;
-	}
+	void BoostDrawEnd();
 
 private:
 
-	ChVec3 direction;
+	void UpdateInputFunction(Data& _data);
 
-	float boostPow = 0.0f;
-	unsigned long useBoostEnelgy = 0;
-	float avoidPow = 0.0f;
-	unsigned long useAvoidEnelgy = 0;
-	unsigned long avoidWait = 0;
+	void UpdateModelFunction(Data& _data);
 
-	bool boostStartFlg = false;
-	bool boostUseFlg = false;
+	void UpdateBoost(Data& _data, const ChLMat& _nowTargetPoster);
 
-	bool avoidUseFlg = false;
-	bool avoidStartFlg = false;
-	unsigned long nowAvoidWaitTime = 0;
+	void UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster);
 
-	float nowBoostPow = 0.0f;
+public:
+
+	void SetBoostAvoidWait(const unsigned long _avoidWait, InputName _avoidType);
+
+private:
+
+	unsigned long GetUseEnelgy(AvoidData& _data);
+
+	unsigned long GetUseEnelgy(BoostData& _data, bool _avoidFlg);
+
+public:
+
+	void AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType);
+
+	void AddBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType);
+
+	void AddBoostPow(const float _boostPow, InputName _boostType);
+
+	void AddBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType);
+
+	void AddBoostAvoidPow(const float _avoidPow, InputName _avoidType);
+
+	void AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType);
+
+private:
+
+	static float& GetBoostUpPowerRegister() { static float regist = 0.3f; return regist; }
+
+	enum class BoostDirection
+	{
+		Front,
+		Back,
+		Right,
+		Left,
+		Up,
+		Down
+	};
+
+	struct BoostData
+	{
+
+		InputName name;
+		float pow = 0.0f;
+		unsigned long useEnelgy = 0;
+
+		bool testUseFlg = false;
+
+	};
+
+	struct AvoidData
+	{
+
+		InputName name;
+		float pow = 0.0f;
+		unsigned long useEnelgy = 0;
+		unsigned long wait = 0;
+
+		bool useFlg = false;
+		unsigned long nowWaitTime = 0;
+
+		bool testUseFlg = false;
+
+	};
+
+	struct Data
+	{
+		ChVec3 direction;
+
+		BoostData boost;
+		AvoidData avoid;
+
+		float nowBoostPow = 0.0f;
+
+		std::vector<ChPtr::Shared<ChCpp::FrameObject>>boostObject;
+
+	};
+
 	float boostRotation = 0.0f;
 
-	std::vector<ChPtr::Shared<ChCpp::FrameObject>>boostObject;
+	Data data[6];
 
-	InputName boostName = InputName::None;
-	InputName avoidName = InputName::None;
 };
