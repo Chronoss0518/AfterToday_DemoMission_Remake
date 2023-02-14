@@ -59,6 +59,8 @@ public://Override Functions//
 
 	void Move()override;
 
+	void MoveEnd()override;
+
 	void Draw2D()override;
 
 	void Draw3D()override;
@@ -126,7 +128,7 @@ public:
 
 public://Set Function//
 
-	void SetTeamNo(const unsigned char _team) { team = _team; }
+	void SetTeamNo(const unsigned long _team);
 
 	void SetPosition(const ChVec3& _pos);
 
@@ -167,7 +169,7 @@ public://Get Function//
 		return positions[ChStd::EnumCast(_name)];
 	}
 
-	ChMat_11 GetViewMat();
+	ChLMat GetViewMat() { return viewMat; }
 
 	ChVec3 GetViewPos();
 	
@@ -179,7 +181,9 @@ public://Get Function//
 
 	inline unsigned long GetMechaNo() { return mechasNo; }
 
-	inline unsigned char GetTeamNo() { return team; }
+	unsigned long GetTeamNo();
+
+	inline float GetDamage() { return durable - nowDurable <= 0 ? durable : durable - nowDurable; }
 
 public:
 
@@ -205,13 +209,14 @@ private:
 
 protected:
 
+	ChLMat viewMat;
+
 	ChVec2 viewSize;
 
 	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
 
 	float mass = 1.0f;
 
-	unsigned char team = 0;
 	unsigned long mechasNo = 0;
 
 	unsigned long maxEnelgy = 0;
@@ -221,7 +226,8 @@ protected:
 
 	float groundDistance = 0.0f;
 
-	float durable = 100;
+	float durable = 100.0f;
+	float nowDurable = 100.0f;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 

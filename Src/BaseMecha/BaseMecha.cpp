@@ -10,7 +10,9 @@
 #include"../Frames/GameFrame.h"
 #include"../Physics/PhysicsMachine.h"
 #include"FunctionComponent/WeaponComponents.h"
+#include"FunctionComponent/BoostComponent.h"
 #include"../Bullet/BulletObject.h"
+#include"Controller/ControllerBase.h"
 
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
 
@@ -201,18 +203,21 @@ void BaseMecha::Move()
 
 }
 
-ChMat_11 BaseMecha::GetViewMat()
+void BaseMecha::MoveEnd()
 {
-	ChLMat camMat;
-	ChMat_11 res;
+	auto viewPos = GetViewPos();
+	auto viewLookPos = GetViewLookPos();
 
-	camMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-	camMat.SetPosition(centerPos + ChVec3(0.0f, 5.0f, 0.0f));
-	auto lookPos = camMat.Transform(ChVec3(0.0f, -9.0f, 5.0f));
-	auto camPos = camMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
+	ChMat_11 tmpMat;
+	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
 
-	res.CreateViewMatLookTarget(camPos, lookPos, ChVec3(0.0f, 1.0f, 0.0f));
-	return res;
+	viewMat = tmpMat;
+
+	auto&& controller = GetComponent<CPUController>();
+
+	if (controller == nullptr)return;
+	
+	controller->SetViewMatrix(viewMat);
 }
 
 ChVec3 BaseMecha::GetViewPos()
@@ -272,16 +277,18 @@ void BaseMecha::Draw3D()
 	ChLMat tmp;
 	tmp.SetRotation(ChVec3(ChMath::ToRadian(-90.0f), 0.0f, 0.0f));
 	positions[ChStd::EnumCast(PartsPosNames::RArm)][0]->positionObject->SetOutSizdTransform(tmp);
+	positions[ChStd::EnumCast(PartsPosNames::LArm)][0]->positionObject->SetOutSizdTransform(tmp);
 
-	DrawBeginFunction();
+	auto boostComponent = GetComponent<BoostComponent>();
+
+	if(boostComponent != nullptr)boostComponent->BoostDrawBegin();
 
 	for (auto&& parts : mechaParts)
 	{
 		parts->Draw(drawMat);
 	}
 
-	DrawEndFunction();
-
+	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
 }
 
 void BaseMecha::Deserialize(const std::string& _fileName)
@@ -292,6 +299,13 @@ void BaseMecha::Deserialize(const std::string& _fileName)
 std::string BaseMecha::Serialize()
 {
 	return "";
+}
+
+void BaseMecha::SetTeamNo(const unsigned long _team)
+{
+	auto controller = GetComponent<ControllerBase>();
+	if (controller == nullptr)return;
+	controller->SetTeamNo(_team);
 }
 
 void BaseMecha::SetGroundHeight(const float _height)
@@ -348,6 +362,13 @@ ChVec3 BaseMecha::GetRotation()
 	return physics->GetRotation();
 }
 
+unsigned long BaseMecha::GetTeamNo()
+{
+	auto controller = GetComponent<ControllerBase>();
+	if (controller == nullptr)return 0;
+	return controller->GetTeamNo();
+}
+
 void BaseMecha::TestBulletHit(BulletObject& _obj)
 {
 	if (_obj.GetBaseMecha() == this)return;
@@ -399,6 +420,7 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 
 		if (!isHitFlg)continue;
 		_obj.SetMovePower(nowVector);
+		_obj.SetIsHitTrue();
 
 		break;
 	}
