@@ -26,6 +26,12 @@
 #define STAGE_DIRECTORY(current_path) TARGET_DIRECTORY("StageScript/" current_path) 
 #endif
 
+#ifndef CPU_DIRECTORY
+#define CPU_DIRECTORY(current_path) TARGET_DIRECTORY("CPUCharactor/" current_path) 
+#endif
+
+
+
 enum class FrameNo :unsigned long
 {
 	Title,
