@@ -8,7 +8,10 @@
 
 #include"ControllerBase.h"
 
+#include"CPUFunction/CPUFunctions.h"
+
 #define DEFAULT_CURSOL_MOVE_SIZE 0.2f
+#define MAX_LOOK_LEN  10000.0f
 
 void ControllerBase::Input(const InputName _inputFlgName)
 {
@@ -154,6 +157,11 @@ void PlayerController::CursolFunction(float& _value, const float _windSize, cons
 	}
 }
 
+void CPUController::Init()
+{
+
+}
+
 void CPUController::UpdateBegin()
 {
 	if (ChPtr::NullCheck(frame))
@@ -161,11 +169,38 @@ void CPUController::UpdateBegin()
 		LookObj()->Destroy();
 		return;
 	}
+	
+	FindMecha();
 
-	FindTarget();
+	for (auto&& function : cpuFunctions)
+	{
+		if (nowActionMoveTime > 0)continue;
+		if (function->Update(*this))break;
+	}
+
 }
 
-void CPUController::FindTarget()
+void CPUController::LoadCPUData(const std::string& _fileName)
+{
+	ChCpp::TextObject textData;
+	
+	{
+		ChCpp::File<> file;
+		file.FileOpen(CPU_DIRECTORY(+_fileName));
+		textData.SetText(file.FileReadText());
+		file.FileClose();
+	}
+
+	actionMoveTime = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(0));
+
+	for (unsigned long i = 1; i < textData.Count(); i++)
+	{
+
+	}
+
+}
+
+void CPUController::FindMecha()
 {
 	auto mecha = LookObj<BaseMecha>();
 	if (ChPtr::NullCheck(mecha))
@@ -174,11 +209,87 @@ void CPUController::FindTarget()
 		return;
 	}
 
-	for (auto&& otherMecha : frame->GetMechaList().GetObjectList<BaseMecha>()) 
+	float nearLength = MAX_LOOK_LEN;
+	float farLength = 0.0f;
+
+
+	for (auto&& otherMecha : frame->GetMechaList().GetObjectList<BaseMecha>())
 	{
 		auto otherMechaObject = otherMecha.lock();
 		if (otherMechaObject == nullptr)continue;
 		if (otherMechaObject.get() == mecha)continue;
-		if (otherMechaObject->GetTeamNo() == mecha->GetTeamNo())continue;
+		auto controller = otherMechaObject->GetComponent<ControllerBase>();
+		if (controller == nullptr)continue;
+		if (controller->GetTeamNo() == GetTeamNo())continue;
+		ChVec3 targetPos = otherMechaObject->GetPosition();
+
+		ChVec4 targetProPos = viewMat.Transform(targetPos);
+		targetProPos = proMat.Transform(targetProPos);
+
+		targetProPos.x = targetProPos.x / targetProPos.w;
+		targetProPos.x *= targetProPos.x;
+		targetProPos.y = targetProPos.y / targetProPos.w;
+		targetProPos.y *= targetProPos.y;
+		targetProPos.z = (targetProPos.z / targetProPos.w) * 2.0f - 1.0f;
+		targetProPos.z *= targetProPos.z;
+
+		if (1.0f - targetProPos.x < 0.0f)continue;
+		if (1.0f - targetProPos.y < 0.0f)continue;
+		if (1.0f - targetProPos.z < 0.0f)continue;
+
+		float tmpLength = ChVec3::GetLen(targetProPos, mecha->GetPosition());
+		if (nearLength > tmpLength)
+		{
+			nearLength = nearLength;
+			nearEnemy.reset();
+			nearEnemy = otherMecha;
+			MenyDamageTest(nearManyDamageEnemy, otherMecha);
+			FewDamageTest(nearFewDamageEnemy, otherMecha);
+
+		}
+		
+		if (farLength < tmpLength)
+		{
+			farLength = nearLength;
+			farEnemy.reset();
+			farEnemy = otherMecha;
+			MenyDamageTest(farManyDamageEnemy, otherMecha);
+			FewDamageTest(farFewDamageEnemy, otherMecha);
+
+		}
 	}
+}
+
+void CPUController::MenyDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target)
+{
+	auto target = _target.lock();
+	if (target == nullptr)return;
+
+	auto base = _base.lock();
+	if (base == nullptr)
+	{
+		_base = _target;
+		return;
+	}
+
+	if (base->GetDamage() >= target->GetDamage())return;
+	_base.reset();
+	_base = _target;
+}
+
+void CPUController::FewDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target)
+{
+	auto target = _target.lock();
+	if (target == nullptr)return;
+
+	auto base = _base.lock();
+	if (base == nullptr)
+	{
+		_base = _target;
+		return;
+	}
+
+	if (base->GetDamage() <= target->GetDamage())return;
+	_base.reset();
+	_base = _target;
 }
