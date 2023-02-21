@@ -22,9 +22,11 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 
 	effectShader->SetAlphaBlendTestFlg(true);
 
+	effectShader->SetLuminescencePower(4.0f);
+
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 
-	effectShader->SetAlphaTestNum(0.2f);
+	effectShader->SetAlphaTestNum(0.5f);
 
 	updater.Init([&]() {
 		while (!gameEndFlg)
