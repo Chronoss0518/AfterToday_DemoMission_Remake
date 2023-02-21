@@ -38,6 +38,8 @@ public:
 
 	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower);
 
+	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow);
+
 public:
 
 	void Draw(ID3D11DeviceContext* _dc);
@@ -64,7 +66,7 @@ private:
 
 	ChCpp::MultiThread updater;
 
-#if 0
+#if 1
 
 	ChD3D11::RenderTarget11 renderTarget;
 	ChD3D11::Sprite11 sprite;

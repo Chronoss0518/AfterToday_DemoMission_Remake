@@ -148,6 +148,11 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 
 void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower)
 {
+	AddSmokeEffect(_pos, _moveVector, _initDispersalpower, 1.0f);
+}
+
+void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow)
+{
 	if (effectShader == nullptr)return;
 
 	float smokePower = static_cast<float>(std::rand() % RANDOM_ALPHA_POWER_SIZE) / RANDOM_ALPHA_POWER_SIZE;
@@ -157,7 +162,7 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 
 	ChVec4 color = ChVec4(smokePower);
 
-	color.a = 1.0f;
+	color.a = _initAlphaPow;
 
 	effectShader->SetEffectColor(color, nowCount);
 	effectShader->SetEffectPosition(_pos, nowCount);
