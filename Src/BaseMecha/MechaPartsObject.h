@@ -117,7 +117,7 @@ private:
 	unsigned char partsPosName = -1;
 	unsigned long partsPosNo = 0;
 	ChCpp::BitBool weaponType;
-	 
+
 	BaseMecha* mecha = nullptr;
 };
 
@@ -173,7 +173,7 @@ protected:
 
 	MechaPartsObject* obj = nullptr;
 
-	ChD3D::AudioObject se;
+	ChD3D::X3DAudioObject se;
 
 	//Ÿ‚ÌUŒ‚‰Â”\‚Ü‚Å‚ÌŠÔ//
 	unsigned long nowWeatTime = 0;

@@ -23,21 +23,24 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
 	ChLMat tmp;
-	tmp.Identity();
 
 	if (positionObject != nullptr)
 	{
 		tmp = positionObject->positionObject->GetDrawLHandMatrix();
 	}
+	else
+	{
+		tmp = baseParts->GetDefaultFrameMat();
+	}
 
-	mesh.SetOutSizdTransform(tmp);
+	mesh.SetFrameTransform(tmp);
 
 	tmp.Identity();
 	tmp.SetRotation(baseRot);
 
 	ChMat_11 drawMat;
-	drawMat = tmp * _drawMat;
-	lastDrawMat = drawMat;
+	drawMat = lastDrawMat  = tmp * _drawMat;
+
 	baseParts->Draw(drawMat);
 
 	collider.SetPosition(lastDrawMat.GetPosition());
@@ -90,7 +93,7 @@ float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, Bullet
 
 	float res = 0;
 
-	unsigned long tmp = baseParts->GetHardness() - _bullet.GetPenetration();
+	unsigned long tmp = _bullet.GetPenetration() - baseParts->GetHardness();
 
 	tmp = tmp < 0 ? 0 : tmp;
 
@@ -154,7 +157,7 @@ void GunFunction::AttackFunction()
 	se.Stop();
 	se.Play();
 
-	//se.SetPosition(tmpMat.GetPosition());
+	se.InitMatrix(tmpMat);
 
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{

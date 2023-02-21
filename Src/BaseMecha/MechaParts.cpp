@@ -85,6 +85,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		model->Init(_device);
 		std::string tmp = textObject.GetTextLine(0);
 		loader.CreateModel(model, tmp);
+		defaultFrameMat = model->GetFrameTransformLMat();
 		if (thisFileName.find("Foot/") != thisFileName.find("Body/"))
 		{
 			for (auto&& child : model->GetAllChildlen<ChCpp::FrameObject>())

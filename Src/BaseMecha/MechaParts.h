@@ -58,6 +58,8 @@ public://Get Function//
 
 	inline ChD3D11::Mesh11& GetMesh() { return *model; }
 
+	inline ChLMat GetDefaultFrameMat() { return defaultFrameMat; }
+
 	inline std::string GetThisFileName() { return thisFileName; }
 
 	inline MeshDrawer* GetMeshDrawer() { return drawer; }
@@ -79,6 +81,7 @@ private:
 	float groundHeight = 0.0f;
 
 	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChLMat defaultFrameMat;
 
 	MeshDrawer* drawer = nullptr;
 
