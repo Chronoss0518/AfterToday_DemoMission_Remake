@@ -11,7 +11,7 @@ class EffectObjectShader;
 class ShotEffectList;
 class SmokeEffectList;
 
-struct MapObject
+struct MapObject : public ChCpp::BaseObject
 {
 	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
 	ChVec3 position;
@@ -43,12 +43,6 @@ private:
 
 	void LoadStage();
 
-	void LoadMechas();
-
-	void LoadBGMs();
-
-	void LoadMaps();
-
 public:
 
 	void AddMecha(const std::string& _text);
@@ -59,13 +53,15 @@ public:
 
 	void AddBGM(const std::string& _text);
 
-	void AddSE(const std::string& _text);
-
 	void AddBullet(ChPtr::Shared<BulletObject> _bullet);
 
 	void AddShotEffectObject(const ChVec3& _pos);
 
 	void AddSmokeEffectObject(const ChVec3& _pos,const ChVec3& _moveVector);
+
+	void AddSmokeEffectObject(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower);
+
+	void AddSmokeEffectObject(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow);
 
 public:
 
@@ -95,9 +91,10 @@ private:
 		Effect,Obj
 	};
 
+
 	void CamUpdate();
 
-	std::vector<ChPtr::Shared<MapObject>> map;
+	ChCpp::ObjectList mapList;
 
 	ChPtr::Shared<ChD3D11::Mesh11> skySphere = ChPtr::Make_S<ChD3D11::Mesh11>();
 

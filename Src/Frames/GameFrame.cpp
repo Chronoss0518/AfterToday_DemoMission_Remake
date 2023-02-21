@@ -18,15 +18,9 @@
 #include"../EffectObjects/SmokeEffectList/SmokeEffectList.h"
 
 #define PLAYER_MECHA_FILE_NAME ""
-#if 0
-#define GAME_WINDOW_WITDH 3840
-#define GAME_WINDOW_HEIGHT 2160
-#endif
 
 //想定するメカオブジェクトの最大数//
 #define MAX_MECHA_OBJECT_COUNT 100
-#define GAME_WINDOW_WITDH 1280
-#define GAME_WINDOW_HEIGHT 720
 #define BASE_FPS 60
 #define GRAVITY_POWER 4.9f
 #define DEBUG_FLG 1
@@ -34,6 +28,12 @@
 #ifndef PARTS_DIRECTORY
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
+
+#define INIT_SMOKE_DISPERSAL_POWER 5.0f
+#define INIT_SMOKE_ALPHA_POWER 0.5f
+
+#define DISPLAY_FPS_FLG 1
+#define DISPLAY_NOW_BULLET_NUM_FLG 0
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //Gameメソッド
@@ -50,8 +50,11 @@ void GameFrame::Init()
 	PhysicsMachine::SetAirRegist(0.1f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+
+#if DISPLAY_FPS_FLG | DISPLAY_NOW_BULLET_NUM_FLG
 	box.Create("Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
 	box.SetEnableFlg(false);
+#endif
 
 	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
 
@@ -68,17 +71,19 @@ void GameFrame::Init()
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
 
-	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100);
+	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
 
 	smokeEffectList->SetMaxColorPower(0.8f);
-	smokeEffectList->SetMinColorPower(0.3f);
+	smokeEffectList->SetMinColorPower(0.6f);
 
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.001f);
-	smokeEffectList->SetDispersalPower(0.05f);
+	smokeEffectList->SetInitialDispersalPower(3.0f);
 
 	{
 		ChMat_11 proMat;
-		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), windSize.w, windSize.h, 0.1f, 100000.0f);
+		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), windSize.w, windSize.h, 0.1f, 10000.0f);
+
+		projectionMat = proMat;
 
 		meshDrawer.drawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
@@ -89,13 +94,7 @@ void GameFrame::Init()
 		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 	}
 
-	//LoadMechas();
-	//LoadMaps();
-	//LoadBGMs();
-
 	LoadStage();
-
-	light.Init(ChD3D11::D3D11Device());
 
 	enemyMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Ts.png"), ChD3D11::D3D11Device());
 	baseMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Window.png"), ChD3D11::D3D11Device());
@@ -116,56 +115,7 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction("Initialize", [&](const std::string& _text) {initFlg = true; });
 
 	script->SetFunction("LoadBGM", [&](const std::string& _text) {
-		auto argment = ChStr::Split(_text, " ");
-		auto audio = ChPtr::Make_S< ChD3D::AudioObject>();
-
-		std::string audioName = argment[0];
-
-		ChD3D::XAudioManager().CreateSound(audio.get(), SOUND_DIRECTORY(+ audioName));
-		audio->SetLoopFlg(false);
-
-		for (unsigned long i = 1; i < argment.size(); i++)
-		{
-			if (argment[i] == "-l" || argment[i] == "--loop")
-			{
-				audio->SetLoopFlg(true);
-				continue;
-			}
-
-			if (argment[i] == "-sp" || argment[i] == "--startpos") 
-			{
-				i++;
-				unsigned long start = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
-				audio->SetPlayTime(start);
-				continue;
-			}
-
-			if (argment[i] == "-ls" || argment[i] == "--loopstart")
-			{
-				i++;
-				unsigned long start = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
-				audio->SetLoopStartPos(start);
-				continue;
-			}
-
-			if (argment[i] == "-le" || argment[i] == "--loopend")
-			{
-				i++;
-				float end = ChStr::GetFloatingFromText<float>(argment[i]);
-				audio->SetLoopEndPos(end);
-				continue;
-			}
-
-			if (argment[i] == "-v" || argment[i] == "--volume")
-			{
-				i++;
-				float vol = ChStr::GetFloatingFromText<float>(argment[i]);
-				audio->SetVolume(vol);
-				continue;
-			}
-
-		}
-		audios[audioName] = audio;
+		AddBGM(_text);
 	});
 
 	script->SetFunction("Play", [&](const std::string& _text) {
@@ -208,7 +158,7 @@ void GameFrame::InitScriptFunction()
 
 			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
 			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
-			unsigned long targetNum = 0;
+			unsigned long targetNum = 0xffffffff;
 
 			for (unsigned long i = 2; i < args.size(); i++)
 			{
@@ -233,7 +183,7 @@ void GameFrame::InitScriptFunction()
 					continue;
 				}
 			}
-			if (targetNum <= base)return;
+			if (targetNum >= base)return;
 
 			script->SetNowScriptCount(script->GetScriptCount() + skip);
 		});
@@ -268,7 +218,7 @@ void GameFrame::InitScriptFunction()
 					continue;
 				}
 			}
-			if (targetNum >= base)return;
+			if (targetNum <= base)return;
 
 			script->SetNowScriptCount(script->GetScriptCount() + skip);
 		});
@@ -320,10 +270,14 @@ void GameFrame::LoadStage()
 
 	script->CreateAllScript(stageScript);
 
+	ChD3D::XAudioManager().LoadStart();
+
 	while (!initFlg)
 	{
 		script->UpdateScript();
 	}
+
+	ChD3D::XAudioManager().LoadEnd();
 }
 
 void GameFrame::LoadScript(const std::string& _text)
@@ -331,59 +285,6 @@ void GameFrame::LoadScript(const std::string& _text)
 	ChCpp::TextObject text;
 	text.SetText(_text);
 
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::LoadMechas()
-{
-	//AddMecha("GuardianRobot.amf --u player -pc --position 0.0f,700.0f,0.0f; -t 0");
-	AddMecha("AirRobot.amf --u player -pc --position 0.0f,700.0f,0.0f; -t 0");
-	//AddMecha("NormalRobot.amf --u player -pc --position 0.0f,700.0f,0.0f; -t 0");
-
-	AddMecha("GuardianRobot.amf --u enemyTest -cc 1 --position 0.0f,700.0f,0.0f; -t 1");
-
-}
-
-///////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::LoadBGMs()
-{
-	
-	//ChD3D::XAudioManager().CreateSound(&testBattle, SOUND_DIRECTORY("TestBattle.wav"));
-	//ChD3D::XAudioManager().CreateSound(&mainBattle, SOUND_DIRECTORY("MainBattle1.wav"));
-
-	//testBattle.Play();
-
-}
-
-void GameFrame::LoadMaps()
-{
-
-	AddField("TestField.x -s 100.0f,100.0f,100.0f; -h");
-	AddField("TestField2.x -s 100.0f,100.0f,100.0f;");
-
-#if 0 
-
-	auto mainMap = ChPtr::Make_S<MapObject>();
-	mainMap->model->Init(ChD3D11::D3D11Device());
-	{
-		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(mainMap->model, MESH_DIRECTORY("TestField.x"));
-		mainMap->scalling = 100.0f;
-	}
-	map.push_back(mainMap); 
-	SetHitMap(mainMap);
-
-
-	auto subMap = ChPtr::Make_S<MapObject>();
-	subMap->model->Init(ChD3D11::D3D11Device());
-	{
-		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(subMap->model, MESH_DIRECTORY("TestField2.x"));
-	}
-	map.push_back(subMap);
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -417,8 +318,12 @@ void GameFrame::Update()
 #endif
 
 	DrawFunction();
-	//box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
+	
+#if DISPLAY_FPS_FLG
 	box.SetText("FPS:" + std::to_string(ChSystem::SysManager().GetNowFPSPoint()));
+#elif DISPLAY_NOW_BULLET_NUM_FLG
+	box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -447,6 +352,7 @@ void GameFrame::UpdateFunction()
 		for (auto&& bullet : bulletList.GetObjectList<BulletObject>())
 		{
 			auto bObj = bullet.lock();
+			if (bObj->IsHit())continue;
 			mObj->TestBulletHit(*bObj);
 		}
 	}
@@ -456,21 +362,19 @@ void GameFrame::UpdateFunction()
 	{
 		auto targetMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
 
-		auto viewPos = targetMecha->GetViewPos();
-		auto viewLookPos = targetMecha->GetViewLookPos();
+		auto viewMat = targetMecha->GetViewMat();
 
-		ChMat_11 tmpMat;
-		tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
+		meshDrawer.drawer.SetViewMatrix(viewMat);
 
-		meshDrawer.drawer.SetViewMatrix(tmpMat);
+		shotEffectList->SetViewMatrix(viewMat);
 
-		shotEffectList->SetViewMatrix(tmpMat);
+		smokeEffectList->SetViewMatrix(viewMat);
 
-		smokeEffectList->SetViewMatrix(tmpMat);
-		//AddSmokeEffectObject(targetMecha->GetPosition(), 0.0f);
+		viewMat.Inverse();
 
-
-		light.SetCamPos(viewPos);
+		light.SetCamPos(viewMat.GetPosition());
+		ChD3D::XAudioManager().InitMatrix(ChLMat());
+		//ChD3D::XAudioManager().InitMatrix(viewMat);
 		
 		ChVec3 dir = ChVec3(0.25f, -0.5f, 0.25f);
 		dir.Normalize();
@@ -489,11 +393,7 @@ void GameFrame::DrawFunction()
 {
 	ChD3D11::Shader11().DrawStart();
 
-	ChD3D11::Shader11().DrawStart3D();
-
 	Render3D();
-
-	ChD3D11::Shader11().DrawStart2D();
 
 	Render2D();
 
@@ -512,8 +412,9 @@ void GameFrame::Render3D(void)
 
 	light.SetPSDrawData(meshDrawer.dc);
 
-	for (auto mapModel : map)
+	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
+		auto mapModel = weakMapModel.lock();
 		ChMat_11 mapSizeMatrix;
 		mapSizeMatrix.SetPosition(mapModel->position);
 		mapSizeMatrix.SetRotation(mapModel->rotation);
@@ -588,8 +489,9 @@ void GameFrame::AddMecha(const std::string& _text)
 				cpuFlg = true;
 				i++;
 				auto cpuController = mecha->SetComponent<CPUController>();
-				cpuController->SetCPULevel(ChStr::GetIntegialFromText<unsigned char>(argment[i]));
+				cpuController->LoadCPUData(argment[i]);
 				cpuController->SetGameFrame(this);
+				cpuController->SetProjectionMatrix(projectionMat);
 			}
 			continue;
 		}
@@ -597,10 +499,11 @@ void GameFrame::AddMecha(const std::string& _text)
 		{
 			i++;
 			teamNo = ChStr::GetIntegialFromText<unsigned char>(argment[i]);
-			mecha->SetTeamNo(teamNo);
 			continue;
 		}
 	}
+
+	mecha->SetTeamNo(teamNo);
 
 	auto&& counter = mechaPartyCounter.find(teamNo);
 	if (counter == mechaPartyCounter.end())
@@ -636,7 +539,7 @@ void GameFrame::AddField(const std::string& _text)
 	{
 		return;
 	}
-	map.push_back(mainMap);
+	mapList.SetObject(mainMap);
 
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
@@ -703,14 +606,57 @@ void GameFrame::AddSkyObject(const std::string& _text)
 
 void GameFrame::AddBGM(const std::string& _text)
 {
+	auto argment = ChStr::Split(_text, " ");
+	auto audio = ChPtr::Make_S< ChD3D::AudioObject>();
 
+	std::string audioName = argment[0];
+
+	ChD3D::XAudioManager().LoadSound(*audio, SOUND_DIRECTORY(+audioName));
+	audio->SetLoopFlg(false);
+
+	for (unsigned long i = 1; i < argment.size(); i++)
+	{
+		if (argment[i] == "-l" || argment[i] == "--loop")
+		{
+			audio->SetLoopFlg(true);
+			continue;
+		}
+
+		if (argment[i] == "-sp" || argment[i] == "--startpos")
+		{
+			i++;
+			unsigned long start = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
+			audio->SetPlayTime(start);
+			continue;
+		}
+
+		if (argment[i] == "-ls" || argment[i] == "--loopstart")
+		{
+			i++;
+			unsigned long start = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
+			audio->SetLoopStartPos(start);
+			continue;
+		}
+
+		if (argment[i] == "-le" || argment[i] == "--loopend")
+		{
+			i++;
+			float end = ChStr::GetFloatingFromText<float>(argment[i]);
+			audio->SetLoopEndPos(end);
+			continue;
+		}
+
+		if (argment[i] == "-v" || argment[i] == "--volume")
+		{
+			i++;
+			float vol = ChStr::GetFloatingFromText<float>(argment[i]);
+			audio->SetVolume(vol);
+			continue;
+		}
+
+	}
+	audios[audioName] = audio;
 }
-
-void GameFrame::AddSE(const std::string& _text)
-{
-
-}
-
 
 void GameFrame::AddBullet(ChPtr::Shared<BulletObject> _bullet)
 {
@@ -729,7 +675,17 @@ void GameFrame::BreakMecha(BaseMecha* _mecha)
 
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector)
 {
-	smokeEffectList->AddSmokeEffect(_pos,_moveVector);
+	smokeEffectList->AddSmokeEffect(_pos, _moveVector, INIT_SMOKE_DISPERSAL_POWER, INIT_SMOKE_ALPHA_POWER);
+}
+
+void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower)
+{
+	smokeEffectList->AddSmokeEffect(_pos, _moveVector, _initDispersalpower, INIT_SMOKE_ALPHA_POWER);
+}
+
+void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow)
+{
+	smokeEffectList->AddSmokeEffect(_pos,_moveVector, _initDispersalpower, _initAlphaPow);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
