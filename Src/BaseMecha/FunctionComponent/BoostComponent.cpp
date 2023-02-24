@@ -132,11 +132,9 @@ void BoostComponent::BoostComponent::UpdateBoost(Data& _data, const ChLMat& _now
 
 void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
 {
+	if (_data.avoid.wait >= _data.avoid.nowWaitTime)
 	{
-		unsigned long longMax = -1;
-
-		_data.avoid.nowWaitTime = (_data.avoid.nowWaitTime - 1) % longMax;
-
+		_data.avoid.nowWaitTime++;
 	}
 
 	if (!_data.avoid.testUseFlg)
@@ -145,10 +143,10 @@ void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
 		return;
 	}
 
-	if (_data.avoid.nowWaitTime > 0)return;
+	if (_data.avoid.nowWaitTime < _data.avoid.wait)return;
 	if (_data.avoid.useFlg)return;
 
-	_data.avoid.nowWaitTime = _data.avoid.wait;
+	_data.avoid.nowWaitTime = 0;
 
 	_data.avoid.useFlg = true;
 
@@ -174,7 +172,7 @@ unsigned long BoostComponent::GetUseEnelgy(AvoidData& _data)
 
 	if (!IsPushFlg(_data.name))return 0;
 
-	if (_data.nowWaitTime > 0)return 0;
+	if (_data.nowWaitTime < _data.wait)return 0;
 	if (_data.useFlg)return 0;
 
 	_data.testUseFlg = true;
