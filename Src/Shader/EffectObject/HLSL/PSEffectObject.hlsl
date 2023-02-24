@@ -59,9 +59,12 @@ float3 GetLightColor(OutColor _res, In_Pixel _pixel)
 
 void FrustumCulling(float4 _pos)
 {
-	float x = ((_pos.x / _pos.w) + 1.0f) * 0.5f;
-	float y = ((_pos.y / _pos.w) + 1.0f) * 0.5f;
-	float z = (_pos.z / _pos.w);
+	float x = (_pos.x / _pos.w);
+	x *= x;
+	float y = _pos.y / _pos.w;
+	y *= y;
+	float z = (_pos.z / _pos.w) * 2.0f - 1.0f;
+	z *= z;
 	clip(1.0f - x);
 	clip(1.0f - y);
 	clip(1.0f - z);
