@@ -85,58 +85,17 @@ public:
 
 	inline void SetGameFrame(GameFrame* _frame) { frame = _frame; }
 
-	inline void SetProjectionMatrix(const ChLMat& _mat) { proMat = _mat; }
-
-	inline void SetViewMatrix(const ChLMat& _mat) { viewMat = _mat; }
-
-public:
-	//一番近い敵//
-	ChPtr::Weak<BaseMecha> FindNearEnemyMecha() { return nearEnemy; }
-
-	//一番近くダメージが多い敵//
-	ChPtr::Weak<BaseMecha> FindNearManyDamageEnemyMecha() { return nearManyDamageEnemy; }
-
-	//一番近くダメージが少ない敵//
-	ChPtr::Weak<BaseMecha> FindNearFewDamageEnemyMecha() { return nearFewDamageEnemy; }
-
-	//一番遠い敵//
-	ChPtr::Weak<BaseMecha> FindFarEnemyMecha() { return farEnemy; }
-
-	//一番遠くダメージが多い敵//
-	ChPtr::Weak<BaseMecha> FindFarManyDamageEnemyMecha() { return farManyDamageEnemy; }
-
-	//一番遠くダメージが少ない敵//
-	ChPtr::Weak<BaseMecha> FindFarFewDamageEnemyMecha() { return farFewDamageEnemy; }
-
 public:
 
 	void LoadCPUData(const std::string& _fileName);
 
 private:
 
-	void FindMecha();
-
-	void MenyDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target);
-
-	void FewDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target);
-
 	std::vector<ChPtr::Shared<CPUFunctionBase>>cpuFunctions;
 	ChPtr::Weak<CPUFunctionBase>action;
 
 	unsigned long actionMoveTime = 100;
 	unsigned long nowActionMoveTime = actionMoveTime;
-
-	ChLMat viewMat;
-	ChLMat proMat;
-
-	ChPtr::Weak<BaseMecha> nearEnemy;
-	ChPtr::Weak<BaseMecha> nearManyDamageEnemy;
-	ChPtr::Weak<BaseMecha> nearFewDamageEnemy;
-	ChPtr::Weak<BaseMecha> farEnemy;
-	ChPtr::Weak<BaseMecha> farManyDamageEnemy;
-	ChPtr::Weak<BaseMecha> farFewDamageEnemy;
-	ChPtr::Weak<BaseMecha> leaderMecha;
-	ChPtr::Weak<BaseMecha> nearMember;
 
 	std::vector<ChPtr::Shared<ChVec3>>voicePos;
 

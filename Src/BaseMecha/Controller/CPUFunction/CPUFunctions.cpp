@@ -13,7 +13,7 @@ ChStd::Bool CPUAttackFunction::Update(CPUController& _controller)
 
 ChStd::Bool CPUAvoidFunction::Update(CPUController& _controller)
 {
-	return IsUnStopFlg() == false;;
+	return IsUnStopFlg() == false;
 }
 
 ChStd::Bool CPUMoveFunction::Update(CPUController& _controller)
