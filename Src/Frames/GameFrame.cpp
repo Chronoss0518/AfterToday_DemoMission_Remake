@@ -17,6 +17,8 @@
 #include"../EffectObjects/ShotEffectList/ShotEffectList.h"
 #include"../EffectObjects/SmokeEffectList/SmokeEffectList.h"
 
+#include"../BaseMecha/CPU/CPULooker.h"
+
 #define PLAYER_MECHA_FILE_NAME ""
 
 //想定するメカオブジェクトの最大数//
@@ -56,8 +58,6 @@ void GameFrame::Init()
 	box.SetEnableFlg(false);
 #endif
 
-	windSize = ChVec2(static_cast<float>(GAME_WINDOW_WITDH), static_cast<float>(GAME_WINDOW_HEIGHT));
-
 	meshDrawer.drawer.Init(ChD3D11::D3D11Device());
 	meshDrawer.drawer.SetCullMode(D3D11_CULL_BACK);
 
@@ -79,22 +79,27 @@ void GameFrame::Init()
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.001f);
 	smokeEffectList->SetInitialDispersalPower(3.0f);
 
+	light.Init(ChD3D11::D3D11Device());
+	light.SetUseLightFlg(true);
+	light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
+
 	{
 		ChMat_11 proMat;
-		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), windSize.w, windSize.h, 0.1f, 10000.0f);
-
+		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
+		
 		projectionMat = proMat;
-
+		
 		meshDrawer.drawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
 		smokeEffectList->SetProjectionMatrix(proMat);
 
-		light.Init(ChD3D11::D3D11Device());
-		light.SetUseLightFlg(true);
-		light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
+		//projectionMat = CPUObjectLooker::SetProjectionMatrix(windSize.w, windSize.h, ChMath::ToRadian(60.0f), 0.1f, 10000.0f);
+
 	}
 
 	LoadStage();
+
+	enemy = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
 
 	enemyMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Ts.png"), ChD3D11::D3D11Device());
 	baseMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Window.png"), ChD3D11::D3D11Device());
@@ -197,12 +202,6 @@ void GameFrame::InitScriptFunction()
 
 			for (unsigned long i = 2; i < args.size(); i++)
 			{
-				if (args[i] == "-p" || args[i] == "--party")
-				{
-					i++;
-					targetNum += mechaPartyCounter[ChStr::GetIntegialFromText<unsigned char>(args[i])];
-					continue;
-				}
 				if (args[i] == "-e" || args[i] == "--enemyAll")
 				{
 					for (auto count : mechaPartyCounter)
@@ -210,6 +209,21 @@ void GameFrame::InitScriptFunction()
 						if (playerParty == count.first)continue;
 						targetNum += count.second;
 					}
+					continue;
+				}
+				if (args[i] == "-p" || args[i] == "--party" || args[i] == "-t" || args[i] == "--teamNo")
+				{
+					i++;
+					unsigned char no = ChStr::GetIntegialFromText<unsigned char>(args[i]);
+					
+					auto&& it = mechaPartyCounter.find(no);
+
+					if (it == mechaPartyCounter.end())
+					{
+						continue;
+					}
+
+					targetNum = it->second;
 					continue;
 				}
 				if (args[i] == "-m" || args[i] == "--memberAll")
@@ -227,10 +241,6 @@ void GameFrame::InitScriptFunction()
 void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 {
 
-	ChMat_11 mapSizeMatrix;
-	mapSizeMatrix.SetPosition(_map->position);
-	mapSizeMatrix.SetRotation(_map->rotation);
-	mapSizeMatrix.SetScaleSize(_map->scalling);
 	ChVec3 fieldSize;
 
 	for (auto&& child : _map->model->GetAllChildlen<ChCpp::FrameObject>())
@@ -240,14 +250,17 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 		auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
 		if (frameCom == nullptr)continue;
 		childObj->UpdateAllDrawTransform();
-		ChLMat tmpMat = childObj->GetDrawLHandMatrix() * mapSizeMatrix;
+		ChLMat tmpMat = childObj->GetDrawLHandMatrix() * _map->mat;
 		ChVec3 tmp = tmpMat.TransformCoord(frameCom->boxSize);
 		fieldSize = fieldSize.x > tmp.x ? fieldSize.x : tmp.x;
 		fieldSize = fieldSize.y > tmp.y ? fieldSize.y : tmp.y;
 		fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
 	}
 
-	PhysicsMachine::AddField(_map->model, mapSizeMatrix);
+	auto cpuLookAnchor = _map->SetComponent<MapLookAnchor>();
+	cpuLookAnchor->SetPositionList(*_map->model, _map->mat);
+
+	PhysicsMachine::AddField(_map->model, _map->mat);
 	PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
 }
 
@@ -295,6 +308,7 @@ void GameFrame::Release()
 	smokeEffectList->Release();
 	mechaList.ClearObject();
 	bulletList.ClearObject();
+	mapList.ClearObject();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -302,9 +316,9 @@ void GameFrame::Release()
 void GameFrame::Update()
 {
 
-	script->UpdateScript();
-
 	UpdateFunction();
+
+	script->UpdateScript();
 
 #if DEBUG_FLG
 
@@ -317,13 +331,23 @@ void GameFrame::Update()
 
 #endif
 
+	auto&& looker = enemy->GetComponent<CPUObjectLooker>();
+
+	auto&& lookTarget =
+		looker->GetLookTypeMechas(CPUObjectLooker::MemberType::Enemy, CPUObjectLooker::DistanceType::Near, CPUObjectLooker::DamageSizeType::None);
+
+	box.SetText("FPS:" +
+		std::to_string(ChSystem::SysManager().GetNowFPSPoint()) +
+		"\r\n" +
+		"Bullet Num:" +
+		std::to_string(bulletList.GetObjectCount()) +
+		"\r\n" +
+		"CPULookRobot:" +
+		(lookTarget.expired() ? "None" : lookTarget.lock()->GetMyName())
+	);
+
 	DrawFunction();
-	
-#if DISPLAY_FPS_FLG
-	box.SetText("FPS:" + std::to_string(ChSystem::SysManager().GetNowFPSPoint()));
-#elif DISPLAY_NOW_BULLET_NUM_FLG
-	box.SetText("Bullet Num:" + std::to_string(bulletList.GetObjectCount()));
-#endif
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -397,6 +421,8 @@ void GameFrame::DrawFunction()
 
 	Render2D();
 
+	enemy->Draw2DFunction();
+
 	ChD3D11::Shader11().DrawEnd();
 
 	mechaList.ObjectDrawEnd();
@@ -415,11 +441,7 @@ void GameFrame::Render3D(void)
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
 		auto mapModel = weakMapModel.lock();
-		ChMat_11 mapSizeMatrix;
-		mapSizeMatrix.SetPosition(mapModel->position);
-		mapSizeMatrix.SetRotation(mapModel->rotation);
-		mapSizeMatrix.SetScaleSize(mapModel->scalling);
-		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel->model, mapSizeMatrix);
+		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel->model, (ChMat_11)mapModel->mat);
 	}
 
 	mechaList.ObjectDraw3D();
@@ -440,7 +462,7 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	auto&& mecha = mechaList.SetObject<BaseMecha>("");
 
-	mecha->Create(windSize, meshDrawer, this);
+	mecha->Create(ChVec2(GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT), meshDrawer, this);
 
 	mecha->Load(ChD3D11::D3D11Device(), argment[0]);
 
@@ -479,6 +501,9 @@ void GameFrame::AddMecha(const std::string& _text)
 			{
 				playerFlg = true;
 				mecha->SetComponent<PlayerController>();
+				auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
+				cpuObjectLooker->SetGameFrame(this);
+				cpuObjectLooker->SetProjectionMatrix(projectionMat);
 			}
 			continue;
 		}
@@ -491,7 +516,9 @@ void GameFrame::AddMecha(const std::string& _text)
 				auto cpuController = mecha->SetComponent<CPUController>();
 				cpuController->LoadCPUData(argment[i]);
 				cpuController->SetGameFrame(this);
-				cpuController->SetProjectionMatrix(projectionMat);
+				auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
+				cpuObjectLooker->SetGameFrame(this);
+				cpuObjectLooker->SetProjectionMatrix(projectionMat);
 			}
 			continue;
 		}
@@ -517,7 +544,7 @@ void GameFrame::AddMecha(const std::string& _text)
 	}
 
 	mechaList.SetObject(mecha);
-	mechaPartyCounter[teamNo]++;
+	mechaPartyCounter[teamNo] += 1;
 }
 
 void GameFrame::AddField(const std::string& _text)
@@ -541,32 +568,49 @@ void GameFrame::AddField(const std::string& _text)
 	}
 	mapList.SetObject(mainMap);
 
+	ChStd::Bool hitMapFlg = false;
+
+	ChVec3 position,rotation,scalling;
+
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
 		if (argment[i] == "-p" || argment[i] == "--position")
 		{
 			i++;
-			mainMap->position.Deserialize(argment[i], 0, ",", ";");
+			position.Deserialize(argment[i], 0, ",", ";");
 			continue;
 		}
 		if (argment[i] == "-r" || argment[i] == "--rotation")
 		{
 			i++;
-			mainMap->rotation.Deserialize(argment[i], 0, ",", ";");
+			rotation.Deserialize(argment[i], 0, ",", ";");
 			continue;
 		}
 		if (argment[i] == "-s" || argment[i] == "--scalling")
 		{
 			i++;
-			mainMap->scalling.Deserialize(argment[i], 0, ",", ";");
+			scalling.Deserialize(argment[i], 0, ",", ";");
 			continue;
 		}
 		if (argment[i] == "-h" || argment[i] == "--hit")
 		{
-			SetHitMap(mainMap);
+			hitMapFlg = true;
 			continue;
 		}
 	}
+
+
+	ChMat_11 mapSizeMatrix;
+	mapSizeMatrix.SetPosition(position);
+	mapSizeMatrix.SetRotation(rotation);
+	mapSizeMatrix.SetScaleSize(scalling);
+	mainMap->mat = mapSizeMatrix;
+
+	if (hitMapFlg)
+	{
+		SetHitMap(mainMap);
+	}
+
 }
 
 void GameFrame::AddSkyObject(const std::string& _text)
@@ -668,11 +712,6 @@ void GameFrame::AddShotEffectObject(const ChVec3& _pos)
 	shotEffectList->AddShotEffect(_pos);
 }
 
-void GameFrame::BreakMecha(BaseMecha* _mecha)
-{
-	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
-}
-
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector)
 {
 	smokeEffectList->AddSmokeEffect(_pos, _moveVector, INIT_SMOKE_DISPERSAL_POWER, INIT_SMOKE_ALPHA_POWER);
@@ -686,6 +725,57 @@ void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVect
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow)
 {
 	smokeEffectList->AddSmokeEffect(_pos,_moveVector, _initDispersalpower, _initAlphaPow);
+}
+
+std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix)
+{
+	std::vector<ChPtr::Shared<LookSquareValue>> res;
+
+	for (auto&& mapWeak : mapList.GetObjectList())
+	{
+		auto&& map = mapWeak.lock();
+
+		if (map == nullptr)continue;
+
+		auto mapLookAnchor = map->GetComponent<MapLookAnchor>();
+
+		if (mapLookAnchor == nullptr)continue;
+
+		for (auto&& square : mapLookAnchor->GetMapSquares(_viewMatrix, _projectionMatrix))
+		{
+			res.push_back(square);
+		}
+	}
+
+	return res;
+}
+
+std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMap(const ChLMat& _vpMatrix)
+{
+	std::vector<ChPtr::Shared<LookSquareValue>> res;
+
+	for (auto&& mapWeak : mapList.GetObjectList())
+	{
+		auto&& map = mapWeak.lock();
+
+		if (map == nullptr)continue;
+
+		auto mapLookAnchor = map->GetComponent<MapLookAnchor>();
+
+		if (mapLookAnchor == nullptr)continue;
+
+		for (auto&& square : mapLookAnchor->GetMapSquares(_vpMatrix))
+		{
+			res.push_back(square);
+		}
+	}
+
+	return res;
+}
+
+void GameFrame::BreakMecha(BaseMecha* _mecha)
+{
+	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

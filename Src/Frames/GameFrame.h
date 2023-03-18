@@ -8,15 +8,16 @@ class CloudList;
 class GameScript;
 class EffectObjectShader;
 
+
+struct LookSquareValue;
+
 class ShotEffectList;
 class SmokeEffectList;
 
 struct MapObject : public ChCpp::BaseObject
 {
 	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
-	ChVec3 position;
-	ChVec3 rotation;
-	ChVec3 scalling;
+	ChLMat mat;
 };
 
 class GameFrame:public ChCpp::BaseFrame
@@ -69,6 +70,12 @@ public:
 
 	ChCpp::ObjectList& GetBulletList() { return bulletList; }
 
+	ChCpp::ObjectList& GetMapList() { return mapList; }
+
+	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
+
+	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _vpMatrix);
+
 public:
 
 	void BreakMecha(BaseMecha* _mecha);
@@ -83,8 +90,6 @@ private:
 
 	ChMat_11 viewMat;
 	ChMat_11 proMat;
-
-	ChVec2 windSize;
 
 	enum class DrawEffect:ChStd::DataNo
 	{
@@ -109,6 +114,8 @@ private:
 	unsigned long mechaView = 0;
 	ChCpp::ObjectList bulletList;
 	ChCpp::ObjectList mapObjects;
+
+	ChPtr::Shared<ChCpp::BaseObject>enemy = nullptr;
 
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	ChPtr::Shared<ChD3D11::Texture11>baseMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
