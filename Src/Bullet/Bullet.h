@@ -3,12 +3,34 @@
 class BaseMecha;
 class BulletObject;
 
+enum class BulletType :unsigned char
+{
+	Bullet,
+	BoostBullet,
+	HighExplosive,
+	Missile,
+};
+
 //通常弾全般//
-class BulletData
+class Bullet
 {
 public:
 
-	static ChPtr::Shared<BulletData> CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	class ExternulBulletFunctionBase
+	{
+	public:
+
+		virtual void UpdateBulletObject(BulletObject& _bullet) = 0;
+
+		virtual unsigned long Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text,const unsigned long _nowPos = 0) = 0;
+
+		virtual std::string Serialize() = 0;
+
+	};
+
+
+
+	static ChPtr::Shared<Bullet> CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
 
 	static void AllRelease();
 
@@ -18,13 +40,19 @@ public://Serialize Deserialize\\
 
 	virtual std::string Serialize();
 
+	void CreateBulletData();
+
+	void CrateBoostBulletData();
+
+	void CreateHighExplosiveBulletData();
+
+	void CrateMissileData();
+
 public:
 
 	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
 
 public:
-
-	virtual std::string GetBulletType() { return "0\n"; }
 
 	inline unsigned long GetPenetration() { return penetration; }
 
@@ -42,9 +70,9 @@ public:
 
 public:
 
-	static std::map<std::string,ChPtr::Shared<BulletData>>LoadBulletList()
+	static std::map<std::string,ChPtr::Shared<Bullet>>LoadBulletList()
 	{
-		static std::map<std::string,ChPtr::Shared<BulletData>> ins;
+		static std::map<std::string,ChPtr::Shared<Bullet>> ins;
 		return ins;
 	}
 
@@ -62,20 +90,33 @@ protected:
 	//弾のモデル//
 	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
 
+	unsigned char bulletType = 0;
+	ChPtr::Shared<ExternulBulletFunctionBase> externulFunction[4] = { nullptr,nullptr,nullptr,nullptr };
+
 	MeshDrawer* drawer = nullptr;
 
 private:
 
-	static ChPtr::Shared<BulletData>(*CreateBulletFunction[4])();
-
 };
 
-//ブースター付きの弾全般//
-class BoostBulletData :public BulletData
+//通常弾全般//
+class BulletData :public Bullet::ExternulBulletFunctionBase
 {
 public:
 
-	virtual void Deserialize(ID3D11Device* _device, const std::string& _text)override;
+	unsigned long Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
+
+	std::string Serialize()override;
+
+	void UpdateBulletObject(BulletObject& _bullet)override;
+};
+
+//ブースター付きの弾全般//
+class BoostBulletData :public Bullet::ExternulBulletFunctionBase
+{
+public:
+
+	virtual unsigned long Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
 
 	virtual std::string Serialize()override;
 
@@ -83,13 +124,11 @@ public:
 
 	void UpdateBulletObject(BulletObject& _bullet)override;
 
-	virtual std::string GetBulletType()override { return "1\n"; }
 
 protected:
 
 	//ブースト点火までの時間//
 	unsigned long startBoostTime = 0;
-
 
 	//ブーストのパワー//
 	float boostPow = 0.0f;
@@ -97,19 +136,17 @@ protected:
 
 
 //爆発弾全般//
-class HighExplosiveBulletData :public BoostBulletData
+class HighExplosiveBulletData :public Bullet::ExternulBulletFunctionBase
 {
 public:
 
-	virtual void Deserialize(ID3D11Device* _device, const std::string& _text)override;
+	virtual unsigned long Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
 
 	virtual std::string Serialize()override;
 
 public:
 	
 	void UpdateBulletObject(BulletObject& _bullet)override;
-
-	virtual std::string GetBulletType()override { return "2\n"; }
 
 protected:
 
@@ -119,19 +156,17 @@ protected:
 };
 
 //誘導弾全般//
-class  MissileData :public HighExplosiveBulletData
+class  MissileData :public Bullet::ExternulBulletFunctionBase
 {
 public://Serialize Deserialize\\
-
-	void Deserialize(ID3D11Device* _device, const std::string& _text)override;
+		
+	unsigned long Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
 
 	std::string Serialize()override;
 
 public:
 
 	void UpdateBulletObject(BulletObject& _bullet)override;
-
-	virtual std::string GetBulletType()override { return "3\n"; }
 
 protected:
 

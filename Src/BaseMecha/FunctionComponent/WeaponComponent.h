@@ -10,6 +10,10 @@ public:
 
 public:
 
+	inline unsigned long GetUseWeaponNo() { return useWeaponNo; }
+
+public:
+
 	inline void AddWeapon(ChPtr::Shared<MechaPartsObject> _weapon)
 	{
 		weapon.push_back(_weapon);

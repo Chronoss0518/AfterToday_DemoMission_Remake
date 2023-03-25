@@ -5,11 +5,12 @@
 #include"BulletObject.h"
 #include"../BaseMecha/BaseMecha.h"
 
-#define CREATE_SMOKE_MAX_COUNT 1
+#define CREATE_SMOKE_MAX_COUNT 2
 
 void BulletObject::Init(const ChLMat& _startMat)
 {
 	data->InitBulletObject(_startMat ,*this);
+	createSmokeCount = CREATE_SMOKE_MAX_COUNT;
 }
 
 unsigned long BulletObject::GetPenetration()
@@ -31,9 +32,15 @@ void BulletObject::Move()
 {
 	data->MoveBulletObject(*this);
 
-	if(createSmokeCount <= 0)frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f);
+	if (nowCreateSmokeCount <= 0)
+	{
+		//frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f);
+		//frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f, dispersalPower);
+		//createSmokeCount++;
+		//dispersalPower *= 0.5f;
+	}
 
-	createSmokeCount = (createSmokeCount + 1) % CREATE_SMOKE_MAX_COUNT;
+	nowCreateSmokeCount = (nowCreateSmokeCount + 1) % createSmokeCount;
 }
 
 void BulletObject::Draw3D()

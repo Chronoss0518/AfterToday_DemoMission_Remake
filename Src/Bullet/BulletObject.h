@@ -1,5 +1,6 @@
 #pragma once
 
+class Bullet;
 class BulletData;
 class BoostBulletData;
 class HighExplosiveBulletData;
@@ -10,6 +11,7 @@ class BulletObject :public ChCpp::BaseObject
 {
 public:
 	
+	friend Bullet;
 	friend BulletData;
 	friend BoostBulletData;
 	friend HighExplosiveBulletData;
@@ -21,7 +23,7 @@ public:
 
 public:
 
-	virtual void SetBulletData(BulletData* _data) { data = _data; }
+	virtual void SetBulletData(Bullet* _data) { data = _data; }
 
 	inline void SetIsHitTrue() { hitFlg = true; }
 
@@ -55,6 +57,10 @@ public:
 
 public:
 
+	ChStd::Bool IsHit() { return hitFlg; }
+
+public:
+
 	void Update()override;
 
 	void Move()override;
@@ -70,8 +76,11 @@ private:
 	ChCpp::SphereCollider collider;
 
 	GameFrame* frame = nullptr;
-	BulletData* data = nullptr;
+	Bullet* data = nullptr;
 	ChStd::Bool hitFlg = false;
 	BaseMecha* mecha = nullptr;
+	unsigned long nowCreateSmokeCount = 0;
+
+	float dispersalPower = 5.0f;
 	unsigned long createSmokeCount = 0;
 };
