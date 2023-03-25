@@ -5,5 +5,5 @@
 
 void Physics_Gravity::AddMove()
 {
-	AddMovePowerVector(ChVec3(0.0f, -(GetGravityAcceleration() * GetMass())/ GetFPS(), 0.0f));
+	AddMovePowerVector(ChVec3(0.0f, -(GetGravityAcceleration() * GetMass()), 0.0f));
 }

@@ -35,7 +35,7 @@ BoostComponent::BoostComponent()
 
 void BoostComponent::Update()
 {
-	unsigned long useEnelgy = 0.0f;
+	unsigned long useEnelgy = 0;
 
 	for (unsigned char i = 0; i < 6; i++)
 	{
@@ -91,7 +91,7 @@ void BoostComponent::BoostDrawEnd()
 	for (unsigned char i = 0; i < 6; i++)
 	{
 		auto&& boostData = data[i];
-		for (auto&& boostObject : boostData.boostObject) 
+		for (auto&& boostObject : boostData.boostObject)
 		{
 			boostObject->SetOutSizdTransform(tmp);
 		}
@@ -105,7 +105,7 @@ void BoostComponent::UpdateInputFunction(Data& _data)
 
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
-	UpdateAvoid(_data,tmp);
+	UpdateAvoid(_data, tmp);
 
 	UpdateBoost(_data, tmp);
 
@@ -122,7 +122,7 @@ void BoostComponent::BoostComponent::UpdateBoost(Data& _data, const ChLMat& _now
 {
 	if (!_data.boost.testUseFlg)return;
 
-	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.boost.pow / PhysicsMachine::GetFPS());
+	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.boost.pow);
 
 	SubNowEnelgy(_data.boost.useEnelgy);
 
@@ -150,7 +150,7 @@ void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
 
 	_data.avoid.useFlg = true;
 
-	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.avoid.pow / PhysicsMachine::GetFPS());
+	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.avoid.pow);
 
 	SubNowEnelgy(_data.avoid.useEnelgy);
 

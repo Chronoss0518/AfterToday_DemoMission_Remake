@@ -34,7 +34,7 @@ void MoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, I
 
 	if (!IsGround())return;
 
-	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow / PhysicsMachine::GetFPS());
+	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow);
 
 }
 
@@ -42,7 +42,7 @@ void MoveComponent::RotateUpdate(InputName _input, const ChVec3& _direction)
 {
 	if (!IsPushFlg(_input))return;
 
-	AddRotateVector(_direction * rotatePow / PhysicsMachine::GetFPS());
+	AddRotateVector(_direction * rotatePow);
 }
 
 void MoveComponent::CamRotateUpdate(InputName _input, const float _camRot)

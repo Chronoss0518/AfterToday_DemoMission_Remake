@@ -22,6 +22,7 @@ public:
 	struct ModelData
 	{
 		ChPtr::Weak<ChCpp::FrameObject> model;
+		ChCpp::PolygonCollider collider;
 		ChLMat transform;
 	};
 
@@ -39,18 +40,11 @@ private:
 
 public:
 
-	inline void AddMovePowerVector(const ChVec3& _addPowerVector) { addMovePowerVector += _addPowerVector; }
+	inline void AddMovePowerVector(const ChVec3& _addPowerVector) { addMovePowerVector += _addPowerVector / (CastFloat(GetFPS()) / CastFloat(BaseSpeed())); }
 
-	inline void AddRotatePowerVector(const ChVec3& _addPowerVector) { addRotatePowerVector += _addPowerVector; }
+	inline void AddRotatePowerVector(const ChVec3& _addPowerVector) { addRotatePowerVector += _addPowerVector / (CastFloat(GetFPS()) / CastFloat(BaseSpeed())); }
 
-	static inline void AddField(ChPtr::Shared<ChCpp::FrameObject> _fieldModel,const ChLMat& _mat)
-	{
-		if (_fieldModel == nullptr)return;
-		auto field = ChPtr::Make_S<ModelData>();
-		field->model = _fieldModel;
-		field->transform = _mat;
-		FieldList().push_back(field);
-	}
+	static void AddField(ChPtr::Shared<ChCpp::FrameObject> _fieldModel, const ChLMat& _mat);
 
 	inline void AddBaseModel(ChPtr::Shared<ChCpp::FrameObject>_model,const ChLMat& _mat)
 	{
@@ -93,7 +87,9 @@ public:
 
 	inline void SetFrontBackWallLen(const float _len) { if (_len > 0.0f)frontBackWallLen = _len; }
 
-	static inline void SetFPS(unsigned long _fps) { FreamPerSeccond() = _fps; }
+	static inline void SetFPS(unsigned long _fps) { if(_fps > 0)FreamPerSeccond() = _fps; }
+
+	static inline void SetBaseSpeed(unsigned long _baseSpeed) { if (_baseSpeed > 0)BaseSpeed() = _baseSpeed; }
 
 	static inline void SetElevation(const float _elevation) { Elevation() = _elevation; }
 
@@ -116,6 +112,8 @@ public:
 	inline float GetGroundHeight() { return groundHeight; }
 
 	static inline unsigned long GetFPS() { return FreamPerSeccond(); }
+
+	static inline unsigned long GetBaseSpeed() { return BaseSpeed(); }
 
 	static inline float GetElevation() { return Elevation(); }
 
@@ -146,6 +144,8 @@ public:
 	}
 
 private:
+
+	inline float CastFloat(unsigned long _val) { return static_cast<float>(_val); }
 
 	void TestFieldRange();
 
@@ -213,7 +213,13 @@ private:
 
 	inline static unsigned long& FreamPerSeccond()
 	{
-		static unsigned long ins = 0;
+		static unsigned long ins = 1;
+		return ins;
+	}
+
+	inline static unsigned long& BaseSpeed()
+	{
+		static unsigned long ins = 1;
 		return ins;
 	}
 
