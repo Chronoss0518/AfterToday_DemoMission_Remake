@@ -70,7 +70,7 @@ public:
 
 public:
 
-	static std::map<std::string,ChPtr::Shared<Bullet>>LoadBulletList()
+	static std::map<std::string,ChPtr::Shared<Bullet>>& LoadBulletList()
 	{
 		static std::map<std::string,ChPtr::Shared<Bullet>> ins;
 		return ins;
