@@ -14,6 +14,8 @@
 #include"../Bullet/BulletObject.h"
 #include"Controller/ControllerBase.h"
 
+#include"CPU/CPULooker.h"
+
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
 
 #define CAMERA_Y_POS 5.0f
@@ -41,14 +43,14 @@ BaseMecha::~BaseMecha()
 
 }
 
-void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer,GameFrame* _frame)
+void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer, GameFrame* _frame)
 {
 	viewSize = _viewSize;
 	drawer = &_drawer;
 	frame = _frame;
 	physics->Init();
 	mechasNo = frame->GetMechaList().GetObjectCount();
-	
+
 
 }
 
@@ -65,6 +67,8 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 	ChCpp::TextObject textObject;
 	textObject.SetText(text);
 
+	SetComponent<LookAnchor>();
+
 	LoadPartsList(_device, textObject);
 
 	nowEnelgy = maxEnelgy;
@@ -78,11 +82,19 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 
 	for (unsigned long i = 0; i < count; i++)
 	{
-		auto texts = ChStr::Split(_textObject.GetTextLine(i + 1)," ");
+		auto texts = ChStr::Split(_textObject.GetTextLine(i + 1), " ");
 
 		auto parts = MechaParts::LoadParts(*this, _device, drawer, frame, texts[0]);
 		parts->SetFrame(frame);
 		parts->SetBaseMecha(this);
+
+
+		auto anchor = GetComponent<LookAnchor>();
+
+		parts->SetLookAnchorNo(anchor->GetPositionListCount());
+
+		anchor->AddLookAnchorPosition(parts->GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
+
 		AddMechaParts(parts);
 
 		if (texts.size() <= 1)continue;
@@ -168,7 +180,7 @@ std::string BaseMecha::SavePartsList()
 			weaponName = " " + weaponTypeName[1];
 		}
 
-		res += parts->GetBaseObject()->GetThisFileName() +  positionName + weaponName + "\n";
+		res += parts->GetBaseObject()->GetThisFileName() + positionName + weaponName + "\n";
 	}
 	return res;
 }
@@ -213,11 +225,11 @@ void BaseMecha::MoveEnd()
 
 	viewMat = tmpMat;
 
-	auto&& controller = GetComponent<CPUController>();
+	auto&& objectLooker = GetComponent<CPUObjectLooker>();
 
-	if (controller == nullptr)return;
-	
-	controller->SetViewMatrix(viewMat);
+	if (objectLooker == nullptr)return;
+
+	objectLooker->SetViewMatrix(viewMat);
 }
 
 ChVec3 BaseMecha::GetViewPos()
@@ -281,14 +293,20 @@ void BaseMecha::Draw3D()
 
 	auto boostComponent = GetComponent<BoostComponent>();
 
-	if(boostComponent != nullptr)boostComponent->BoostDrawBegin();
+	if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
+
+	auto anchor = GetComponent<LookAnchor>();
 
 	for (auto&& parts : mechaParts)
 	{
 		parts->Draw(drawMat);
+		ChLMat tmpMat;
+		tmpMat = parts->GetLastDrawMat();
+		anchor->UpdateLookAnchorPosition(parts->GetLookAnchorNo(), tmpMat);
 	}
 
 	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
+
 }
 
 void BaseMecha::Deserialize(const std::string& _fileName)
@@ -315,10 +333,10 @@ void BaseMecha::SetGroundHeight(const float _height)
 	physics->SetGroundHeight(_height);
 }
 
-void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,unsigned long _no)
+void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name, unsigned long _no)
 {
 
-	if (_name  == PartsPosNames::None)return;
+	if (_name == PartsPosNames::None)return;
 
 	auto mechaPartsPosList = GetMechaPartsPosList(_name);
 
@@ -348,7 +366,7 @@ void BaseMecha::SetPosition(const ChVec3& _pos)
 }
 
 void BaseMecha::SetRotation(const ChVec3& _rot)
-{ 
+{
 	physics->SetRotation(_rot);
 }
 
@@ -425,9 +443,12 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 		break;
 	}
 
+	if (breakFlg)return;
 	if (durable > 0)return;
-
+	
 	Break();
+
+	breakFlg = true;
 }
 
 void BaseMecha::Break()

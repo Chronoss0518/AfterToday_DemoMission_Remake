@@ -245,6 +245,8 @@ protected:
 	ChVec3 centerPos;
 	float viewVertical = 0.0f;
 	float maxViewVertical = 85.0f;
+
+	ChStd::Bool breakFlg = false;
 };
 
 #endif
