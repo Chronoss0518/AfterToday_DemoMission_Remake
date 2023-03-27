@@ -4,14 +4,69 @@
 
 #include"../BaseMecha.h"
 
+#include"../FunctionComponent/WeaponComponents.h"
+
 #include"../../Frames/GameFrame.h"
 
 #include"ControllerBase.h"
 
-#include"CPUFunction/CPUFunctions.h"
 #include"../CPU/CPULooker.h"
 
+
 #define DEFAULT_CURSOL_MOVE_SIZE 0.2f
+
+class CPUController::CPUFunctionBase
+{
+public:
+
+	enum class HaveHandType
+	{
+		L,R
+	};
+
+	void Init();
+
+	std::string Serialize();
+
+	void Deserialize(const std::string& _text);
+
+	void SetUnStopFlg(const ChStd::Bool _flg) { unStopFlg = _flg; }
+
+	ChStd::Bool IsUnStopFlg() { return unStopFlg; }
+
+	ChStd::Bool IsRunTest(CPUObjectLooker& _looker);
+
+	ChStd::Bool IsRunEnd() { return isRunEndFlg; }
+
+	void Update(CPUController& _controller);
+
+private:
+
+	ChPtr::Shared<CPUObjectLooker::UseSquareValues> target;
+
+	CPUObjectLooker::MemberType memberType = CPUObjectLooker::MemberType::Enemy;
+	CPUObjectLooker::DistanceType distanceType = CPUObjectLooker::DistanceType::None;
+	CPUObjectLooker::DamageSizeType damageType = CPUObjectLooker::DamageSizeType::None;
+
+	float testDamage = 0.0f;
+	ComparisonOperation damageComparison = ComparisonOperation::Smaller;
+
+	float testDistance = 0.0f;
+	ComparisonOperation distanceComparison = ComparisonOperation::Smaller;
+
+	std::function<ChStd::Bool(const float _targetValue, const float _testValue)>comparisonOperation[5];
+
+	unsigned long weaponNo = 0;
+	unsigned long attackType = 0;
+	HaveHandType handType = HaveHandType::L;
+
+	//この命令を行ってもスクリプトを抜けないフラグ//
+	ChStd::Bool unStopFlg = false;
+
+	ChStd::Bool isRunEndFlg = false;
+
+};
+
 
 void ControllerBase::Input(const InputName _inputFlgName)
 {
@@ -180,11 +235,12 @@ void CPUController::UpdateBegin()
 
 	while (!looker->IsEndUpdate())continue;
 
-	for (auto&& function : cpuFunctions)
-	{
-		if (nowActionMoveTime > 0)continue;
-		if (function->Update(*this))break;
-	}
+	SelectRunFunction(*looker);
+	RunUpdate();
+}
+
+void CPUController::SaveCPUData(const std::string& _fileName)
+{
 
 }
 
@@ -203,7 +259,97 @@ void CPUController::LoadCPUData(const std::string& _fileName)
 
 	for (unsigned long i = 1; i < textData.Count(); i++)
 	{
-
+		auto function = ChPtr::Make_S<CPUController::CPUFunctionBase>();
 	}
 
+}
+
+void CPUController::SelectRunFunction(CPUObjectLooker& _looker)
+{
+	if (action != nullptr)return;
+
+	for (auto&& function : cpuFunctions)
+	{
+		if (nowActionMoveTime > 0)continue;
+		if (function->IsRunTest(_looker) && !function->IsUnStopFlg())
+		{
+			action = function;
+			break;
+		}
+	}
+}
+
+void CPUController::RunUpdate()
+{
+	if (action == nullptr)return;
+	action->Update(*this);
+	if (!action->IsRunEnd())return;
+	action = nullptr;
+
+}
+
+void CPUController::CPUFunctionBase::Init()
+{
+	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Greater)] =
+		[&](const float _targetValue, const float _testValue)->ChStd::Bool {return _targetValue > _testValue; };
+
+	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::More)] =
+		[&](const float _targetValue, const float _testValue)->ChStd::Bool {return _targetValue >= _testValue; };
+
+	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Equal)] =
+		[&](const float _targetValue, const float _testValue)->ChStd::Bool {return _targetValue == _testValue; };
+
+	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Less)] =
+		[&](const float _targetValue, const float _testValue)->ChStd::Bool {return _targetValue <= _testValue; };
+
+	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Smaller)] =
+		[&](const float _targetValue, const float _testValue)->ChStd::Bool {return _targetValue < _testValue; };
+}
+
+std::string CPUController::CPUFunctionBase::Serialize()
+{
+	std::string res = "";
+
+	return res;
+}
+
+void CPUController::CPUFunctionBase::Deserialize(const std::string& _text)
+{
+
+}
+
+ChStd::Bool CPUController::CPUFunctionBase::IsRunTest(CPUObjectLooker& _looker)
+{
+	target = _looker.GetLookTypeMechas(memberType, distanceType, damageType);
+
+	if (target == nullptr)return false;
+
+	auto mecha = target->otherMecha.lock();
+
+	if (mecha == nullptr)return false;
+
+	if (!comparisonOperation[ChStd::EnumCast(damageComparison)](mecha->GetDamage(), testDamage))return false;
+
+	if (!comparisonOperation[ChStd::EnumCast(distanceComparison)](mecha->GetDamage(), testDistance))return false;
+	
+	isRunEndFlg = false;
+	
+	return true;
+}
+
+void CPUController::CPUFunctionBase::Update(CPUController& _controller)
+{
+
+
+	auto mecha = _controller.LookObj();
+
+	if (mecha == nullptr)return;
+	
+	auto weapon = mecha->GetComponents<RightWeaponComponent>();
+
+
+
+	_controller.Input(InputName::LAttack);
+
+	isRunEndFlg = true;
 }

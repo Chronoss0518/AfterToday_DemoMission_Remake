@@ -1,5 +1,7 @@
 #pragma once
 
+class CPUObjectLooker;
+
 class ControllerBase:public ChCpp::BaseComponent
 {
 public:
@@ -71,10 +73,19 @@ private:
 	ChVec2 windSize = ChVec2();
 };
 
-class CPUFunctionBase;
-
 class CPUController :public ControllerBase
 {
+public:
+
+	enum class ComparisonOperation : unsigned char
+	{
+		Greater,	//1 > 2//
+		More,		//1 >= 2//
+		Equal,		//1 == 2//
+		Less,		//1 <= 2//
+		Smaller		//1 < 2//
+	};
+
 public:
 
 	void Init()override;
@@ -85,19 +96,36 @@ public:
 
 	inline void SetGameFrame(GameFrame* _frame) { frame = _frame; }
 
+	inline void SetSaveFlg(const ChStd::Bool _flg) { saveFlg = _flg; }
+
 public:
+
+	void SaveCPUData(const std::string& _fileName);
 
 	void LoadCPUData(const std::string& _fileName);
 
 private:
 
+	void SelectRunFunction(CPUObjectLooker& _looker);
+
+	void RunUpdate();
+
+private:
+
+	class CPUFunctionBase;
+
 	std::vector<ChPtr::Shared<CPUFunctionBase>>cpuFunctions;
-	ChPtr::Weak<CPUFunctionBase>action;
+
+	ChPtr::Shared<CPUFunctionBase>action;
 
 	unsigned long actionMoveTime = 100;
 	unsigned long nowActionMoveTime = actionMoveTime;
 
+	ChVec3 lastPos = ChVec3();
+
 	std::vector<ChPtr::Shared<ChVec3>>voicePos;
+
+	ChStd::Bool saveFlg = false;
 
 	GameFrame* frame = nullptr;
 	BaseMecha* target = nullptr;
