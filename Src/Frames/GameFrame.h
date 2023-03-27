@@ -82,6 +82,8 @@ public:
 
 private:
 
+	unsigned long GettargetNum(std::vector<std::string>& _args);
+
 	void UpdateFunction();
 
 	void DrawFunction();
@@ -109,7 +111,7 @@ private:
 	ChStd::Bool startFlg = false;
 	
 	ChCpp::ObjectList mechaList;
-	std::map<unsigned char, unsigned long>mechaPartyCounter;
+	std::map<unsigned long, unsigned long>mechaPartyCounter;
 	unsigned char playerParty = 0;
 	unsigned long mechaView = 0;
 	ChCpp::ObjectList bulletList;

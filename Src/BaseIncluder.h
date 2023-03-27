@@ -30,7 +30,29 @@
 #define CPU_DIRECTORY(current_path) TARGET_DIRECTORY("CPUCharactor/" current_path) 
 #endif
 
+#ifndef GAME_WINDOW_WITDH
+#define GAME_WINDOW_WITDH 1280.0f
+#endif
 
+#ifndef GAME_WINDOW_HEIGHT
+#define GAME_WINDOW_HEIGHT 720.0f
+#endif
+
+#ifndef GAME_WINDOW_WITDH_LONG
+#define GAME_WINDOW_WITDH_LONG static_cast<unsigned long>(GAME_WINDOW_WITDH)
+#endif
+
+#ifndef GAME_WINDOW_HEIGHT_LONG
+#define GAME_WINDOW_HEIGHT_LONG static_cast<unsigned long>(GAME_WINDOW_HEIGHT)
+#endif
+
+#ifndef GAME_PROJECTION_NEAR
+#define GAME_PROJECTION_NEAR 0.1f
+#endif
+
+#ifndef GAME_PROJECTION_FAR
+#define GAME_PROJECTION_FAR 10000.0f
+#endif
 
 enum class FrameNo :unsigned long
 {

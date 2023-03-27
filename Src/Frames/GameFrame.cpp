@@ -48,6 +48,7 @@ void GameFrame::Init()
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
+	PhysicsMachine::SetBaseSpeed(1);
 	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
 	PhysicsMachine::SetAirRegist(0.1f);
 
@@ -71,7 +72,7 @@ void GameFrame::Init()
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
 
-	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
+	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 	smokeEffectList->SetMaxColorPower(0.8f);
 	smokeEffectList->SetMinColorPower(0.6f);
@@ -86,15 +87,12 @@ void GameFrame::Init()
 	{
 		ChMat_11 proMat;
 		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
-		
+
 		projectionMat = proMat;
-		
+
 		meshDrawer.drawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
 		smokeEffectList->SetProjectionMatrix(proMat);
-
-		//projectionMat = CPUObjectLooker::SetProjectionMatrix(windSize.w, windSize.h, ChMath::ToRadian(60.0f), 0.1f, 10000.0f);
-
 	}
 
 	LoadStage();
@@ -106,11 +104,11 @@ void GameFrame::Init()
 
 	enemyMarker.CreateRenderTarget(
 		ChD3D11::D3D11Device(),
-		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
+		GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 	baseMarker.CreateRenderTarget(
 		ChD3D11::D3D11Device(),
-		GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT);
+		GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 
 }
@@ -121,24 +119,24 @@ void GameFrame::InitScriptFunction()
 
 	script->SetFunction("LoadBGM", [&](const std::string& _text) {
 		AddBGM(_text);
-	});
+		});
 
 	script->SetFunction("Play", [&](const std::string& _text) {
 		auto argment = ChStr::Split(_text, " ");
 
-		if(nowPlayAudio != "")audios[nowPlayAudio]->Stop();
+	if (nowPlayAudio != "")audios[nowPlayAudio]->Stop();
 
-		nowPlayAudio = argment[0];
-		audios[nowPlayAudio]->Play();
-	});
+	nowPlayAudio = argment[0];
+	audios[nowPlayAudio]->Play();
+		});
 
 	script->SetFunction("Stop", [&](const std::string& _text) {
 		audios[nowPlayAudio]->Stop();
-	});
+		});
 
 	script->SetFunction("Pause", [&](const std::string& _text) {
 		audios[nowPlayAudio]->Pause();
-	});
+		});
 
 	script->SetFunction("LoadMap", [&](const std::string& _text) {AddField(_text); });
 
@@ -156,86 +154,78 @@ void GameFrame::InitScriptFunction()
 			script->SetPosToLoopStart(_text);
 		});
 
-
-	script->SetFunction("SkipIfMany", [&](const std::string& _text)
+	//target < inputNum//
+	script->SetFunction("SkipIfGreater", [&](const std::string& _text)
 		{
 			auto args = ChStr::Split(_text, " ");
 
 			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			if (skip <= 0)skip = 1;
 			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
-			unsigned long targetNum = 0xffffffff;
-
-			for (unsigned long i = 2; i < args.size(); i++)
-			{
-				if (args[i] == "-p" || args[i] == "--party")
-				{
-					i++;
-					targetNum += mechaPartyCounter[ChStr::GetIntegialFromText<unsigned char>(args[i])];
-					continue;
-				}
-				if (args[i] == "-e" || args[i] == "--enemyAll")
-				{
-					for (auto count : mechaPartyCounter)
-					{
-						if (playerParty == count.first)continue;
-						targetNum += count.second;
-					}
-					continue;
-				}
-				if (args[i] == "-m" || args[i] == "--memberAll")
-				{
-					targetNum = mechaPartyCounter[playerParty];
-					continue;
-				}
-			}
+			unsigned long targetNum = GettargetNum(args);
 			if (targetNum >= base)return;
 
 			script->SetNowScriptCount(script->GetScriptCount() + skip);
 		});
 
-	script->SetFunction("SkipIfFew", [&](const std::string& _text)
+
+	//target <= inputNum//
+	script->SetFunction("SkipIfMore", [&](const std::string& _text)
 		{
 			auto args = ChStr::Split(_text, " ");
 			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			if (skip <= 0)skip = 1;
 			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
-			unsigned long targetNum = 0;
+			unsigned long targetNum = GettargetNum(args);
 
-			for (unsigned long i = 2; i < args.size(); i++)
-			{
-				if (args[i] == "-e" || args[i] == "--enemyAll")
-				{
-					for (auto count : mechaPartyCounter)
-					{
-						if (playerParty == count.first)continue;
-						targetNum += count.second;
-					}
-					continue;
-				}
-				if (args[i] == "-p" || args[i] == "--party" || args[i] == "-t" || args[i] == "--teamNo")
-				{
-					i++;
-					unsigned char no = ChStr::GetIntegialFromText<unsigned char>(args[i]);
-					
-					auto&& it = mechaPartyCounter.find(no);
+			if (targetNum > base)return;
 
-					if (it == mechaPartyCounter.end())
-					{
-						continue;
-					}
+			script->SetNowScriptCount(script->GetScriptCount() + skip);
+		});
 
-					targetNum = it->second;
-					continue;
-				}
-				if (args[i] == "-m" || args[i] == "--memberAll")
-				{
-					targetNum = mechaPartyCounter[playerParty];
-					continue;
-				}
-			}
+	//target == inputNum//
+	script->SetFunction("SkipIfEqual", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text, " ");
+			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			if (skip <= 0)skip = 1;
+			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long targetNum = GettargetNum(args);
+
+			if (targetNum != base)return;
+
+			script->SetNowScriptCount(script->GetScriptCount() + skip);
+		});
+
+	//target >= inputNum//
+	script->SetFunction("SkipIfLess", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text, " ");
+			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			if (skip <= 0)skip = 1;
+			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long targetNum = GettargetNum(args);
+
+			if (targetNum < base)return;
+
+			script->SetNowScriptCount(script->GetScriptCount() + skip);
+		});
+
+	//target > inputNum//
+	script->SetFunction("SkipIfSmaller", [&](const std::string& _text)
+		{
+			auto args = ChStr::Split(_text, " ");
+			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			if (skip <= 0)skip = 1;
+			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long targetNum = GettargetNum(args);
+
 			if (targetNum <= base)return;
 
 			script->SetNowScriptCount(script->GetScriptCount() + skip);
 		});
+
+
 }
 
 void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
@@ -271,14 +261,21 @@ void GameFrame::LoadStage()
 	auto playerData = BaseFrame::GetData<PlayerData>();
 
 	std::string stageScript = "";
-	
+
 	{
 		ChCpp::File<char> file;
-		file.FileOpen(STAGE_DIRECTORY( + playerData->stageName));
+		file.FileOpen(STAGE_DIRECTORY(+playerData->stageName));
 
 		stageScript = file.FileReadText();
 
 		file.FileClose();
+	}
+
+	if (stageScript.empty())
+	{
+		auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+		windows->Release();
+		return;
 	}
 
 	script->CreateAllScript(stageScript);
@@ -343,7 +340,7 @@ void GameFrame::Update()
 		std::to_string(bulletList.GetObjectCount()) +
 		"\r\n" +
 		"CPULookRobot:" +
-		(lookTarget.expired() ? "None" : lookTarget.lock()->GetMyName())
+		(lookTarget == nullptr ? "None" : lookTarget->otherMecha.expired() ? "None" : lookTarget->otherMecha.lock()->GetMyName())
 	);
 
 	DrawFunction();
@@ -399,7 +396,7 @@ void GameFrame::UpdateFunction()
 		light.SetCamPos(viewMat.GetPosition());
 		ChD3D::XAudioManager().InitMatrix(ChLMat());
 		//ChD3D::XAudioManager().InitMatrix(viewMat);
-		
+
 		ChVec3 dir = ChVec3(0.25f, -0.5f, 0.25f);
 		dir.Normalize();
 		light.SetLightDir(dir);
@@ -441,7 +438,7 @@ void GameFrame::Render3D(void)
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
 		auto mapModel = weakMapModel.lock();
-		meshDrawer.drawer.Draw(meshDrawer.dc,*mapModel->model, (ChMat_11)mapModel->mat);
+		meshDrawer.drawer.Draw(meshDrawer.dc, *mapModel->model, (ChMat_11)mapModel->mat);
 	}
 
 	mechaList.ObjectDraw3D();
@@ -471,6 +468,9 @@ void GameFrame::AddMecha(const std::string& _text)
 	ChStd::Bool playerFlg = false;
 	ChStd::Bool cpuFlg = false;
 
+	ChVec3 position;
+	ChVec3 rotation;
+
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
 		if (argment[i] == "-u" || argment[i] == "--username")
@@ -482,18 +482,64 @@ void GameFrame::AddMecha(const std::string& _text)
 		if (argment[i] == "-p" || argment[i] == "--position")
 		{
 			i++;
-			ChVec3 position;
 			position.Deserialize(argment[i], 0, ",", ";");
-			mecha->SetPosition(position);
 			continue;
 		}
 		if (argment[i] == "-r" || argment[i] == "--rotation")
 		{
 			i++;
-			ChVec3 rotation;
 			rotation.Deserialize(argment[i], 0, ",", ";");
-			mecha->SetRotation(rotation);
 			continue;
+		}
+		if (argment[i] == "-rp" || argment[i] == "--randomposition")
+		{
+
+			i++;
+			ChVec3 min;
+			if (argment[i][0] == 'm' && argment[i][1] == 'i' && argment[i][2] == 'n')
+			{
+				min.Deserialize(argment[i], 3, ",", ";");
+			}
+
+			i++;
+			ChVec3 max;
+			if (argment[i][0] == 'm' && argment[i][1] == 'a' && argment[i][2] == 'x')
+			{
+				max.Deserialize(argment[i], 3, ",", ";");
+			}
+
+
+			ChVec3 random;
+			random.x = GameScript::GetRand(min.x, max.x);
+			random.y = GameScript::GetRand(min.y, max.y);
+			random.z = GameScript::GetRand(min.z, max.z);
+			position += random;
+			continue;
+		}
+		if (argment[i] == "-rr" || argment[i] == "--randomrotation")
+		{
+
+			i++;
+			ChVec3 min;
+			if (argment[i][0] == 'm' && argment[i][1] == 'i' && argment[i][2] == 'n')
+			{
+				min.Deserialize(argment[i], 3, ",", ";");
+			}
+
+			i++;
+			ChVec3 max;
+			if (argment[i][0] == 'm' && argment[i][1] == 'a' && argment[i][2] == 'x')
+			{
+				max.Deserialize(argment[i], 3, ",", ";");
+			}
+
+			ChVec3 random;
+			random.x = GameScript::GetRand(min.x, max.x);
+			random.y = GameScript::GetRand(min.y, max.y);
+			random.z = GameScript::GetRand(min.z, max.z);
+			rotation += random;
+			continue;
+
 		}
 		if (argment[i] == "-pc" || argment[i] == "--playercontroller")
 		{
@@ -530,6 +576,8 @@ void GameFrame::AddMecha(const std::string& _text)
 		}
 	}
 
+	mecha->SetPosition(position);
+	mecha->SetRotation(rotation);
 	mecha->SetTeamNo(teamNo);
 
 	auto&& counter = mechaPartyCounter.find(teamNo);
@@ -538,7 +586,7 @@ void GameFrame::AddMecha(const std::string& _text)
 		mechaPartyCounter[teamNo] = 0;
 	}
 
-	if (playerFlg) 
+	if (playerFlg)
 	{
 		playerParty = teamNo;
 	}
@@ -556,11 +604,11 @@ void GameFrame::AddField(const std::string& _text)
 	unsigned long pos = argment[0].find_last_of(".");
 	if (argment[0].substr(pos) == ".x") {
 		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+ argment[0]));
+		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
 	}
 	else if (argment[0].substr(pos) == ".obj") {
 		ChCpp::ModelLoader::ObjFile loader;
-		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+ argment[0]));
+		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
 	}
 	else
 	{
@@ -570,7 +618,7 @@ void GameFrame::AddField(const std::string& _text)
 
 	ChStd::Bool hitMapFlg = false;
 
-	ChVec3 position,rotation,scalling;
+	ChVec3 position, rotation, scalling;
 
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
@@ -685,7 +733,7 @@ void GameFrame::AddBGM(const std::string& _text)
 		if (argment[i] == "-le" || argment[i] == "--loopend")
 		{
 			i++;
-			float end = ChStr::GetFloatingFromText<float>(argment[i]);
+			unsigned long end = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
 			audio->SetLoopEndPos(end);
 			continue;
 		}
@@ -724,7 +772,7 @@ void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVect
 
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow)
 {
-	smokeEffectList->AddSmokeEffect(_pos,_moveVector, _initDispersalpower, _initAlphaPow);
+	smokeEffectList->AddSmokeEffect(_pos, _moveVector, _initDispersalpower, _initAlphaPow);
 }
 
 std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix)
@@ -789,6 +837,48 @@ void GameFrame::Render2D(void)
 
 void GameFrame::CamUpdate(void)
 {
+
+}
+
+unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
+{
+
+	unsigned long targetNum = 0;
+
+	for (unsigned long i = 2; i < _args.size(); i++)
+	{
+		if (_args[i] == "-e" || _args[i] == "--enemyAll")
+		{
+			for (auto count : mechaPartyCounter)
+			{
+				if (playerParty == count.first)continue;
+				targetNum += count.second;
+			}
+			continue;
+		}
+		if (_args[i] == "-p" || _args[i] == "--party" || _args[i] == "-t" || _args[i] == "--teamNo")
+		{
+			i++;
+			unsigned char no = ChStr::GetIntegialFromText<unsigned char>(_args[i]);
+
+			auto&& it = mechaPartyCounter.find(no);
+
+			if (it == mechaPartyCounter.end())
+			{
+				continue;
+			}
+
+			targetNum = it->second;
+			continue;
+		}
+		if (_args[i] == "-m" || _args[i] == "--memberAll")
+		{
+			targetNum = mechaPartyCounter[playerParty];
+			continue;
+		}
+	}
+
+	return targetNum;
 
 }
 

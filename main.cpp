@@ -52,9 +52,9 @@ int WINAPI WinMain(
 		msg.AddDisplayButtonType(ChWin::MsgBox::DisplayButtonType::YesNo);
 		bool fullScreenFlg = msg.Display(system.GethWnd(), "全画面確認", "全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
 
-		ChD3D11::D3D11API().Init(system.GethWnd(), fullScreenFlg, s_screen.w, s_screen.h);
+		ChD3D11::D3D11API().Init(system.GethWnd(), fullScreenFlg, GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
-		ChD3D11::Shader11().Init(ChD3D11::D3D11API(), s_screen.w, s_screen.h);
+		ChD3D11::Shader11().Init(ChD3D11::D3D11API(), GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 		ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -62,12 +62,17 @@ int WINAPI WinMain(
 
 	}
 
-	//Test::Init();
-
 	ChCpp::FrameList frameList;
+
+	PlayerData testData;
+
+	testData.stageName = "stage1.chs";
+
+	frameList.SaveData(&testData);
 
 	//frameList.SetFrame<TitleFrame>();
 	frameList.SetFrame<GameFrame>();
+	auto gameFrame = frameList.GetNowFrame<GameFrame>();
 
 	// ゲームに関する初期化処理 ---------------------------
 

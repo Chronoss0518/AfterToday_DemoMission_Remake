@@ -213,8 +213,9 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 						normal = pos[frameList[i][j]];
 					}
 					normal = normal - position;
-					normal /= normal.z;
-					float length = (GAME_PROJECTION_NEAR + 0.01f) - position.z;
+					z = normal.z;
+					normal /= z;
+					float length = (GAME_PROJECTION_NEAR + (GAME_PROJECTION_NEAR * 0.01f)) - position.z;
 					normal *= length;
 					position += normal;
 					position.w = 1.0f;
@@ -275,10 +276,10 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 
 			if (mathSquare->square.GetCount() <= 0)continue;
 
+			mathSquare->objectName = anchorObj->objectName;
 			res.push_back(mathSquare);
 		}
 	}
-
 
 	return res;
 
@@ -376,6 +377,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 
 			if (mathSquare->square.GetCount() <= 0)continue;
 
+
 			res.push_back(mathSquare);
 		}
 	}
@@ -438,12 +440,13 @@ void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat
 		lookAnchor->anchors.push_back(anchorPos);
 	}
 
+	lookAnchor->objectName = _frame.GetMyName();
 	positionList.push_back(lookAnchor);
 
 }
 
 
-ChPtr::Weak<BaseMecha>& CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
+ChPtr::Shared<CPUObjectLooker::UseSquareValues>& CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
 {
 	return lookMechaTypes[ChStd::EnumCast(_member)][ChStd::EnumCast(_distance)][ChStd::EnumCast(_damageSize)];
 }
@@ -469,13 +472,21 @@ void CPUObjectLooker::Init()
 
 	spriteDrawer.SetAlphaBlendFlg(true);
 
-	ChVec4 tmp = ChVec4(1.0f, 1.0f, 0.0f, 0.1f);
+	ChVec4 tmp = ChVec4(0.0f, 1.0f, 0.0f, 0.2f);
 
 	mechaTexture.CreateColorTexture(&tmp, 1, 1);
 
-	tmp = ChVec4(0.0f, 1.0f, 1.0f, 0.1f);
+	tmp = ChVec4(1.0f, 0.0f, 0.0f, 0.2f);
+	mapTexture_Cube.CreateColorTexture(&tmp, 1, 1);
 
-	mapTexture.CreateColorTexture(&tmp, 1, 1);
+	tmp = ChVec4(1.0f, 1.0f, 0.0f, 0.2f);
+	mapTexture_Cube_001.CreateColorTexture(&tmp, 1, 1);
+
+	tmp = ChVec4(1.0f, 0.0f, 1.0f, 0.2f);
+	mapTexture_Cube_002.CreateColorTexture(&tmp, 1, 1);
+
+	tmp = ChVec4(0.0f, 1.0f, 1.0f, 0.2f);
+	mapTexture_Plane_002.CreateColorTexture(&tmp, 1, 1);
 
 	//drawPosition.SetSize(ChVec2(0.2f, 0.2f));
 	drawPosition.SetSize(ChVec2(1.0f, 1.0f));
@@ -490,6 +501,8 @@ void CPUObjectLooker::Init()
 
 void CPUObjectLooker::Draw2D()
 {
+
+	return;
 
 	auto dc = ChD3D11::D3D11DC();
 
@@ -517,7 +530,14 @@ void CPUObjectLooker::Draw2D()
 			sprite.SetPos(ChD3D11::SpritePositionName::RightDown, ChVec2(square->right, square->bottom));
 			sprite.SetPos(ChD3D11::SpritePositionName::LeftDown, ChVec2(square->left, square->bottom));
 
-			spriteDrawer.Draw(dc, mapTexture, sprite);
+			ChD3D11::TextureBase11* base = &mapTexture_Cube;
+
+			if (map->objectName == "Cube")base = &mapTexture_Cube;
+			if (map->objectName == "Cube_001")base = &mapTexture_Cube_001;
+			if (map->objectName == "Cube_002")base = &mapTexture_Cube_002;
+			if (map->objectName == "Plane_002")base = &mapTexture_Plane_002;
+
+			spriteDrawer.Draw(dc, *base, sprite);
 
 		}
 	}
@@ -718,8 +738,8 @@ void CPUObjectLooker::FindMecha()
 
 		ChVec3 targetPos = otherMechaObject->GetPosition();
 
-		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], mechaSquare->otherMecha);
-		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], mechaSquare->otherMecha);
+		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], mechaSquare);
+		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], mechaSquare);
 		
 		float tmpLength = ChVec3::GetLen(targetPos, mecha->GetPosition());
 
@@ -727,9 +747,9 @@ void CPUObjectLooker::FindMecha()
 		{
 			nearLength = nearLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = mechaSquare->otherMecha;
-			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Many)], mechaSquare->otherMecha);
-			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Few)], mechaSquare->otherMecha);
+			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = mechaSquare;
+			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Many)], mechaSquare);
+			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Few)], mechaSquare);
 
 		}
 
@@ -737,9 +757,9 @@ void CPUObjectLooker::FindMecha()
 		{
 			farLength = nearLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = mechaSquare->otherMecha;
-			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Many)], mechaSquare->otherMecha);
-			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Few)], mechaSquare->otherMecha);
+			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = mechaSquare;
+			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Many)], mechaSquare);
+			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Few)], mechaSquare);
 
 		}
 
@@ -748,12 +768,20 @@ void CPUObjectLooker::FindMecha()
 	}
 }
 
-void CPUObjectLooker::MenyDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target)
+void CPUObjectLooker::MenyDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target)
 {
-	auto target = _target.lock();
+	if (_target == nullptr)return;
+
+	auto target = _target->otherMecha.lock();
 	if (target == nullptr)return;
 
-	auto base = _base.lock();
+	if (_base == nullptr)
+	{
+		_base = _target;
+		return;
+	}
+
+	auto base = _base->otherMecha.lock();
 	if (base == nullptr)
 	{
 		_base = _target;
@@ -761,16 +789,24 @@ void CPUObjectLooker::MenyDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<
 	}
 
 	if (base->GetDamage() >= target->GetDamage())return;
-	_base.reset();
+	_base = nullptr;
 	_base = _target;
 }
 
-void CPUObjectLooker::FewDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target)
+void CPUObjectLooker::FewDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target)
 {
-	auto target = _target.lock();
+	if (_target == nullptr)return;
+
+	auto target = _target->otherMecha.lock();
 	if (target == nullptr)return;
 
-	auto base = _base.lock();
+	if (_base == nullptr)
+	{
+		_base = _target;
+		return;
+	}
+
+	auto base = _base->otherMecha.lock();
 	if (base == nullptr)
 	{
 		_base = _target;
@@ -778,6 +814,6 @@ void CPUObjectLooker::FewDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<B
 	}
 
 	if (base->GetDamage() <= target->GetDamage())return;
-	_base.reset();
+	_base = nullptr;
 	_base = _target;
 }

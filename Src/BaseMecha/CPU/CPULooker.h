@@ -7,6 +7,7 @@ struct LookSquareValue
 {
 	ChCpp::MathSquare square = ChCpp::MathSquare();
 	float distance = (10e+37f) * -1.0f;
+	std::string objectName = "";
 };
 
 class LookAnchor : public ChCpp::BaseComponent
@@ -59,6 +60,7 @@ public:
 	{
 		std::vector<ChPtr::Shared<MapLookAnchorPosition>> anchors;
 		ChLMat drawMatrix = ChLMat();
+		std::string objectName = "";
 	};
 
 
@@ -91,6 +93,13 @@ private:
 class CPUObjectLooker:public ChCpp::BaseComponent
 {
 public:
+
+	struct UseSquareValues
+	{
+		std::vector<ChPtr::Shared<LookSquareValue>> values;
+		ChPtr::Weak<BaseMecha> otherMecha;
+		float nearDistance = 1e+38f;
+	};
 
 	enum class MemberType : unsigned char
 	{
@@ -137,8 +146,6 @@ public:
 
 	inline void SetProjectionMatrix(const ChLMat& _mat) { projectionMatrix = _mat; }
 
-	static ChLMat SetProjectionMatrix(const float _w, const float _h, const float _radian, const float _near, const float _far);
-
 	inline void UpdateCount(const unsigned long _updateCount) { updateCount = _updateCount; }
 
 public:
@@ -147,22 +154,14 @@ public:
 
 public:
 
-	ChPtr::Weak<BaseMecha>& GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
+	ChPtr::Shared<CPUObjectLooker::UseSquareValues>& GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
 
 private:
-
-	struct UseSquareValues
-	{
-		std::vector<ChPtr::Shared<LookSquareValue>> values;
-		ChPtr::Weak<BaseMecha> otherMecha;
-		float nearDistance = 1e+38f;
-	};
-
 	void FindMecha();
 
-	void MenyDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target);
+	void MenyDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target);
 
-	void FewDamageTest(ChPtr::Weak<BaseMecha>& _base, ChPtr::Weak<BaseMecha>& _target);
+	void FewDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target);
 
 	GameFrame* frame = nullptr;
 	ChLMat projectionMatrix;
@@ -175,14 +174,16 @@ private:
 	unsigned long updateCount = 1;
 	unsigned long nowUpdateCount = 0;
 
-	ChPtr::Weak<BaseMecha> lookMechaTypes[MEMBER_TYPE_COUNT][DISTANCE_TYPE_COUNT][DAMAGE_SIZE_TYPE_COUNT];
-
+	ChPtr::Shared<UseSquareValues> lookMechaTypes[MEMBER_TYPE_COUNT][DISTANCE_TYPE_COUNT][DAMAGE_SIZE_TYPE_COUNT];
+	
 	std::vector<ChPtr::Shared<UseSquareValues>>lookMecas;
 	std::vector<ChPtr::Shared<LookSquareValue>>lookMaps;
-
 	ChD3D11::Texture11 mechaTexture;
 
-	ChD3D11::Texture11 mapTexture;
+	ChD3D11::Texture11 mapTexture_Cube;
+	ChD3D11::Texture11 mapTexture_Cube_001;
+	ChD3D11::Texture11 mapTexture_Cube_002;
+	ChD3D11::Texture11 mapTexture_Plane_002;
 
 	ChD3D11::ShaderParts::ViewPort drawPosition;
 
