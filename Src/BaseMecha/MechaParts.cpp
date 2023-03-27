@@ -88,16 +88,9 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		defaultFrameMat = model->GetFrameTransformLMat();
 		if (thisFileName.find("Foot/") != thisFileName.find("Body/"))
 		{
-			for (auto&& child : model->GetAllChildlen<ChCpp::FrameObject>())
+			auto test = model->GetInitAllFrameMinPos().y;
+			if (groundHeight > test)
 			{
-				auto childObj = child.lock();
-				if (childObj == nullptr)continue;
-				auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
-				if (frameCom == nullptr)continue;
-
-				childObj->UpdateAllDrawTransform();
-				float test = childObj->GetDrawLHandMatrix().Transform(frameCom->minPos).y;
-				if (groundHeight < test)continue;
 				groundHeight = test;
 			}
 		}

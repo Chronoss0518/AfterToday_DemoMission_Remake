@@ -172,7 +172,6 @@ void GunFunction::AttackFunction()
 			rangeMat.SetRotation(tmp);
 
 			tmpMat = rangeMat * tmpMat;
-
 		}
 
 		auto bullet = ChPtr::Make_S<BulletObject>();
@@ -204,7 +203,7 @@ void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
 
 	reloadFlg = false;
 
-	createBulletData = BulletData::CreateBullet(_drawer, _device, gunData->GetUseBulletFile());
+	createBulletData = Bullet::CreateBullet(_drawer, _device, gunData->GetUseBulletFile());
 
 	ChD3D::XAudioManager().LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
 

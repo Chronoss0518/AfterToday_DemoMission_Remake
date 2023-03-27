@@ -8,7 +8,7 @@ class WeaponData;
 class SwordData;
 class GunData;
 
-class BulletData;
+class Bullet;
 struct PositionObject;
 
 class MechaPartsObject
@@ -44,6 +44,8 @@ public:
 
 	void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
+	void SetLookAnchorNo(const unsigned long _no) { lookAnchorNo = _no; }
+
 public:
 
 	MechaParts* GetBaseObject() { return baseParts; }
@@ -67,6 +69,8 @@ public:
 	float GetDamage(ChCpp::SphereCollider& _sphereCollider, BulletObject& _bullet);
 
 	float GetDamage(ChCpp::BoxCollider& _collider);
+
+	unsigned long GetLookAnchorNo() { return lookAnchorNo; }
 
 public:
 
@@ -117,6 +121,8 @@ private:
 	unsigned char partsPosName = -1;
 	unsigned long partsPosNo = 0;
 	ChCpp::BitBool weaponType;
+
+	unsigned long lookAnchorNo = 0xffffffff;
 
 	BaseMecha* mecha = nullptr;
 };
@@ -235,7 +241,7 @@ private:
 
 	ChPtr::Shared<ChCpp::FrameObject>shotPos = nullptr;
 
-	ChPtr::Shared<BulletData>createBulletData = nullptr;
+	ChPtr::Shared<Bullet>createBulletData = nullptr;
 
 	ChLMat lastShotPos;
 
