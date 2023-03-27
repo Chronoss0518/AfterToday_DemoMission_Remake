@@ -31,10 +31,28 @@ void GameScript::SetPosToLoopStart(const std::string& _name)
 	nowScriptCount = loopPos->second;
 }
 
+long GameScript::GetRand(long _min, long _max)
+{
+	if (_min >= _max)return 0;
+	return (rand() % (_max - _min)) + _min;
+}
+
+float GameScript::GetRand(float _min, float _max)
+{
+	unsigned char decimalPoint = DecimalPoint();
+	long min = static_cast<long>(_min * decimalPoint);
+	long max = static_cast<long>(_max * decimalPoint);
+
+	float res = static_cast<float>(GetRand(min, max));
+
+	res *= static_cast<float>(decimalPoint);
+	return res;
+}
+
 void GameScript::UpdateScript()
 {
 	if (IsStop())return;
-
+	
 	std::string script = "";
 
 	do{

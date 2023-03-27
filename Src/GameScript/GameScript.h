@@ -22,9 +22,17 @@ public:
 
 	void SetPosToLoopStart(const std::string& _name);
 
+	static void SetDecimalPoint(const unsigned char _size) { if(_size < 37)DecimalPoint() = _size; }
+
 	ChCpp::TextObject GetScripts() { return scripts; }
 
 	unsigned long GetScriptCount() { return nowScriptCount; }
+
+	static long GetRand(long _min = 1, long _max = 0xffffffff);
+
+	static float GetRand(float _min = 1, float _max = 10E+37);
+
+	static unsigned char GetDecimalPoint() { return DecimalPoint(); }
 
 	void UpdateScript();
 
@@ -32,9 +40,16 @@ public:
 
 private:
 
+	//¬”“_ˆÈ‰º‚Ì
+	static unsigned char& DecimalPoint()
+	{
+		static unsigned char ins = 1;
+		return ins;
+	}
+
 	unsigned long nowScriptCount = 0;
 	std::map<std::string, unsigned long>loopPosList;
-	
+
 	ChCpp::TextObject scripts;
 
 	std::map<std::string, std::function<void(const std::string&)>>scriptFunctions;
