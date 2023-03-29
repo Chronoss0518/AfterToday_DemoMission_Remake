@@ -149,15 +149,18 @@ public:
 	inline void UpdateCount(const unsigned long _updateCount) { updateCount = _updateCount; }
 
 public:
+
+	ChPtr::Shared<CPUObjectLooker::UseSquareValues>& GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
+
+public:
 	
 	ChStd::Bool IsEndUpdate() { return updateFlg == 0; }
 
 public:
 
-	ChPtr::Shared<CPUObjectLooker::UseSquareValues>& GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
+	void FindMecha();
 
 private:
-	void FindMecha();
 
 	void MenyDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target);
 
@@ -166,10 +169,6 @@ private:
 	GameFrame* frame = nullptr;
 	ChLMat projectionMatrix;
 	ChLMat viewMatrix;
-
-	ChCpp::MultiThread thread;
-	ChStd::Bool endFlg = false;
-	ChStd::Bool updateFlg = false;
 
 	unsigned long updateCount = 1;
 	unsigned long nowUpdateCount = 0;
