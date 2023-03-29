@@ -448,6 +448,8 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 	
 	Break();
 
+	Release();
+
 	breakFlg = true;
 }
 
