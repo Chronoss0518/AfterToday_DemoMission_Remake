@@ -22,7 +22,7 @@ public:
 
 public:
 
-	ChStd::Bool IsUpdateFlg() { return updateFlg; }
+	bool IsUpdateFlg() { return updateFlg; }
 
 public:
 
@@ -34,8 +34,8 @@ public:
 
 private:
 
-	ChStd::Bool gameEndFlg = false;
-	ChStd::Bool updateFlg = false;
+	bool gameEndFlg = false;
+	bool updateFlg = false;
 	ChCpp::MultiThread updater;
 	ChPtr::Shared<EffectObjectShader> effectShader = nullptr;
 	unsigned long nowCount = 0;

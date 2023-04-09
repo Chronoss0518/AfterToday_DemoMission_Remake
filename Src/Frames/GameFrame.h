@@ -122,7 +122,7 @@ private:
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	ChPtr::Shared<ChD3D11::Texture11>baseMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 
-	ChStd::Bool gameEndFlg = false;
+	bool gameEndFlg = false;
 
 	ChLMat projectionMat;
 

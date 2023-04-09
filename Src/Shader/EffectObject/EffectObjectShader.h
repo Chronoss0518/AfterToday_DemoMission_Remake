@@ -99,20 +99,20 @@ protected:
 
 private:
 
-	ChStd::Bool rasterizerUpdateFlg = true;;
-	ChStd::Bool alphaBlendTestFlg = false;
-	ChStd::Bool useDepthStencilTestFlg = true;
-	ChStd::Bool vbUpdateFlg = true;
+	bool rasterizerUpdateFlg = true;;
+	bool alphaBlendTestFlg = false;
+	bool useDepthStencilTestFlg = true;
+	bool vbUpdateFlg = true;
 	std::vector<In_Vertex> effectPosList;
 	ChD3D11::VertexBuffer11<In_Vertex> vb;
 
 	ChPtr::Shared<ChD3D11::TextureBase11> effectTexture = nullptr;
 
-	ChStd::Bool gsUpdateFlg = true;
+	bool gsUpdateFlg = true;
 	GSEffectObjectData gsData;
 	ChD3D11::ConstantBuffer11<GSEffectObjectData>gsBuf;
 
-	ChStd::Bool psUpdateFlg = true;
+	bool psUpdateFlg = true;
 	PSEffectObjectData psData;
 	ChD3D11::ConstantBuffer11<PSEffectObjectData>psBuf;
 
