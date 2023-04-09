@@ -459,12 +459,22 @@ void CPUObjectLooker::Init()
 			while (!endFlg)
 			{
 				if (!updateFlg)continue;
-				
-				FindMecha();
+				try
+				{
+					FindMecha();
+				}
+				catch (std::exception& e)
+				{
+					OutputDebugString(e.what());
+				}
 
 				updateFlg = false;
 			}
 		});
+	
+	endFlg = false;
+	
+	updateFlg = false;
 
 	auto device = ChD3D11::D3D11Device();
 
@@ -607,6 +617,12 @@ void CPUObjectLooker::FindMecha()
 		return;
 	}
 
+	if (mecha->IsBreak())
+	{
+		updateFlg = true;
+		return;
+	}
+
 
 #if !MATH_MATRIX
 	ChLMat vpMatrix = viewMatrix * projectionMatrix;
@@ -622,11 +638,18 @@ void CPUObjectLooker::FindMecha()
 
 	std::vector<ChPtr::Shared<UseSquareValues>> testMechaSquares;
 
-	for (auto&& otherMecha : frame->GetMechaList().GetObjectList<BaseMecha>())
+	auto&& baseMechaList = frame->GetMechaList().GetObjectList<BaseMecha>();
+
+	for (unsigned long i = 0;i< baseMechaList.size() ; i++)
 	{
+		
+		auto&& otherMecha = baseMechaList[i];
+
 		auto otherMechaObject = otherMecha.lock();
 		if (otherMechaObject == nullptr)continue;
 		if (otherMechaObject.get() == mecha)continue;
+		if (otherMechaObject->IsBreak())continue;
+		
 
 		auto&& lookAnchor = otherMechaObject->GetComponent<LookAnchor>();
 
@@ -680,26 +703,44 @@ void CPUObjectLooker::FindMecha()
 		if (controller == nullptr)continue;
 		if (controller->GetTeamNo() == mecha->GetTeamNo()) memberType = ChStd::EnumCast(MemberType::Member);
 
-		bool lookFlg = false;
+		bool lookFlg = true;
 
 		bool isTestFlg = false;
 
-		for (auto&& mechaS : mechaSquare->values)
 		{
-			for (auto&& mapS : mapSquares)
+			unsigned long squareZeroCount = 0;
+
+			for (auto&& mechaS : mechaSquare->values)
 			{
-				if (mechaS->distance < mapS->distance)continue;
-				isTestFlg = true;
-				mechaS->square.Sub(mapS->square);
-				lookFlg = false;
-				if (mechaS->square.GetCount() <= 0)continue;
-				lookFlg = true;
+				if (mechaS->square.GetCount() <= 0)
+				{
+					squareZeroCount++;
+					continue;
+				}
+
+				for (auto&& mapS : mapSquares)
+				{
+					if (mechaS->distance < mapS->distance)continue;
+					isTestFlg = true;
+					mechaS->square.Sub(mapS->square);
+					if (mechaS->square.GetCount() > 0)continue;
+					squareZeroCount++;
+					break;
+				}
+
 			}
+
+			if (squareZeroCount < mechaSquare->values.size())lookFlg = false;
+
 		}
+
 
 		if(!isTestFlg)lookFlg = true;
 
 		if (!lookFlg)continue;
+
+
+#if false
 
 		lookFlg = true;
 
@@ -726,15 +767,16 @@ void CPUObjectLooker::FindMecha()
 					{
 						mechaS->square.Sub(otherMechaS->square);
 
+						if (mechaS->square.GetCount() > 0)continue;
 						lookFlg = false;
-						if (mechaS->square.GetCount() <= 0)continue;
-						lookFlg = true;
 					}
 				}
 			}
 		}
 
 		if (!lookFlg)continue;
+
+#endif
 
 		ChVec3 targetPos = otherMechaObject->GetPosition();
 

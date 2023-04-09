@@ -154,7 +154,7 @@ public:
 
 public:
 	
-	ChStd::Bool IsEndUpdate() { return updateFlg == 0; }
+	bool IsEndUpdate() { return !updateFlg; }
 
 public:
 
@@ -169,6 +169,10 @@ private:
 	GameFrame* frame = nullptr;
 	ChLMat projectionMatrix;
 	ChLMat viewMatrix;
+
+	ChCpp::MultiThread thread;
+	bool endFlg = false;
+	bool updateFlg = false;
 
 	unsigned long updateCount = 1;
 	unsigned long nowUpdateCount = 0;
