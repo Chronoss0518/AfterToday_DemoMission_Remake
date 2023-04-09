@@ -170,6 +170,8 @@ private:
 	ChLMat projectionMatrix;
 	ChLMat viewMatrix;
 
+	ChCpp::HitTestRay ray;
+
 	ChCpp::MultiThread thread;
 	bool endFlg = false;
 	bool updateFlg = false;
