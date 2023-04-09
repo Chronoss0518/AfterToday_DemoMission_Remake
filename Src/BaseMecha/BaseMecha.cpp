@@ -187,7 +187,13 @@ std::string BaseMecha::SavePartsList()
 
 void BaseMecha::Release()
 {
+	for (auto&& parts : mechaParts)
+	{
+		if (parts == nullptr)continue;
+		parts->Release();
+	}
 
+	mechaParts.clear();
 }
 
 void BaseMecha::Update()
@@ -390,6 +396,8 @@ unsigned long BaseMecha::GetTeamNo()
 void BaseMecha::TestBulletHit(BulletObject& _obj)
 {
 	if (_obj.GetBaseMecha() == this)return;
+	if (_obj.IsHit())return;
+	if (IsBreak())return;
 
 	ChVec3 pos = _obj.GetPosition();
 
@@ -447,8 +455,8 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 	if (durable > 0)return;
 	
 	Break();
-
-	Release();
+	
+	Destroy();
 
 	breakFlg = true;
 }

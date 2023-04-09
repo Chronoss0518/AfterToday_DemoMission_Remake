@@ -187,6 +187,10 @@ public://Get Function//
 
 public:
 
+	inline bool IsBreak() { return breakFlg; }
+
+public:
+
 	void TestBulletHit(BulletObject& _obj);
 
 public:
