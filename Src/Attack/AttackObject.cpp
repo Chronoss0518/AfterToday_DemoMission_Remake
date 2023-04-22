@@ -1,34 +1,34 @@
 
 #include"../BaseIncluder.h"
 #include"../Frames/GameFrame.h"
-#include"Bullet.h"
-#include"BulletObject.h"
+#include"Attack.h"
+#include"AttackObject.h"
 #include"../BaseMecha/BaseMecha.h"
 
 #define CREATE_SMOKE_MAX_COUNT 2
 
-void BulletObject::Init(const ChLMat& _startMat)
+void AttackObject::Init(const ChLMat& _startMat)
 {
 	data->InitBulletObject(_startMat ,*this);
 	createSmokeCount = CREATE_SMOKE_MAX_COUNT;
 }
 
-unsigned long BulletObject::GetPenetration()
+unsigned long AttackObject::GetPenetration()
 { 
 	return data->GetPenetration();
 }
 
-float BulletObject::GetHitSize()
+float AttackObject::GetHitSize()
 {
 	return data->GetHitSize();
 }
 
-void BulletObject::Update()
+void AttackObject::Update()
 {
 	data->UpdateBulletObject(*this);
 }
 
-void BulletObject::Move()
+void AttackObject::Move()
 {
 	data->MoveBulletObject(*this);
 
@@ -43,7 +43,7 @@ void BulletObject::Move()
 	nowCreateSmokeCount = (nowCreateSmokeCount + 1) % createSmokeCount;
 }
 
-void BulletObject::Draw3D()
+void AttackObject::Draw3D()
 {
 	ChLMat tmp = ChLMat();
 	tmp.SetScalling(ChVec3(10.0f));

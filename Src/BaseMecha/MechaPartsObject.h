@@ -19,6 +19,10 @@ public:
 
 public:
 
+	void Release();
+
+public:
+
 	void AddWeaponFunction(ChPtr::Shared<WeaponFunction> _weapon)
 	{
 		weaponFunc.push_back(_weapon);
@@ -78,8 +82,6 @@ public:
 
 public:
 
-public:
-
 	virtual void Draw(const ChLMat& _drawMat);
 
 public:
@@ -113,7 +115,7 @@ private:
 	ChVec3 baseRot = ChVec3();
 
 	//パーツの解除フラグ//
-	ChStd::Bool releaseFlg = false;
+	bool releaseFlg = false;
 
 	//パーツの耐久地//
 	float durableValue = 100.0f;
@@ -132,6 +134,8 @@ class WeaponFunction
 public:
 
 	virtual void Init(MeshDrawer* _drawer, ID3D11Device* _device) = 0;
+
+	virtual void Release();
 
 	inline void SetFrmae(GameFrame* _frame) { frame = _frame; }
 
@@ -184,7 +188,7 @@ protected:
 	//次の攻撃可能までの時間//
 	unsigned long nowWeatTime = 0;
 
-	ChStd::Bool attackFlg = false;
+	bool attackFlg = false;
 };
 
 class SwordFunction : public WeaponFunction
@@ -245,7 +249,7 @@ private:
 
 	ChLMat lastShotPos;
 
-	ChStd::Bool reloadFlg = false;
+	bool reloadFlg = false;
 
 	//残りの弾数//
 	unsigned long nowBulletNum = 0;

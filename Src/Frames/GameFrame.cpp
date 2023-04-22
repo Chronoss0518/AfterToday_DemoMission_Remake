@@ -5,7 +5,7 @@
 #include"../AllStruct.h"
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
-#include"../Bullet/BulletObject.h"
+#include"../Attack/AttackObject.h"
 #include"../GameScript/GameScript.h"
 #include"GameFrame.h"
 
@@ -249,7 +249,13 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 
 	auto cpuLookAnchor = _map->SetComponent<MapLookAnchor>();
 	cpuLookAnchor->SetPositionList(*_map->model, _map->mat);
+	
+	auto mapCollider = _map->SetComponent<MapCollider>();
+	mapCollider->GetCollider().SetLeftHandFlg();
+	mapCollider->SetMatrix(_map->mat);
+	mapCollider->SetPolygon(*_map->model);
 
+	hitMapList.push_back(_map);
 	PhysicsMachine::AddField(_map->model, _map->mat);
 	PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
 }
@@ -294,13 +300,13 @@ void GameFrame::LoadScript(const std::string& _text)
 {
 	ChCpp::TextObject text;
 	text.SetText(_text);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 void GameFrame::Release()
 {
+	gameEndFlg = true;
 	shotEffectList->Release();
 	smokeEffectList->Release();
 	mechaList.ClearObject();
@@ -316,6 +322,8 @@ void GameFrame::Update()
 	UpdateFunction();
 
 	script->UpdateScript();
+
+	mechas = mechaList.GetObjectList<BaseMecha>();
 
 #if DEBUG_FLG
 
@@ -340,7 +348,10 @@ void GameFrame::Update()
 		std::to_string(bulletList.GetObjectCount()) +
 		"\r\n" +
 		"CPULookRobot:" +
-		(lookTarget == nullptr ? "None" : lookTarget->otherMecha.expired() ? "None" : lookTarget->otherMecha.lock()->GetMyName())
+		(lookTarget >= mechas.size() ? "None" : mechas[lookTarget].expired() ? "None" : mechas[lookTarget].lock()->GetMyName()) +
+		"\r\n" +
+		"RobotCount:" + 
+		std::to_string(mechaList.GetObjectCount())
 	);
 
 	DrawFunction();
@@ -412,6 +423,8 @@ void GameFrame::UpdateFunction()
 
 void GameFrame::DrawFunction()
 {
+	mechaList.ObjectDrawBegin();
+
 	ChD3D11::Shader11().DrawStart();
 
 	Render3D();
@@ -465,8 +478,8 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	unsigned char teamNo = 0;
 
-	ChStd::Bool playerFlg = false;
-	ChStd::Bool cpuFlg = false;
+	bool playerFlg = false;
+	bool cpuFlg = false;
 
 	ChVec3 position;
 	ChVec3 rotation;
@@ -616,7 +629,7 @@ void GameFrame::AddField(const std::string& _text)
 	}
 	mapList.SetObject(mainMap);
 
-	ChStd::Bool hitMapFlg = false;
+	bool hitMapFlg = false;
 
 	ChVec3 position, rotation, scalling;
 

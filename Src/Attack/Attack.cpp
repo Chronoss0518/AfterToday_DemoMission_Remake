@@ -3,9 +3,9 @@
 #include"../AllStruct.h"
 #include"../Frames/GameFrame.h"
 #include"Attack.h"
-#include"BulletObject.h"
+#include"AttackObject.h"
 
-ChPtr::Shared<Bullet> Bullet::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Bullet> Attack::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
 {
 	auto&& bulletList = LoadBulletList();
 
@@ -44,12 +44,12 @@ ChPtr::Shared<Bullet> Bullet::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _d
 
 }
 
-void Bullet::AllRelease()
+void Attack::AllRelease()
 {
 	LoadBulletList().clear();
 }
 
-void Bullet::Deserialize(ID3D11Device* _device, const std::string& _text)
+void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
 {
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
@@ -81,7 +81,7 @@ void Bullet::Deserialize(ID3D11Device* _device, const std::string& _text)
 
 }
 
-std::string Bullet::Serialize()
+std::string Attack::Serialize()
 {
 	std::string res = std::to_string(bulletType);
 	
@@ -99,31 +99,31 @@ std::string Bullet::Serialize()
 	return res;
 }
 
-void Bullet::CreateBulletData()
+void Attack::CreateBulletData()
 {	
-	if(!(bulletType & (1 << ChStd::EnumCast(BulletType::Bullet))))return;
-	externulFunction[ChStd::EnumCast(BulletType::Bullet)] = ChPtr::Make_S<BulletData>();
+	if(!(bulletType & (1 << ChStd::EnumCast(AttackType::Bullet))))return;
+	externulFunction[ChStd::EnumCast(AttackType::Bullet)] = ChPtr::Make_S<BulletData>();
 }
 
-void Bullet::CrateBoostBulletData()
+void Attack::CrateBoostBulletData()
 {
-	if (!(bulletType & (1 << ChStd::EnumCast(BulletType::BoostBullet))))return;
-	externulFunction[ChStd::EnumCast(BulletType::BoostBullet)] = ChPtr::Make_S<BoostBulletData>();
+	if (!(bulletType & (1 << ChStd::EnumCast(AttackType::BoostBullet))))return;
+	externulFunction[ChStd::EnumCast(AttackType::BoostBullet)] = ChPtr::Make_S<BoostBulletData>();
 }
 
-void Bullet::CreateHighExplosiveBulletData()
+void Attack::CreateHighExplosiveBulletData()
 {
-	if (!(bulletType & (1 << ChStd::EnumCast(BulletType::HighExplosive))))return;
-	externulFunction[ChStd::EnumCast(BulletType::HighExplosive)] = ChPtr::Make_S<HighExplosiveBulletData>();
+	if (!(bulletType & (1 << ChStd::EnumCast(AttackType::HighExplosive))))return;
+	externulFunction[ChStd::EnumCast(AttackType::HighExplosive)] = ChPtr::Make_S<HighExplosiveBulletData>();
 }
 
-void Bullet::CrateMissileData()
+void Attack::CrateMissileData()
 {
-	if (!(bulletType & (1 << ChStd::EnumCast(BulletType::Missile))))return;
-	externulFunction[ChStd::EnumCast(BulletType::Missile)] = ChPtr::Make_S<MissileData>();
+	if (!(bulletType & (1 << ChStd::EnumCast(AttackType::Missile))))return;
+	externulFunction[ChStd::EnumCast(AttackType::Missile)] = ChPtr::Make_S<MissileData>();
 }
 
-void Bullet::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
+void Attack::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 {
 	ChLMat mat = (bullet->GetDrawLHandMatrix() * _startMat);
 
@@ -141,7 +141,7 @@ void Bullet::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 	_bullet.collider.SetScalling(hitSize);
 }
 
-void Bullet::UpdateBulletObject(BulletObject& _bullet)
+void Attack::UpdateBulletObject(BulletObject& _bullet)
 {
 	for (auto&& bulletFunction : externulFunction)
 	{
@@ -151,13 +151,13 @@ void Bullet::UpdateBulletObject(BulletObject& _bullet)
 
 }
 
-void Bullet::MoveBulletObject(BulletObject& _bullet)
+void Attack::MoveBulletObject(BulletObject& _bullet)
 {
 	_bullet.physics->SetPosition(_bullet.physics->GetPosition() + _bullet.physics->GetAddMovePowerVector());
 	_bullet.physics->SetRotation(_bullet.physics->GetRotation() + _bullet.physics->GetAddRotatePowerVector());
 }
 
-void Bullet::Draw(const ChMat_11& _mat)
+void Attack::Draw(const ChMat_11& _mat)
 {
 	if (bullet == nullptr)return;
 	drawer->drawer.Draw(drawer->dc, *bullet, _mat);

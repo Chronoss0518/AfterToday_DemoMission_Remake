@@ -155,8 +155,6 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
-	ChCpp::ObjectList& GetMechaList();
-
 	inline std::vector<ChPtr::Shared<MechaPartsObject>> GetMechaPartsList()
 	{
 		return mechaParts;
@@ -250,7 +248,7 @@ protected:
 	float viewVertical = 0.0f;
 	float maxViewVertical = 85.0f;
 
-	ChStd::Bool breakFlg = false;
+	bool breakFlg = false;
 };
 
 #endif

@@ -2,14 +2,22 @@
 
 #include"../AllStruct.h"
 #include"../Frames/GameFrame.h"
-#include"../Bullet/Bullet.h"
-#include"../Bullet/BulletObject.h"
+#include"../Attack/Attack.h"
+#include"../Attack/AttackObject.h"
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
 
 #define SE_VOLUME_SIZE 0.5f
 
-using PositionObject = PositionObject;
+void MechaPartsObject::Release()
+{
+	for (auto&& function : weaponFunc)
+	{
+		if (function == nullptr)continue;
+		function->Release();
+	}
+
+}
 
 void MechaPartsObject::Update()
 {
@@ -109,6 +117,11 @@ float MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
 	if (!collider.IsHit(&_collider))return 0.0f;
 
 	return 0.0f;
+}
+
+void WeaponFunction::Release()
+{
+	se.Release();
 }
 
 void WeaponFunction::Attack()

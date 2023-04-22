@@ -20,6 +20,31 @@ struct MapObject : public ChCpp::BaseObject
 	ChLMat mat;
 };
 
+class MapCollider :public ChCpp::BaseComponent
+{
+public:
+
+	void SetMatrix(ChLMat& _mat)
+	{
+		collider.SetMatrix(_mat);
+	}
+
+	void SetPolygon(ChCpp::FrameObject& _frame)
+	{
+		collider.SetModel(_frame);
+	}
+
+	ChCpp::PolygonCollider& GetCollider()
+	{
+		return collider;
+	}
+
+private:
+
+	ChCpp::PolygonCollider collider;
+
+};
+
 class GameFrame:public ChCpp::BaseFrame
 {
 public:
@@ -68,9 +93,13 @@ public:
 
 	ChCpp::ObjectList& GetMechaList() { return mechaList; }
 
+	std::vector<ChPtr::Weak<BaseMecha>>& GetMechas() { return mechas; }
+
 	ChCpp::ObjectList& GetBulletList() { return bulletList; }
 
 	ChCpp::ObjectList& GetMapList() { return mapList; }
+
+	const std::vector<ChPtr::Shared<MapObject>>& GetHitMapList() { return hitMapList; }
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
 
@@ -88,12 +117,12 @@ private:
 
 	void DrawFunction();
 
-	ChStd::Bool initFlg = false;
+	bool initFlg = false;
 
 	ChMat_11 viewMat;
 	ChMat_11 proMat;
 
-	enum class DrawEffect:ChStd::DataNo
+	enum class DrawEffect:unsigned short
 	{
 		Effect,Obj
 	};
@@ -103,14 +132,17 @@ private:
 
 	ChCpp::ObjectList mapList;
 
+	std::vector<ChPtr::Shared<MapObject>> hitMapList;
+
 	ChPtr::Shared<ChD3D11::Mesh11> skySphere = ChPtr::Make_S<ChD3D11::Mesh11>();
 
 	std::map<std::string,ChPtr::Shared<ChD3D::AudioObject>>audios;
 	std::string nowPlayAudio = "";
 
-	ChStd::Bool startFlg = false;
+	bool startFlg = false;
 	
 	ChCpp::ObjectList mechaList;
+	std::vector<ChPtr::Weak<BaseMecha>>mechas;
 	std::map<unsigned long, unsigned long>mechaPartyCounter;
 	unsigned char playerParty = 0;
 	unsigned long mechaView = 0;

@@ -44,7 +44,7 @@ public://Set Functions//
 
 	void SetMass(const float _mass) { mass = _mass; }
 
-	ChStd::Bool SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name);
+	bool SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name);
 
 	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
 

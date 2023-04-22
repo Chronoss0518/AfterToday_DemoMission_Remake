@@ -3,7 +3,7 @@
 
 #include"../AllStruct.h"
 
-#include"../Bullet/Bullet.h"
+#include"../Attack/Attack.h"
 #include"MechaParts.h"
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
@@ -11,7 +11,7 @@
 #include"../Physics/PhysicsMachine.h"
 #include"FunctionComponent/WeaponComponents.h"
 #include"FunctionComponent/BoostComponent.h"
-#include"../Bullet/BulletObject.h"
+#include"../Attack/AttackObject.h"
 #include"Controller/ControllerBase.h"
 
 #include"CPU/CPULooker.h"
@@ -350,11 +350,6 @@ void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,
 	_parts.GetBaseObject()->GetMesh().SetFrameTransform(ChLMat());
 }
 
-ChCpp::ObjectList& BaseMecha::GetMechaList()
-{
-	return frame->GetMechaList();
-}
-
 void BaseMecha::AddMoveVector(const ChVec3& _moveVecAdd)
 {
 	physics->AddMovePowerVector(_moveVecAdd);
@@ -426,7 +421,7 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 
 	collider.SetScalling(hitSize);
 
-	ChStd::Bool isHitFlg = false;
+	bool isHitFlg = false;
 
 	for (float nowPos : lenList)
 	{
@@ -456,7 +451,7 @@ void BaseMecha::TestBulletHit(BulletObject& _obj)
 	
 	Break();
 	
-	Destroy();
+	//Destroy();
 
 	breakFlg = true;
 }

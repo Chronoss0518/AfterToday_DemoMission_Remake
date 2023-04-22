@@ -1,26 +1,27 @@
 #pragma once
 
 class BaseMecha;
-class BulletObject;
+class AttackObject;
 
-enum class BulletType :unsigned char
+enum class AttackType :unsigned char
 {
+	Sword,
 	Bullet,
 	BoostBullet,
 	HighExplosive,
 	Missile,
 };
 
-//í èÌíeëSî //
-class Bullet
+//çUåÇëSî //
+class Attack
 {
 public:
 
-	class ExternulBulletFunctionBase
+	class AttackBase
 	{
 	public:
 
-		virtual void UpdateBulletObject(BulletObject& _bullet) = 0;
+		virtual void UpdateBulletObject(AttackObject& _bullet) = 0;
 
 		virtual unsigned long Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text,const unsigned long _nowPos = 0) = 0;
 
@@ -91,7 +92,7 @@ protected:
 	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
 
 	unsigned char bulletType = 0;
-	ChPtr::Shared<ExternulBulletFunctionBase> externulFunction[4] = { nullptr,nullptr,nullptr,nullptr };
+	ChPtr::Shared<AttackBase> externulFunction[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
 	MeshDrawer* drawer = nullptr;
 
@@ -100,7 +101,7 @@ private:
 };
 
 //í èÌíeëSî //
-class BulletData :public Bullet::ExternulBulletFunctionBase
+class BulletData :public Attack::AttackBase
 {
 public:
 
@@ -108,11 +109,11 @@ public:
 
 	std::string Serialize()override;
 
-	void UpdateBulletObject(BulletObject& _bullet)override;
+	void UpdateBulletObject(AttackObject& _bullet)override;
 };
 
 //ÉuÅ[ÉXÉ^Å[ïtÇ´ÇÃíeëSî //
-class BoostBulletData :public Bullet::ExternulBulletFunctionBase
+class BoostBulletData :public Attack::AttackBase
 {
 public:
 
@@ -122,7 +123,7 @@ public:
 
 public:
 
-	void UpdateBulletObject(BulletObject& _bullet)override;
+	void UpdateBulletObject(AttackObject& _bullet)override;
 
 
 protected:
@@ -136,7 +137,7 @@ protected:
 
 
 //îöî≠íeëSî //
-class HighExplosiveBulletData :public Bullet::ExternulBulletFunctionBase
+class HighExplosiveBulletData :public Attack::AttackBase
 {
 public:
 
@@ -146,7 +147,7 @@ public:
 
 public:
 	
-	void UpdateBulletObject(BulletObject& _bullet)override;
+	void UpdateBulletObject(AttackObject& _bullet)override;
 
 protected:
 
@@ -156,7 +157,7 @@ protected:
 };
 
 //óUì±íeëSî //
-class  MissileData :public Bullet::ExternulBulletFunctionBase
+class  MissileData :public Attack::AttackBase
 {
 public://Serialize Deserialize\\
 		
@@ -166,7 +167,7 @@ public://Serialize Deserialize\\
 
 public:
 
-	void UpdateBulletObject(BulletObject& _bullet)override;
+	void UpdateBulletObject(AttackObject& _bullet)override;
 
 protected:
 
