@@ -132,6 +132,8 @@ public:
 
 	void Init()override;
 
+	void DrawBegin()override;
+
 	void Draw2D()override;
 
 	void DrawEnd()override;
@@ -150,7 +152,7 @@ public:
 
 public:
 
-	ChPtr::Shared<CPUObjectLooker::UseSquareValues>& GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
+	unsigned long GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
 
 public:
 	
@@ -162,9 +164,9 @@ public:
 
 private:
 
-	void MenyDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target);
+	void MenyDamageTest(unsigned long& _base, unsigned long _target, std::vector<ChPtr::Weak<BaseMecha>>& _mechas);
 
-	void FewDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target);
+	void FewDamageTest(unsigned long& _base, unsigned long _target,std::vector<ChPtr::Weak<BaseMecha>>& _mechas);
 
 	GameFrame* frame = nullptr;
 	ChLMat projectionMatrix;
@@ -179,7 +181,7 @@ private:
 	unsigned long updateCount = 1;
 	unsigned long nowUpdateCount = 0;
 
-	ChPtr::Shared<UseSquareValues> lookMechaTypes[MEMBER_TYPE_COUNT][DISTANCE_TYPE_COUNT][DAMAGE_SIZE_TYPE_COUNT];
+	unsigned long lookMechaTypes[MEMBER_TYPE_COUNT][DISTANCE_TYPE_COUNT][DAMAGE_SIZE_TYPE_COUNT];
 	
 	std::vector<ChPtr::Shared<UseSquareValues>>lookMecas;
 	std::vector<ChPtr::Shared<LookSquareValue>>lookMaps;

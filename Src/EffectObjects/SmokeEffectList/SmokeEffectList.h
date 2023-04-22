@@ -14,7 +14,7 @@ public:
 
 public:
 
-	inline void SetUpdateFlg(const ChStd::Bool _flg) { updateFlg = _flg; }
+	inline void SetUpdateFlg(const bool _flg) { updateFlg = _flg; }
 
 	void SetProjectionMatrix(const ChLMat& _projection);
 

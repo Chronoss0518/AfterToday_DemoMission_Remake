@@ -123,11 +123,11 @@ public:
 
 public:
 
-	inline ChStd::Bool IsGround() { return isGroundFlg; }
+	inline bool IsGround() { return isGroundFlg; }
 
-	inline ChStd::Bool IsWall() { return isWallFlg; }
+	inline bool IsWall() { return isWallFlg; }
 
-	inline ChStd::Bool IsOutSide() { return isOutSide; }
+	inline bool IsOutSide() { return isOutSide; }
 
 public:
 
@@ -173,9 +173,9 @@ private:
 
 	ChLMat nowTransform;
 
-	ChStd::Bool isGroundFlg = false;
-	ChStd::Bool isWallFlg = false;
-	ChStd::Bool isOutSide = false;
+	bool isGroundFlg = false;
+	bool isWallFlg = false;
+	bool isOutSide = false;
 
 	float mass = 0.0f;
 
@@ -259,7 +259,7 @@ private:
 
 	public:
 
-		inline void SetInversFlg(const ChStd::Bool _flg) { inversFlg = _flg; }
+		inline void SetInversFlg(const bool _flg) { inversFlg = _flg; }
 
 		inline void SetBaseDirection(const ChVec3& _dir) { baseDir = _dir; }
 
@@ -273,17 +273,17 @@ private:
 
 	public:
 
-		inline ChStd::Bool IsInvers() { return inversFlg; }
+		inline bool IsInvers() { return inversFlg; }
 
-		inline ChStd::Bool IsHit() { return isHit; }
+		inline bool IsHit() { return isHit; }
 
 		void IsHitField(ChCpp::PolygonCollider& _polygon);
 
 	private:
 
 		ChCpp::HitTestRay ray;
-		ChStd::Bool inversFlg = false;
-		ChStd::Bool isHit = false;
+		bool inversFlg = false;
+		bool isHit = false;
 		ChVec3 baseDir;
 
 		float vecSize = 0.0f;
@@ -342,7 +342,7 @@ public:
 
 public:
 
-	ChStd::Bool IsGround();
+	bool IsGround();
 
 private:
 

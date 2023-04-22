@@ -36,7 +36,7 @@ public:
 
 	void UpdateScript();
 
-	ChStd::Bool IsStop() { return nowScriptCount >= scripts.Count(); };
+	bool IsStop() { return nowScriptCount >= scripts.Count(); };
 
 private:
 

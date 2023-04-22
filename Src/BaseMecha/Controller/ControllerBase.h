@@ -16,7 +16,6 @@ public:
 
 	inline unsigned long GetTeamNo() { return teamNo; }
 
-
 private:
 
 	unsigned long teamNo = 0;
@@ -96,7 +95,11 @@ public:
 
 	inline void SetGameFrame(GameFrame* _frame) { frame = _frame; }
 
-	inline void SetSaveFlg(const ChStd::Bool _flg) { saveFlg = _flg; }
+	inline void SetSaveFlg(const bool _flg) { saveFlg = _flg; }
+
+public :
+
+	void AddCPUFunction();
 
 public:
 
@@ -105,6 +108,8 @@ public:
 	void LoadCPUData(const std::string& _fileName);
 
 private:
+
+	void MoveUpdate();
 
 	void SelectRunFunction(CPUObjectLooker& _looker);
 
@@ -121,12 +126,16 @@ private:
 	unsigned long actionMoveTime = 100;
 	unsigned long nowActionMoveTime = actionMoveTime;
 
-	ChVec3 lastPos = ChVec3();
+	bool lookTarget = false;
+
+	ChVec3 lastPos = 0.0f;
+	ChVec3 basePos = 0.0f;
+
+	ChPtr::Shared<BaseMecha>mecha = nullptr;
 
 	std::vector<ChPtr::Shared<ChVec3>>voicePos;
-
-	ChStd::Bool saveFlg = false;
+	
+	bool saveFlg = false;
 
 	GameFrame* frame = nullptr;
-	BaseMecha* target = nullptr;
 };

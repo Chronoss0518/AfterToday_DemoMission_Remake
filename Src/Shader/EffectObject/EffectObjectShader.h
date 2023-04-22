@@ -20,9 +20,9 @@ protected:
 
 public:
 
-	void SetUseDepthStencilTestFlg(ChStd::Bool _flg);
+	void SetUseDepthStencilTestFlg(bool _flg);
 
-	void SetAlphaBlendTestFlg(ChStd::Bool _flg);
+	void SetAlphaBlendTestFlg(bool _flg);
 
 	void SetViewMatrix(const ChLMat& _viewMat);
 
@@ -34,11 +34,11 @@ public:
 
 	void SetAlphaTestNum(const float _num);
 
-	void SetBlendFlg(const ChStd::Bool& _flg);
+	void SetBlendFlg(const bool& _flg);
 
 	void SetSpecularColor(const ChVec3& _color);
 
-	void SetLightFlg(const ChStd::Bool& _flg);
+	void SetLightFlg(const bool& _flg);
 
 	//animationCountÇÕ 1à»è„ÇÃêîílÇ≈Ç†ÇÈïKóvÇ™Ç†ÇÈ//
 	void SetEffectTexture(ChPtr::Shared<ChD3D11::TextureBase11> _effectTexture, const ChMath::Vector2Base<unsigned long>& _animationCount);
@@ -67,7 +67,7 @@ public:
 
 	void SetEffectVerticalAnimationCount(const unsigned long _animationCount, const unsigned long _effectCount);
 
-	void SetEffectDisplayFlg(const ChStd::Bool& _flg, const unsigned long _effectCount);
+	void SetEffectDisplayFlg(const bool& _flg, const unsigned long _effectCount);
 
 public:
 

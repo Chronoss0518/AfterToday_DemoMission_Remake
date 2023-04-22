@@ -102,13 +102,13 @@ void EffectObjectShader::InitGeometryShader()
 
 }
 
-void EffectObjectShader::SetUseDepthStencilTestFlg(ChStd::Bool _flg)
+void EffectObjectShader::SetUseDepthStencilTestFlg(bool _flg)
 {
 	useDepthStencilTestFlg = _flg;
 	rasterizerUpdateFlg = true;
 }
 
-void EffectObjectShader::SetAlphaBlendTestFlg(ChStd::Bool _flg)
+void EffectObjectShader::SetAlphaBlendTestFlg(bool _flg)
 {
 	alphaBlendTestFlg = _flg;
 }
@@ -143,7 +143,7 @@ void EffectObjectShader::SetAlphaTestNum(const float _num)
 	psUpdateFlg = true;
 }
 
-void EffectObjectShader::SetBlendFlg(const ChStd::Bool& _flg)
+void EffectObjectShader::SetBlendFlg(const bool& _flg)
 {
 	psData.blendFlg = _flg;
 	psUpdateFlg = true;
@@ -155,7 +155,7 @@ void EffectObjectShader::SetSpecularColor(const ChVec3& _color)
 	psUpdateFlg = true;
 }
 
-void EffectObjectShader::SetLightFlg(const ChStd::Bool& _flg)
+void EffectObjectShader::SetLightFlg(const bool& _flg)
 {
 	psData.lightFlg = _flg;
 	psUpdateFlg = true;
@@ -283,7 +283,7 @@ void EffectObjectShader::SetEffectVerticalAnimationCount(const unsigned long _an
 	vbUpdateFlg = true;
 }
 
-void EffectObjectShader::SetEffectDisplayFlg(const ChStd::Bool& _flg, const unsigned long _effectCount)
+void EffectObjectShader::SetEffectDisplayFlg(const bool& _flg, const unsigned long _effectCount)
 {
 	if (effectPosList.size() <= _effectCount)return;
 

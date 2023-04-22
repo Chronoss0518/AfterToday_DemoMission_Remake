@@ -13,6 +13,8 @@
 #define TEST true
 
 
+unsigned long resetNum = -1;
+
 void LookAnchor::AddLookAnchorPosition(const ChVec3& _size, const ChLMat& _drawMat)
 {
 	auto&& lookAnchor = ChPtr::Make_S<LookAnchorPosition>();
@@ -100,7 +102,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 
 	for (unsigned long i = 0; i < positionList.size(); i++)
 	{
-		auto && anchorPos = positionList[i];
+		auto&& anchorPos = positionList[i];
 		ChLMat tmpMat = anchorPos->drawMatrix * _vpMatrix;
 
 		ChVec4 square = ChVec4(10e+37f, (10e+37f) * -1.0f, (10e+37f) * -1.0f, 10e+37f);
@@ -235,7 +237,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 				float w = position.w;
 				position /= w;
 
-				
+
 #if FEATURE
 
 				if (anchorPos[ChStd::EnumCast(AnchorPosName::LeftTop)].x > position.x &&
@@ -330,7 +332,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 				position = tmpMat.Transform(position);
 				float w = position.w;
 				position /= w;
-				
+
 				if (w < 0.0f)
 				{
 					position.x = -position.x;
@@ -409,7 +411,7 @@ void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat
 	//ChLMat drawMatrix = _drawMat;
 
 	auto&& frameCom = _frame.GetComponent<ChCpp::FrameComponent>();
-	
+
 	if (frameCom == nullptr)return;
 
 	auto&& vertexList = frameCom->vertexList;
@@ -449,7 +451,7 @@ void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat
 }
 
 
-ChPtr::Shared<CPUObjectLooker::UseSquareValues>& CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
+unsigned long CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
 {
 	return lookMechaTypes[ChStd::EnumCast(_member)][ChStd::EnumCast(_distance)][ChStd::EnumCast(_damageSize)];
 }
@@ -462,21 +464,14 @@ void CPUObjectLooker::Init()
 			while (!endFlg)
 			{
 				if (!updateFlg)continue;
-				try
-				{
-					FindMecha();
-				}
-				catch (std::exception& e)
-				{
-					OutputDebugString(e.what());
-				}
+				FindMecha();
 
 				updateFlg = false;
 			}
 		});
-	
+
 	endFlg = false;
-	
+
 	updateFlg = false;
 
 	auto device = ChD3D11::D3D11Device();
@@ -504,12 +499,34 @@ void CPUObjectLooker::Init()
 	//drawPosition.SetSize(ChVec2(0.2f, 0.2f));
 	drawPosition.SetSize(ChVec2(1.0f, 1.0f));
 
-	drawPosition.SetDrawDepth(0.0f,1.0f);
+	drawPosition.SetDrawDepth(0.0f, 1.0f);
 	//drawPosition.SetTopLeftPos(ChVec2(0.6f, 0.7f));
 	drawPosition.SetTopLeftPos(ChVec2(-1.0f, 1.0f));
 
 	sprite.Init(device);
 	sprite.SetInitPosition();
+}
+
+void CPUObjectLooker::DrawBegin()
+{
+	nowUpdateCount = (nowUpdateCount + 1) % updateCount;
+
+	if (nowUpdateCount <= 0)
+	{
+		for (unsigned char memberType = 0; memberType < MEMBER_TYPE_COUNT; memberType++)
+		{
+			for (unsigned char distanceType = 0; distanceType < DISTANCE_TYPE_COUNT; distanceType++)
+			{
+				for (unsigned char damageSizeType = 0; damageSizeType < DAMAGE_SIZE_TYPE_COUNT; damageSizeType++)
+				{
+					lookMechaTypes[memberType][distanceType][damageSizeType] = resetNum;
+				}
+			}
+		}
+		updateFlg = true;
+	}
+
+
 }
 
 void CPUObjectLooker::Draw2D()
@@ -537,7 +554,7 @@ void CPUObjectLooker::Draw2D()
 	{
 		for (auto&& square : map->square.GetSquare())
 		{
-			
+
 			sprite.SetPos(ChD3D11::SpritePositionName::LeftTop, ChVec2(square->left, square->top));
 			sprite.SetPos(ChD3D11::SpritePositionName::RightTop, ChVec2(square->right, square->top));
 			sprite.SetPos(ChD3D11::SpritePositionName::RightDown, ChVec2(square->right, square->bottom));
@@ -579,28 +596,12 @@ void CPUObjectLooker::Draw2D()
 
 	dc->OMSetRenderTargets(1, &rt, dp);
 
+	lookMecas.clear();
+
 }
 
 void CPUObjectLooker::DrawEnd()
 {
-	nowUpdateCount = (nowUpdateCount + 1) % updateCount;
-
-	if (nowUpdateCount <= 0)
-	{
-		for (unsigned char memberType = 0; memberType < MEMBER_TYPE_COUNT; memberType++)
-		{
-			for (unsigned char distanceType = 0; distanceType < DISTANCE_TYPE_COUNT; distanceType++)
-			{
-				for (unsigned char damageSizeType = 0; damageSizeType < DAMAGE_SIZE_TYPE_COUNT; damageSizeType++)
-				{
-					lookMechaTypes[memberType][distanceType][damageSizeType].reset();
-				}
-			}
-		}
-		lookMecas.clear();
-
-		updateFlg = true;
-	}
 
 }
 
@@ -633,7 +634,7 @@ void CPUObjectLooker::FindMecha()
 
 	auto&& hitTestMap = frame->GetHitMapList();
 
-	auto&& baseMechaList = frame->GetMechaList().GetObjectList<BaseMecha>();
+	auto&& baseMechaList = frame->GetMechas();
 
 	float nearLength[2] = { 10e+37f,10e+37f };
 	float farLength[2] = { 0.0f ,0.0f };
@@ -653,11 +654,11 @@ void CPUObjectLooker::FindMecha()
 
 		{
 			ChVec4 tmp = viewMatrix.Transform(targetPos);
-			
+
 			if (tmp.z <= GAME_PROJECTION_NEAR)continue;
 
 			tmp = projectionMatrix.Transform(tmp);
-			
+
 			tmp /= tmp.z;
 
 			tmp *= tmp;
@@ -667,7 +668,7 @@ void CPUObjectLooker::FindMecha()
 
 
 		float tmpLength = ChVec3::GetLen(targetPos, mecha->GetPosition());
-		
+
 		ChVec3 direction = targetPos - pos;
 
 		direction.Normalize();
@@ -692,21 +693,17 @@ void CPUObjectLooker::FindMecha()
 
 		if (!lookFlg)continue;
 
-		auto useSquareValues = ChPtr::Make_S<CPUObjectLooker::UseSquareValues>();
 
-		useSquareValues->otherMecha = otherMecha;
-		useSquareValues->nearDistance = tmpLength;
+		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
+		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 
-		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], useSquareValues);
-		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], useSquareValues);
-		
 		if (nearLength[memberType] > tmpLength)
 		{
 			nearLength[memberType] = tmpLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = useSquareValues;
-			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Many)], useSquareValues);
-			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Few)], useSquareValues);
+			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = i;
+			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
+			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 
 		}
 
@@ -714,10 +711,9 @@ void CPUObjectLooker::FindMecha()
 		{
 			farLength[memberType] = tmpLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = useSquareValues;
-			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Many)], useSquareValues);
-			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Few)], useSquareValues);
-
+			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = i;
+			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
+			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 		}
 
 	}
@@ -931,20 +927,20 @@ void CPUObjectLooker::FindMecha()
 
 #endif
 
-void CPUObjectLooker::MenyDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target)
+void CPUObjectLooker::MenyDamageTest(unsigned long& _base, unsigned long _target, std::vector<ChPtr::Weak<BaseMecha>>& _mechas)
 {
-	if (_target == nullptr)return;
+	if (_target >= _mechas.size())return;
 
-	auto target = _target->otherMecha.lock();
+	auto target = _mechas[_target].lock();
 	if (target == nullptr)return;
 
-	if (_base == nullptr)
+	if (_base >= _mechas.size())
 	{
 		_base = _target;
 		return;
 	}
 
-	auto base = _base->otherMecha.lock();
+	auto base = _mechas[_base].lock();
 	if (base == nullptr)
 	{
 		_base = _target;
@@ -952,24 +948,23 @@ void CPUObjectLooker::MenyDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPt
 	}
 
 	if (base->GetDamage() >= target->GetDamage())return;
-	_base = nullptr;
 	_base = _target;
 }
 
-void CPUObjectLooker::FewDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr::Shared<UseSquareValues>& _target)
+void CPUObjectLooker::FewDamageTest(unsigned long& _base, unsigned long _target, std::vector<ChPtr::Weak<BaseMecha>>& _mechas)
 {
-	if (_target == nullptr)return;
+	if (_target >= _mechas.size())return;
 
-	auto target = _target->otherMecha.lock();
+	auto target = _mechas[_target].lock();
 	if (target == nullptr)return;
 
-	if (_base == nullptr)
+	if (_base >= _mechas.size())
 	{
 		_base = _target;
 		return;
 	}
 
-	auto base = _base->otherMecha.lock();
+	auto base = _mechas[_base].lock();
 	if (base == nullptr)
 	{
 		_base = _target;
@@ -977,6 +972,5 @@ void CPUObjectLooker::FewDamageTest(ChPtr::Shared<UseSquareValues>& _base, ChPtr
 	}
 
 	if (base->GetDamage() <= target->GetDamage())return;
-	_base = nullptr;
 	_base = _target;
 }

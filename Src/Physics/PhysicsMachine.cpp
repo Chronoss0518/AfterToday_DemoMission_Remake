@@ -104,7 +104,7 @@ std::vector<ChPtr::Shared<ChVec3>>PhysicsFunction::GetBrustPosList()
 	return PhysicsMachine::BrustPosList();
 }
 
-ChStd::Bool PhysicsFunction::IsGround()
+bool PhysicsFunction::IsGround()
 {
 	return machine->isGroundFlg;
 }
