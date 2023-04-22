@@ -5,6 +5,8 @@
 #include<ChDirect3D11Library.h>
 #include"Physics/PhysicsMachine.h"
 
+#define BETA
+
 #ifndef TARGET_DIRECTORY 
 //#define	TARGET_DIRECTORY(current_path) "../é¿çs/data/" current_path
 #define	TARGET_DIRECTORY(current_path) "Resource/" current_path
