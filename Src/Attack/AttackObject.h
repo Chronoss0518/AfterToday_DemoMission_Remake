@@ -57,7 +57,7 @@ public:
 
 public:
 
-	ChStd::Bool IsHit() { return hitFlg; }
+	bool IsHit() { return hitFlg; }
 
 public:
 
@@ -77,7 +77,7 @@ private:
 
 	GameFrame* frame = nullptr;
 	Bullet* data = nullptr;
-	ChStd::Bool hitFlg = false;
+	bool hitFlg = false;
 	BaseMecha* mecha = nullptr;
 	unsigned long nowCreateSmokeCount = 0;
 

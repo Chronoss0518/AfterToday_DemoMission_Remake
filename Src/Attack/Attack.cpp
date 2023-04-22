@@ -2,7 +2,7 @@
 
 #include"../AllStruct.h"
 #include"../Frames/GameFrame.h"
-#include"Bullet.h"
+#include"Attack.h"
 #include"BulletObject.h"
 
 ChPtr::Shared<Bullet> Bullet::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
