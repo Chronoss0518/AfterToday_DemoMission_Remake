@@ -2,8 +2,16 @@
 
 #include"FunctionComponent.h"
 
-class MoveComponent :public FunctionComponent
+class MoveComponentBase :public FunctionComponent
 {
+protected:
+
+	enum class UsingCameraRotateAxisType
+	{
+		Horizontal,//êÖïΩ//
+		Vertical//êÇíº//
+	};
+
 public:
 
 	void Update()override;
@@ -14,23 +22,42 @@ public:
 
 	void SetRotatePow(const float _rotatePow) { rotatePow = _rotatePow; }
 
+	void SetCameraRotatePow(const float _rotatePow) { cameraRotatePow = _rotatePow; }
+
 	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
 
-private:
+	void SetUsingCameraRotateAxisFlg(bool _flg, UsingCameraRotateAxisType _type);
 
-	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid,const ChVec3& _direction,const ChLMat& _nowTargetPoster);
-	
-	void RotateUpdate(InputName _input, const ChVec3& _direction);
+protected:
 
-	void CamRotateUpdate(InputName _input, const float _camRot);
+	virtual void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster) = 0;
+
+	virtual void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction) = 0;
+
+	void CamVerticalRotateUpdate(InputName _input, const float _camRot);
+
+	void CamHorizontalRotateUpdate(InputName _input, const float _camRot);
 
 private:
 
 	float movePow = 0.0f;
 	float jumpPow = 0.0f;
 	float rotatePow = 0.0f;
+	float cameraRotatePow = 50.0f;
 
-	InputName inputName = InputName::None;
-	InputName boostName = InputName::None;
-	InputName avoidName = InputName::None;
+	ChCpp::BitBool usingCameraRotateAxisFlg;
+};
+
+class BaseMechaMoveComponent :public MoveComponentBase
+{
+public:
+
+	void Init()override;
+
+private:
+
+	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid,const ChVec3& _direction,const ChLMat& _nowTargetPoster)override;
+	
+	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
+
 };

@@ -24,7 +24,9 @@ public:
 	
 	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->physics->AddRotatePowerVector(_rotateVecAdd); }
 
-	inline void AddViewRotate(const float& _viewRotate) { target->AddViewVertical(_viewRotate); }
+	inline void AddViewRotateVertical(const float& _viewRotate) { target->AddViewVertical(_viewRotate); }
+
+	inline void AddViewRotateHorizontal(const float& _viewRotate) { target->AddViewHorizontal(_viewRotate); }
 
 public:
 
