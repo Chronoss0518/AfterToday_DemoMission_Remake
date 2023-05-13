@@ -6,7 +6,7 @@ class MechaPartsObject;
 class CameraObject;
 class WeaponObject;
 class FunctionComponent;
-class BulletObject;
+class AttackObject;
 
 class PhysicsMachine;
 
@@ -29,8 +29,8 @@ public://Inner Struct Class Enum//
 	enum class InputName : unsigned char
 	{
 		Front, Back, Right, Left, Jump,
-		RightRotation, LeftRotation,
-		CameraUpRotation, CameraDownRotation, CameraLeftRotation, CameraRightRotation,
+		UpRotation, DownRotation, RightRotation, LeftRotation,
+		CameraUpRotation, CameraDownRotation, CameraRightRotation, CameraLeftRotation,
 		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, RightBoost, LeftBoost, UpBoost, DownBoost,
 		Attack, RAttack, LAttack,
@@ -110,7 +110,9 @@ public:
 		positions[ChStd::EnumCast(_name)].push_back(_posObject);
 	}
 
-	inline void AddViewVertical(const float& _x) { if (std::abs(viewVertical) < maxViewVertical)viewVertical += _x; }
+	inline void AddViewVertical(const float& _x) { viewVertical = std::abs(viewVertical + _x) < maxViewVertical ? viewVertical + _x : viewVertical; }
+
+	inline void AddViewHorizontal(const float& _y) { viewHorizontal = std::abs(viewHorizontal + _y) < maxViewHorizontal ? viewHorizontal + _y : viewHorizontal; }
 
 	void AddMass(const float _mass) { mass += _mass; }
 
@@ -189,7 +191,7 @@ public:
 
 public:
 
-	void TestBulletHit(BulletObject& _obj);
+	void TestBulletHit(AttackObject& _obj);
 
 public:
 
@@ -228,7 +230,8 @@ protected:
 
 	float groundDistance = 0.0f;
 
-	float durable = 100.0f;
+	//float durable = 100.0f;
+	float durable = 10.0f;
 	float nowDurable = 100.0f;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
@@ -247,6 +250,9 @@ protected:
 	ChVec3 centerPos;
 	float viewVertical = 0.0f;
 	float maxViewVertical = 85.0f;
+
+	float viewHorizontal = 0.0f;
+	float maxViewHorizontal = 85.0f;
 
 	bool breakFlg = false;
 };

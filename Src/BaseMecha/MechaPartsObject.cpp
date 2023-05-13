@@ -7,23 +7,27 @@
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
 
-#define SE_VOLUME_SIZE 0.5f
+#include"MechaPartsObjectFunction/WeaponFunction.h"
 
 void MechaPartsObject::Release()
 {
-	for (auto&& function : weaponFunc)
+	for (auto&& function : externulFunctions)
 	{
 		if (function == nullptr)continue;
 		function->Release();
 	}
-
 }
 
 void MechaPartsObject::Update()
 {
-	for (auto&& weapon : weaponFunc)
+	for (auto&& func : externulFunctions)
 	{
-		weapon->Update();
+		func->Update();
+	}
+
+	for (auto&& func : weaponFunctions)
+	{
+		func->Update();
 	}
 }
 
@@ -54,7 +58,12 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 	collider.SetPosition(lastDrawMat.GetPosition());
 	collider.SetRotation(lastDrawMat.GetRotation());
 
-	for (auto func : weaponFunc)
+	for (auto func : externulFunctions)
+	{
+		func->PosUpdate();
+	}
+
+	for (auto func : weaponFunctions)
 	{
 		func->PosUpdate();
 	}
@@ -66,36 +75,7 @@ void MechaPartsObject::Damage()
 
 }
 
-void MechaPartsObject::Attack()
-{
-	weaponFunc[useAttackType]->Attack();
-}
-
-void MechaPartsObject::StartSubFunction()
-{
-	weaponFunc[useAttackType]->SubFunction();
-}
-
-void MechaPartsObject::SetSwordHitObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject)
-{
-	auto func = ChPtr::SharedSafeCast<SwordFunction>(weaponFunc[weaponFunc.size() - 1]);
-
-	if (func == nullptr)return;
-
-	func->SetHitObjectStart(_targetObject);
-
-}
-
-void MechaPartsObject::SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject)
-{
-	auto func = ChPtr::SharedSafeCast<GunFunction>(weaponFunc[weaponFunc.size() - 1]);
-
-	if (func == nullptr)return;
-
-	func->SetShotPos(_targetObject);
-}
-
-float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, BulletObject& _bullet)
+float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet)
 {
 	if (!collider.IsHit(&_sphereCollider))return 0.0f;
 
@@ -119,145 +99,12 @@ float MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
 	return 0.0f;
 }
 
-void WeaponFunction::Release()
+void MechaPartsObject::AttackUpdate()
 {
-	se.Release();
+	weaponFunctions[useAttackType]->AttackUpdate();
 }
 
-void WeaponFunction::Attack()
+void MechaPartsObject::StartWeaponSubFunction()
 {
-	if (nowWeatTime < data->GetWeatTime())return;;
-
-	AttackFunction();
-
-	nowWeatTime = 0;
-}
-
-void WeaponFunction::Update()
-{
-	nowWeatTime++;
-
-	UpdateFunction();
-}
-
-void SwordFunction::SetData(WeaponData* _data)
-{
-	swordData = ChPtr::SafeCast<SwordData>(_data);
-}
-
-void SwordFunction::AttackFunction()
-{
-
-}
-
-void SwordFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
-{
-
-}
-
-void GunFunction::AttackFunction()
-{
-	if (reloadFlg)return;
-	if (nowBulletNum <= 0)return;
-
-	ChLMat tmpMat;
-	tmpMat = obj->GetLastDrawMat();
-
-	tmpMat = lastShotPos * tmpMat;
-
-	frame->AddShotEffectObject(tmpMat.GetPosition());
-
-	se.Stop();
-	se.Play();
-
-	se.InitMatrix(tmpMat);
-
-	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
-	{
-
-		{
-			ChVec3 tmp;
-
-			tmp.x = ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f);
-			tmp.y = ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f);
-
-			ChLMat rangeMat;
-			rangeMat.SetRotation(tmp);
-
-			tmpMat = rangeMat * tmpMat;
-		}
-
-		auto bullet = ChPtr::Make_S<BulletObject>();
-
-		bullet->SetBulletData(createBulletData.get());
-		bullet->SetFrame(frame);
-		bullet->SetBaseMecha(mecha);
-		bullet->Init(tmpMat);
-		frame->AddBullet(bullet);
-
-		ChVec3 nockback = bullet->GetMovePower() * 0.01f / -mecha->GetMass();
-
-		mecha->AddMoveVector(nockback);
-
-		nowBulletNum--;
-		if (nowBulletNum <= 0)break;
-	}
-
-	if (nowBulletNum > 0)return;
-
-	SubFunction();
-}
-
-void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
-{
-	nowBulletNum = gunData->GetBulletNum();
-
-	nowMagazineNum = gunData->GetMagazineNum();
-
-	reloadFlg = false;
-
-	createBulletData = Bullet::CreateBullet(_drawer, _device, gunData->GetUseBulletFile());
-
-	ChD3D::XAudioManager().LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
-
-	se.SetVolume(SE_VOLUME_SIZE);
-}
-
-void GunFunction::SubFunction()
-{
-	if (nowMagazineNum <= 0)return;
-	if (reloadFlg)return;
-
-	nowReloadTime = 0;
-
-	reloadFlg = true;
-}
-
-void GunFunction::SetData(WeaponData* _data)
-{
-	gunData = ChPtr::SafeCast<GunData>(_data);
-}
-
-void GunFunction::UpdateFunction()
-{
-	if (!reloadFlg)return;
-
-	nowReloadTime++;
-
-	if (gunData->GetReloadTime() > nowReloadTime)return;
-
-	nowBulletNum = gunData->GetBulletNum();
-
-	nowMagazineNum--;
-
-	reloadFlg = false;
-
-
-}
-
-void GunFunction::PosUpdate()
-{
-	if (shotPos == nullptr)return;
-
-	lastShotPos = shotPos->GetDrawLHandMatrix();
+	weaponFunctions[useAttackType]->StartSubFunction();
 }

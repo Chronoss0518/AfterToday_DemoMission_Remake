@@ -3,12 +3,11 @@
 class GameFrame;
 class BaseMecha;
 class MechaParts;
+class ExternalFunction;
 class WeaponFunction;
-class WeaponData;
-class SwordData;
-class GunData;
 
-class Bullet;
+class Attack;
+class AttackObject;
 struct PositionObject;
 
 class MechaPartsObject
@@ -25,7 +24,7 @@ public:
 
 	void AddWeaponFunction(ChPtr::Shared<WeaponFunction> _weapon)
 	{
-		weaponFunc.push_back(_weapon);
+		weaponFunctions.push_back(_weapon);
 	}
 
 public:
@@ -40,9 +39,7 @@ public:
 
 	void SetLWeapon(const bool _flg) { weaponType.SetBitFlg(1, _flg); }
 
-	void SetSwordHitObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
-
-	void SetGunShotPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
+	void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
 
 	void SetFrame(GameFrame* _frame) { frame = _frame; }
 
@@ -58,6 +55,16 @@ public:
 
 	ChPtr::Shared<PositionObject> GetPositionObject() { return positionObject; }
 
+	std::vector<ChPtr::Shared<ExternalFunction>>& GetExternalFunctions()
+	{
+		return externulFunctions;
+	}
+
+	std::vector<ChPtr::Shared<WeaponFunction>>& GetWeaponFunctions()
+	{
+		return weaponFunctions;
+	}
+
 	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
 
 	float GetDurableValue() { return durableValue; }
@@ -70,7 +77,7 @@ public:
 
 	bool GetLWeapon() { return weaponType.GetBitFlg(1); }
 
-	float GetDamage(ChCpp::SphereCollider& _sphereCollider, BulletObject& _bullet);
+	float GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet);
 
 	float GetDamage(ChCpp::BoxCollider& _collider);
 
@@ -90,13 +97,19 @@ public:
 
 public:
 
-	void Attack();
+	void AttackUpdate();
 
-	void StartSubFunction();
+	void StartWeaponSubFunction();
 
-	void UpUseAttackType() { useAttackType = (1 + useAttackType) % weaponFunc.size(); }
+	void UpUseAttackType()
+	{
+		useAttackType = (useAttackType + 1) % weaponFunctions.size();
+	}
 
-	void DownUseAttackType() { useAttackType = (useAttackType + weaponFunc.size() - 1) % weaponFunc.size(); }
+	void DownUseAttackType()
+	{
+		useAttackType = (useAttackType + weaponFunctions.size() - 1) % weaponFunctions.size();
+	}
 
 protected:
 
@@ -108,7 +121,9 @@ private:
 
 	GameFrame* frame = nullptr;
 
-	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunc;
+	std::vector<ChPtr::Shared<ExternalFunction>>externulFunctions;
+
+	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
 	unsigned long useAttackType = 0;
 
 	ChPtr::Shared<PositionObject>positionObject = nullptr;
@@ -129,23 +144,22 @@ private:
 	BaseMecha* mecha = nullptr;
 };
 
-class WeaponFunction
+class ExternalFunction
 {
+
 public:
 
-	virtual void Init(MeshDrawer* _drawer, ID3D11Device* _device) = 0;
+	virtual void Init(MeshDrawer* _drawer, ID3D11Device* _device) {};
 
-	virtual void Release();
+	virtual void Release() {};
 
 	inline void SetFrmae(GameFrame* _frame) { frame = _frame; }
 
 	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
-	void Attack();
+	virtual void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
 
-	virtual void SubFunction() {}
-
-	void Update();
+	virtual void Update() = 0;
 
 	inline void SetPartsObject(MechaPartsObject* _obj)
 	{
@@ -154,24 +168,7 @@ public:
 		obj = _obj;
 	}
 
-	inline void SetBaseData(WeaponData* _data)
-	{
-		if (_data == nullptr)return;
-
-		data = _data;
-
-		SetData(_data);
-	}
-
 	virtual void PosUpdate() {};
-
-protected:
-
-	virtual void AttackFunction() = 0;
-
-	virtual void UpdateFunction() = 0;
-
-	virtual void SetData(WeaponData* _data) = 0;
 
 protected:
 
@@ -179,83 +176,6 @@ protected:
 
 	BaseMecha* mecha = nullptr;
 
-	WeaponData* data = nullptr;
-
 	MechaPartsObject* obj = nullptr;
-
-	ChD3D::X3DAudioObject se;
-
-	//次の攻撃可能までの時間//
-	unsigned long nowWeatTime = 0;
-
-	bool attackFlg = false;
-};
-
-class SwordFunction : public WeaponFunction
-{
-public:
-
-	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
-
-	void AttackFunction()override;
-
-	void UpdateFunction()override {};
-
-	inline void SetHitObjectStart(ChPtr::Shared<ChCpp::FrameObject> _hitStart) { hitObjectStart = _hitStart; }
-
-private:
-
-	void SetData(WeaponData* _data)override;
-
-private:
-
-	SwordData* swordData = nullptr;
-
-	ChPtr::Shared<ChCpp::FrameObject>hitObjectStart = nullptr;
-
-	//攻撃開始から現在までの時間//
-	unsigned long nowAttackTime = 0;
-
-
-};
-
-class GunFunction : public WeaponFunction
-{
-public:
-
-	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
-
-	void AttackFunction()override;
-
-	void SubFunction()override;
-
-	void UpdateFunction()override;
-
-	void PosUpdate()override;
-
-	inline void SetShotPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }
-
-private:
-	
-	void SetData(WeaponData* _data)override;
-
-private:
-
-	GunData* gunData = nullptr;
-
-	ChPtr::Shared<ChCpp::FrameObject>shotPos = nullptr;
-
-	ChPtr::Shared<Bullet>createBulletData = nullptr;
-
-	ChLMat lastShotPos;
-
-	bool reloadFlg = false;
-
-	//残りの弾数//
-	unsigned long nowBulletNum = 0;
-	//残りのマガジン数//
-	unsigned long nowMagazineNum = 0;
-	//残りのリロード時間//
-	unsigned long nowReloadTime = 0;
 
 };

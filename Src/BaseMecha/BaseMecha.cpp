@@ -50,8 +50,6 @@ void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer, GameFrame* 
 	frame = _frame;
 	physics->Init();
 	mechasNo = frame->GetMechaList().GetObjectCount();
-
-
 }
 
 void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
@@ -72,6 +70,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 	LoadPartsList(_device, textObject);
 
 	nowEnelgy = maxEnelgy;
+	nowDurable = durable;
 	physics->SetMass(mass);
 }
 
@@ -223,6 +222,8 @@ void BaseMecha::Move()
 
 void BaseMecha::MoveEnd()
 {
+	viewHorizontal = physics->GetRotation().y;
+
 	auto viewPos = GetViewPos();
 	auto viewLookPos = GetViewLookPos();
 
@@ -243,7 +244,7 @@ ChVec3 BaseMecha::GetViewPos()
 
 	ChLMat camYMat, camXMat;
 
-	camYMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
 	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
 	camYMat = camXMat * camYMat;
 	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
@@ -256,7 +257,7 @@ ChVec3 BaseMecha::GetViewLookPos()
 
 	ChLMat camYMat, camXMat;
 
-	camYMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
 	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
 	camYMat = camXMat * camYMat;
 	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS - 2.0f, 0.0f));
@@ -388,7 +389,7 @@ unsigned long BaseMecha::GetTeamNo()
 	return controller->GetTeamNo();
 }
 
-void BaseMecha::TestBulletHit(BulletObject& _obj)
+void BaseMecha::TestBulletHit(AttackObject& _obj)
 {
 	if (_obj.GetBaseMecha() == this)return;
 	if (_obj.IsHit())return;
