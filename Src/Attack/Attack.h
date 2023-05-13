@@ -31,7 +31,7 @@ public:
 
 
 
-	static ChPtr::Shared<Bullet> CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
 
 	static void AllRelease();
 
@@ -49,6 +49,8 @@ public://Serialize Deserialize\\
 
 	void CrateMissileData();
 
+	void CrateSwordData();
+
 public:
 
 	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
@@ -61,19 +63,19 @@ public:
 
 public:
 
-	virtual void InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet);
+	virtual void InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet);
 
-	virtual void UpdateBulletObject(BulletObject& _bullet);
+	virtual void UpdateBulletObject(AttackObject& _bullet);
 
-	virtual void MoveBulletObject(BulletObject& _bullet);
+	virtual void MoveBulletObject(AttackObject& _bullet);
 
 	void Draw(const ChMat_11& _mat);
 
 public:
 
-	static std::map<std::string,ChPtr::Shared<Bullet>>& LoadBulletList()
+	static std::map<std::string,ChPtr::Shared<Attack>>& LoadBulletList()
 	{
-		static std::map<std::string,ChPtr::Shared<Bullet>> ins;
+		static std::map<std::string,ChPtr::Shared<Attack>> ins;
 		return ins;
 	}
 

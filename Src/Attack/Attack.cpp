@@ -5,7 +5,7 @@
 #include"Attack.h"
 #include"AttackObject.h"
 
-ChPtr::Shared<Bullet> Attack::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
 {
 	auto&& bulletList = LoadBulletList();
 
@@ -30,7 +30,7 @@ ChPtr::Shared<Bullet> Attack::CreateBullet(MeshDrawer* _drawer, ID3D11Device* _d
 	
 	if (textObject.LineCount() <= 2)return nullptr;
 
-	auto bullet = ChPtr::Make_S<Bullet>();
+	auto bullet = ChPtr::Make_S<Attack>();
 
 	bullet->SetMeshDrawer(_drawer);
 
@@ -123,7 +123,7 @@ void Attack::CrateMissileData()
 	externulFunction[ChStd::EnumCast(AttackType::Missile)] = ChPtr::Make_S<MissileData>();
 }
 
-void Attack::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
+void Attack::InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet)
 {
 	ChLMat mat = (bullet->GetDrawLHandMatrix() * _startMat);
 
@@ -141,7 +141,7 @@ void Attack::InitBulletObject(const ChLMat& _startMat,BulletObject& _bullet)
 	_bullet.collider.SetScalling(hitSize);
 }
 
-void Attack::UpdateBulletObject(BulletObject& _bullet)
+void Attack::UpdateBulletObject(AttackObject& _bullet)
 {
 	for (auto&& bulletFunction : externulFunction)
 	{
@@ -151,7 +151,7 @@ void Attack::UpdateBulletObject(BulletObject& _bullet)
 
 }
 
-void Attack::MoveBulletObject(BulletObject& _bullet)
+void Attack::MoveBulletObject(AttackObject& _bullet)
 {
 	_bullet.physics->SetPosition(_bullet.physics->GetPosition() + _bullet.physics->GetAddMovePowerVector());
 	_bullet.physics->SetRotation(_bullet.physics->GetRotation() + _bullet.physics->GetAddRotatePowerVector());
@@ -173,7 +173,7 @@ std::string BulletData::Serialize()
 	return "";
 }
 
-void BulletData::UpdateBulletObject(BulletObject& _bullet)
+void BulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 	if (_bullet.hitFlg)
 	{
@@ -215,7 +215,7 @@ std::string BoostBulletData::Serialize()
 	return res;
 }
 
-void BoostBulletData::UpdateBulletObject(BulletObject& _bullet)
+void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 
 }
@@ -237,7 +237,7 @@ std::string HighExplosiveBulletData::Serialize()
 	return res;
 }
 
-void HighExplosiveBulletData::UpdateBulletObject(BulletObject& _bullet)
+void HighExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 
 }
@@ -260,7 +260,7 @@ std::string MissileData::Serialize()
 	return res;
 }
 
-void MissileData::UpdateBulletObject(BulletObject& _bullet)
+void MissileData::UpdateBulletObject(AttackObject& _bullet)
 {
 
 }
