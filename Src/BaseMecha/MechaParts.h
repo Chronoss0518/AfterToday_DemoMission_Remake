@@ -4,8 +4,7 @@
 #include"BaseMecha.h"
 
 class MechaPartsObject;
-class CameraObject;
-class WeaponObject;
+class CameraComponent;
 class PartsDataBase;
 
 class MechaParts :public ChCpp::BaseObject
@@ -528,6 +527,8 @@ public:
 
 	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
 
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
 public:
 
 	inline std::string GetPartsTypeTag() override { return "WeaponData:"; }
@@ -552,8 +553,6 @@ public://Serialize Deserialize//
 	std::string Serialize()override;
 
 public://Set Functions//
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
@@ -581,8 +580,6 @@ public://Serialize Deserialize//
 	std::string Serialize()override;
 
 public://Set Functions//
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 

@@ -32,12 +32,14 @@ void AttackObject::Move()
 {
 	data->MoveBulletObject(*this);
 
+	return;
+	
 	if (nowCreateSmokeCount <= 0)
 	{
 		//frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f);
-		//frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f, dispersalPower);
-		//createSmokeCount++;
-		//dispersalPower *= 0.5f;
+		frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.001f, dispersalPower);
+		createSmokeCount++;
+		dispersalPower *= 0.5f;
 	}
 
 	nowCreateSmokeCount = (nowCreateSmokeCount + 1) % createSmokeCount;

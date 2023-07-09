@@ -81,6 +81,6 @@ private:
 	BaseMecha* mecha = nullptr;
 	unsigned long nowCreateSmokeCount = 0;
 
-	float dispersalPower = 5.0f;
+	float dispersalPower = 0.5f;
 	unsigned long createSmokeCount = 0;
 };

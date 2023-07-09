@@ -1,12 +1,14 @@
 #include"../BaseIncluder.h"
 
 #include"../AllStruct.h"
-#include"../Attack/Attack.h"
-#include"CaneraObject.h"
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
 #include"FunctionComponent/BoostComponent.h"
 #include"FunctionComponent/MoveComponent.h"
+#include"FunctionComponent/CameraComponent.h"
+#include"../Attack/Attack.h"
+
+#include"MechaPartsObjectFunction/WeaponFunction.h"
 
 #ifndef PARTS_DIRECTORY
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
@@ -232,9 +234,9 @@ std::string CameraData::Serialize()
 
 void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
-	auto camera = ChPtr::Make_S<CameraObject>();
+	//auto camera = ChPtr::Make_S<CameraObject>();
 
-	_base.AddCamera(camera);
+	//_base.AddCamera(camera);
 }
 
 unsigned long ScopeData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -259,9 +261,9 @@ std::string ScopeData::Serialize()
 
 void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
-	auto camera = ChPtr::Make_S<CameraObject>();
+	//auto camera = ChPtr::Make_S<CameraObject>();
 
-	_base.AddCamera(camera);
+	//_base.AddCamera(camera);
 }
 
 unsigned long WalkData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -285,7 +287,7 @@ std::string WalkData::Serialize()
 
 void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
-	auto&& walk = GetComponent<MoveComponent>(_base);
+	auto&& walk = GetComponent<BaseMechaMoveComponent>(_base);
 
 	walk->SetMovePow(movePow);
 	walk->SetRotatePow(rotatePow);
@@ -493,6 +495,11 @@ std::string WeaponData::Serialize()
 	return res;
 }
 
+void WeaponData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	_parts.GetWeaponFunctions()[_parts.GetWeaponFunctions().size() - 1]->SetObjectPos(_targetObject);
+}
+
 unsigned long SwordData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = WeaponData::Deserialize(_text, _textPos);
@@ -529,11 +536,6 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 	_parts.AddWeaponFunction(function);
 
 	NextPosBase::SetPartsParameter(_base, _parts,_frame);
-}
-
-void SwordData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
-{
-	_parts.SetSwordHitObjectPos(_targetObject);
 }
 
 unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -584,9 +586,4 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 	_parts.AddWeaponFunction(function);
 
 	NextPosBase::SetPartsParameter(_base, _parts,_frame);
-}
-
-void GunData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
-{
-	_parts.SetGunShotPos(_targetObject);
 }

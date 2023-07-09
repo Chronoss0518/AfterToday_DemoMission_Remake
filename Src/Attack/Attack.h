@@ -31,7 +31,7 @@ public:
 
 
 
-	static ChPtr::Shared<Attack> CreateBullet(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateAttackData(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
 
 	static void AllRelease();
 
@@ -61,6 +61,8 @@ public:
 
 	inline float GetHitSize() { return hitSize; }
 
+	inline ChCpp::BitBool GetAttackType() { return attackType; }
+
 public:
 
 	virtual void InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet);
@@ -73,7 +75,7 @@ public:
 
 public:
 
-	static std::map<std::string,ChPtr::Shared<Attack>>& LoadBulletList()
+	static std::map<std::string,ChPtr::Shared<Attack>>& LoadAttackList()
 	{
 		static std::map<std::string,ChPtr::Shared<Attack>> ins;
 		return ins;
@@ -93,7 +95,7 @@ protected:
 	//’e‚Ìƒ‚ƒfƒ‹//
 	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
 
-	unsigned char bulletType = 0;
+	ChCpp::BitBool attackType;
 	ChPtr::Shared<AttackBase> externulFunction[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
 	MeshDrawer* drawer = nullptr;

@@ -60,7 +60,7 @@ public:
 		return externulFunctions;
 	}
 
-	std::vector<ChPtr::Shared<WeaponFunction>>& GetWeaponFunctions()
+	std::vector<ChPtr::Shared<WeaponFunction>> GetWeaponFunctions()
 	{
 		return weaponFunctions;
 	}
@@ -82,6 +82,8 @@ public:
 	float GetDamage(ChCpp::BoxCollider& _collider);
 
 	unsigned long GetLookAnchorNo() { return lookAnchorNo; }
+
+	unsigned long GetUseAttackType() { return useAttackType; }
 
 public:
 
