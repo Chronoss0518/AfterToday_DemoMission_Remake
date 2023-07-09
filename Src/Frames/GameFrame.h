@@ -2,7 +2,7 @@
 #ifndef _GameFrame
 #define _GameFrame
 
-class BulletObject;
+class AttackObject;
 class BaseMecha;
 class CloudList;
 class GameScript;
@@ -61,6 +61,8 @@ public:
 
 private:
 
+	void StartFrame();
+
 	void InitScriptFunction();
 
 	void SetHitMap(ChPtr::Shared<MapObject> _map);
@@ -79,7 +81,7 @@ public:
 
 	void AddBGM(const std::string& _text);
 
-	void AddBullet(ChPtr::Shared<BulletObject> _bullet);
+	void AddBullet(ChPtr::Shared<AttackObject> _bullet);
 
 	void AddShotEffectObject(const ChVec3& _pos);
 
@@ -179,6 +181,8 @@ private:
 	ChPtr::Shared<GameScript> script = nullptr;
 
 	ChWin::TextBox box;
+
+	bool isFrameUpdate = false;
 
 };
 

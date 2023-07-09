@@ -11,7 +11,6 @@
 
 #include"../BaseMecha/Controller/ControllerBase.h"
 
-#include"../CloudObj/CloudObj.h"
 #include"../Physics/PhysicsMachine.h"
 
 #include"../EffectObjects/ShotEffectList/ShotEffectList.h"
@@ -22,7 +21,7 @@
 #define PLAYER_MECHA_FILE_NAME ""
 
 //想定するメカオブジェクトの最大数//
-#define MAX_MECHA_OBJECT_COUNT 100
+#define MAX_MECHA_OBJECT_COUNT 50
 #define BASE_FPS 60
 #define GRAVITY_POWER 4.9f
 #define DEBUG_FLG 1
@@ -31,7 +30,7 @@
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
 
-#define INIT_SMOKE_DISPERSAL_POWER 5.0f
+#define INIT_SMOKE_DISPERSAL_POWER 10.0f
 #define INIT_SMOKE_ALPHA_POWER 0.5f
 
 #define DISPLAY_FPS_FLG 1
@@ -68,7 +67,7 @@ void GameFrame::Init()
 
 	shotEffectList = ChPtr::Make_S<ShotEffectList>();
 
-	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 6);
+	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 10);
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
 
@@ -77,8 +76,8 @@ void GameFrame::Init()
 	smokeEffectList->SetMaxColorPower(0.8f);
 	smokeEffectList->SetMinColorPower(0.6f);
 
-	smokeEffectList->SetDownSpeedOnAlphaValue(0.001f);
-	smokeEffectList->SetInitialDispersalPower(3.0f);
+	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
+	smokeEffectList->SetInitialDispersalPower(1.0f);
 
 	light.Init(ChD3D11::D3D11Device());
 	light.SetUseLightFlg(true);
@@ -336,10 +335,10 @@ void GameFrame::Update()
 
 #endif
 
-	auto&& looker = enemy->GetComponent<CPUObjectLooker>();
+	//auto&& looker = enemy->GetComponent<CPUObjectLooker>();
 
-	auto&& lookTarget =
-		looker->GetLookTypeMechas(CPUObjectLooker::MemberType::Enemy, CPUObjectLooker::DistanceType::Near, CPUObjectLooker::DamageSizeType::None);
+	//auto&& lookTarget =
+		//looker->GetLookTypeMechas(CPUObjectLooker::MemberType::Enemy, CPUObjectLooker::DistanceType::Near, CPUObjectLooker::DamageSizeType::None);
 
 	box.SetText("FPS:" +
 		std::to_string(ChSystem::SysManager().GetNowFPSPoint()) +
@@ -348,8 +347,8 @@ void GameFrame::Update()
 		std::to_string(bulletList.GetObjectCount()) +
 		"\r\n" +
 		"CPULookRobot:" +
-		(lookTarget >= mechas.size() ? "None" : mechas[lookTarget].expired() ? "None" : mechas[lookTarget].lock()->GetMyName()) +
-		"\r\n" +
+		//(lookTarget >= mechas.size() ? "None" : mechas[lookTarget].expired() ? "None" : mechas[lookTarget].lock()->GetMyName()) +
+		//"\r\n" +
 		"RobotCount:" + 
 		std::to_string(mechaList.GetObjectCount())
 	);
@@ -362,10 +361,6 @@ void GameFrame::Update()
 
 void GameFrame::UpdateFunction()
 {
-
-	shotEffectList->SetUpdateFlg(false);
-	smokeEffectList->SetUpdateFlg(false);
-
 	mechaList.ObjectUpdateBegin();
 
 	mechaList.ObjectUpdate();
@@ -381,7 +376,7 @@ void GameFrame::UpdateFunction()
 	for (auto&& mecha : mechaList.GetObjectList<BaseMecha>())
 	{
 		auto mObj = mecha.lock();
-		for (auto&& bullet : bulletList.GetObjectList<BulletObject>())
+		for (auto&& bullet : bulletList.GetObjectList<AttackObject>())
 		{
 			auto bObj = bullet.lock();
 			if (bObj->IsHit())continue;
@@ -390,6 +385,10 @@ void GameFrame::UpdateFunction()
 	}
 
 	bulletList.ObjectMove();
+
+
+	shotEffectList->SetUpdateFlg(false);
+	smokeEffectList->SetUpdateFlg(false);
 
 	{
 		auto targetMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
@@ -414,15 +413,15 @@ void GameFrame::UpdateFunction()
 
 	}
 
-	while (!shotEffectList->IsUpdateFlg()) {}
-	while (!smokeEffectList->IsUpdateFlg()) {}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
 void GameFrame::DrawFunction()
 {
+	while (!shotEffectList->IsUpdateFlg()) {}
+	while (!smokeEffectList->IsUpdateFlg()) {}
+
 	mechaList.ObjectDrawBegin();
 
 	ChD3D11::Shader11().DrawStart();
@@ -481,6 +480,8 @@ void GameFrame::AddMecha(const std::string& _text)
 	bool playerFlg = false;
 	bool cpuFlg = false;
 
+	std::string cpuLoadData = "";
+
 	ChVec3 position;
 	ChVec3 rotation;
 
@@ -506,21 +507,22 @@ void GameFrame::AddMecha(const std::string& _text)
 		}
 		if (argment[i] == "-rp" || argment[i] == "--randomposition")
 		{
-
-			i++;
-			ChVec3 min;
-			if (argment[i][0] == 'm' && argment[i][1] == 'i' && argment[i][2] == 'n')
+			ChVec3 min = 0.0f;
+			ChVec3 max = 1.0f;
+			for (unsigned long j = 0; j < 2; j++)
 			{
-				min.Deserialize(argment[i], 3, ",", ";");
-			}
+				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'i' && argment[i + 1][2] == 'n')
+				{
+					i++;
+					min.Deserialize(argment[i], 3, ",", ";");
+				}
 
-			i++;
-			ChVec3 max;
-			if (argment[i][0] == 'm' && argment[i][1] == 'a' && argment[i][2] == 'x')
-			{
-				max.Deserialize(argment[i], 3, ",", ";");
+				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'a' && argment[i + 1][2] == 'x')
+				{
+					i++;
+					max.Deserialize(argment[i], 3, ",", ";");
+				}
 			}
-
 
 			ChVec3 random;
 			random.x = GameScript::GetRand(min.x, max.x);
@@ -532,18 +534,21 @@ void GameFrame::AddMecha(const std::string& _text)
 		if (argment[i] == "-rr" || argment[i] == "--randomrotation")
 		{
 
-			i++;
-			ChVec3 min;
-			if (argment[i][0] == 'm' && argment[i][1] == 'i' && argment[i][2] == 'n')
+			ChVec3 min = 0.0f;
+			ChVec3 max = 1.0f;
+			for (unsigned long j = 0; j < 2; j++)
 			{
-				min.Deserialize(argment[i], 3, ",", ";");
-			}
+				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'i' && argment[i + 1][2] == 'n')
+				{
+					i++;
+					min.Deserialize(argment[i], 3, ",", ";");
+				}
 
-			i++;
-			ChVec3 max;
-			if (argment[i][0] == 'm' && argment[i][1] == 'a' && argment[i][2] == 'x')
-			{
-				max.Deserialize(argment[i], 3, ",", ";");
+				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'a' && argment[i + 1][2] == 'x')
+				{
+					i++;
+					max.Deserialize(argment[i], 3, ",", ";");
+				}
 			}
 
 			ChVec3 random;
@@ -559,10 +564,6 @@ void GameFrame::AddMecha(const std::string& _text)
 			if (!cpuFlg)
 			{
 				playerFlg = true;
-				mecha->SetComponent<PlayerController>();
-				auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
-				cpuObjectLooker->SetGameFrame(this);
-				cpuObjectLooker->SetProjectionMatrix(projectionMat);
 			}
 			continue;
 		}
@@ -572,12 +573,7 @@ void GameFrame::AddMecha(const std::string& _text)
 			{
 				cpuFlg = true;
 				i++;
-				auto cpuController = mecha->SetComponent<CPUController>();
-				cpuController->LoadCPUData(argment[i]);
-				cpuController->SetGameFrame(this);
-				auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
-				cpuObjectLooker->SetGameFrame(this);
-				cpuObjectLooker->SetProjectionMatrix(projectionMat);
+				cpuLoadData = argment[i];
 			}
 			continue;
 		}
@@ -591,17 +587,33 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	mecha->SetPosition(position);
 	mecha->SetRotation(rotation);
+
+	if (playerFlg)
+	{
+		mecha->SetComponent<PlayerController>();
+		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
+		cpuObjectLooker->SetGameFrame(this);
+		cpuObjectLooker->SetProjectionMatrix(projectionMat);
+
+		playerParty = teamNo;
+	}
+
+	if (cpuFlg)
+	{
+		auto cpuController = mecha->SetComponent<CPUController>();
+		cpuController->LoadCPUData(cpuLoadData);
+		cpuController->SetGameFrame(this);
+		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
+		cpuObjectLooker->SetGameFrame(this);
+		cpuObjectLooker->SetProjectionMatrix(projectionMat);
+	}
+
 	mecha->SetTeamNo(teamNo);
 
 	auto&& counter = mechaPartyCounter.find(teamNo);
 	if (counter == mechaPartyCounter.end())
 	{
 		mechaPartyCounter[teamNo] = 0;
-	}
-
-	if (playerFlg)
-	{
-		playerParty = teamNo;
 	}
 
 	mechaList.SetObject(mecha);
@@ -615,6 +627,7 @@ void GameFrame::AddField(const std::string& _text)
 	auto mainMap = ChPtr::Make_S<MapObject>();
 	mainMap->model->Init(ChD3D11::D3D11Device());
 	unsigned long pos = argment[0].find_last_of(".");
+
 	if (argment[0].substr(pos) == ".x") {
 		ChCpp::ModelLoader::XFile loader;
 		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
@@ -627,6 +640,7 @@ void GameFrame::AddField(const std::string& _text)
 	{
 		return;
 	}
+
 	mapList.SetObject(mainMap);
 
 	bool hitMapFlg = false;
@@ -659,7 +673,6 @@ void GameFrame::AddField(const std::string& _text)
 			continue;
 		}
 	}
-
 
 	ChMat_11 mapSizeMatrix;
 	mapSizeMatrix.SetPosition(position);
@@ -763,7 +776,7 @@ void GameFrame::AddBGM(const std::string& _text)
 	audios[audioName] = audio;
 }
 
-void GameFrame::AddBullet(ChPtr::Shared<BulletObject> _bullet)
+void GameFrame::AddBullet(ChPtr::Shared<AttackObject> _bullet)
 {
 	bulletList.SetObject(_bullet);
 }
