@@ -9,7 +9,7 @@
 
 #include"WeaponFunction.h"
 
-#define SE_VOLUME_SIZE 0.5f
+#define SE_VOLUME_SIZE 0.1f
 
 void WeaponFunction::Release()
 {

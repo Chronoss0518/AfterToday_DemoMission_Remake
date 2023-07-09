@@ -2,6 +2,8 @@
 
 #include"FunctionComponent.h"
 
+class WeaponFunction;
+
 class WeaponComponent:public FunctionComponent
 {
 public:
@@ -11,6 +13,13 @@ public:
 public:
 
 	inline unsigned long GetUseWeaponNo() { return useWeaponNo; }
+	
+	inline unsigned long GetRegistWeaponCount() { return weapon.size(); }
+
+	std::vector<ChPtr::Weak<WeaponFunction>> GetRegistWeaponList();
+
+	std::vector<ChPtr::Weak<MechaPartsObject>> GetWeaponMechaPartsList();
+	
 
 public:
 

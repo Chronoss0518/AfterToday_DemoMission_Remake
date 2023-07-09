@@ -6,6 +6,7 @@
 #include"WeaponComponent.h"
 #include"WeaponComponents.h"
 
+#include"../MechaPartsObjectFunction/WeaponFunction.h"
 #include"../MechaPartsObject.h"
 
 void WeaponComponent::Update()
@@ -44,14 +45,42 @@ void WeaponComponent::Update()
 	}
 }
 
+std::vector<ChPtr::Weak<WeaponFunction>> WeaponComponent::GetRegistWeaponList()
+{
+	std::vector<ChPtr::Weak<WeaponFunction>> res;
+
+	for (auto&& weaponParts : weapon)
+	{
+		for (auto&& weap : weaponParts->GetWeaponFunctions())
+		{
+			res.push_back(weap);
+		}
+	}
+
+	return res;
+}
+
+std::vector<ChPtr::Weak<MechaPartsObject>> WeaponComponent::GetWeaponMechaPartsList()
+{
+	std::vector<ChPtr::Weak<MechaPartsObject>> res;
+
+	for (auto&& weaponParts : weapon)
+	{
+		res.push_back(weaponParts);
+	}
+
+	return res;
+}
+
+
 void WeaponComponent::Attack()
 {
-	weapon[useWeaponNo]->Attack();
+	weapon[useWeaponNo]->AttackUpdate();
 }
 
 void WeaponComponent::StartSubFunction()
 {
-	weapon[useWeaponNo]->StartSubFunction();
+	weapon[useWeaponNo]->StartWeaponSubFunction();
 }
 
 void WeaponComponent::WeaponUpChange()
