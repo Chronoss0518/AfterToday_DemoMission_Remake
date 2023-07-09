@@ -7,83 +7,19 @@
 #include"../FunctionComponent/WeaponComponents.h"
 
 #include"../../Frames/GameFrame.h"
+#include"../../Attack/Attack.h"
 
 #include"ControllerBase.h"
-
 #include"../CPU/CPULooker.h"
 
+#include"CPUAction/CPUActionBase.h"
+#include"CPUAction/CPUWeaponSelector.h"
+#include"CPUAction/CPUTargetSelector.h"
+#include"CPUAction/CPUMovePositionSelector.h"
+#include"CPUAction/CPUAttack.h"
+#include"CPUAction/CPUMoveInput.h"
+
 #define DEFAULT_CURSOL_MOVE_SIZE 0.2f
-
-class CPUController::CPUFunctionBase
-{
-public:
-
-	enum class HaveHandType
-	{
-		L,R
-	};
-
-	void Init();
-
-	std::string Serialize();
-
-	void Deserialize(const std::string& _text);
-
-	void SetUnStopFlg(const bool _flg) { unStopFlg = _flg; }
-
-	unsigned long  GetTargetNo() { return targetNo; }
-
-	bool IsUnStopFlg() { return unStopFlg; }
-
-	bool IsRunTest(CPUObjectLooker& _looker, GameFrame& _frame);
-
-	bool IsRunEnd() { return isRunEndFlg; }
-
-	void Update(CPUController& _controller, GameFrame& _frame);
-
-private:
-
-	enum class SerializeNo
-	{
-		ActiveFlg,
-		MemberType,
-		DistanceType,
-		DamageType,
-		TestDistance,
-		DistanceComparison,
-		TestDamage,
-		DamageComparison,
-		WeaponType,
-		BulletType,
-		HandType,
-		UnStop
-	};
-
-	unsigned long targetNo = -1;
-	bool activeFlg = true;
-
-	CPUObjectLooker::MemberType memberType = CPUObjectLooker::MemberType::Enemy;
-	CPUObjectLooker::DistanceType distanceType = CPUObjectLooker::DistanceType::None;
-	CPUObjectLooker::DamageSizeType damageType = CPUObjectLooker::DamageSizeType::None;
-
-	float testDistance = 0.0f;
-	ComparisonOperation distanceComparison = ComparisonOperation::Smaller;
-
-	float testDamage = 0.0f;
-	ComparisonOperation damageComparison = ComparisonOperation::Smaller;
-
-	std::function<bool(const float _targetValue, const float _testValue)>comparisonOperation[5];
-
-	unsigned long weaponType = 0;
-	unsigned long bulletType = 0;
-	HaveHandType handType = HaveHandType::L;
-
-	//この命令を行ってもスクリプトを抜けないフラグ//
-	bool unStopFlg = false;
-
-	bool isRunEndFlg = false;
-};
-
 
 void ControllerBase::Input(const InputName _inputFlgName)
 {
@@ -91,7 +27,6 @@ void ControllerBase::Input(const InputName _inputFlgName)
 	if (ChPtr::NullCheck(targetMecha))Destroy();
 
 	targetMecha->SetPushFlg(_inputFlgName);
-
 }
 
 void PlayerController::Init()
@@ -229,9 +164,36 @@ void PlayerController::CursolFunction(float& _value, const float _windSize, cons
 	}
 }
 
+std::function<bool(const float _targetValue, const float _testValue)> comparisonOperation[5] =
+{
+	[](const float _targetValue, const float _testValue)->bool {return _targetValue > _testValue; },
+	[](const float _targetValue, const float _testValue)->bool {return _targetValue >= _testValue; },
+	[](const float _targetValue, const float _testValue)->bool {return _targetValue == _testValue; },
+	[](const float _targetValue, const float _testValue)->bool {return _targetValue <= _testValue; },
+	[](const float _targetValue, const float _testValue)->bool {return _targetValue < _testValue; }
+};
+
+const std::string CPUController::cutChar = ",";
+
 void CPUController::Init()
 {
+	cpuTargetSelect = ChPtr::Make_S<CPUTargetSelector>();
+	
+	cpuMovePositionSelect = ChPtr::Make_S<CPUMovePositionSelector>();
+	
+	cpuWeaponSelect = ChPtr::Make_S<CPUWeaponSelector>();
 
+	cpuAttack = ChPtr::Make_S<CPUAttack>();
+
+	//cpuAvoidTest = ChPtr::Make_S<CPUAvoidTest>();
+
+	cpuMoveInput = ChPtr::Make_S<CPUMoveInput>();
+
+
+	cpuAttack->SetRightWeapons(LookObj()->GetComponent<RightWeaponComponent>());
+	cpuAttack->SetLeftWeapons(LookObj()->GetComponent<LeftWeaponComponent>());
+
+	SampleCreate();
 }
 
 void CPUController::UpdateBegin()
@@ -244,44 +206,63 @@ void CPUController::UpdateBegin()
 
 	auto mecha = LookObj<BaseMecha>();
 
-	if (ChPtr::NullCheck(mecha))
+	if (ChPtr::NullCheck(mecha))return;
+
+	if (mecha->IsBreak())return;
+	
+	if (nowActionMoveTime <= endActionMoveTime)
 	{
-		LookObj()->Destroy();
+		nowActionMoveTime++;
+
+		for (auto&& input : inputDataParFrame)
+		{
+			Input(input);
+		}
+
 		return;
 	}
 
-	if (mecha->IsBreak())return;
+	nowActionMoveTime = 0;
+	inputDataParFrame.clear();
+
+	UpdateEndActionMoveTime();
 
 	auto looker = mecha->GetComponent<CPUObjectLooker>();
 
-	if (looker == nullptr)
-	{
-		LookObj()->Destroy();
-		return;
-	}
+	if (looker == nullptr)return;
 
-	RunUpdate();
-	SelectRunFunction(*looker);
+	cpuTargetSelect->Update(*looker, *frame, *this);
 
-	MoveUpdate();
+	cpuMovePositionSelect->Update(*cpuTargetSelect, *frame, *this);
+
+	cpuWeaponSelect->Update(*cpuTargetSelect, *frame,*cpuAttack,*this);
+
+	cpuAttack->Update(*cpuWeaponSelect, *cpuTargetSelect, *this, *frame);
+
+	cpuMoveInput->Update(*this,*cpuTargetSelect,*cpuMovePositionSelect,*frame);
+}
+
+void CPUController::Input(InputName _input, bool _addInputDataParFrameFlg)
+{
+	if(_addInputDataParFrameFlg)inputDataParFrame.push_back(_input);
+	Input(_input);
 }
 
 void CPUController::SaveCPUData(const std::string& _fileName)
 {
+	if (!saveFlg)return;
+
 	std::string textData = "";
 
-	textData += saveFlg ? "1" : "0";
-	textData += "\n";
+	if (sampleFlg)saveFlg = false;
+	textData += std::to_string(saveFlg ? 1 : 0) + "\n";
+	textData += std::to_string(actionMoveMaxTime) + "\n";
+	textData += std::to_string(actionMoveMinTime) + "\n";
 
-	textData += std::to_string(actionMoveTime);
-	textData += "\n";
+	textData += cpuTargetSelect->Serialize();
+	textData += cpuMovePositionSelect->Serialize();
+	textData += cpuWeaponSelect->Serialize();
 
-	for (auto&& func : cpuFunctions)
-	{
-		textData += func->Serialize();
-		textData += "\n";
-
-	}
 
 	ChCpp::File<> file;
 	file.FileOpen(CPU_DIRECTORY(+_fileName));
@@ -292,6 +273,7 @@ void CPUController::SaveCPUData(const std::string& _fileName)
 
 void CPUController::LoadCPUData(const std::string& _fileName)
 {
+	return;
 	ChCpp::TextObject textData;
 
 	{
@@ -301,128 +283,126 @@ void CPUController::LoadCPUData(const std::string& _fileName)
 		file.FileClose();
 	}
 
+	if (textData.LineCount() <= 1)
+	{
+		SampleCreate();
+		SaveCPUData(_fileName);
+		return;
+	}
+
 	saveFlg = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(0)) == 1;
-	actionMoveTime = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(1));
+	actionMoveMaxTime = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(1));
+	actionMoveMinTime = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(2));
+	
+	UpdateEndActionMoveTime();
 
-	for (unsigned long i = 2; i < textData.Count(); i++)
-	{
-		auto function = ChPtr::Make_S<CPUController::CPUFunctionBase>();
-		function->Deserialize(textData.GetTextLine(i));
-		cpuFunctions.push_back(function);
-	}
+	nowActionMoveTime = endActionMoveTime;
 }
 
-void CPUController::MoveUpdate()
+void CPUController::SampleCreate()
+{
+	sampleFlg = true;
+
+	saveFlg = true;
+	actionMoveMaxTime = 10;
+	actionMoveMinTime = 5;
+
+	auto function = ChPtr::Make_S<CPUWeaponSelect>();
+	function->SetActiveFlg(true);
+	function->SetMemberType(CPUObjectLooker::MemberType::Enemy);
+	function->SetDistanceType(CPUObjectLooker::DistanceType::Near);
+	function->SetTestDistance(1000.0f);
+	function->SetDistanceComparison(ComparisonOperation::Less);
+	function->SetDamageType(CPUObjectLooker::DamageSizeType::Many);
+	function->SetTestDamage(0.0f);
+	function->SetDamageComparison(ComparisonOperation::More);
+	function->SetAttackType(AttackType::Bullet);
+
+	cpuWeaponSelect->Add(function);
+
+	auto targetSelector = ChPtr::Make_S<CPUTargetSelect>();
+	targetSelector->SetActiveFlg(true);
+	targetSelector->SetMemberType(CPUObjectLooker::MemberType::Enemy);
+	targetSelector->SetDistanceType(CPUObjectLooker::DistanceType::Near);
+	targetSelector->SetTestDistance(1000.0f);
+	targetSelector->SetDistanceComparison(ComparisonOperation::Less);
+	targetSelector->SetDamageType(CPUObjectLooker::DamageSizeType::Many);
+	targetSelector->SetTestDamage(0.0f);
+	targetSelector->SetDamageComparison(ComparisonOperation::More);
+
+	cpuTargetSelect->Add(targetSelector);
+
+	cpuMovePositionSelect->SetInitPosition(*this, 20.0f, false, false, false);
+}
+
+void CPUController::UpdateEndActionMoveTime()
 {
 
+	unsigned long tmpActionTime = actionMoveMaxTime - actionMoveMinTime;
+
+	if (tmpActionTime <= 0)tmpActionTime = 1;
+
+	endActionMoveTime = std::rand() % tmpActionTime;
+	endActionMoveTime += actionMoveMinTime;
+
+	if (endActionMoveTime <= 0)endActionMoveTime = 1;
 }
 
-void CPUController::SelectRunFunction(CPUObjectLooker& _looker)
-{
-	if (action != nullptr)return;
-
-	while (!_looker.IsEndUpdate())continue;
-
-	for (auto&& function : cpuFunctions)
-	{
-		if (nowActionMoveTime > 0)continue;
-		if (function->IsRunTest(_looker, *frame) && !function->IsUnStopFlg())
-		{
-			action = function;
-			break;
-		}
-	}
-}
-
-void CPUController::RunUpdate()
-{
-	if (action == nullptr)return;
-	action->Update(*this, *frame);
-	if (!action->IsRunEnd())return;
-	action = nullptr;
-
-}
-
-void CPUController::CPUFunctionBase::Init()
-{
-	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Greater)] =
-		[&](const float _targetValue, const float _testValue)->bool {return _targetValue > _testValue; };
-
-	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::More)] =
-		[&](const float _targetValue, const float _testValue)->bool {return _targetValue >= _testValue; };
-
-	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Equal)] =
-		[&](const float _targetValue, const float _testValue)->bool {return _targetValue == _testValue; };
-
-	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Less)] =
-		[&](const float _targetValue, const float _testValue)->bool {return _targetValue <= _testValue; };
-
-	comparisonOperation[ChStd::EnumCast(CPUController::ComparisonOperation::Smaller)] =
-		[&](const float _targetValue, const float _testValue)->bool {return _targetValue < _testValue; };
-}
-
-std::string CPUController::CPUFunctionBase::Serialize()
+std::string CPUActionBase::Serialize()
 {
 	std::string res = "";
+#if 0
+	for (unsigned char i = 0; i < ChStd::EnumCast(SerializeNo::None); i++)
+	{
+		res += GetValue(i) + cutChar;
+	}
 
-	res = activeFlg ? "1" : "0";
-	res += "\n";
-
-	res += std::to_string(ChStd::EnumCast(memberType)) + "\n";
-	res += std::to_string(ChStd::EnumCast(distanceType)) + "\n";
-	res += std::to_string(ChStd::EnumCast(damageType)) + "\n";
-
-	res += std::to_string(testDamage) + "\n";
-	res += std::to_string(ChStd::EnumCast(damageComparison)) + "\n";
-	res += std::to_string(testDistance) + "\n";
-	res += std::to_string(ChStd::EnumCast(distanceComparison)) + "\n";
-
-	res += std::to_string(weaponType) + "\n";
-	res += std::to_string(bulletType) + "\n";
-	res += std::to_string(ChStd::EnumCast(handType)) + "\n";
-	
-	res += unStopFlg ? "1" : "0";
-	res += "\n";
-
+	res.pop_back();
+#endif
 	return res;
 }
 
-void CPUController::CPUFunctionBase::Deserialize(const std::string& _text)
+void CPUActionBase::Deserialize(const std::string& _text)
 {
+	if (_text.empty())return;
 
-	auto&& textList = ChStr::Split(_text, " ");
+#if 0
+	auto&& textList = ChStr::Split(_text, cutChar);
 
 	activeFlg = textList[ChStd::EnumCast(SerializeNo::ActiveFlg)] == "1";
 
 	memberType = (CPUObjectLooker::MemberType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::MemberType)]);
+
 	distanceType = (CPUObjectLooker::DistanceType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceType)]);
-	damageType = (CPUObjectLooker::DamageSizeType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageType)]);
-
-	testDamage = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDamage)]);
-	damageComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageComparison)]);
-
 	testDistance = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDistance)]);
 	distanceComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceComparison)]);
 
-	weaponType = ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::WeaponType)]);
-	bulletType = ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::BulletType)]);
-
-
-	handType = (HaveHandType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::HandType)]);
-	
-	unStopFlg = textList[ChStd::EnumCast(SerializeNo::HandType)] == "1";
+	damageType = (CPUObjectLooker::DamageSizeType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageType)]);
+	testDamage = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDamage)]);
+	damageComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageComparison)]);
+#endif
 }
 
-bool CPUController::CPUFunctionBase::IsRunTest(CPUObjectLooker& _looker , GameFrame& _frame)
+unsigned long CPUActionBase::GetLookTypeMechas(CPUObjectLooker& _lookTarget)
 {
+	return _lookTarget.GetLookTypeMechas(memberType, distanceType, damageType);
+}
 
-	targetNo = _looker.GetLookTypeMechas(memberType, distanceType, damageType);
+bool CPUActionBase::IsRunTest(unsigned long _lookTarget, GameFrame& _frame, CPUController& _controller)
+{
+	if (!activeFlg)return false;
+
+	auto&& thisMecha = _controller.GetBaseMecha();
+
+	if (ChPtr::NullCheck(thisMecha))return false;
+
+	if (thisMecha->IsBreak())return false;
 
 	auto&& mechas = _frame.GetMechas();
 
-	if (mechas.size() >= targetNo)return false;
+	if (mechas.size() <= _lookTarget)return false;
 
-	auto target = mechas[targetNo];
+	auto target = mechas[_lookTarget];
 
 	if (target.expired())return false;
 
@@ -430,35 +410,19 @@ bool CPUController::CPUFunctionBase::IsRunTest(CPUObjectLooker& _looker , GameFr
 
 	if (mecha == nullptr)return false;
 
+	if (mecha->IsBreak())return false;
+
+	OutputDebugString("MechaTest Success\n");
+
 	if (!comparisonOperation[ChStd::EnumCast(damageComparison)](mecha->GetDamage(), testDamage))return false;
 
-	if (!comparisonOperation[ChStd::EnumCast(distanceComparison)](mecha->GetDamage(), testDistance))return false;
-	
-	isRunEndFlg = false;
-	
+	OutputDebugString("DamageTest Success\n");
+
+	float length = ChVec3::GetLen(thisMecha->GetPosition(), mecha->GetPosition());
+
+	if (!comparisonOperation[ChStd::EnumCast(distanceComparison)](length, testDistance))return false;
+
+	OutputDebugString("DistanceTest Success\n");
+
 	return true;
-}
-
-void CPUController::CPUFunctionBase::Update(CPUController& _controller, GameFrame& _frame)
-{
-	auto&& mechas = _frame.GetMechas();
-
-	if (mechas.size() >= targetNo)return;
-
-	auto&& target = mechas[targetNo];
-	if (target.expired())
-	{
-		isRunEndFlg = true;
-		return;
-	}
-
-	auto mecha = _controller.LookObj();
-
-	if (mecha == nullptr)return;
-	
-	auto weapon = mecha->GetComponents<RightWeaponComponent>();
-
-	_controller.Input(InputName::LAttack);
-
-	isRunEndFlg = true;
 }
