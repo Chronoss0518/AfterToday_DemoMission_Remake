@@ -45,12 +45,14 @@ void CPUAttack::SetLeftWeapons(const ChPtr::Shared<LeftWeaponComponent>& _weapon
 }
 
 void CPUAttack::Update(
-	CPUWeaponSelector& _weaponSelector, 
-	CPUTargetSelector& _targetSelector, 
-	CPUController& _controller, 
+	CPUWeaponSelector& _weaponSelector,
+	CPUTargetSelector& _targetSelector,
+	CPUController& _controller,
 	GameFrame& _frame)
 {
-	if(selectWeapon == nullptr)selectWeapon = _weaponSelector.GetSelectWeapon();
+	if (!_targetSelector.IsLookTarget())return;
+
+	if (selectWeapon == nullptr)selectWeapon = _weaponSelector.GetSelectWeapon();
 
 	if (selectWeapon == nullptr)return;
 
@@ -60,10 +62,11 @@ void CPUAttack::Update(
 
 	FindLeftPriorityAttack();
 
-	AttackFunction(_controller);
+	AttackFunction(_controller, leftCommandList);
+
+	AttackFunction(_controller, rightCommandList);
 
 	//OutputDebugString("CPUAttack Update End\n");
-
 }
 
 void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
@@ -76,7 +79,7 @@ void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
 		auto&& attackData = function->GetAttackData();
 
 		unsigned char attackTypeValue = attackData->GetAttackType().GetValue();
-		
+
 		attackTypeValue |= attackType.GetValue();
 
 		attackType.SetValue(attackTypeValue);
@@ -87,11 +90,13 @@ void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
 
 void CPUAttack::FindRightPriorityAttack()
 {
-	if (!commandList.empty())return;
+	if (!leftCommandList.empty())return;
+	if (!rightCommandList.empty())return;
 	if (priorityWeaponType != PriorityWeaponType::Right)return;
 
 	FindAttackFunction(
 		*rightWeaponFunctions,
+		rightCommandList,
 		ControllerBase::InputName::RAttack,
 		ControllerBase::InputName::RWUChange,
 		ControllerBase::InputName::RWDChange,
@@ -100,6 +105,7 @@ void CPUAttack::FindRightPriorityAttack()
 
 	FindAttackFunction(
 		*leftWeaponFunctions,
+		leftCommandList,
 		ControllerBase::InputName::LAttack,
 		ControllerBase::InputName::LWUChange,
 		ControllerBase::InputName::LWDChange,
@@ -109,11 +115,13 @@ void CPUAttack::FindRightPriorityAttack()
 
 void CPUAttack::FindLeftPriorityAttack()
 {
-	if (!commandList.empty())return;
+	if (!leftCommandList.empty())return;
+	if (!rightCommandList.empty())return;
 	if (priorityWeaponType != PriorityWeaponType::Left)return;
 
 	FindAttackFunction(
 		*leftWeaponFunctions,
+		leftCommandList,
 		ControllerBase::InputName::LAttack,
 		ControllerBase::InputName::LWUChange,
 		ControllerBase::InputName::LWDChange,
@@ -122,6 +130,7 @@ void CPUAttack::FindLeftPriorityAttack()
 
 	FindAttackFunction(
 		*rightWeaponFunctions,
+		rightCommandList,
 		ControllerBase::InputName::RAttack,
 		ControllerBase::InputName::RWUChange,
 		ControllerBase::InputName::RWDChange,
@@ -132,13 +141,15 @@ void CPUAttack::FindLeftPriorityAttack()
 
 void CPUAttack::FindAttackFunction(
 	WeaponComponent& _weaponFunction,
+	std::vector<ControllerBase::InputName>& _commandList,
 	ControllerBase::InputName _attack,
 	ControllerBase::InputName _weaponUpChange,
 	ControllerBase::InputName _weaponDownChange,
 	ControllerBase::InputName _typeUpChange,
 	ControllerBase::InputName _typeDownChange)
 {
-	if (!commandList.empty())return;
+	if (ChPtr::NullCheck(&_weaponFunction))return;
+	if (!_commandList.empty())return;
 
 	unsigned long nowSelectWeapon = _weaponFunction.GetUseWeaponNo();
 	unsigned long nowSelectAttack = -1;
@@ -152,7 +163,7 @@ void CPUAttack::FindAttackFunction(
 	unsigned long maxAttackSize = 0;
 	ChPtr::Shared<MechaPartsObject> weapon = nullptr;
 
-	for(unsigned long i = 0; i < maxWeaponSize;i++)
+	for (unsigned long i = 0; i < maxWeaponSize; i++)
 	{
 		weapon = registWeaponList[i].lock();
 		if (weapon == nullptr)continue;
@@ -174,17 +185,17 @@ void CPUAttack::FindAttackFunction(
 		break;
 
 	}
-	
+
 	if (targetWeapon > maxWeaponSize || targetAttackType > maxAttackSize)return;
 
 	for (unsigned long i = 0; i < attackCount; i++)
 	{
-		commandList.push_back(_attack);
+		_commandList.push_back(_attack);
 	}
 
-	CreateAttackCommand(maxAttackSize, nowSelectAttack, targetAttackType, _typeUpChange, _typeDownChange);
+	CreateAttackCommand(maxAttackSize, nowSelectAttack, targetAttackType, _commandList, _typeUpChange, _typeDownChange);
 
-	CreateAttackCommand(maxWeaponSize, nowSelectWeapon, targetWeapon, _weaponUpChange, _weaponDownChange);
+	CreateAttackCommand(maxWeaponSize, nowSelectWeapon, targetWeapon, _commandList, _weaponUpChange, _weaponDownChange);
 
 }
 
@@ -192,6 +203,7 @@ void CPUAttack::CreateAttackCommand(
 	unsigned long maxSize,
 	unsigned long nowSelectCount,
 	unsigned long targetSelectCount,
+	std::vector<ControllerBase::InputName>& _commandList,
 	ControllerBase::InputName _upChange,
 	ControllerBase::InputName _downChange)
 {
@@ -209,16 +221,16 @@ void CPUAttack::CreateAttackCommand(
 
 	for (unsigned long i = 0; i < moveCount; i++)
 	{
-		commandList.push_back(upFlg ? _upChange : _downChange);
+		_commandList.push_back(upFlg ? _upChange : _downChange);
 	}
-
 }
 
-void CPUAttack::AttackFunction(CPUController& _controller)
+void CPUAttack::AttackFunction(CPUController& _controller,
+	std::vector<ControllerBase::InputName>& _commandList)
 {
-	if (commandList.empty())return;
+	if (_commandList.empty())return;
 
-	_controller.Input(commandList[commandList.size() - 1], false);
+	_controller.Input(_commandList[_commandList.size() - 1], false);
 
-	commandList.pop_back();
+	_commandList.pop_back();
 }

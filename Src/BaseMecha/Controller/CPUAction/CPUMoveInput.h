@@ -10,10 +10,6 @@ class CPUMoveInput
 {
 public:
 
-	inline float GetNearTestLength() { return nearTestLength; }
-
-public:
-
 	void Update(
 		CPUController& _controller, 
 		CPUTargetSelector& _targetSelector,
@@ -22,21 +18,23 @@ public:
 
 private:
 	
-	void MoveBattleTarget(CPUController& _controller,bool _isNearThePositionFlg, const ChVec3& _dir);
+	void MoveBattleTarget(CPUController& _controller,bool _isBattleFlg, const ChVec3& _dir, bool _isLookTarget);
 
-	void MoveUnButtleTarget(CPUController& _controller, bool _isFarThePositionFlg, const ChVec3& _dir);
+	void MoveUnButtleTarget(CPUController& _controller, bool _isBattleFlg, const ChVec3& _dir);
 
 private:
-
-	float nearTestLength = 1.0f;
 
 	unsigned long targetNo = -1;
 	bool battleFlg = false;
 
-	float battleTargetNearLength = 10.0f;
-	
-	float useBoostLengthFromBattle = 100.0f;
+	ControllerBase::InputName beforeCameraRotationInputName;
 
-	float useBoostLengthFromUnBattle = 50.0f;
+	float lookTweakSize = 0.8f;
+
+	float targetPositionLength = 100.0f;
+	
+	float useBoostLengthFromBattle = 200.0f;
+
+	float useBoostLengthFromUnBattle = 400.0f;
 
 };

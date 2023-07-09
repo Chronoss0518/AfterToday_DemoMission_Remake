@@ -9,15 +9,27 @@ class CPUMovePositionSelect
 {
 public:
 
+	enum class IgnoreAxisFlg
+	{
+		X, Y, Z
+	};
+
+public:
+
 	std::string Serialize();
 
 	void Deserialize(const std::string& _text);
 
 	void SetOperationPoint(const ChVec3& _point) { point = _point; }
 
+	inline void SetIgnoreFlg(const bool _flg, IgnoreAxisFlg _axis)
+	{
+		axisFlg.SetBitFlg(ChStd::EnumCast(_axis), _flg);
+	}
+
 	void SetOperationPointDistance(const float _distance) { if (_distance > 0.0f) distance = _distance; }
 
-	ChVec3 GetOperationPoint() { return point; }
+	ChVec3 GetOperationPoint() { return outPoint; }
 
 	float GetOperationPointDistance() { return distance; }
 
@@ -30,7 +42,10 @@ private:
 	std::string GetValue(unsigned char _no);
 
 	ChVec3 point = 0.0f;
+	ChVec3 outPoint = 0.0f;
 	float distance = 10.0f;
+
+	ChCpp::BitBool axisFlg;
 
 };
 
@@ -38,29 +53,35 @@ class CPUMovePositionSelector : public FunctionsBase<CPUMovePositionSelect>
 {
 public:
 
-	void Init(bool _insertStartPointFlg, CPUController& _controller,float _distance);
+	void SetInitPosition(CPUController& _controller, float _distance, bool _xIgnore, bool _yIgnore, bool _zIgnore);
 
 	std::string Serialize()override;
 
 	void Deserialize(const std::string& _text)override;
 
-	void Update(CPUTargetSelector& _selector, GameFrame& _frame, CPUMoveInput& _moveInput,CPUController& _controller);
+	void Update(CPUTargetSelector& _selector, GameFrame& _frame,CPUController& _controller);
 
 	inline ChVec3 GetMovePoint() { return point; }
+
+	inline bool IsBattleFlg() { return isBattleFlg; }
 
 private:
 
 	void UpdateLookTarget(CPUTargetSelector& _selector, GameFrame& _frame);
 
-	void UpdateUnLookTarget(CPUController& _controller, float _nearTestLength);
+	void UpdateUnLookTarget(CPUController& _controller);
 
 private:
 	
+	float isTargetPositionInAreaLength = 20.0f;
+
 	bool runUpdateLookTargetFlg = false;
 	ChVec3 point = 0.0f;
 
 	ChVec3 lastLookPoint = 0.0f;
-	bool isButtleFlg = false;
+	bool isBattleFlg = false;
+
+	ChPtr::Weak<BaseMecha>targetMecha;
 
 	unsigned long moveOperationPointCount = 0;
 };

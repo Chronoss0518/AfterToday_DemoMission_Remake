@@ -28,7 +28,7 @@ public:
 
 	unsigned long GetLookTypeMechas(CPUObjectLooker& _lookTarget);
 
-	virtual bool IsRunTest(unsigned long _lookTarget, GameFrame& _frame);
+	virtual bool IsRunTest(unsigned long _lookTarget, GameFrame& _frame,CPUController& _controller);
 
 	inline bool IsActiveFlg() { return activeFlg; }
 

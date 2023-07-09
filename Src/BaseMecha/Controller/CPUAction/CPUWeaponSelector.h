@@ -22,7 +22,7 @@ public:
 
 	bool IsUnStopFlg() { return unStopFlg; }
 
-	bool Update(unsigned long _lookTarget, GameFrame& _frame, CPUAttack& _attack);
+	bool Update(unsigned long _lookTarget, GameFrame& _frame, CPUAttack& _attack, CPUController& _controller);
 
 private:
 
@@ -70,7 +70,7 @@ public:
 
 	bool IsRunEnd() { return selectWeaponsQueue.empty(); }
 
-	void Update(CPUTargetSelector& _targetSelector, GameFrame& _frame, CPUAttack& _attack);
+	void Update(CPUTargetSelector& _targetSelector, GameFrame& _frame, CPUAttack& _attack,CPUController& _controller);
 
 	void ActionCansel() { selectWeaponsQueue.clear(); }
 

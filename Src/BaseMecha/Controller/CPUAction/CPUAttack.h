@@ -43,7 +43,8 @@ public:
 	void AttackCancel()
 	{
 		selectWeapon = nullptr;
-		commandList.clear();
+		leftCommandList.clear();
+		rightCommandList.clear();
 	}
 
 	bool IsHaveAttackType(AttackType _attackType) { return attackType.GetBitFlg(ChStd::EnumCast(_attackType)); }
@@ -58,6 +59,7 @@ private:
 
 	void FindAttackFunction(
 		WeaponComponent& _weaponFunction,
+		std::vector<ControllerBase::InputName>& _commandList,
 		ControllerBase::InputName _attack,
 		ControllerBase::InputName _weaponUpChange,
 		ControllerBase::InputName _weaponDownChange,
@@ -68,10 +70,12 @@ private:
 		unsigned long maxSize,
 		unsigned long nowSelectCount,
 		unsigned long targetSelectCount,
+		std::vector<ControllerBase::InputName>& _commandList,
 		ControllerBase::InputName _upChange,
 		ControllerBase::InputName _downChange);
 
-	void AttackFunction(CPUController& _controller);
+	void AttackFunction(CPUController& _controller,
+		std::vector<ControllerBase::InputName>& _commandList);
 
 	ChPtr::Shared<RightWeaponComponent>rightWeaponFunctions;
 
@@ -80,7 +84,9 @@ private:
 	ChCpp::BitBool attackType;
 	ChPtr::Shared<CPUWeaponSelect> selectWeapon = nullptr;
 
-	std::vector<ControllerBase::InputName>commandList;
+	std::vector<ControllerBase::InputName>leftCommandList;
+
+	std::vector<ControllerBase::InputName>rightCommandList;
 
 	PriorityWeaponType priorityWeaponType = PriorityWeaponType::Right;
 

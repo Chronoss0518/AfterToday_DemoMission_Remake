@@ -54,9 +54,9 @@ void CPUWeaponSelect::Deserialize(const std::string& _text)
 #endif
 }
 
-bool CPUWeaponSelect::Update(unsigned long _lookTarget, GameFrame& _frame, CPUAttack& _attack)
+bool CPUWeaponSelect::Update(unsigned long _lookTarget, GameFrame& _frame, CPUAttack& _attack, CPUController& _controller)
 {
-	if(!IsRunTest(_lookTarget, _frame))return false;
+	if(!IsRunTest(_lookTarget, _frame, _controller))return false;
 
 	if (!_attack.IsHaveAttackType(attackType))return false;
 
@@ -108,7 +108,7 @@ void CPUWeaponSelector::Deserialize(const std::string& _text)
 
 }
 
-void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _frame, CPUAttack& _attack)
+void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _frame, CPUAttack& _attack, CPUController& _controller)
 {
 	if (!_targetSelector.IsLookTarget())
 	{
@@ -129,7 +129,7 @@ void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _f
 
 	for (auto&& func : functions)
 	{
-		if (!func->Update(beforeTarget, _frame, _attack))continue;
+		if (!func->Update(beforeTarget, _frame, _attack, _controller))continue;
 		selectWeaponsQueue.push_back(func);
 	}
 

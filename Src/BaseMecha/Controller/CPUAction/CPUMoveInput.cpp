@@ -23,6 +23,8 @@ void CPUMoveInput::Update(
 
 	if (ChPtr::NullCheck(baseMecha))return;
 
+	bool isBattleFlg = _movePositionSelector.IsBattleFlg();
+
 	//OutputDebugString("CPUMoveInput Update Start\n");
 
 	auto moveDir = _movePositionSelector.GetMovePoint() - baseMecha->GetPosition();
@@ -33,24 +35,51 @@ void CPUMoveInput::Update(
 
 	ChLMat tmpMat;
 
-	
-
 	auto lookDir = baseMecha->GetViewLookPos() - baseMecha->GetViewPos();
 
 	lookDir.Normalize();
 
-	auto cross = ChVec3::GetCross(moveDir, lookDir);
+	auto sideCross = ChVec3::GetCross(moveDir, lookDir);
+	float sideCos = ChVec3::GetCos(moveDir, lookDir);
 
-	if (cross.y > 0.0f)_controller.Input(ControllerBase::InputName::CameraLeftRotation, true);
-	if (cross.y < 0.0f)_controller.Input(ControllerBase::InputName::CameraRightRotation, true);
+	bool inputHoldFlg = true;
 
-	OutputDebugString(("CrossSize x:[" + std::to_string(cross.x)+"] y:[" + std::to_string(cross.y) + "] z:[" + std::to_string(cross.z) + "]\n").c_str());
+	if (sideCos > lookTweakSize)inputHoldFlg = false;
+
+	if (sideCross.y > 0.0f)
+	{
+		_controller.Input(ControllerBase::InputName::CameraLeftRotation, inputHoldFlg);
+		beforeCameraRotationInputName = ControllerBase::InputName::CameraLeftRotation;
+	}
+
+	if (sideCross.y < 0.0f)
+	{
+		_controller.Input(ControllerBase::InputName::CameraRightRotation, inputHoldFlg);
+		beforeCameraRotationInputName = ControllerBase::InputName::CameraRightRotation;
+	}
+
+	if (sideCos < 0.0f)
+	{
+		if (sideCross.y == 0.0f)
+		{
+			auto tmp = rand() % 2;
+			beforeCameraRotationInputName = tmp == 0 ? ControllerBase::InputName::CameraLeftRotation : ControllerBase::InputName::CameraRightRotation;
+			_controller.Input(beforeCameraRotationInputName, inputHoldFlg);
+		}
+		return;
+	}
+
+
+	//if (moveDir.y < lookDir.y)_controller.Input(ControllerBase::InputName::CameraUpRotation, true);
+	//if (moveDir.y > lookDir.y)_controller.Input(ControllerBase::InputName::CameraDownRotation, true);
+
+	//OutputDebugString(("CrossSize x:[" + std::to_string(cross.x)+"] y:[" + std::to_string(cross.y) + "] z:[" + std::to_string(cross.z) + "]\n").c_str());
 
 	//OutputDebugString("CPUMoveInput Update End\n");
 
 	if (!_targetSelector.IsLookTarget())
 	{
-		MoveUnButtleTarget(_controller, true, targetDir);
+		MoveUnButtleTarget(_controller, false, targetDir);
 		return;
 	}
 
@@ -59,7 +88,7 @@ void CPUMoveInput::Update(
 
 	if (mechaList.size() <= targetNo)
 	{
-		MoveUnButtleTarget(_controller, true, targetDir);
+		MoveUnButtleTarget(_controller, false, targetDir);
 		return;
 	}
 
@@ -67,7 +96,7 @@ void CPUMoveInput::Update(
 
 	if (targetMecha.expired())
 	{
-		MoveUnButtleTarget(_controller, true, targetDir);
+		MoveUnButtleTarget(_controller, false, targetDir);
 		return;
 	}
 
@@ -77,42 +106,52 @@ void CPUMoveInput::Update(
 
 	float moveToTargetPositionLenght = (targetPosition - _movePositionSelector.GetMovePoint()).Len();
 
-	MoveBattleTarget(_controller, moveToTargetPositionLenght < nearTestLength, targetDir);
+	MoveBattleTarget(_controller, _movePositionSelector.IsBattleFlg(), targetDir, _targetSelector.IsLookTarget());
 
-	MoveUnButtleTarget(_controller, moveToTargetPositionLenght > nearTestLength, targetDir);
+	MoveUnButtleTarget(_controller, _movePositionSelector.IsBattleFlg(), targetDir);
 }
 
-void CPUMoveInput::MoveBattleTarget(CPUController& _controller, bool _isNearThePositionFlg, const ChVec3& _dir)
+void CPUMoveInput::MoveBattleTarget(CPUController& _controller, bool _isBattleFlg, const ChVec3& _dir, bool _isLookTarget)
 {
-	if (!_isNearThePositionFlg)return;
+	if (!_isBattleFlg)return;
 
 	float length = _dir.Len();
 
 	ChVec3 tmpDir = _dir;
-	tmpDir.Abs();
 
-	if (length > useBoostLengthFromBattle + battleTargetNearLength)_controller.Input(ControllerBase::InputName::Boost, true);
+	if (length > useBoostLengthFromBattle)_controller.Input(ControllerBase::InputName::Boost, true);
 
-	auto moveInput = ControllerBase::InputName::None;
+	auto moveInput = ControllerBase::InputName::Front;
 
-	if (tmpDir.x + tmpDir.z > tmpDir.y)
+	if (length < targetPositionLength && _isLookTarget)moveInput = ControllerBase::InputName::Back;
+
+	if (tmpDir.y > 0.0f)
 	{
-		moveInput = ControllerBase::InputName::Front;
-
-		if (length < battleTargetNearLength)moveInput = ControllerBase::InputName::Back;
-	}
-	else
-	{
-		if (length > battleTargetNearLength)moveInput = ControllerBase::InputName::Jump;
+		moveInput = ControllerBase::InputName::Jump;
 	}
 
 	_controller.Input(moveInput, true);
-
 }
 
-void CPUMoveInput::MoveUnButtleTarget(CPUController& _controller, bool _isFarThePositionFlg, const ChVec3& _dir)
+void CPUMoveInput::MoveUnButtleTarget(CPUController& _controller, bool _isBattleFlg, const ChVec3& _dir)
 {
-	if (!_isFarThePositionFlg)return;
+	if (_isBattleFlg)return;
 
+	float length = _dir.Len();
+
+	ChVec3 tmpDir = _dir;
+
+	if (length > useBoostLengthFromBattle)_controller.Input(ControllerBase::InputName::Boost, true);
+
+	auto moveInput = ControllerBase::InputName::Front;
+
+	if (length < 10.0f)moveInput = ControllerBase::InputName::Back;
+
+	_controller.Input(moveInput, true);
+
+	if(tmpDir.y > 0.0f)
+	{
+		_controller.Input(ControllerBase::InputName::Jump, true);
+	}
 
 }

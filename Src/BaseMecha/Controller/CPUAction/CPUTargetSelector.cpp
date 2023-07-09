@@ -46,18 +46,18 @@ void CPUTargetSelect::Deserialize(const std::string& _text)
 #endif
 }
 
-unsigned long CPUTargetSelect::Update(CPUObjectLooker& _lookTarget, GameFrame& _frame)
+unsigned long CPUTargetSelect::Update(CPUObjectLooker& _lookTarget, GameFrame& _frame, CPUController& _controller)
 {
 	unsigned long lookTargetNo = GetLookTypeMechas(_lookTarget);
 
-	if (!IsRunTest(lookTargetNo, _frame))return -1;
+	if (!IsRunTest(lookTargetNo, _frame, _controller))return -1;
 
 	return lookTargetNo;
 }
 
 std::string CPUTargetSelect::GetValue(unsigned char _no)
 {
-
+	return "";
 }
 
 std::string CPUTargetSelector::Serialize()
@@ -70,23 +70,21 @@ void CPUTargetSelector::Deserialize(const std::string& _text)
 
 }
 
-void CPUTargetSelector::Update(CPUObjectLooker& _looker, GameFrame& _frame)
+void CPUTargetSelector::Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller)
 {
 	if (functions.empty())return;
-
-	//OutputDebugString("CPUTargetSelector Update Start\n");
 
 	lookTargetFlg = false;
 	targetNo = -1;
 	for (auto&& selectFunction : functions)
 	{
-		unsigned long test = selectFunction->Update(_looker, _frame);
-		if (test < 0)continue;
+		unsigned long test = selectFunction->Update(_looker, _frame, _controller);
+
+		OutputDebugString(("TestTargetNo :" + std::to_string(test) + "\n").c_str());
+		if (test >= _frame.GetMechaList().GetObjectCount())continue;
 		targetNo = test;
 		lookTargetFlg = true;
 		break;
 	}
-
-	//OutputDebugString("CPUTargetSelector Update End\n");
 
 }

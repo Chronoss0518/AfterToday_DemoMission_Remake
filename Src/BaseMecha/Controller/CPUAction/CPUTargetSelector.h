@@ -10,7 +10,7 @@ public:
 
 	void Deserialize(const std::string& _text)override;
 
-	unsigned long Update(CPUObjectLooker& _looker, GameFrame& _frame);
+	unsigned long Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller);
 
 private:
 
@@ -26,7 +26,7 @@ public:
 
 	void Deserialize(const std::string& _text)override;
 
-	void Update(CPUObjectLooker& _looker,GameFrame& _frame);
+	void Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller);
 
 	inline bool IsLookTarget() { return lookTargetFlg; }
 
