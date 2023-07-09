@@ -6,12 +6,6 @@ class MoveComponentBase :public FunctionComponent
 {
 protected:
 
-	enum class UsingCameraRotateAxisType
-	{
-		Horizontal,//êÖïΩ//
-		Vertical//êÇíº//
-	};
-
 public:
 
 	void Update()override;
@@ -26,17 +20,15 @@ public:
 
 	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
 
-	void SetUsingCameraRotateAxisFlg(bool _flg, UsingCameraRotateAxisType _type);
-
 protected:
 
 	virtual void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster) = 0;
 
 	virtual void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction) = 0;
 
-	void CamVerticalRotateUpdate(InputName _input, const float _camRot);
+	virtual void CamVerticalRotateUpdate(InputName _input, const float _camRot) = 0;
 
-	void CamHorizontalRotateUpdate(InputName _input, const float _camRot);
+	virtual void CamHorizontalRotateUpdate(InputName _input, const float _camRot) = 0;
 
 private:
 
@@ -45,19 +37,20 @@ private:
 	float rotatePow = 0.0f;
 	float cameraRotatePow = 50.0f;
 
-	ChCpp::BitBool usingCameraRotateAxisFlg;
 };
 
 class BaseMechaMoveComponent :public MoveComponentBase
 {
-public:
-
-	void Init()override;
 
 private:
 
-	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid,const ChVec3& _direction,const ChLMat& _nowTargetPoster)override;
-	
+	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
+
 	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
+
+	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
+
+	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
+
 
 };
