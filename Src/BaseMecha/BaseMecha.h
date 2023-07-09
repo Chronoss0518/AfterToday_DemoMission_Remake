@@ -175,6 +175,8 @@ public://Get Function//
 	
 	ChVec3 GetViewLookPos();
 
+	ChVec3 GetDamageDir() { return damageDir; }
+
 	inline float GetMass() { return mass; }
 
 	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
@@ -230,8 +232,8 @@ protected:
 
 	float groundDistance = 0.0f;
 
-	//float durable = 100.0f;
-	float durable = 10.0f;
+	float durable = 100.0f;
+	//float durable = 10.0f;
 	float nowDurable = 100.0f;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
@@ -241,6 +243,9 @@ protected:
 
 	unsigned long useCameraNo = 0;
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;
+
+	ChVec3 damageDir = ChVec3();
+
 
 	std::string mechaName = "";
 

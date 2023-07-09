@@ -395,6 +395,8 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 	if (_obj.IsHit())return;
 	if (IsBreak())return;
 
+	damageDir = ChVec3();
+
 	ChVec3 pos = _obj.GetPosition();
 
 	ChVec3 dir = _obj.GetMovePower();
@@ -437,6 +439,8 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 			if (damage == 0.0f)continue;
 			durable -= damage;
 			isHitFlg = true;
+			damageDir = collider.GetPos() - physics->GetPosition();
+			damageDir.Normalize();
 			break;
 		}
 
@@ -452,7 +456,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 	
 	Break();
 	
-	//Destroy();
+	Destroy();
 
 	breakFlg = true;
 }
