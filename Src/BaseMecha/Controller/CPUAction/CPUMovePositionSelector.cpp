@@ -12,43 +12,50 @@
 #include"CPUTargetSelector.h"
 #include"CPUMoveInput.h"
 
-std::string CPUMovePositionSelect::Serialize()
+ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelect::Serialize()
 {
-	std::string res = "";
-#if 0
-	for (unsigned char i = 0; i < ChStd::EnumCast(SerializeNo::None); i++)
-	{
-		res += GetValue(i) + cutChar;
-	}
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	res.pop_back();
-#endif
+	auto&& operationPoint = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	operationPoint->SetObject("X", ChCpp::JsonNumber::CreateObject(point.x));
+
+	operationPoint->SetObject("Y", ChCpp::JsonNumber::CreateObject(point.y));
+
+	operationPoint->SetObject("Z", ChCpp::JsonNumber::CreateObject(point.z));
+
+	res->SetObject("OperationPoint", operationPoint);
+
+	res->SetObject("Distance", ChCpp::JsonNumber::CreateObject(distance));
+
+	res->SetObject("AxisFlg", ChCpp::JsonNumber::CreateObject(axisFlg.GetValue()));
+
 	return res;
 }
 
-void CPUMovePositionSelect::Deserialize(const std::string& _text)
+void CPUMovePositionSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
-	if (_text.empty())return;
-#if 0
-	auto&& textList = ChStr::Split(_text, cutChar);
+	if (_jsonObject == nullptr)return;
 
-	activeFlg = textList[ChStd::EnumCast(SerializeNo::ActiveFlg)] == "1";
+	auto&& operationPoint = _jsonObject->GetJsonObject("OperationPoint");
 
-	memberType = (CPUObjectLooker::MemberType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::MemberType)]);
+	if (operationPoint != nullptr)
+	{
+		auto&& x = operationPoint->GetJsonNumber("X");
+		if (x != nullptr)point.x = *x;
 
-	distanceType = (CPUObjectLooker::DistanceType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceType)]);
-	testDistance = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDistance)]);
-	distanceComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceComparison)]);
+		auto&& y = operationPoint->GetJsonNumber("Y");
+		if (y != nullptr)point.y = *y;
 
-	damageType = (CPUObjectLooker::DamageSizeType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageType)]);
-	testDamage = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDamage)]);
-	damageComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageComparison)]);
-#endif
-}
+		auto&& z = operationPoint->GetJsonNumber("Z");
+		if (z != nullptr)point.z = *z;
+	}
 
-std::string CPUMovePositionSelect::GetValue(unsigned char _no)
-{
-	return "";
+	auto&& distanceObject = _jsonObject->GetJsonNumber("Distance");
+	if (distanceObject != nullptr)distance = *distanceObject;
+
+	auto&& axisFlgObject = _jsonObject->GetJsonNumber("AxisFlg");
+	if (axisFlgObject != nullptr)axisFlg.SetValue(*axisFlgObject);
 }
 
 float CPUMovePositionSelect::GetPointLength(const ChVec3& _position)
@@ -86,14 +93,36 @@ void CPUMovePositionSelector::SetInitPosition(CPUController& _controller, float 
 	Add(point);
 }
 
-std::string CPUMovePositionSelector::Serialize()
+ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelector::Serialize()
 {
-	return "";
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	auto&& operationPointArray = ChPtr::Make_S<ChCpp::JsonArray>();
+
+	for (auto&& positions : functions)
+	{
+		operationPointArray->AddObject(positions->Serialize());
+	}
+
+	res->SetObject("OperatorPositions", operationPointArray);
+
+	return res;
 }
 
-void CPUMovePositionSelector::Deserialize(const std::string& _text)
+void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
+	if (_jsonObject == nullptr)return;
 
+	auto&& operationPointArray = _jsonObject->GetJsonArray("OperatorPositions");
+
+	if (operationPointArray == nullptr)return;
+
+	for (unsigned long i = 0; i < operationPointArray->GetCount(); i++)
+	{
+		auto&& operationPoint = ChPtr::Make_S<CPUMovePositionSelect>();
+
+		operationPoint->Deserialize(operationPointArray->GetJsonObject(i));
+	}
 }
 
 void CPUMovePositionSelector::Update(CPUTargetSelector& _selector, GameFrame& _frame, CPUController& _controller)

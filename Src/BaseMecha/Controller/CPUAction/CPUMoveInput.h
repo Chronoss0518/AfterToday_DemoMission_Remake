@@ -10,6 +10,10 @@ class CPUMoveInput
 {
 public:
 
+	ChPtr::Shared<ChCpp::JsonObject> Serialize();
+
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
+
 	void Update(
 		CPUController& _controller, 
 		CPUTargetSelector& _targetSelector,

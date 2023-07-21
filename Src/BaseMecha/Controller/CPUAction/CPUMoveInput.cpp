@@ -12,6 +12,38 @@
 #include"CPUTargetSelector.h"
 #include"CPUMovePositionSelector.h"
 
+ChPtr::Shared<ChCpp::JsonObject> CPUMoveInput::Serialize()
+{
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	res->SetObject("LookTweakSize", ChCpp::JsonNumber::CreateObject(lookTweakSize));
+
+	res->SetObject("TargetPositionLength", ChCpp::JsonNumber::CreateObject(targetPositionLength));
+
+	res->SetObject("UseBoostLengthFromBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromBattle));
+
+	res->SetObject("UseBoostLengthFromUnBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromUnBattle));
+
+	return res;
+}
+
+void CPUMoveInput::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+{
+	if (_jsonObject == nullptr)return;
+
+	auto&& lookTweakSizeObject = _jsonObject->GetJsonNumber("LookTweakSize");
+	if (lookTweakSizeObject != nullptr)lookTweakSize = *lookTweakSizeObject;
+
+	auto&& targetPositionLengthObject = _jsonObject->GetJsonNumber("TargetPositionLength");
+	if (targetPositionLengthObject != nullptr)targetPositionLength = *targetPositionLengthObject;
+
+	auto&& useBoostLengthFromBattleObject = _jsonObject->GetJsonNumber("UseBoostLengthFromBattle");
+	if (useBoostLengthFromBattleObject != nullptr)useBoostLengthFromBattle = *useBoostLengthFromBattleObject;
+
+	auto&& useBoostLengthFromUnBattleObject = _jsonObject->GetJsonNumber("UseBoostLengthFromUnBattle");
+	if (useBoostLengthFromUnBattleObject != nullptr)useBoostLengthFromUnBattle = *useBoostLengthFromUnBattleObject;
+}
+
 void CPUMoveInput::Update(
 	CPUController& _controller, 
 	CPUTargetSelector& _targetSelector,

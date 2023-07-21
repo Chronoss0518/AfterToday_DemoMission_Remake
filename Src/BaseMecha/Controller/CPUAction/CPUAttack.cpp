@@ -16,13 +16,31 @@
 #include"CPUTargetSelector.h"
 
 
-std::string CPUAttack::Serialize()
+ChPtr::Shared<ChCpp::JsonObject> CPUAttack::Serialize()
 {
-	return "";
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	res->SetObject("CenterLength", ChCpp::JsonNumber::CreateObject(centerLength));
+	
+	res->SetObject("PriorityWeaponType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(priorityWeaponType)));
+	
+	res->SetObject("AttackCount", ChCpp::JsonNumber::CreateObject(attackCount));
+
+	return res;
 }
 
-void CPUAttack::Deserialize(const std::string& _text)
+void CPUAttack::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
+	if (_jsonObject == nullptr)return;
+
+	auto&& centerLengthObject = _jsonObject->GetJsonNumber("CenterLength");
+	if (centerLengthObject != nullptr)centerLength = *centerLengthObject;
+	
+	auto&& priorityWeaponTypeObject = _jsonObject->GetJsonNumber("PriorityWeaponType");
+	if (priorityWeaponTypeObject != nullptr)priorityWeaponType = static_cast<PriorityWeaponType>((unsigned char)*priorityWeaponTypeObject);
+
+	auto&& attackCountObject = _jsonObject->GetJsonNumber("AttackCount");
+	if (attackCountObject != nullptr)attackCount = *attackCountObject;
 
 }
 

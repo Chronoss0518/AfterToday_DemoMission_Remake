@@ -18,17 +18,21 @@ public:
 
 public:
 
-	std::string Serialize();
+	ChPtr::Shared<ChCpp::JsonObject> Serialize();
 
-	void Deserialize(const std::string& _text);
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
 
 	void SetRightWeapons(const ChPtr::Shared<RightWeaponComponent>& _weapons);
 
 	void SetLeftWeapons(const ChPtr::Shared<LeftWeaponComponent>& _weapons);
 
-	inline void SetCenterLength(const float _len) { centerLength = _len; }
+	inline void SetCenterLength(const float _len) {if(_len > 0.0f) centerLength = _len; }
 
 	inline float GetCenterLength() { return centerLength; }
+
+	inline void SetAttackCount(const unsigned long _count) { attackCount = _count; }
+
+	inline unsigned long GetAttackCount() { return attackCount; }
 
 	inline void SetHaveWeaponType(PriorityWeaponType _type) { priorityWeaponType = _type; }
 

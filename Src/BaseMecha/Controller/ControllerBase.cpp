@@ -252,48 +252,62 @@ void CPUController::SaveCPUData(const std::string& _fileName)
 {
 	if (!saveFlg)return;
 
-	std::string textData = "";
-
 	if (sampleFlg)saveFlg = false;
-	textData += std::to_string(saveFlg ? 1 : 0) + "\n";
-	textData += std::to_string(actionMoveMaxTime) + "\n";
-	textData += std::to_string(actionMoveMinTime) + "\n";
 
-	textData += cpuTargetSelect->Serialize();
-	textData += cpuMovePositionSelect->Serialize();
-	textData += cpuWeaponSelect->Serialize();
+	auto&& saveData = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	saveData->SetObject("SaveFlg", ChCpp::JsonBoolean::CreateObject(saveFlg));
+	saveData->SetObject("ActionMoveMaxTime", ChCpp::JsonNumber::CreateObject(actionMoveMaxTime));
+	saveData->SetObject("ActionMoveMinTime", ChCpp::JsonNumber::CreateObject(actionMoveMinTime));
+
+	saveData->SetObject("TargetSelector", cpuTargetSelect->Serialize());
+	saveData->SetObject("MovePositionSelector", cpuMovePositionSelect->Serialize());
+	saveData->SetObject("WeaponSelector", cpuWeaponSelect->Serialize());
+	saveData->SetObject("MoveInput", cpuMoveInput->Serialize());
+	saveData->SetObject("Attack", cpuAttack->Serialize());
 
 
 	ChCpp::File<> file;
 	file.FileOpen(CPU_DIRECTORY(+_fileName));
-	file.FileWriteText(textData);
+	file.FileWriteText(saveData->GetRawData());
 	file.FileClose();
 
 }
 
 void CPUController::LoadCPUData(const std::string& _fileName)
 {
-	return;
-	ChCpp::TextObject textData;
+	std::string textData;
 
 	{
 		ChCpp::File<> file;
 		file.FileOpen(CPU_DIRECTORY(+_fileName));
-		textData.SetText(file.FileReadText());
+		textData = file.FileReadText();
 		file.FileClose();
 	}
 
-	if (textData.LineCount() <= 1)
-	{
-		SampleCreate();
-		SaveCPUData(_fileName);
-		return;
-	}
+	auto&& json = ChCpp::JsonBaseType::GetParameter(textData);
 
-	saveFlg = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(0)) == 1;
-	actionMoveMaxTime = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(1));
-	actionMoveMinTime = ChStr::GetIntegialFromText<unsigned long>(textData.GetTextLine(2));
-	
+	if (json == nullptr)return;
+
+	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject>(json);
+
+	if (jsonObject == nullptr)return;
+
+	auto&& saveFlgObject = jsonObject->GetJsonBoolean("SaveFlg");
+	if (saveFlgObject != nullptr)saveFlg = *saveFlgObject;
+
+	auto&& actionMoveMaxTimeObject = jsonObject->GetJsonNumber("ActionMoveMaxTime");
+	if (actionMoveMaxTimeObject != nullptr)actionMoveMaxTime = *actionMoveMaxTimeObject;
+
+	auto&& actionMoveMinTimeObject = jsonObject->GetJsonNumber("ActionMoveMinTime");
+	if (actionMoveMinTimeObject != nullptr)actionMoveMinTime = *actionMoveMinTimeObject;
+
+	cpuTargetSelect->Deserialize(jsonObject->GetJsonObject("TargetSelector"));
+	cpuMovePositionSelect->Deserialize(jsonObject->GetJsonObject("MovePositionSelector"));
+	cpuWeaponSelect->Deserialize(jsonObject->GetJsonObject("WeaponSelector"));
+	cpuMoveInput->Deserialize(jsonObject->GetJsonObject("MoveInput"));
+	cpuAttack->Deserialize(jsonObject->GetJsonObject("Attack"));
+
 	UpdateEndActionMoveTime();
 
 	nowActionMoveTime = endActionMoveTime;
@@ -333,6 +347,9 @@ void CPUController::SampleCreate()
 	cpuTargetSelect->Add(targetSelector);
 
 	cpuMovePositionSelect->SetInitPosition(*this, 20.0f, false, false, false);
+
+
+	SaveCPUData("mob.cpu");
 }
 
 void CPUController::UpdateEndActionMoveTime()
@@ -348,39 +365,58 @@ void CPUController::UpdateEndActionMoveTime()
 	if (endActionMoveTime <= 0)endActionMoveTime = 1;
 }
 
-std::string CPUActionBase::Serialize()
+ChPtr::Shared<ChCpp::JsonObject> CPUActionBase::Serialize()
 {
-	std::string res = "";
-#if 0
-	for (unsigned char i = 0; i < ChStd::EnumCast(SerializeNo::None); i++)
-	{
-		res += GetValue(i) + cutChar;
-	}
 
-	res.pop_back();
-#endif
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	res->SetObject("MemberType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(memberType)));
+	
+	res->SetObject("DistanceType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(distanceType)));
+	res->SetObject("TestDistance", ChCpp::JsonNumber::CreateObject(testDistance));
+	res->SetObject("DistanceComparison", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(distanceComparison)));
+
+	
+	res->SetObject("DamageSizeType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(damageType)));
+	res->SetObject("TestDamage", ChCpp::JsonNumber::CreateObject(testDamage));
+	res->SetObject("DamageComparison", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(damageComparison)));
+
+	res->SetObject("ActiveFlg", ChCpp::JsonBoolean::CreateObject(activeFlg));
+
 	return res;
 }
 
-void CPUActionBase::Deserialize(const std::string& _text)
+void CPUActionBase::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
-	if (_text.empty())return;
+	if (_jsonObject == nullptr)return;
 
-#if 0
-	auto&& textList = ChStr::Split(_text, cutChar);
+	auto&& memberTypeObject = _jsonObject->GetJsonNumber("MemberType");
+	if (memberTypeObject != nullptr)memberType = static_cast<CPUObjectLooker::MemberType>((unsigned char)*memberTypeObject);
 
-	activeFlg = textList[ChStd::EnumCast(SerializeNo::ActiveFlg)] == "1";
 
-	memberType = (CPUObjectLooker::MemberType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::MemberType)]);
+	auto&& distanceTypeObject = _jsonObject->GetJsonNumber("DistanceType");
+	if (distanceTypeObject != nullptr)distanceType = static_cast<CPUObjectLooker::DistanceType>((unsigned char)*distanceTypeObject);
 
-	distanceType = (CPUObjectLooker::DistanceType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceType)]);
-	testDistance = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDistance)]);
-	distanceComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceComparison)]);
+	auto&& testDistanceObject = _jsonObject->GetJsonNumber("TestDistance");
+	if (testDistanceObject != nullptr)testDistance = *testDistanceObject;
 
-	damageType = (CPUObjectLooker::DamageSizeType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageType)]);
-	testDamage = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDamage)]);
-	damageComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageComparison)]);
-#endif
+	auto&& distanceComparisonObject = _jsonObject->GetJsonNumber("DistanceComparison");
+	if (distanceComparisonObject != nullptr)distanceComparison = static_cast<CPUController::ComparisonOperation>((unsigned char)*distanceTypeObject);
+
+
+	auto&& damageTypeObject = _jsonObject->GetJsonNumber("DamageSizeType");
+	if (damageTypeObject != nullptr)damageType = static_cast<CPUObjectLooker::DamageSizeType>((unsigned char)*damageTypeObject);
+
+	auto&& testDamageObject = _jsonObject->GetJsonNumber("TestDamage");
+	if (testDamageObject != nullptr)testDamage = *testDamageObject;
+
+	auto&& damageComparisonObject = _jsonObject->GetJsonNumber("DamageComparison");
+	if (damageComparisonObject != nullptr)damageComparison = static_cast<CPUController::ComparisonOperation>((unsigned char)*damageComparisonObject);
+
+
+	auto&& activeFlgObject = _jsonObject->GetJsonBoolean("ActiveFlg");
+	if (activeFlgObject != nullptr)activeFlg = *activeFlgObject;
+
 }
 
 unsigned long CPUActionBase::GetLookTypeMechas(CPUObjectLooker& _lookTarget)

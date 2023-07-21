@@ -6,15 +6,11 @@ class CPUTargetSelect :public CPUActionBase
 {
 public:
 
-	std::string Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
 
-	void Deserialize(const std::string& _text)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
 
 	unsigned long Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller);
-
-private:
-
-	std::string GetValue(unsigned char _no);
 
 };
 
@@ -22,9 +18,9 @@ class CPUTargetSelector : public FunctionsBase<CPUTargetSelect>
 {
 public:
 
-	std::string Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
 
-	void Deserialize(const std::string& _text)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
 
 	void Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller);
 

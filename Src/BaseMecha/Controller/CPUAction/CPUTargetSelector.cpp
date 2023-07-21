@@ -12,38 +12,16 @@
 
 #include"CPUTargetSelector.h"
 
-std::string CPUTargetSelect::Serialize()
+ChPtr::Shared<ChCpp::JsonObject> CPUTargetSelect::Serialize()
 {
-	std::string res = "";
-#if 0
-	for (unsigned char i = 0; i < ChStd::EnumCast(SerializeNo::None); i++)
-	{
-		res += GetValue(i) + cutChar;
-	}
-
-	res.pop_back();
-#endif
-	return res;
+	return CPUActionBase::Serialize();
 }
 
-void CPUTargetSelect::Deserialize(const std::string& _text)
+void CPUTargetSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
-	if (_text.empty())return;
-#if 0
-	auto&& textList = ChStr::Split(_text, cutChar);
+	if (_jsonObject == nullptr)return;
 
-	activeFlg = textList[ChStd::EnumCast(SerializeNo::ActiveFlg)] == "1";
-
-	memberType = (CPUObjectLooker::MemberType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::MemberType)]);
-
-	distanceType = (CPUObjectLooker::DistanceType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceType)]);
-	testDistance = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDistance)]);
-	distanceComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceComparison)]);
-
-	damageType = (CPUObjectLooker::DamageSizeType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageType)]);
-	testDamage = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDamage)]);
-	damageComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageComparison)]);
-#endif
+	CPUActionBase::Deserialize(_jsonObject);
 }
 
 unsigned long CPUTargetSelect::Update(CPUObjectLooker& _lookTarget, GameFrame& _frame, CPUController& _controller)
@@ -55,19 +33,36 @@ unsigned long CPUTargetSelect::Update(CPUObjectLooker& _lookTarget, GameFrame& _
 	return lookTargetNo;
 }
 
-std::string CPUTargetSelect::GetValue(unsigned char _no)
+ChPtr::Shared<ChCpp::JsonObject> CPUTargetSelector::Serialize()
 {
-	return "";
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	auto&& functionArray = ChPtr::Make_S<ChCpp::JsonArray>();
+
+	for (auto&& function : functions)
+	{
+		functionArray->AddObject(function->Serialize());
+	}
+
+	res->SetObject("TargetSelectorFunctions", functionArray);
+
+	return res;
 }
 
-std::string CPUTargetSelector::Serialize()
+void CPUTargetSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
-	return "";
-}
+	if (_jsonObject == nullptr)return;
 
-void CPUTargetSelector::Deserialize(const std::string& _text)
-{
+	auto&& functionArray = _jsonObject->GetJsonArray("TargetSelectorFunctions");
 
+	if (functionArray == nullptr)return;
+
+	for (unsigned long i = 0; i < functionArray->GetCount(); i++)
+	{
+		auto&& function = ChPtr::Make_S<CPUTargetSelect>();
+
+		function->Deserialize(functionArray->GetJsonObject(i));
+	}
 }
 
 void CPUTargetSelector::Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller)

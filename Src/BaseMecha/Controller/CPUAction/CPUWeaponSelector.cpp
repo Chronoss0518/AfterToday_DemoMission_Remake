@@ -15,43 +15,30 @@
 #include"CPUTargetSelector.h"
 #include"CPUAttack.h"
 
-std::string CPUWeaponSelect::Serialize()
+ChPtr::Shared<ChCpp::JsonObject> CPUWeaponSelect::Serialize()
 {
-	std::string res = "";
-#if 0
-	for (unsigned char i = 0; i < ChStd::EnumCast(SerializeNo::None); i++)
-	{
-		res += GetValue(i) + cutChar;
-	}
+	auto&& res = CPUActionBase::Serialize();
 
-	res.pop_back();
-#endif
+	res->SetObject("AttackType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(attackType)));
+
+	res->SetObject("UnStopFlg", ChCpp::JsonBoolean::CreateObject(unStopFlg));
+
 	return res;
 }
 
-void CPUWeaponSelect::Deserialize(const std::string& _text)
+void CPUWeaponSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
-	if (_text.empty())return;
-#if 0
-	auto&& textList = ChStr::Split(_text, cutChar);
 
-	activeFlg = textList[ChStd::EnumCast(SerializeNo::ActiveFlg)] == "1";
-	centerLength = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::CenterLength)]);
+	if (_jsonObject == nullptr)return;
 
-	memberType = (CPUObjectLooker::MemberType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::MemberType)]);
+	CPUActionBase::Deserialize(_jsonObject);
 
-	distanceType = (CPUObjectLooker::DistanceType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceType)]);
-	testDistance = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDistance)]);
-	distanceComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DistanceComparison)]);
+	auto&& attackTypeObject = _jsonObject->GetJsonNumber("AttackType");
+	if (attackTypeObject != nullptr)attackType = static_cast<AttackType>((unsigned char)*attackTypeObject);
 
-	damageType = (CPUObjectLooker::DamageSizeType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageType)]);
-	testDamage = ChStr::GetFloatingFromText<float>(textList[ChStd::EnumCast(SerializeNo::TestDamage)]);
-	damageComparison = (ComparisonOperation)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::DamageComparison)]);
+	auto&& unStopFlgObject = _jsonObject->GetJsonBoolean("UnStopFlg");
+	if (unStopFlgObject != nullptr)unStopFlg = *unStopFlgObject;
 
-	attackType = (AttackType)ChStr::GetIntegialFromText<int>(textList[ChStd::EnumCast(SerializeNo::AttackType)]);
-
-	unStopFlg = textList[ChStd::EnumCast(SerializeNo::UnStop)] == "1";
-#endif
 }
 
 bool CPUWeaponSelect::Update(unsigned long _lookTarget, GameFrame& _frame, CPUAttack& _attack, CPUController& _controller)
@@ -63,49 +50,36 @@ bool CPUWeaponSelect::Update(unsigned long _lookTarget, GameFrame& _frame, CPUAt
 	return true;
 }
 
-
-std::string CPUWeaponSelect::GetValue(unsigned char _no)
+ChPtr::Shared<ChCpp::JsonObject> CPUWeaponSelector::Serialize()
 {
-	return "";
-#if 0
-	switch ((SerializeNo)_no)
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+
+	auto&& functionArray = ChPtr::Make_S<ChCpp::JsonArray>();
+
+	for (auto&& function : functions)
 	{
-	case SerializeNo::ActiveFlg:
-		return std::to_string(activeFlg ? 1 : 0) + cutChar;
-	case SerializeNo::CenterLength:
-		return std::to_string(centerLength) + cutChar;
-	case SerializeNo::MemberType:
-		return  std::to_string(ChStd::EnumCast(memberType)) + cutChar;
-	case SerializeNo::DistanceType:
-		return std::to_string(ChStd::EnumCast(distanceType)) + cutChar;
-	case SerializeNo::TestDistance:
-		return std::to_string(testDistance) + cutChar;
-	case SerializeNo::DistanceComparison:
-		return std::to_string(ChStd::EnumCast(distanceComparison)) + cutChar;
-	case SerializeNo::DamageType:
-		return std::to_string(ChStd::EnumCast(damageType)) + cutChar;
-	case SerializeNo::TestDamage:
-		return std::to_string(testDamage) + cutChar;
-	case SerializeNo::DamageComparison:
-		return std::to_string(ChStd::EnumCast(damageComparison)) + cutChar;
-	case SerializeNo::AttackType:
-		return std::to_string(ChStd::EnumCast(attackType)) + cutChar;
-	case SerializeNo::UnStop:
-		return std::to_string(unStopFlg ? 1 : 0) + cutChar;
-	default:
-		break;
+		functionArray->AddObject(function->Serialize());
 	}
-#endif
+
+	res->SetObject("WeaponSelectorFunctions", functionArray);
+
+	return res;
 }
 
-std::string CPUWeaponSelector::Serialize()
+void CPUWeaponSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 {
-	return "";
-}
+	if (_jsonObject == nullptr)return;
 
-void CPUWeaponSelector::Deserialize(const std::string& _text)
-{
+	auto&& functionArray = _jsonObject->GetJsonArray("WeaponSelectorFunctions");
 
+	if (functionArray == nullptr)return;
+
+	for (unsigned long i = 0; i < functionArray->GetCount(); i++)
+	{
+		auto&& function = ChPtr::Make_S<CPUWeaponSelect>();
+
+		function->Deserialize(functionArray->GetJsonObject(i));
+	}
 }
 
 void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _frame, CPUAttack& _attack, CPUController& _controller)

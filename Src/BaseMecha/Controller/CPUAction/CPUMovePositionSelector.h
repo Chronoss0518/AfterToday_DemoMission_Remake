@@ -16,9 +16,9 @@ public:
 
 public:
 
-	std::string Serialize();
+	ChPtr::Shared<ChCpp::JsonObject> Serialize();
 
-	void Deserialize(const std::string& _text);
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
 
 	void SetOperationPoint(const ChVec3& _point) { point = _point; }
 
@@ -39,8 +39,6 @@ public:
 
 private:
 
-	std::string GetValue(unsigned char _no);
-
 	ChVec3 point = 0.0f;
 	ChVec3 outPoint = 0.0f;
 	float distance = 10.0f;
@@ -55,9 +53,9 @@ public:
 
 	void SetInitPosition(CPUController& _controller, float _distance, bool _xIgnore, bool _yIgnore, bool _zIgnore);
 
-	std::string Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
 
-	void Deserialize(const std::string& _text)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
 
 	void Update(CPUTargetSelector& _selector, GameFrame& _frame,CPUController& _controller);
 

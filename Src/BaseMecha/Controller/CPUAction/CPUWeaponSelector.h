@@ -10,9 +10,9 @@ public:
 
 public:
 
-	std::string Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
 
-	void Deserialize(const std::string& _text)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
 
 	inline void SetAttackType(AttackType _type) { attackType = _type; }
 
@@ -26,24 +26,6 @@ public:
 
 private:
 
-	std::string GetValue(unsigned char _no);
-
-	enum class SerializeNo :unsigned char
-	{
-		ActiveFlg,//実行するしないの判定//
-		CenterLength,//中心点からどの程度離れているかの確認距離//
-		MemberType,//対象とする陣営の判定//
-		DistanceType,//距離の比較種類//
-		TestDistance,//比較対象の距離//
-		DistanceComparison,//距離判定で利用する比較演算子//
-		DamageType,//ダメージの比較種類//
-		TestDamage,//比較対象のダメージ//
-		DamageComparison,//ダメージ判定で利用する比較演算子//
-		AttackType,//利用する武器の種類//
-		UnStop,//ここを通過してもテストを実行するフラグ//
-		None//終了文字
-	};
-
 	AttackType attackType = AttackType::Sword;
 	//この命令を行ってもスクリプトを抜けないフラグ//
 	bool unStopFlg = false;
@@ -54,9 +36,9 @@ class CPUWeaponSelector : public FunctionsBase<CPUWeaponSelect>
 {
 public:
 
-	std::string Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
 
-	void Deserialize(const std::string& _text)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
 
 	inline ChPtr::Shared<CPUWeaponSelect> GetSelectWeapon()
 	{
