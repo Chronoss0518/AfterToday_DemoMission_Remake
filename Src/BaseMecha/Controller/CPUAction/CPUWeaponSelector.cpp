@@ -79,6 +79,8 @@ void CPUWeaponSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jso
 		auto&& function = ChPtr::Make_S<CPUWeaponSelect>();
 
 		function->Deserialize(functionArray->GetJsonObject(i));
+
+		Add(function);
 	}
 }
 

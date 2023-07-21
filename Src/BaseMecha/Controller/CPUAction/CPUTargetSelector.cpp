@@ -62,6 +62,8 @@ void CPUTargetSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jso
 		auto&& function = ChPtr::Make_S<CPUTargetSelect>();
 
 		function->Deserialize(functionArray->GetJsonObject(i));
+
+		Add(function);
 	}
 }
 

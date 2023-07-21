@@ -122,6 +122,8 @@ void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>
 		auto&& operationPoint = ChPtr::Make_S<CPUMovePositionSelect>();
 
 		operationPoint->Deserialize(operationPointArray->GetJsonObject(i));
+
+		Add(operationPoint);
 	}
 }
 
