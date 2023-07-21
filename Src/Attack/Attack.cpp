@@ -143,7 +143,7 @@ void Attack::InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet)
 	for (unsigned char i = 0; i < 5; i++)
 	{
 		float pow = static_cast<float>((rand() % 100) * 0.01);
-		pow = pow - (pow * 0.5) + _bullet.dispersalPower;
+		pow = pow - (pow * 0.5f) + _bullet.dispersalPower;
 		float move = static_cast<float>((rand() % 100) * 0.0001) + 0.01f;
 		for (unsigned char j = 0; j < i; j++)
 		{
