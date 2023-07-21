@@ -106,6 +106,8 @@ ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelector::Serialize()
 
 	res->SetObject("OperatorPositions", operationPointArray);
 
+	res->SetObject("IsTargetPositionInAreaLength", ChCpp::JsonNumber::CreateObject(isTargetPositionInAreaLength));
+
 	return res;
 }
 
@@ -115,16 +117,21 @@ void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>
 
 	auto&& operationPointArray = _jsonObject->GetJsonArray("OperatorPositions");
 
-	if (operationPointArray == nullptr)return;
-
-	for (unsigned long i = 0; i < operationPointArray->GetCount(); i++)
+	if (operationPointArray != nullptr)
 	{
-		auto&& operationPoint = ChPtr::Make_S<CPUMovePositionSelect>();
+		for (unsigned long i = 0; i < operationPointArray->GetCount(); i++)
+		{
+			auto&& operationPoint = ChPtr::Make_S<CPUMovePositionSelect>();
 
-		operationPoint->Deserialize(operationPointArray->GetJsonObject(i));
+			operationPoint->Deserialize(operationPointArray->GetJsonObject(i));
 
-		Add(operationPoint);
+			Add(operationPoint);
+		}
 	}
+
+	auto&& isTargetPositionInAreaLengthObject = _jsonObject->GetJsonNumber("IsTargetPositionInAreaLength");
+	if (isTargetPositionInAreaLengthObject != nullptr)isTargetPositionInAreaLength = *isTargetPositionInAreaLengthObject;
+
 }
 
 void CPUMovePositionSelector::Update(CPUTargetSelector& _selector, GameFrame& _frame, CPUController& _controller)

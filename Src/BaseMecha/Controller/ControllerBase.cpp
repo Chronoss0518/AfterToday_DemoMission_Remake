@@ -308,6 +308,8 @@ void CPUController::LoadCPUData(const std::string& _fileName)
 	cpuMoveInput->Deserialize(jsonObject->GetJsonObject("MoveInput"));
 	cpuAttack->Deserialize(jsonObject->GetJsonObject("Attack"));
 
+	endActionMoveTime = actionMoveMaxTime;
+
 	UpdateEndActionMoveTime();
 
 	nowActionMoveTime = endActionMoveTime;
@@ -349,6 +351,11 @@ void CPUController::SampleCreate()
 	cpuMovePositionSelect->SetInitPosition(*this, 20.0f, false, false, false);
 
 
+	endActionMoveTime = actionMoveMaxTime;
+
+	UpdateEndActionMoveTime();
+
+	nowActionMoveTime = endActionMoveTime;
 	SaveCPUData("mob.cpu");
 }
 
@@ -401,7 +408,7 @@ void CPUActionBase::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObj
 	if (testDistanceObject != nullptr)testDistance = *testDistanceObject;
 
 	auto&& distanceComparisonObject = _jsonObject->GetJsonNumber("DistanceComparison");
-	if (distanceComparisonObject != nullptr)distanceComparison = static_cast<CPUController::ComparisonOperation>((unsigned char)*distanceTypeObject);
+	if (distanceComparisonObject != nullptr)distanceComparison = static_cast<CPUController::ComparisonOperation>((unsigned char)*distanceComparisonObject);
 
 
 	auto&& damageTypeObject = _jsonObject->GetJsonNumber("DamageSizeType");

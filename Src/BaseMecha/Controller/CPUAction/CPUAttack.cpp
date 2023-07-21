@@ -26,6 +26,8 @@ ChPtr::Shared<ChCpp::JsonObject> CPUAttack::Serialize()
 	
 	res->SetObject("AttackCount", ChCpp::JsonNumber::CreateObject(attackCount));
 
+	res->SetObject("AttackType", ChCpp::JsonNumber::CreateObject(attackType.GetValue()));
+
 	return res;
 }
 
@@ -41,6 +43,9 @@ void CPUAttack::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
 
 	auto&& attackCountObject = _jsonObject->GetJsonNumber("AttackCount");
 	if (attackCountObject != nullptr)attackCount = *attackCountObject;
+
+	auto&& attackTypeObject = _jsonObject->GetJsonNumber("AttackType");
+	if (attackTypeObject != nullptr)attackType.SetValue(*attackTypeObject);
 
 }
 

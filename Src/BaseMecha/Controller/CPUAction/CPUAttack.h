@@ -38,6 +38,10 @@ public:
 
 	inline PriorityWeaponType GetHaveWeaponType() { return priorityWeaponType; }
 
+	inline void SetAttackType(const ChCpp::BitBool& _type) { attackType = _type; }
+
+	inline ChCpp::BitBool GetAttackType() { return attackType; }
+
 	void Update(
 		CPUWeaponSelector& _weaponSelector, 
 		CPUTargetSelector& _targetSelector,
