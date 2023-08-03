@@ -1,3 +1,6 @@
 [submodule "Src/External/ChCppLibrary"]
 	path = Src/External/ChCppLibrary
 	url = https://github.com/Chronoss0518/ChCppLibrary
+[submodule "Src/Physics"]
+	path = Src/Physics
+	url = C:\\Users\\sinyu\\Desktop\\MyProject\\PhysicsMachineTest\\.git
