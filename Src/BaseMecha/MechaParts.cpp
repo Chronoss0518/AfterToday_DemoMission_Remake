@@ -20,6 +20,8 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	{"Camera:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<CameraData>(); }},
 	{"Scope:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ScopeData>(); }},
 	{"Walk:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WalkData>(); }},
+	{"Aerodynamics:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<Aerodynamics>(); }},
+	{"MoveAcceleration:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<MoveAcceleration>(); }},
 	{"RightArmPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightArmPos>(); }},
 	{"LeftArmPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftArmPos>(); }},
 	{"FootPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FootPos>(); }},

@@ -232,6 +232,63 @@ protected:
 
 };
 
+class Aerodynamics : public PartsDataBase
+{
+public://Serialize Deserialize//
+
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
+
+	std::string Serialize()override;
+
+public://Set Functions//
+
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetUpPowerParSpeed(const float _upPowerParSpeed) { upPowerParSpeed = _upPowerParSpeed; }
+
+public://Get Functions//
+
+	float GetGroundNearPos() { return 0.0f; };
+
+	std::string GetPartsTypeTag()override { return "Aerodynamics:"; }
+
+protected:
+
+	//速度による反下降補正//
+	float  upPowerParSpeed = 0.0f;
+};
+
+class MoveAcceleration : public PartsDataBase
+{
+public://Serialize Deserialize//
+
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
+
+	std::string Serialize()override;
+
+public://Set Functions//
+
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetAcceleration(const float _acceleration) { acceleration = _acceleration; }
+
+	void SetDeceleration(const float _deceleration) { deceleration = _deceleration; }
+
+public://Get Functions//
+
+	float GetGroundNearPos() { return 0.0f; };
+
+	std::string GetPartsTypeTag()override { return "MoveAcceleration:"; }
+
+protected:
+
+	//前方への加速度//
+	float acceleration = 0.0f;
+
+	//前方への減速度//
+	float deceleration = 0.0f;
+};
+
 class WalkData :public PartsDataBase
 {
 
