@@ -159,7 +159,7 @@ void CPUMoveInput::MoveBattleTarget(CPUController& _controller, bool _isBattleFl
 
 	if (tmpDir.y > 0.0f)
 	{
-		moveInput = ControllerBase::InputName::Jump;
+		moveInput = ControllerBase::InputName::Up;
 	}
 
 	_controller.Input(moveInput, true);
@@ -183,7 +183,7 @@ void CPUMoveInput::MoveUnButtleTarget(CPUController& _controller, bool _isBattle
 
 	if(tmpDir.y > 0.0f)
 	{
-		_controller.Input(ControllerBase::InputName::Jump, true);
+		_controller.Input(ControllerBase::InputName::Up, true);
 	}
 
 }

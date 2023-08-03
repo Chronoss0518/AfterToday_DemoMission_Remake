@@ -39,6 +39,7 @@ private:
 
 };
 
+//êlå^ìãèÊï∫äÌ//
 class BaseMechaMoveComponent :public MoveComponentBase
 {
 
@@ -52,5 +53,63 @@ private:
 
 	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
 
+
+};
+
+//ëD//
+class ShipMoveComponent :public MoveComponentBase
+{
+
+private:
+
+	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
+
+	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
+
+	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
+
+	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
+
+};
+
+//êÌé‘//
+class TankMoveComponent :public MoveComponentBase
+{
+
+private:
+
+	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
+
+	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
+
+	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
+
+	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
+
+};
+
+//êÌì¨ã@//
+class FighterMoveComponent :public MoveComponentBase
+{
+
+private:
+
+	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
+
+	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
+
+	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
+
+	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
+
+	void MoveFront(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster);
+
+	void MoveSide(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster);
+
+	void RotateUpDown(float _pow, InputName _input, const ChVec3& _direction);
+
+	void RotateZRightZLeft(float _pow, InputName _input, const ChVec3& _direction);
+
+private:
 
 };

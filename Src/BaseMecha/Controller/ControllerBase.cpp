@@ -39,7 +39,7 @@ void PlayerController::Init()
 	mouse->SetCenterFixedFlg(true);
 	mouse->SetVisibleFlg(true);
 
-	keyTypes[VK_SPACE] = InputName::Jump;
+	keyTypes[VK_SPACE] = InputName::Up;
 	keyTypes[VK_SHIFT] = InputName::Avo;
 	keyTypes[VK_CONTROL] = InputName::Boost;
 
