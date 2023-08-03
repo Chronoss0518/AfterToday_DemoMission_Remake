@@ -20,7 +20,7 @@ private:
 
 	unsigned char BackCol;
 	const unsigned char MoveCol = 5;
-	ChStd::Bool UpDownFlg = false;
+	bool UpDownFlg = false;
 
 	unsigned char DeviceTexChenge = 0;
 	unsigned char ChengeCount = 20;
