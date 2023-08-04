@@ -8,7 +8,6 @@
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
 #include"../Frames/GameFrame.h"
-#include"../Physics/PhysicsMachine.h"
 #include"FunctionComponent/WeaponComponents.h"
 #include"FunctionComponent/BoostComponent.h"
 #include"../Attack/AttackObject.h"
