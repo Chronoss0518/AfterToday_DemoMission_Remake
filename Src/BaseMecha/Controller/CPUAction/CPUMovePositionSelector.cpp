@@ -106,6 +106,8 @@ ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelector::Serialize()
 
 	res->SetObject("OperatorPositions", operationPointArray);
 
+	res->SetObject("CombatModeOff", ChCpp::JsonNumber::CreateObject(combatModeOffTime));
+
 	res->SetObject("IsTargetPositionInAreaLength", ChCpp::JsonNumber::CreateObject(isTargetPositionInAreaLength));
 
 	return res;
@@ -128,6 +130,10 @@ void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>
 			Add(operationPoint);
 		}
 	}
+
+	auto&& combatModeOffTimeObject = _jsonObject->GetJsonNumber("CombatModeOff");
+	if (combatModeOffTimeObject != nullptr)combatModeOffTime = *combatModeOffTimeObject;
+
 
 	auto&& isTargetPositionInAreaLengthObject = _jsonObject->GetJsonNumber("IsTargetPositionInAreaLength");
 	if (isTargetPositionInAreaLengthObject != nullptr)isTargetPositionInAreaLength = *isTargetPositionInAreaLengthObject;
@@ -176,6 +182,8 @@ void CPUMovePositionSelector::UpdateLookTarget(CPUTargetSelector& _selector, Gam
 	lastLookPoint = point;
 	isBattleFlg = true;
 	runUpdateLookTargetFlg = true;
+
+	combatModeOffTimeNow = 0;
 }
 
 void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
@@ -198,14 +206,15 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 
 	if (isBattleFlg)
 	{
+		combatModeOffTimeNow++;
+		if (combatModeOffTime < combatModeOffTimeNow)return;
+		combatModeOffTimeNow = combatModeOffTime;
+
 		float testLookPosLength = (lastLookPoint - mecha->GetPosition()).Len();
 
 		if (testLookPosLength < isTargetPositionInAreaLength)isBattleFlg = false;
 
 		point = lastLookPoint;
-		OutputDebugString(("Last Look Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
-		OutputDebugString(("Last Look Point Length :"+std::to_string(testLookPosLength) + "\n").c_str());
-
 		return;
 	}
 

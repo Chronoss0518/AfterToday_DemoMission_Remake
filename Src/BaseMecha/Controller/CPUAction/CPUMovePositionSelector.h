@@ -79,6 +79,9 @@ private:
 	ChVec3 lastLookPoint = 0.0f;
 	bool isBattleFlg = false;
 
+	unsigned long combatModeOffTime = 2000;
+	unsigned long combatModeOffTimeNow = 0;
+
 	ChPtr::Weak<BaseMecha>targetMecha;
 
 	unsigned long moveOperationPointCount = 0;
