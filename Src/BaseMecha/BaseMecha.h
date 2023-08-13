@@ -7,6 +7,7 @@ class CameraObject;
 class WeaponObject;
 class FunctionComponent;
 class AttackObject;
+class WeaponComponent;
 
 class PhysicsMachine;
 
@@ -61,11 +62,15 @@ public://Override Functions//
 
 	void MoveEnd()override;
 
-	void Draw2D()override;
-
 	void Draw3D()override;
 
 public:
+
+	void DrawUI();
+
+private:
+
+	void DrawWeaponComponent(ChPtr::Shared<WeaponComponent> _component);
 
 	void BaseMove();
 
@@ -181,11 +186,15 @@ public://Get Function//
 
 	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
 
+	inline unsigned long GetMaxEnelgy() { return maxEnelgy; }
+
 	inline unsigned long GetMechaNo() { return mechasNo; }
 
 	unsigned long GetTeamNo();
 
-	inline float GetDamage() { return durable - nowDurable <= 0 ? durable : durable - nowDurable; }
+	inline float GetMaxDamageGage() { return durable; }
+
+	inline float GetDamage() { return nowDurable; }
 
 public:
 
@@ -246,6 +255,11 @@ protected:
 
 	ChVec3 damageDir = ChVec3();
 
+
+	float baseHitSize = 0.0f;
+
+	ChCpp::SphereCollider testCollider;
+	ChCpp::SphereCollider testAttackCollider;
 
 	std::string mechaName = "";
 

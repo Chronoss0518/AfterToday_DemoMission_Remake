@@ -11,8 +11,6 @@
 
 #include"../BaseMecha/Controller/ControllerBase.h"
 
-#include"../Physics/PhysicsMachine.h"
-
 #include"../EffectObjects/ShotEffectList/ShotEffectList.h"
 #include"../EffectObjects/SmokeEffectList/SmokeEffectList.h"
 
@@ -62,26 +60,46 @@ void GameFrame::Init()
 	meshDrawer.drawer.SetCullMode(D3D11_CULL_BACK);
 
 	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
-
 	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
 
 	shotEffectList = ChPtr::Make_S<ShotEffectList>();
-
 	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 10);
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
-
 	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
-
 	smokeEffectList->SetMaxColorPower(0.8f);
 	smokeEffectList->SetMinColorPower(0.6f);
-
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
 	smokeEffectList->SetInitialDispersalPower(1.0f);
+
+	enemyMarkerShader = ChPtr::Make_S<EffectObjectShader>();
+	enemyMarkerShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT);
 
 	light.Init(ChD3D11::D3D11Device());
 	light.SetUseLightFlg(true);
 	light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
+
+	centerUITexture->CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBarFrame.png"));
+	receveDamageUITexture->CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Damage.png"));
+	enelgyUITexture->CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Enelgy.png"));
+
+	gageDrawer.Init(ChD3D11::D3D11Device());
+
+	gageDrawer.SetStartDrawDir(ChVec2(0.0f, -1.0f));
+	uiDrawer.Init(ChD3D11::D3D11Device());
+
+	centerUISprite.SetInitPosition();
+	centerUISprite.SetPos(0, ChVec2(-0.39f, 0.69f));
+	centerUISprite.SetUVPos(0, ChVec2(0.0f, 1.0f));
+	
+	centerUISprite.SetPos(1, ChVec2(0.39f, 0.69f));
+	centerUISprite.SetUVPos(1, ChVec2(1.0f, 1.0f));
+
+	centerUISprite.SetPos(2, ChVec2(0.39f, -0.69f));
+	centerUISprite.SetUVPos(2, ChVec2(1.0f, 0.0f));
+
+	centerUISprite.SetPos(3, ChVec2(-0.39f, -0.69f));
+	centerUISprite.SetUVPos(3, ChVec2(0.0f, 0.0f));
 
 	{
 		ChMat_11 proMat;
@@ -96,16 +114,11 @@ void GameFrame::Init()
 
 	LoadStage();
 
-	enemy = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
+	drawMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
 
 	enemyMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Ts.png"), ChD3D11::D3D11Device());
-	baseMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Window.png"), ChD3D11::D3D11Device());
 
 	enemyMarker.CreateRenderTarget(
-		ChD3D11::D3D11Device(),
-		GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
-
-	baseMarker.CreateRenderTarget(
 		ChD3D11::D3D11Device(),
 		GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
@@ -430,8 +443,6 @@ void GameFrame::DrawFunction()
 
 	Render2D();
 
-	enemy->Draw2DFunction();
-
 	ChD3D11::Shader11().DrawEnd();
 
 	mechaList.ObjectDrawEnd();
@@ -461,6 +472,36 @@ void GameFrame::Render3D(void)
 
 	shotEffectList->Draw(meshDrawer.dc);
 	smokeEffectList->Draw(meshDrawer.dc);
+
+}
+
+void GameFrame::Render2D(void)
+{
+	float damageParcec = drawMecha->GetDamage() / drawMecha->GetMaxDamageGage();
+
+	float enelgyParcec = static_cast<float>(drawMecha->GetNowEnelgy()) / drawMecha->GetMaxEnelgy();
+
+	gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
+
+	gageDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	gageDrawer.Draw(ChD3D11::D3D11DC(), *enelgyUITexture, centerUISprite);
+
+	gageDrawer.DrawEnd();
+
+	gageDrawer.SetDrawValue(damageParcec * -0.5f);
+
+	gageDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	gageDrawer.Draw(ChD3D11::D3D11DC(), *receveDamageUITexture, centerUISprite);
+
+	gageDrawer.DrawEnd();
+
+	uiDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	uiDrawer.Draw(ChD3D11::D3D11DC(), *centerUITexture, centerUISprite);
+
+	uiDrawer.DrawEnd();
 
 }
 
@@ -850,13 +891,6 @@ std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMa
 void GameFrame::BreakMecha(BaseMecha* _mecha)
 {
 	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-void GameFrame::Render2D(void)
-{
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////

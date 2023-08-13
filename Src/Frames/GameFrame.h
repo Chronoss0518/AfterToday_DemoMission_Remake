@@ -8,7 +8,6 @@ class CloudList;
 class GameScript;
 class EffectObjectShader;
 
-
 struct LookSquareValue;
 
 class ShotEffectList;
@@ -151,11 +150,18 @@ private:
 	ChCpp::ObjectList bulletList;
 	ChCpp::ObjectList mapObjects;
 
-	ChPtr::Shared<ChCpp::BaseObject>enemy = nullptr;
+	ChPtr::Shared<BaseMecha>drawMecha = nullptr;
+	ChD3D11::Shader::CircleCullingSprite11 gageDrawer;
+	ChD3D11::Shader::BaseDrawSprite11 uiDrawer;
+
+	ChPtr::Shared<ChD3D11::Texture11> centerUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
+	ChPtr::Shared<ChD3D11::Texture11> enelgyUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
+	ChPtr::Shared<ChD3D11::Texture11> receveDamageUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
+	ChD3D11::Sprite11 centerUISprite;
+
+	
 
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
-	ChPtr::Shared<ChD3D11::Texture11>baseMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
-
 	bool gameEndFlg = false;
 
 	ChLMat projectionMat;
@@ -165,6 +171,7 @@ private:
 
 	ChPtr::Shared<EffectObjectShader> cloudEffectShader = nullptr;
 	ChPtr::Shared<EffectObjectShader> waterSplashEffectShader = nullptr;
+	ChPtr::Shared<EffectObjectShader> enemyMarkerShader = nullptr;
 
 	ChD3D11::RenderTarget11 enemyMarker;
 	ChD3D11::RenderTarget11 baseMarker;

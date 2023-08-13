@@ -109,6 +109,18 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 				unsigned long no = std::atol(text.substr(partsTypeName[j].size()).c_str());
 				SetPartsPos(*parts, static_cast<PartsPosNames>(j), no);
 				parts->SetPartsPosData(j, no);
+				ChVector3 tmpHitSize = parts->GetColliderSize();
+				auto positionObject = parts->GetPositionObject();
+
+				if (positionObject != nullptr)tmpHitSize += positionObject->positionObject->GetDrawLHandMatrix().GetPosition();
+
+
+				tmpHitSize.Abs();
+				if (baseHitSize < tmpHitSize.x)baseHitSize = tmpHitSize.x;
+				if (baseHitSize < tmpHitSize.y)baseHitSize = tmpHitSize.y;
+				if (baseHitSize < tmpHitSize.z)baseHitSize = tmpHitSize.z;
+
+
 				findFlg = true;
 				break;
 			}
@@ -136,6 +148,8 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 		}
 
 	}
+
+	testCollider.SetScalling(baseHitSize);
 
 	return;
 }
@@ -209,6 +223,14 @@ void BaseMecha::UpdateEnd()
 	nowEnelgy += (chargeEnelgy * (120 / fps));
 
 	nowEnelgy = nowEnelgy > maxEnelgy ? maxEnelgy : nowEnelgy;
+
+
+	physics->Update();
+
+	float moveSize = physics->GetAddMovePowerVector().Len();
+
+	testCollider.SetScalling(moveSize + baseHitSize);
+
 }
 
 void BaseMecha::Move()
@@ -236,6 +258,18 @@ void BaseMecha::MoveEnd()
 	if (objectLooker == nullptr)return;
 
 	objectLooker->SetViewMatrix(viewMat);
+}
+
+void BaseMecha::DrawUI()
+{
+	auto&& leftWeaponData = GetComponent<LeftWeaponComponent>();
+
+	auto&& rightWeaponData = GetComponent<RightWeaponComponent>();
+}
+
+void BaseMecha::DrawWeaponComponent(ChPtr::Shared<WeaponComponent> _component)
+{
+	if (_component == nullptr)return;
 }
 
 ChVec3 BaseMecha::GetViewPos()
@@ -266,24 +300,19 @@ ChVec3 BaseMecha::GetViewLookPos()
 
 void BaseMecha::BaseMove()
 {
-	physics->Update();
 	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
 	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
 
 	ChVec3 pos = physics->GetPosition();
 	ChVec3 normal = (pos - centerPos);
+
+	testCollider.SetPosition(pos);
+
 	float tmp = normal.Len() - CENTER_LEN;
 	if (tmp < 0)return;
 	normal.Normalize();
 	normal.val.SetLen(tmp);
 	centerPos += normal;
-}
-
-void BaseMecha::Draw2D()
-{
-
-
-
 }
 
 void BaseMecha::Draw3D()
@@ -396,15 +425,21 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	damageDir = ChVec3();
 
-	ChVec3 pos = _obj.GetPosition();
-
 	ChVec3 dir = _obj.GetMovePower();
 
 	float moveLen = dir.Len();
 
-	dir.Normalize();
-
 	float hitSize = _obj.GetHitSize();
+
+	ChVec3 pos = _obj.GetPosition();
+
+	testAttackCollider.SetScalling(hitSize + moveLen);
+
+	testAttackCollider.SetPosition(pos);
+
+	if (!testCollider.IsHit(&testAttackCollider))return;
+
+	dir.Normalize();
 
 	std::vector<float> lenList;
 
@@ -436,7 +471,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 		{
 			float damage = parts->GetDamage(collider, _obj);
 			if (damage == 0.0f)continue;
-			durable -= damage;
+			nowDurable -= damage;
 			isHitFlg = true;
 			damageDir = collider.GetPos() - physics->GetPosition();
 			damageDir.Normalize();
@@ -451,8 +486,8 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 	}
 
 	if (breakFlg)return;
-	if (durable > 0)return;
-	
+	if (nowDurable > 0)return;
+
 	Break();
 	
 	Destroy();
