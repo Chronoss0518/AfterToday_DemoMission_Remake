@@ -78,6 +78,7 @@ private:
 
 	ChVec3 lastLookPoint = 0.0f;
 	bool isBattleFlg = false;
+	bool isDamageFlg = false;
 
 	unsigned long combatModeOffTime = 2000;
 	unsigned long combatModeOffTimeNow = 0;

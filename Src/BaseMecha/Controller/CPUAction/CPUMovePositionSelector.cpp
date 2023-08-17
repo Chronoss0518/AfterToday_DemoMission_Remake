@@ -196,13 +196,14 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 
 	if (mecha->IsBreak())return;
 
-	if (!isBattleFlg && mecha->GetDamageDir() != ChVec3())
-	{
-		isBattleFlg = true;
-		lastLookPoint = mecha->GetDamageDir() * (isTargetPositionInAreaLength + 0.1f);
-	}
+	if (!isDamageFlg && targetMecha.expired())isBattleFlg = false;
 
-	if (targetMecha.expired())isBattleFlg = false;
+	if (mecha->GetDamageDir() != ChVec3())
+	{
+		isDamageFlg = isBattleFlg = true;
+		point = lastLookPoint = mecha->GetDamageDir() * (isTargetPositionInAreaLength + 100.0f);
+		OutputDebugString(("CPUMovePositionSelector GetDamageDir x{: " + std::to_string(mecha->GetDamageDir().x) + "} y{: " + std::to_string(mecha->GetDamageDir().y) + "} z{: " + std::to_string(mecha->GetDamageDir().z) + "}\n").c_str());
+	}
 
 	if (isBattleFlg)
 	{
@@ -212,9 +213,10 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 
 		float testLookPosLength = (lastLookPoint - mecha->GetPosition()).Len();
 
-		if (testLookPosLength < isTargetPositionInAreaLength)isBattleFlg = false;
+		if (testLookPosLength < isTargetPositionInAreaLength)isDamageFlg = isBattleFlg = false;
 
 		point = lastLookPoint;
+
 		return;
 	}
 
@@ -230,5 +232,5 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 
 	point = functions[moveOperationPointCount]->GetOperationPoint();
 
-	OutputDebugString(("Operation Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
+	//OutputDebugString(("Operation Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
 }
