@@ -2,7 +2,6 @@
 #include"../../BaseIncluder.h"
 
 #include"../../AllStruct.h"
-#include"../../Physics/PhysicsMachine.h"
 #include"FunctionComponent.h"
 
 
