@@ -22,11 +22,15 @@ public:
 
 public:
 
-	bool IsUpdateFlg() { return updateFlg; }
+	bool IsUpdateFlg();
 
 public:
 
 	void AddShotEffect(const ChVec3& _pos);
+
+public:
+
+	void Update();
 
 public:
 

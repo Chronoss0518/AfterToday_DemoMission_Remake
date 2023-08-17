@@ -56,37 +56,20 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 		effectMoveDataList[i] = ChPtr::Make_S<EffectMoveData>();
 	}
 
-
+#if USE_THREAD
 	updater.Init([&]() {
 		while (!gameEndFlg)
 		{
-			if (updateFlg)continue;
-
-			for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
+			if (updateFlg)
 			{
-				auto effectObject = effectShader->GetEffectPos(i);
-				if (!effectObject.displayFlg)continue;
-				if (effectObject.color.a <= 0.0f) {
-					effectShader->SetEffectDisplayFlg(false, i);
-					effectShader->SetEffectColor(ChVec4(1.0f), i);
-					continue;
-				}
-
-				ChLMat tmpMat;
-				effectObject.color.a -= downSpeedOnAlphaValue;
-				effectObject.pos += effectMoveDataList[i]->moveVector;
-				effectMoveDataList[i]->dispersal += effectMoveDataList[i]->dispersalPower;
-				effectMoveDataList[i]->dispersalPower *= DISPERSAL_POWER_DOWN_PARCEC;
-				tmpMat.SetScalling(ChVec3(effectMoveDataList[i]->dispersal));
-				effectShader->SetEffectColor(effectObject.color, i);
-				effectShader->SetEffectVertexRotation(tmpMat, i);
-				effectShader->SetEffectPosition(effectObject.pos, i);
-
+				std::this_thread::yield();
+				continue;
 			}
+			Update();
 			updateFlg = true;
 		}
 	});
-
+#endif 
 
 }
 
@@ -141,6 +124,11 @@ void SmokeEffectList::SetDownSpeedOnAlphaValue(const float _speed)
 	downSpeedOnAlphaValue = _speed;
 }
 
+bool SmokeEffectList::IsUpdateFlg()
+{
+	return updateFlg;
+}
+
 void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVector)
 {
 	AddSmokeEffect(_pos, _moveVector, initialDispersalPower);
@@ -172,6 +160,33 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 	effectMoveDataList[nowCount]->dispersalPower = _initDispersalpower;
 
 	nowCount = (1 + nowCount) % effectShader->GetMaxEffectCount();
+}
+
+void SmokeEffectList::Update()
+{
+	if (effectShader == nullptr)return;
+
+	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
+	{
+		auto effectObject = effectShader->GetEffectPos(i);
+		if (!effectObject.displayFlg)continue;
+		if (effectObject.color.a <= 0.0f) {
+			effectShader->SetEffectDisplayFlg(false, i);
+			effectShader->SetEffectColor(ChVec4(1.0f), i);
+			continue;
+		}
+
+		ChLMat tmpMat;
+		effectObject.color.a -= downSpeedOnAlphaValue;
+		effectObject.pos += effectMoveDataList[i]->moveVector;
+		effectMoveDataList[i]->dispersal += effectMoveDataList[i]->dispersalPower;
+		effectMoveDataList[i]->dispersalPower *= DISPERSAL_POWER_DOWN_PARCEC;
+		tmpMat.SetScalling(ChVec3(effectMoveDataList[i]->dispersal));
+		effectShader->SetEffectColor(effectObject.color, i);
+		effectShader->SetEffectVertexRotation(tmpMat, i);
+		effectShader->SetEffectPosition(effectObject.pos, i);
+
+	}
 }
 
 void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)

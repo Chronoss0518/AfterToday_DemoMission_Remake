@@ -30,7 +30,7 @@ public:
 
 public:
 
-	bool IsUpdateFlg() { return updateFlg; }
+	bool IsUpdateFlg();
 
 public:
 
@@ -39,6 +39,10 @@ public:
 	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower);
 
 	void AddSmokeEffect(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow);
+
+public:
+
+	void Update();
 
 public:
 

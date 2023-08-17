@@ -28,26 +28,25 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 
 	effectShader->SetAlphaTestNum(0.5f);
 
+#if USE_THREAD
 	updater.Init([&]() {
 		while (!gameEndFlg)
 		{
-			if (updateFlg)continue;
-
-			for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
+			if (updateFlg)
 			{
-				auto effectObject = effectShader->GetEffectPos(i);
-				if (!effectObject.displayFlg)continue;
-				effectObject.animationCount.w += 1;
-				if (effectObject.animationCount.w > ANIMATION_COUNT) {
-					effectShader->SetEffectDisplayFlg(false, i);
-					effectShader->SetEffectHorizontalAnimationCount(0, i);
-					continue;
-				}
-				effectShader->SetEffectHorizontalAnimationCount(effectObject.animationCount.w, i);
+				std::this_thread::yield();
+				continue;
 			}
+			Update();
 			updateFlg = true;
 		}
 	});
+#endif
+}
+
+bool ShotEffectList::IsUpdateFlg() 
+{
+	return updateFlg; 
 }
 
 void ShotEffectList::Release()
@@ -81,6 +80,24 @@ void ShotEffectList::AddShotEffect(const ChVec3& _pos)
 	effectShader->SetEffectDisplayFlg(true, nowCount);
 
 	nowCount = (1 + nowCount) % effectShader->GetMaxEffectCount();
+}
+
+void ShotEffectList::Update()
+{
+	if (effectShader == nullptr)return;
+
+	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
+	{
+		auto effectObject = effectShader->GetEffectPos(i);
+		if (!effectObject.displayFlg)continue;
+		effectObject.animationCount.w += 1;
+		if (effectObject.animationCount.w > ANIMATION_COUNT) {
+			effectShader->SetEffectDisplayFlg(false, i);
+			effectShader->SetEffectHorizontalAnimationCount(0, i);
+			continue;
+		}
+		effectShader->SetEffectHorizontalAnimationCount(effectObject.animationCount.w, i);
+	}
 }
 
 void ShotEffectList::Draw(ID3D11DeviceContext* _dc)

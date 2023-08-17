@@ -20,8 +20,9 @@
 
 //想定するメカオブジェクトの最大数//
 #define MAX_MECHA_OBJECT_COUNT 50
+
 #define BASE_FPS 60
-#define GRAVITY_POWER 4.9f
+#define GRAVITY_POWER 9.8f
 #define DEBUG_FLG 1
 
 #ifndef PARTS_DIRECTORY
@@ -46,7 +47,7 @@ void GameFrame::Init()
 
 	PhysicsMachine::SetFPS(BASE_FPS);
 	PhysicsMachine::SetBaseSpeed(1);
-	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
+	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER * (1.0f  / BASE_FPS));
 	PhysicsMachine::SetAirRegist(0.1f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
@@ -122,7 +123,6 @@ void GameFrame::Init()
 		ChD3D11::D3D11Device(),
 		GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
-
 }
 
 void GameFrame::InitScriptFunction()
@@ -164,6 +164,37 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction("End", [&](const std::string& _text)
 		{
 			script->SetPosToLoopStart(_text);
+		});
+
+	script->SetFunction("SetControllerUsing", [&](const std::string& _text)
+		{
+			bool setFlg = false;
+			std::string test = "";
+			if (_text.length() == 4)
+			{
+				setFlg = true;
+				test = "true";
+			}
+
+			if (_text.length() == 5)
+			{
+				setFlg = false;
+				test = "false";
+			}
+
+			bool testFlg = true;
+			std::string useText = _text;
+			for (unsigned long i = 0; i < test.size(); i++)
+			{
+				useText[i] = useText[i] < 'a' ? useText[i] + ('a' - 'A') : useText[i];
+				if (useText[i] == test[i])continue;
+				testFlg = false;
+				break;
+			}
+
+			if (!testFlg)return;
+
+			SetAllControllerFlg(setFlg);
 		});
 
 	//target < inputNum//
@@ -346,6 +377,12 @@ void GameFrame::Update()
 		return;
 	}
 
+	if (windows->IsPushKey(VK_RETURN))
+	{
+		int i = 0;
+		i = 1;
+	}
+
 #endif
 
 	//auto&& looker = enemy->GetComponent<CPUObjectLooker>();
@@ -397,16 +434,18 @@ void GameFrame::UpdateFunction()
 		}
 	}
 
+
 	bulletList.ObjectMove();
 
-
+#if USE_THREAD
 	shotEffectList->SetUpdateFlg(false);
 	smokeEffectList->SetUpdateFlg(false);
+#endif
 
 	{
-		auto targetMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
+		drawMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
 
-		auto viewMat = targetMecha->GetViewMat();
+		auto viewMat = drawMecha->GetViewMat();
 
 		meshDrawer.drawer.SetViewMatrix(viewMat);
 
@@ -432,8 +471,13 @@ void GameFrame::UpdateFunction()
 
 void GameFrame::DrawFunction()
 {
-	while (!shotEffectList->IsUpdateFlg()) {}
-	while (!smokeEffectList->IsUpdateFlg()) {}
+#if USE_THREAD
+	if (!shotEffectList->IsUpdateFlg()) {}
+	if (!smokeEffectList->IsUpdateFlg()) {}
+#else
+	shotEffectList->Update();
+	smokeEffectList->Update();
+#endif
 
 	mechaList.ObjectDrawBegin();
 
@@ -446,6 +490,8 @@ void GameFrame::DrawFunction()
 	ChD3D11::Shader11().DrawEnd();
 
 	mechaList.ObjectDrawEnd();
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -942,3 +988,15 @@ unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
 
 }
 
+void GameFrame::SetAllControllerFlg(bool _flg)
+{
+	for (auto&& mecha : mechaList.GetObjectList())
+	{
+		if (mecha.expired())continue;
+		auto&& mechaObject = mecha.lock();
+		if (mechaObject == nullptr)continue;
+		auto&& controller = mechaObject->GetComponent<ControllerBase>();
+		if (controller == nullptr)continue;
+		controller->SetUsing(_flg);
+	}
+}

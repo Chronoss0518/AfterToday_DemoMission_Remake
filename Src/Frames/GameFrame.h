@@ -4,7 +4,6 @@
 
 class AttackObject;
 class BaseMecha;
-class CloudList;
 class GameScript;
 class EffectObjectShader;
 
@@ -117,6 +116,8 @@ private:
 	void UpdateFunction();
 
 	void DrawFunction();
+
+	void SetAllControllerFlg(bool _flg);
 
 	bool initFlg = false;
 

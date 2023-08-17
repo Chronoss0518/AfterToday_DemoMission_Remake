@@ -230,7 +230,11 @@ void CPUController::UpdateBegin()
 	auto looker = mecha->GetComponent<CPUObjectLooker>();
 
 	if (looker == nullptr)return;
+#if USE_CPU_THREAD
+	
+	while (!looker->IsEndUpdate()) {};
 
+#endif
 	cpuTargetSelect->Update(*looker, *frame, *this);
 
 	cpuMovePositionSelect->Update(*cpuTargetSelect, *frame, *this);
