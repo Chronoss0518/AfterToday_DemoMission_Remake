@@ -77,7 +77,7 @@ void CPUTargetSelector::Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUC
 	{
 		unsigned long test = selectFunction->Update(_looker, _frame, _controller);
 
-		OutputDebugString(("TestTargetNo :" + std::to_string(test) + "\n").c_str());
+		//OutputDebugString(("TestTargetNo :" + std::to_string(test) + "\n").c_str());
 		if (test >= _frame.GetMechaList().GetObjectCount())continue;
 		targetNo = test;
 		lookTargetFlg = true;
