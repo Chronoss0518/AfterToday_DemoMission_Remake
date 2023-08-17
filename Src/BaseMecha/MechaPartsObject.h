@@ -65,6 +65,11 @@ public:
 		return weaponFunctions;
 	}
 
+	ChCpp::Collider* GetCollider()
+	{
+		return &collider;
+	}
+
 	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
 
 	float GetDurableValue() { return durableValue; }
@@ -80,6 +85,12 @@ public:
 	float GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet);
 
 	float GetDamage(ChCpp::BoxCollider& _collider);
+
+	float GetDamage(AttackObject& _bullet);
+
+	ChVec3 GetBaseRotation() { return baseRot; }
+
+	ChVec3 GetColliderSize() { return collider.GetScl(); }
 
 	unsigned long GetLookAnchorNo() { return lookAnchorNo; }
 

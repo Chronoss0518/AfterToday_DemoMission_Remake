@@ -55,8 +55,7 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	baseParts->Draw(drawMat);
 
-	collider.SetPosition(lastDrawMat.GetPosition());
-	collider.SetRotation(lastDrawMat.GetRotation());
+	collider.SetMatrix(lastDrawMat);
 
 	for (auto func : externulFunctions)
 	{
@@ -73,6 +72,21 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 void MechaPartsObject::Damage()
 {
 
+}
+
+float MechaPartsObject::GetDamage(AttackObject& _bullet)
+{
+	float res = 0;
+
+	unsigned long tmp = _bullet.GetPenetration() - baseParts->GetHardness();
+
+	tmp = tmp < 0 ? 0 : tmp;
+
+	_bullet.SetIsHitTrue();
+
+	res = static_cast<float>(tmp);
+
+	return res;
 }
 
 float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet)
