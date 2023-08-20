@@ -18,16 +18,18 @@ private:
 
 	void UpdateFunction();
 
-	unsigned char BackCol;
-	const unsigned char MoveCol = 5;
-	bool UpDownFlg = false;
+	void Draw3D();
 
-	unsigned char DeviceTexChenge = 0;
-	unsigned char ChengeCount = 20;
+	void Draw2D();
 
-	ChCpp::ChScCon script;
+	unsigned char backCol;
+	const unsigned char moveCol = 5;
+	bool upDownFlg = false;
 
-	//ChAnimationObject9 Animations;
+	unsigned char deviceTexChenge = 0;
+	unsigned char chengeCount = 20;
+
+	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 
 	ChPtr::Shared<ChD3D11::Mesh11> msd = ChPtr::Make_S<ChD3D11::Mesh11>();
 	ChPtr::Shared<ChD3D11::Mesh11> desk = ChPtr::Make_S<ChD3D11::Mesh11>();
@@ -35,7 +37,6 @@ private:
 
 	ChD3D11::Texture11 title_name;
 	ChD3D11::Texture11 title;
-	ChD3D11::Texture11 tmpTitle;
 	ChD3D11::Texture11 push_space;
 	ChD3D11::Texture11 blackTex;
 	float blendPow = 0;
@@ -47,9 +48,7 @@ private:
 
 	ChPtr::Shared<ChD3D11::RenderTarget11> renderTarget = ChPtr::Make_S<ChD3D11::RenderTarget11>();
 
-	//ChGame::Camera Cam;
-
 	ChD3D11::CB::CBLight11 light;
 
-	ChVec2 mousePos;
+	ChWin::MouseController* mouse = &ChWin::Mouse();
 };
