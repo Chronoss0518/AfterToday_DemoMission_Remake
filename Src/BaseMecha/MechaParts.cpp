@@ -36,6 +36,7 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	{"WeaponPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WeaponPos>(); }},
 	{"Sword:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<SwordData>(); }},
 	{"Gun:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }},
+	{"ExtraPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WeaponPos>(); }},
 };
 
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName)
@@ -189,7 +190,7 @@ std::string MechaParts::Serialize()
 void MechaParts::Draw(const ChMat_11& _mat)
 {
 	if (model == nullptr)return;
-	drawer->drawer.Draw(drawer->dc, *model, _mat);
+	drawer->drawer.Draw(*model, _mat);
 }
 
 unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -266,6 +267,50 @@ void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 	//auto camera = ChPtr::Make_S<CameraObject>();
 
 	//_base.AddCamera(camera);
+}
+
+unsigned long Aerodynamics::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+{
+	upPowerParSpeed = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
+	return _textPos + 1;
+}
+
+std::string Aerodynamics::Serialize()
+{
+	std::string res = "";
+
+	res += std::to_string(upPowerParSpeed) + "\n";
+
+	return res;
+}
+
+void Aerodynamics::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
+{
+	auto&& moveAcceleration = GetComponent<Aerodynamics>(_base);
+
+}
+
+unsigned long MoveAcceleration::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+{
+	acceleration = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
+	deceleration = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 1).c_str()));
+	return _textPos + 2;
+}
+
+std::string MoveAcceleration::Serialize()
+{
+	std::string res = "";
+
+	res += std::to_string(acceleration) + "\n";
+	res += std::to_string(deceleration) + "\n";
+
+	return res;
+}
+
+void MoveAcceleration::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
+{
+	auto&& moveAcceleration = GetComponent<MoveAcceleration>(_base);
+
 }
 
 unsigned long WalkData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -588,4 +633,13 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 	_parts.AddWeaponFunction(function);
 
 	NextPosBase::SetPartsParameter(_base, _parts,_frame);
+}
+
+void ExtraPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+
+	auto obj = ChPtr::Make_S<PositionObject>();
+	obj->haveObject = &_parts;
+	obj->positionObject = _targetObject;
+	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::Extra);
 }

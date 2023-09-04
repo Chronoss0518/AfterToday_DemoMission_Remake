@@ -683,4 +683,16 @@ protected:
 	std::string bulletFile = "";
 };
 
+class ExtraPos :public NextPosBase
+{
+public:
+
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return "ExtraPos:"; }
+
+};
+
 #endif
