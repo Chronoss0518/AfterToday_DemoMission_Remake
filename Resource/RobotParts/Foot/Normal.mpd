@@ -1,7 +1,7 @@
 Resource/XFile/RobotsParts/Foot/Normal.x
 1.000000
 1.000000
-Walk:{
+WalkData:{
 20.000000
 30.000000
 20.000000

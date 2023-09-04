@@ -1,7 +1,7 @@
 Resource/XFile/RobotsParts/Weapon/GunSample.x
 1.000000
 1.000000
-Gun:{
+GunData:{
 Armature_ShotPos
 SE_Shot.v2.wav
 3
