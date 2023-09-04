@@ -14,29 +14,30 @@
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
 
+
 std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
 {
-	{"EnelgyTank:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<EnelgyTankData>(); }},
-	{"Camera:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<CameraData>(); }},
-	{"Scope:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ScopeData>(); }},
-	{"Walk:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WalkData>(); }},
-	{"Aerodynamics:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<Aerodynamics>(); }},
-	{"MoveAcceleration:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<MoveAcceleration>(); }},
-	{"RightArmPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightArmPos>(); }},
-	{"LeftArmPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftArmPos>(); }},
-	{"FootPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FootPos>(); }},
-	{"HeadPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<HeadPos>(); }},
-	{"BoostPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BoostPos>(); }},
-	{"RightBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightBoostBrust>(); }},
-	{"LeftBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftBoostBrust>(); }},
-	{"FrontBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FrontBoostBrust>(); }},
-	{"BackBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BackBoostBrust>(); }},
-	{"UpBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<UpBoostBrust>(); }},
-	{"DownBoostBrust:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<DownBoostBrust>(); }},
-	{"WeaponPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WeaponPos>(); }},
-	{"Sword:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<SwordData>(); }},
-	{"Gun:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }},
-	{"ExtraPos:",[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WeaponPos>(); }},
+	{GET_CLASS_NAME(EnelgyTankData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<EnelgyTankData>(); }},
+	{GET_CLASS_NAME(CameraData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<CameraData>(); }},
+	{GET_CLASS_NAME(ScopeData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ScopeData>(); }},
+	{GET_CLASS_NAME(WalkData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WalkData>(); }},
+	{GET_CLASS_NAME(Aerodynamics),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<Aerodynamics>(); }},
+	{GET_CLASS_NAME(MoveAcceleration),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<MoveAcceleration>(); }},
+	{GET_CLASS_NAME(RightArmPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightArmPos>(); }},
+	{GET_CLASS_NAME(LeftArmPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftArmPos>(); }},
+	{GET_CLASS_NAME(FootPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FootPos>(); }},
+	{GET_CLASS_NAME(HeadPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<HeadPos>(); }},
+	{GET_CLASS_NAME(BoostPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BoostPos>(); }},
+	{GET_CLASS_NAME(RightBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightBoostBrust>(); }},
+	{GET_CLASS_NAME(LeftBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftBoostBrust>(); }},
+	{GET_CLASS_NAME(FrontBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FrontBoostBrust>(); }},
+	{GET_CLASS_NAME(BackBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BackBoostBrust>(); }},
+	{GET_CLASS_NAME(UpBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<UpBoostBrust>(); }},
+	{GET_CLASS_NAME(DownBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<DownBoostBrust>(); }},
+	{GET_CLASS_NAME(WeaponPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WeaponPos>(); }},
+	{GET_CLASS_NAME(SwordData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<SwordData>(); }},
+	{GET_CLASS_NAME(GunData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }},
+	{GET_CLASS_NAME(ExtraPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ExtraPos>(); }},
 };
 
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName)
@@ -118,6 +119,7 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	std::string typeName = _textObject.GetTextLine(_linePos);
 	if (typeName.empty())return _linePos + 1;
 	typeName.pop_back();
+	typeName.pop_back();
 	auto createFunction = createFunctions.find(typeName);
 	if (createFunction == createFunctions.end())return _linePos + 1;
 	auto parts = (*createFunction).second(*this);
@@ -179,7 +181,7 @@ std::string MechaParts::Serialize()
 
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		res += com->GetPartsTypeTag() + "{\n";
+		res += com->GetPartsTypeTag() + ":{\n";
 		res += com->Serialize();
 		res += "}\n";
 	}

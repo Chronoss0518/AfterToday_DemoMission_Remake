@@ -174,7 +174,7 @@ void Attack::MoveBulletObject(AttackObject& _bullet)
 void Attack::Draw(const ChMat_11& _mat)
 {
 	if (bullet == nullptr)return;
-	drawer->drawer.Draw(drawer->dc, *bullet, _mat);
+	drawer->drawer.Draw(*bullet, _mat);
 }
 
 unsigned long BulletData::Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos)

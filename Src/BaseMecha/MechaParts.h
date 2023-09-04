@@ -1,6 +1,18 @@
 #ifndef _BRobParts
 #define _BRobParts
 
+#include <stdio.h>
+#include <string.h>
+
+#ifndef GET_CLASS_NAME
+#ifdef _WINDOWS
+#define GET_CLASS_NAME(cls) &typeid(cls).name()[6]
+#else
+#define GET_CLASS_NAME(cls) typeid(cls).name() 
+#endif
+#endif
+
+
 #include"BaseMecha.h"
 
 class MechaPartsObject;
@@ -49,9 +61,9 @@ public://Set Functions//
 
 public://Get Function//
 
-	inline unsigned long GetHardness() { return hardness; }
+	inline unsigned long GetHardness()const { return hardness; }
 
-	inline float GetMass() { return mass; }
+	inline float GetMass()const { return mass; }
 
 	inline float GetGroundHeight() { return groundHeight; }
 
@@ -148,7 +160,11 @@ public://Set Functions//
 
 public://Get Functions//
 
-	virtual std::string GetPartsTypeTag()override { return "EnelgyTank:"; }
+	virtual std::string GetPartsTypeTag()override { return  GET_CLASS_NAME(EnelgyTankData); }
+
+	unsigned long GetMaxEnelgy()const { return maxEnelgy; }
+
+	unsigned long GetCreateEnelgy()const { return createEnelgy; }
 
 protected:
 
@@ -181,7 +197,9 @@ public://Set Functions//
 
 public://Get Functions//
 
-	virtual std::string GetPartsTypeTag()override{ return "Camera:"; }
+	virtual std::string GetPartsTypeTag()override{ return GET_CLASS_NAME(CameraData); }
+
+	float GetFovy()const { return fovy; }
 
 protected:
 
@@ -217,7 +235,13 @@ public://Set Functions//
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "Scope:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(ScopeData); }
+
+	float GetMaxFovy()const { return minFovy; }
+
+	float GetMinFovy()const { return maxFovy; }
+
+	float GetFovySlideSpeed()const { return fovySlideSpeed; }
 
 protected:
 
@@ -250,7 +274,7 @@ public://Get Functions//
 
 	float GetGroundNearPos() { return 0.0f; };
 
-	std::string GetPartsTypeTag()override { return "Aerodynamics:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(Aerodynamics); }
 
 protected:
 
@@ -278,7 +302,7 @@ public://Get Functions//
 
 	float GetGroundNearPos() { return 0.0f; };
 
-	std::string GetPartsTypeTag()override { return "MoveAcceleration:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(MoveAcceleration); }
 
 protected:
 
@@ -312,7 +336,13 @@ public://Get Functions//
 
 	float GetGroundNearPos() { return 0.0f; };
 
-	std::string GetPartsTypeTag()override { return "Walk:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(WalkData); }
+
+	float GetMovePower()const { return movePow; }
+
+	float GetRotatePower()const { return rotatePow; }
+
+	float GetJumpPower()const { return jumpPow; }
 
 protected:
 	
@@ -378,7 +408,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "RightArmPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(RightArmPos); }
 
 };
 
@@ -390,7 +420,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "LeftArmPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(LeftArmPos); }
 
 };
 
@@ -402,7 +432,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "FootPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(FootPos); }
 
 };
 
@@ -414,7 +444,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "HeadPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(HeadPos); }
 
 };
 
@@ -426,7 +456,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "BoostPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(BoostPos); }
 
 };
 
@@ -462,6 +492,16 @@ public://Get Functions//
 
 	inline std::string GetObjectNameList() { return objectName; }
 
+	unsigned long GetBoostUseEnelgy()const { return useEnelgy; }
+
+	float GetBoostPower()const { return boostPower; }
+
+	unsigned long GetAvoidUseEnelgy()const { return avoidUseEnelgy; }
+
+	float GetAvoidPower()const { return avoidPow; }
+
+	unsigned long GetAvoidWait()const { return avoidWait; }
+
 public:
 
 protected:
@@ -490,7 +530,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "RightBoostBrust:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(RightBoostBrust); }
 
 
 };
@@ -504,7 +544,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "LeftBoostBrust:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(LeftBoostBrust); }
 
 
 };
@@ -518,7 +558,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "FrontBoostBrust:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(FrontBoostBrust); }
 
 };
 
@@ -531,7 +571,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "BackBoostBrust:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(BackBoostBrust); }
 
 };
 
@@ -543,7 +583,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "UpBoostBrust:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(UpBoostBrust); }
 
 };
 
@@ -555,7 +595,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "DownBoostBrust:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(DownBoostBrust); }
 
 };
 
@@ -566,7 +606,7 @@ class WeaponPos : public NextPosBase
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "WeaponPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(WeaponPos); }
 
 };
 
@@ -588,11 +628,9 @@ public:
 
 public:
 
-	inline std::string GetPartsTypeTag() override { return "WeaponData:"; }
-
 	inline std::string GetSEFileName() { return seFile; }
 
-	inline unsigned long GetWeatTime() { return weatTime; }
+	inline unsigned long GetWeatTime() const { return weatTime; }
 
 protected:
 
@@ -617,7 +655,7 @@ public://Set Functions//
 
 public://Get Functions//
 
-	inline std::string GetPartsTypeTag() override { return "Sword:"; }
+	inline std::string GetPartsTypeTag() override { return GET_CLASS_NAME(SwordData); }
 
 	inline unsigned long GetWeatTime() { return attackTime; }
 
@@ -652,19 +690,19 @@ public://Set Functions//
 
 public://Get Functions//
 
-	inline std::string GetPartsTypeTag() override { return "Gun:"; }
+	inline std::string GetPartsTypeTag() override { return GET_CLASS_NAME(GunData); }
 
-	inline unsigned long GetFireNum() { return fireNum; }
+	inline unsigned long GetFireNum()const { return fireNum; }
 
-	inline unsigned long GetBulletNum() { return bulletNum; }
+	inline unsigned long GetBulletNum() const { return bulletNum; }
 
-	inline unsigned long GetMagazineNum() { return magazineNum; }
+	inline unsigned long GetMagazineNum() const { return magazineNum; }
 
-	inline unsigned long GetReloadTime() { return reloadTime; }
+	inline unsigned long GetReloadTime() const { return reloadTime; }
 
-	inline unsigned char GetRange() { return range; }
+	inline unsigned char GetRange() const { return range; }
 
-	inline std::string GetUseBulletFile() { return bulletFile; }
+	inline std::string GetUseBulletFile() const { return bulletFile; }
 
 protected:
 
@@ -691,7 +729,7 @@ public:
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return "ExtraPos:"; }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(ExtraPos); }
 
 };
 

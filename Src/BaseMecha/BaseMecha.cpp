@@ -23,7 +23,7 @@
 
 static const std::string partsTypeName[]
 {
-	"Body","Head","Foot","RightArm","LeftArm","Boost","Holder","Weapon"
+	"Body","Head","Foot","RightArm","LeftArm","Boost","Weapon","Extra"
 };
 
 static const std::string weaponTypeName[]
@@ -377,6 +377,8 @@ void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,
 	if (_name == PartsPosNames::None)return;
 
 	auto mechaPartsPosList = GetMechaPartsPosList(_name);
+
+	if (mechaPartsPosList.empty())return;
 
 	_parts.SetPositoinObject(mechaPartsPosList[_no]);
 	mechaPartsPosList[_no]->nextParts = &_parts;
