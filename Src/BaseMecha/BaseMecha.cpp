@@ -243,6 +243,9 @@ void BaseMecha::Move()
 
 void BaseMecha::MoveEnd()
 {
+
+	damageDir = ChVec3();
+
 	viewHorizontal = physics->GetRotation().y;
 
 	auto viewPos = GetViewPos();
@@ -376,6 +379,7 @@ void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,
 	auto mechaPartsPosList = GetMechaPartsPosList(_name);
 
 	_parts.SetPositoinObject(mechaPartsPosList[_no]);
+	mechaPartsPosList[_no]->nextParts = &_parts;
 	_parts.GetBaseObject()->GetMesh().SetFrameTransform(ChLMat());
 }
 
@@ -423,8 +427,6 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 	if (_obj.IsHit())return;
 	if (IsBreak())return;
 
-	damageDir = ChVec3();
-
 	ChVec3 dir = _obj.GetMovePower();
 
 	float moveLen = dir.Len();
@@ -441,39 +443,31 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	dir.Normalize();
 
-	std::vector<float> lenList;
+	unsigned long cutCount = (moveLen / hitSize) + 1;
 
-	float nowPos = 0;
-
-	for (nowPos = 0; nowPos < moveLen; nowPos += hitSize)
-	{
-		lenList.push_back(nowPos);
-	}
-
-	nowPos = nowPos - hitSize + moveLen;
-
-	lenList.push_back(nowPos);
-
-	ChCpp::SphereCollider collider;
-
-	collider.SetScalling(hitSize);
+	testAttackCollider.SetScalling(hitSize);
 
 	bool isHitFlg = false;
 
-	for (float nowPos : lenList)
+	ChVec3 nowVector = dir;
+
+	float nowPos = 0.0f;
+	for (unsigned long i = 0; i < cutCount; i++)
 	{
-		ChVec3 nowVector = dir;
+		nowPos = hitSize * i;
+		if (nowPos <= 0.0f)nowPos = 1.0f;
 		nowVector.val.SetLen(nowPos);
 
-		collider.SetPosition(pos + nowVector);
+		testAttackCollider.SetPosition(pos + nowVector);
 
 		for (auto&& parts : mechaParts)
 		{
-			float damage = parts->GetDamage(collider, _obj);
+			float damage = parts->GetDamage(testAttackCollider, _obj);
 			if (damage == 0.0f)continue;
 			nowDurable -= damage;
 			isHitFlg = true;
-			damageDir = collider.GetPos() - physics->GetPosition();
+			//damageDir = testAttackCollider.GetPos() - physics->GetPosition();
+			damageDir = dir * -1.0f;
 			damageDir.Normalize();
 			break;
 		}

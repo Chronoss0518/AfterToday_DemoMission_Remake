@@ -15,6 +15,7 @@ struct PositionObject
 {
 	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
 	MechaPartsObject* haveObject = nullptr;
+	MechaPartsObject* nextParts = nullptr;
 };
 
 class BaseMecha :public ChCpp::BaseObject
@@ -47,7 +48,7 @@ public://Inner Struct Class Enum//
 
 	enum class PartsPosNames : unsigned char
 	{
-		Body, Head, Foot, RArm, LArm, Boost, Holder, Weapons, None
+		Body, Head, Foot, RArm, LArm, Boost, Weapons, Extra, None
 	};
 
 public://Override Functions//
@@ -236,7 +237,6 @@ protected:
 
 	unsigned long maxEnelgy = 0;
 	unsigned long chargeEnelgy = 0;
-
 	unsigned long nowEnelgy = 0;
 
 	float groundDistance = 0.0f;
@@ -254,7 +254,6 @@ protected:
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;
 
 	ChVec3 damageDir = ChVec3();
-
 
 	float baseHitSize = 0.0f;
 
