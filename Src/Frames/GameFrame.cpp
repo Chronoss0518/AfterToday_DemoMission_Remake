@@ -47,7 +47,7 @@ void GameFrame::Init()
 
 	PhysicsMachine::SetFPS(BASE_FPS);
 	PhysicsMachine::SetBaseSpeed(1);
-	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER * (1.0f  / BASE_FPS));
+	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
 	PhysicsMachine::SetAirRegist(0.1f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
@@ -507,7 +507,7 @@ void GameFrame::Render3D(void)
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
 		auto mapModel = weakMapModel.lock();
-		meshDrawer.drawer.Draw(meshDrawer.dc, *mapModel->model, (ChMat_11)mapModel->mat);
+		meshDrawer.drawer.Draw(*mapModel->model, (ChMat_11)mapModel->mat);
 	}
 
 	mechaList.ObjectDraw3D();
@@ -531,7 +531,7 @@ void GameFrame::Render2D(void)
 
 	gageDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	gageDrawer.Draw(ChD3D11::D3D11DC(), *enelgyUITexture, centerUISprite);
+	gageDrawer.Draw(*enelgyUITexture, centerUISprite);
 
 	gageDrawer.DrawEnd();
 
@@ -539,13 +539,13 @@ void GameFrame::Render2D(void)
 
 	gageDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	gageDrawer.Draw(ChD3D11::D3D11DC(), *receveDamageUITexture, centerUISprite);
+	gageDrawer.Draw(*receveDamageUITexture, centerUISprite);
 
 	gageDrawer.DrawEnd();
 
 	uiDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	uiDrawer.Draw(ChD3D11::D3D11DC(), *centerUITexture, centerUISprite);
+	uiDrawer.Draw(*centerUITexture, centerUISprite);
 
 	uiDrawer.DrawEnd();
 
