@@ -18,23 +18,25 @@ private:
 
 	void UpdateFunction();
 
-	ChPtr::Shared<ChD3D11::Mesh11> msd = ChPtr::Make_S<ChD3D11::Mesh11>();
-	ChPtr::Shared<ChD3D11::Mesh11> desk = ChPtr::Make_S<ChD3D11::Mesh11>();
-	ChPtr::Shared<ChD3D11::Mesh11> room = ChPtr::Make_S<ChD3D11::Mesh11>();
+	enum class NextButtonType
+	{
 
-	ChPtr::Shared<ChD3D11::RenderTarget11>msdDisplay = ChPtr::Make_S<ChD3D11::RenderTarget11>();
+	};
 
 	ChD3D11::Texture11 backGround;
-	ChD3D11::Texture11 descriptionWindow;
+	ChD3D11::Sprite11 descriptionWindowSprite;
 	
 	ChD3D11::Texture11 toBattle;
+	ChD3D11::Sprite11 toBattleButtonSprite;
 	ChD3D11::Texture11 descriptionBattle;
 	
 	ChD3D11::Texture11 toEdit;
+	ChD3D11::Sprite11 toEditButtonSprite;
 	ChD3D11::Texture11 descriptionEdit;
 
 	ChD3D11::Texture11 toSetting;
+	ChD3D11::Sprite11 toSettingButtonSprite;
 	ChD3D11::Texture11 descriptionSetting;
 
-	ChD3D11::CB::CBLight11 light;
+	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 };
