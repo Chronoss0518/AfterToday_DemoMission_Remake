@@ -34,7 +34,6 @@ void PlayerController::Init()
 	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 	windSize.h = static_cast<float>(windows.GetWindHeight());
 	windSize.w = static_cast<float>(windows.GetWindWidth());
-	mouse->Init(windows);
 	
 	mouse->SetCenterFixedFlg(true);
 	mouse->SetVisibleFlg(true);

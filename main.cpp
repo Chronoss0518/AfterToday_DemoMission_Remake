@@ -6,6 +6,8 @@
 
 #include"Src/Frames/GameFrame.h"
 #include"Src/Frames/TitleFrame.h"
+#include"Src/Frames/SelectFrame.h"
+#include"Src/Frames/EditFrame.h"
 
 #include"Src/BaseMecha/Controller/ControllerBase.h"
 //#include"TestGameLoop.h"
@@ -46,6 +48,11 @@ int WINAPI WinMain(
 				hInst,
 				nCmdshow);
 
+			system.SetWinProcedure(WM_DESTROY, [&](HWND _hWnd, UINT _msg, WPARAM _wPalam, LPARAM _lParam)->LRESULT {
+					system.Release();
+					return 0;
+				});
+
 		}
 		ChWin::MsgBox msg;
 		msg.ClearDisplayButtonType();
@@ -60,6 +67,7 @@ int WINAPI WinMain(
 
 		ChD3D::XAudioManager().Init();
 
+		ChWin::Mouse().Init(system);
 	}
 
 	ChCpp::FrameList frameList;
@@ -71,8 +79,10 @@ int WINAPI WinMain(
 	frameList.SaveData(&testData);
 
 	//frameList.SetFrame<TitleFrame>();
+	frameList.SetFrame<SelectFrame>();
+	frameList.SetFrame<EditFrame>();
 	frameList.SetFrame<GameFrame>();
-	auto gameFrame = frameList.GetNowFrame<GameFrame>();
+	auto gameFrame = frameList.GetNowFrame<TitleFrame>();
 
 	// ÉQÅ[ÉÄÇ…ä÷Ç∑ÇÈèâä˙âªèàóù ---------------------------
 
