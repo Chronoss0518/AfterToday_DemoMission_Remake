@@ -18,14 +18,29 @@ private:
 
 	void UpdateFunction();
 
+	void UpdateMouse();
+
+	void UpdateKeyboard();
+
+	void UpdateController();
+
+	enum class ActionType
+	{
+		UpSelect,
+		DownSelect,
+		Decision
+	};
+
 	enum class NextButtonType
 	{
 		Battle,
 		Edit,
 		Setting
 	};
-	static constexpr int NEXT_BUTTON_TYPE_COUNT = 3;
 
+	static constexpr int NEXT_BUTTON_TYPE_COUNT = 3;
+	std::vector<ActionType> inputDataList;
+	std::map<NextButtonType,std::function<void(void)>>nextFrameFunction;
 
 	ChD3D11::Texture11 backGround;
 	ChD3D11::Sprite11 descriptionWindowSprite;
@@ -33,7 +48,6 @@ private:
 	ChD3D11::Texture11 selectEdge;
 	ChD3D11::Sprite11 selectSprite[NEXT_BUTTON_TYPE_COUNT];
 	
-
 	ChD3D11::Texture11 toBattle;
 	ChD3D11::Sprite11 toBattleButtonSprite;
 	
@@ -48,4 +62,6 @@ private:
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
 	int nowSelect = ChStd::EnumCast(NextButtonType::Battle);
+
+	bool firstFlg = true;
 };

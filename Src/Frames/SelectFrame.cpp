@@ -8,9 +8,9 @@
 
 void SelectFrame::Init()
 {
-	auto&& device = ChD3D11::D3D11Device();
-
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	auto&& device = ChD3D11::D3D11Device();
 
 	spriteShader.Init(device);
 
@@ -30,7 +30,7 @@ void SelectFrame::Init()
 	
 	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].Init(device);
 	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].SetInitPosition();
-	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].SetPosRect(RectToGameWindow(ChVec4(340.0f + 5.0f, 62.0f + 5.0f, 600.0f + 340.0f + 10.0f, 62.0f + 100.0f + 10.0f)));
+	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].SetPosRect(RectToGameWindow(ChVec4(340.0f - 5.0f, 62.0f - 5.0f, 600.0f + 340.0f + 5.0f, 62.0f + 100.0f + 5.0f)));
 
 
 	toEdit.CreateTexture(SELECT_TEXTURE_DIRECTORY("EditButton.png"), device);
@@ -42,7 +42,7 @@ void SelectFrame::Init()
 
 	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].Init(device);
 	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].SetInitPosition();
-	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].SetPosRect(RectToGameWindow(ChVec4(340.0f + 5.0f, 232.0f + 5.0f, 600.0f + 340.0f + 10.0f, 232.0f + 100.0f + 10.0f)));
+	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].SetPosRect(RectToGameWindow(ChVec4(340.0f - 5.0f, 232.0f - 5.0f, 600.0f + 340.0f + 5.0f, 232.0f + 100.0f + 5.0f)));
 
 
 	toSetting.CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButton.png"), device);
@@ -54,7 +54,25 @@ void SelectFrame::Init()
 
 	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].Init(device);
 	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].SetInitPosition();
-	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].SetPosRect(RectToGameWindow(ChVec4(340.0f + 5.0f, 401.0f + 5.0f, 600.0f + 340.0f + 10.0f, 401.0f + 100.0f + 10.0f)));
+	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].SetPosRect(RectToGameWindow(ChVec4(340.0f - 5.0f, 401.0f - 5.0f, 600.0f + 340.0f + 5.0f, 401.0f + 100.0f + 5.0f)));
+
+
+
+	nextFrameFunction[NextButtonType::Battle] = [&]()
+	{
+		ChangeFrame(ChStd::EnumCast(FrameNo::Game));
+	};
+
+	nextFrameFunction[NextButtonType::Edit] = [&]()
+	{
+
+	};
+
+
+	nextFrameFunction[NextButtonType::Setting] = [&]()
+	{
+
+	};
 
 }
 
@@ -73,11 +91,11 @@ void SelectFrame::DrawFunction()
 
 
 
-	spriteShader.Draw(selectEdge, selectSprite[nowSelect]);
-
 	spriteShader.Draw(toBattle, toBattleButtonSprite);
 	spriteShader.Draw(toEdit, toEditButtonSprite);
 	spriteShader.Draw(toSetting, toSettingButtonSprite);
+	spriteShader.Draw(selectEdge, selectSprite[nowSelect]);
+
 
 	spriteShader.Draw(description[nowSelect], descriptionWindowSprite);
 	spriteShader.DrawEnd();
@@ -87,23 +105,66 @@ void SelectFrame::DrawFunction()
 
 void SelectFrame::UpdateFunction()
 {
+
+	UpdateKeyboard();
+	UpdateMouse();
+
+	if (firstFlg)
+	{
+
+		inputDataList.clear();
+		firstFlg = false;
+		return;
+	}
+
+	for (auto&& inputData : inputDataList)
+	{
+		if (inputData == ActionType::UpSelect)
+		{
+			nowSelect--;
+		}
+
+		if (inputData == ActionType::DownSelect)
+		{
+			nowSelect++;
+		}
+
+		nowSelect = (nowSelect + NEXT_BUTTON_TYPE_COUNT) % NEXT_BUTTON_TYPE_COUNT;
+
+		if (inputData == ActionType::Decision)
+		{
+			nextFrameFunction[(NextButtonType)nowSelect]();
+		}
+
+	}
+
+	inputDataList.clear();
+}
+
+void SelectFrame::Update()
+{
+	UpdateFunction();
+
+	DrawFunction();
+}
+
+void SelectFrame::UpdateMouse()
+{
+
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_UP))
+	if (manager.IsPushKeyNoHold(VK_LBUTTON))
 	{
-		nowSelect++;
+		inputDataList.push_back(ActionType::Decision);
 	}
-
-	if (manager.IsPushKeyNoHold(VK_DOWN))
-	{
-		nowSelect--;
-	}
-
-	nowSelect = (nowSelect + NEXT_BUTTON_TYPE_COUNT) % NEXT_BUTTON_TYPE_COUNT;
 
 	auto&& mouce = ChWin::Mouse();
-	
-	if (mouce.GetMoveValueToChVec2().Len() <= 0.01f)return;
+	mouce.Update();
+
+	auto&& mouseMove = mouce.GetMoveValue();
+
+	if (std::abs(mouseMove.x) <= 1 && std::abs(mouseMove.y) <= 1)return;
+
 	if (IsMoucePosOnSprite(toBattleButtonSprite))
 	{
 		nowSelect = ChStd::EnumCast(NextButtonType::Battle);
@@ -119,14 +180,32 @@ void SelectFrame::UpdateFunction()
 		nowSelect = ChStd::EnumCast(NextButtonType::Setting);
 	}
 
-
 }
 
-void SelectFrame::Update()
+void SelectFrame::UpdateKeyboard()
 {
-	UpdateFunction();
 
-	DrawFunction();
+	auto&& manager = ChSystem::SysManager();
+
+	if (manager.IsPushKeyNoHold(VK_RETURN))
+	{
+		inputDataList.push_back(ActionType::Decision);
+	}
+
+	if (manager.IsPushKeyNoHold(VK_UP))
+	{
+		inputDataList.push_back(ActionType::UpSelect);
+	}
+
+	if (manager.IsPushKeyNoHold(VK_DOWN))
+	{
+		inputDataList.push_back(ActionType::DownSelect);
+	}
+}
+
+void SelectFrame::UpdateController()
+{
+
 }
 
 void SelectFrame::SetScript()

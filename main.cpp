@@ -78,10 +78,10 @@ int WINAPI WinMain(
 
 	frameList.SaveData(&testData);
 
-	//frameList.SetFrame<TitleFrame>();
 	frameList.SetFrame<SelectFrame>();
-	frameList.SetFrame<EditFrame>();
+	frameList.SetFrame<TitleFrame>();
 	frameList.SetFrame<GameFrame>();
+	frameList.SetFrame<EditFrame>();
 	auto gameFrame = frameList.GetNowFrame<TitleFrame>();
 
 	// ƒQ[ƒ€‚ÉŠÖ‚·‚é‰Šú‰»ˆ— ---------------------------
