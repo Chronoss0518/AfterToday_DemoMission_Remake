@@ -74,7 +74,10 @@
 enum class FrameNo :unsigned long
 {
 	Title,
+	Select,
 	Game,
+	Edit,
+	Setting,
 };
 
 struct MeshDrawer
@@ -119,10 +122,17 @@ static inline bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
 	ChVec2 lt = _sprite.GetPos(ChD3D11::SpritePositionName::LeftTop);
 	ChVec2 rb = _sprite.GetPos(ChD3D11::SpritePositionName::RightDown);
 
-	ChVec2 moucePos = ChWin::Mouse().GetNowProPosToChVec2();
+	ChVec4 tmpRect;
+	tmpRect.left = lt.x;
+	tmpRect.top = lt.y;
+	tmpRect.right = rb.x;
+	tmpRect.bottom = rb.y;
 
-	if (moucePos.x < lt.x || moucePos.x > lt.x + rb.x)return false;
-	if (moucePos.y > lt.y || moucePos.y < lt.y + rb.y)return false;
+	ChVec2 mousePos = ChWin::Mouse().GetNowProPosToChVec2();
 
-	return true;
+	bool res = false;
+
+	if (tmpRect.IsOnPoint(mousePos))res = true;
+
+	return res;
 }
