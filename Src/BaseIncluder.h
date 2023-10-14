@@ -120,7 +120,7 @@ static inline ChVec4 RectToGameWindow(const ChVec4 _rect)
 static inline bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
 {
 	ChVec2 lt = _sprite.GetPos(ChD3D11::SpritePositionName::LeftTop);
-	ChVec2 rb = _sprite.GetPos(ChD3D11::SpritePositionName::RightDown);
+	ChVec2 rb = _sprite.GetPos(ChD3D11::SpritePositionName::RightBottom);
 
 	ChVec4 tmpRect;
 	tmpRect.left = lt.x;
