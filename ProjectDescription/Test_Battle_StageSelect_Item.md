@@ -1,0 +1,5 @@
+- Target Enemy Name
+- Target Enemy Mecha Image
+- Stage
+- My Mecha Image
+- Stage Rule
