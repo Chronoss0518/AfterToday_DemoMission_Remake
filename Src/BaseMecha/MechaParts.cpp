@@ -15,29 +15,33 @@
 #endif
 
 
+#ifndef PARTS_DATA_CREATER
+#define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
+#endif
+
 std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
 {
-	{GET_CLASS_NAME(EnelgyTankData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<EnelgyTankData>(); }},
-	{GET_CLASS_NAME(CameraData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<CameraData>(); }},
-	{GET_CLASS_NAME(ScopeData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ScopeData>(); }},
-	{GET_CLASS_NAME(WalkData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WalkData>(); }},
-	{GET_CLASS_NAME(Aerodynamics),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<Aerodynamics>(); }},
-	{GET_CLASS_NAME(MoveAcceleration),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<MoveAcceleration>(); }},
-	{GET_CLASS_NAME(RightArmPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightArmPos>(); }},
-	{GET_CLASS_NAME(LeftArmPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftArmPos>(); }},
-	{GET_CLASS_NAME(FootPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FootPos>(); }},
-	{GET_CLASS_NAME(HeadPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<HeadPos>(); }},
-	{GET_CLASS_NAME(BoostPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BoostPos>(); }},
-	{GET_CLASS_NAME(RightBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<RightBoostBrust>(); }},
-	{GET_CLASS_NAME(LeftBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<LeftBoostBrust>(); }},
-	{GET_CLASS_NAME(FrontBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<FrontBoostBrust>(); }},
-	{GET_CLASS_NAME(BackBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<BackBoostBrust>(); }},
-	{GET_CLASS_NAME(UpBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<UpBoostBrust>(); }},
-	{GET_CLASS_NAME(DownBoostBrust),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<DownBoostBrust>(); }},
-	{GET_CLASS_NAME(WeaponPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<WeaponPos>(); }},
-	{GET_CLASS_NAME(SwordData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<SwordData>(); }},
-	{GET_CLASS_NAME(GunData),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<GunData>(); }},
-	{GET_CLASS_NAME(ExtraPos),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<ExtraPos>(); }},
+	PARTS_DATA_CREATER(EnelgyTankData),
+	PARTS_DATA_CREATER(CameraData),
+	PARTS_DATA_CREATER(ScopeData),
+	PARTS_DATA_CREATER(WalkData),
+	PARTS_DATA_CREATER(Aerodynamics),
+	PARTS_DATA_CREATER(MoveAcceleration),
+	PARTS_DATA_CREATER(RightArmPos),
+	PARTS_DATA_CREATER(LeftArmPos),
+	PARTS_DATA_CREATER(FootPos),
+	PARTS_DATA_CREATER(HeadPos),
+	PARTS_DATA_CREATER(BoostPos),
+	PARTS_DATA_CREATER(RightBoostBrust),
+	PARTS_DATA_CREATER(LeftBoostBrust),
+	PARTS_DATA_CREATER(FrontBoostBrust),
+	PARTS_DATA_CREATER(BackBoostBrust),
+	PARTS_DATA_CREATER(UpBoostBrust),
+	PARTS_DATA_CREATER(DownBoostBrust),
+	PARTS_DATA_CREATER(WeaponPos),
+	PARTS_DATA_CREATER(SwordData),
+	PARTS_DATA_CREATER(GunData),
+	PARTS_DATA_CREATER(ExtraPos),
 };
 
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName)
@@ -57,7 +61,7 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 
 	loadPartss[_fileName] = mechaParts;
 	mechaParts->SetMeshDrawer(_drawer);
-	return mechaParts->SetParameters(_base,_frame);
+	return mechaParts->SetParameters(_base, _frame);
 }
 
 void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
@@ -107,7 +111,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 	for (unsigned long i = 3; i < lineCount; i++)
 	{
-		i = CreateDatas(_base,textObject, i);
+		i = CreateDatas(_base, textObject, i);
 	}
 
 }
@@ -123,7 +127,7 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	auto createFunction = createFunctions.find(typeName);
 	if (createFunction == createFunctions.end())return _linePos + 1;
 	auto parts = (*createFunction).second(*this);
-	unsigned long linePos = parts->Deserialize(_textObject,_linePos + 1);
+	unsigned long linePos = parts->Deserialize(_textObject, _linePos + 1);
 	return linePos;
 }
 
@@ -133,7 +137,7 @@ ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, Gam
 	parts->SetFrame(_frame);
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		com->SetPartsParameter(_base,*parts,_frame);
+		com->SetPartsParameter(_base, *parts, _frame);
 	}
 
 	return parts;
@@ -144,7 +148,7 @@ ChPtr::Shared<MechaPartsObject>  MechaParts::SetPartsParameter(BaseMecha& _base)
 	auto partsObject = ChPtr::Make_S<MechaPartsObject>();;
 
 	partsObject->baseParts = this;
-	
+
 	_base.AddMass(mass);
 
 	_base.SetGroundHeight(groundHeight);
@@ -172,7 +176,7 @@ std::string MechaParts::Serialize()
 
 	//モデル名//
 	res += model->GetModelName() + "\n";
-	
+
 	//パーツの硬さ//
 	res += std::to_string(hardness) + "\n";
 
@@ -246,7 +250,7 @@ void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 
 unsigned long ScopeData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
-	unsigned long textPos = CameraData::Deserialize(_text,_textPos);
+	unsigned long textPos = CameraData::Deserialize(_text, _textPos);
 	minFovy = static_cast<float>(std::atof(_text.GetTextLine(textPos).c_str()));
 	maxFovy = static_cast<float>(std::atof(_text.GetTextLine(textPos + 1).c_str()));
 	fovySlideSpeed = static_cast<float>(std::atof(_text.GetTextLine(textPos + 2).c_str()));
@@ -358,7 +362,7 @@ void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, 
 	SetObjectPos(_base, _parts, posObject);
 }
 
-void RightArmPos::SetObjectPos(BaseMecha& _base,  MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+void RightArmPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
 
 	auto obj = ChPtr::Make_S<PositionObject>();
@@ -443,7 +447,7 @@ void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 void RightBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)
 {
 	auto com = GetComponent<BoostComponent>(_base);
-	
+
 	com->AddBoostPow(boostPower, BaseMecha::InputName::RightBoost);
 	com->AddBoostUseEnelgy(useEnelgy, BaseMecha::InputName::RightBoost);
 	com->AddBoostAvoidPow(avoidPow, BaseMecha::InputName::RightAvo);
@@ -529,7 +533,7 @@ void WeaponPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::
 unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
-	seFile =_text.GetTextLine(textPos);
+	seFile = _text.GetTextLine(textPos);
 	weatTime = std::atol(_text.GetTextLine(textPos + 1).c_str());
 	return textPos + 2;
 }
@@ -578,13 +582,13 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 
 	function->SetBaseData(this);
 
-	function->Init(thisParts.GetMeshDrawer(),ChD3D11::D3D11Device());
+	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
 
 	function->SetFrmae(_frame);
 
 	_parts.AddWeaponFunction(function);
 
-	NextPosBase::SetPartsParameter(_base, _parts,_frame);
+	NextPosBase::SetPartsParameter(_base, _parts, _frame);
 }
 
 unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -634,7 +638,7 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 
 	_parts.AddWeaponFunction(function);
 
-	NextPosBase::SetPartsParameter(_base, _parts,_frame);
+	NextPosBase::SetPartsParameter(_base, _parts, _frame);
 }
 
 void ExtraPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
