@@ -36,6 +36,18 @@ public:
 
 	void SetBoostAvoidWait(const unsigned long _avoidWait, InputName _avoidType);
 
+public:
+
+	float GetAvoidMovePow(InputName _avoidType);
+
+	unsigned long GetAvoidUseEnelgy(InputName _avoidType);
+
+	unsigned long GetAvoidUseWaitTime(InputName _avoidType);
+
+	float GetBoostMovePow(InputName _avoidType);
+
+	unsigned long GetBoostUseEnelgy(InputName _avoidType);
+
 private:
 
 	unsigned long GetUseEnelgy(AvoidData& _data);
