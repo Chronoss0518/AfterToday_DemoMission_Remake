@@ -8,8 +8,10 @@
 #include"Src/Frames/TitleFrame.h"
 #include"Src/Frames/SelectFrame.h"
 #include"Src/Frames/EditFrame.h"
+#include"Src/Frames/StageSelectFrame.h"
 
 #include"Src/BaseMecha/Controller/ControllerBase.h"
+#include "Src/StageSelectFrame/StageData/StageData.h"
 //#include"TestGameLoop.h"
 
 int WINAPI WinMain(
@@ -22,6 +24,7 @@ int WINAPI WinMain(
 	//Test::CreateSampleFile();
 
 	//return 0;
+
 
 	auto&& system = *ChSystem::SysManager().Init<ChSystem::Windows>();
 
@@ -59,9 +62,9 @@ int WINAPI WinMain(
 		msg.AddDisplayButtonType(ChWin::MsgBox::DisplayButtonType::YesNo);
 		bool fullScreenFlg = msg.Display(system.GethWnd(), "全画面確認", "全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
 
-		ChD3D11::D3D11API().Init(system.GethWnd(), fullScreenFlg, GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
+		ChD3D11::D3D11API().Init(system.GethWnd(), fullScreenFlg, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
-		ChD3D11::Shader11().Init(ChD3D11::D3D11API(), GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
+		ChD3D11::Shader11().Init(ChD3D11::D3D11API(), GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
 
 		ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -78,10 +81,13 @@ int WINAPI WinMain(
 
 	frameList.SaveData(&testData);
 
+	ChD3D::WICBitmapCreatorObj().Init();
+	
 	frameList.SetFrame<SelectFrame>();
 	frameList.SetFrame<TitleFrame>();
-	frameList.SetFrame<GameFrame>();
+	frameList.SetFrame<StageSelectFrame>();
 	frameList.SetFrame<EditFrame>();
+	frameList.SetFrame<GameFrame>();
 	auto gameFrame = frameList.GetNowFrame<TitleFrame>();
 
 	// ゲームに関する初期化処理 ---------------------------
