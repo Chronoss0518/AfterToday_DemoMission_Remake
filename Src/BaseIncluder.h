@@ -1,6 +1,8 @@
 #pragma once
 
 #include<Windows.h>
+#include<filesystem>
+
 #include<ChBaseLibrary.h>
 #include<ChWindowsLibrary.h>
 #include<ChDirect3D11Library.h>
@@ -39,6 +41,10 @@
 #define STAGE_DIRECTORY(current_path) TARGET_DIRECTORY("StageScript/" current_path) 
 #endif
 
+#ifndef STAGE_DATA_DIRECTORY
+#define STAGE_DATA_DIRECTORY(current_path) TARGET_DIRECTORY("StageData/" current_path) 
+#endif
+
 #ifndef CPU_DIRECTORY
 #define CPU_DIRECTORY(current_path) TARGET_DIRECTORY("CPUCharactor/" current_path) 
 #endif
@@ -47,20 +53,30 @@
 #define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
 #endif
 
-#ifndef GAME_WINDOW_WITDH
-#define GAME_WINDOW_WITDH 1280.0f
+#ifndef GAME_WINDOW_WIDTH
+#define GAME_WINDOW_WIDTH 1280.0f
 #endif
 
 #ifndef GAME_WINDOW_HEIGHT
 #define GAME_WINDOW_HEIGHT 720.0f
 #endif
 
-#ifndef GAME_WINDOW_WITDH_LONG
-#define GAME_WINDOW_WITDH_LONG static_cast<unsigned long>(GAME_WINDOW_WITDH)
+#ifndef GAME_WINDOW_WIDTH_LONG
+#define GAME_WINDOW_WIDTH_LONG static_cast<unsigned long>(GAME_WINDOW_WIDTH)
 #endif
 
 #ifndef GAME_WINDOW_HEIGHT_LONG
 #define GAME_WINDOW_HEIGHT_LONG static_cast<unsigned long>(GAME_WINDOW_HEIGHT)
+#endif
+
+//px = (sx / sw) * 2.0f - 1.0f
+#ifndef SCREEN_TO_PROJECTION_X
+#define SCREEN_TO_PROJECTION_X(value) (static_cast<float>(value)/(GAME_WINDOW_WIDTH)) * 2.0f - 1.0f
+#endif
+
+//py = (sy / sh) * -2.0f + 1.0f
+#ifndef SCREEN_TO_PROJECTION_Y
+#define SCREEN_TO_PROJECTION_Y(value) (static_cast<float>(value)/(GAME_WINDOW_HEIGHT)) * -2.0f + 1.0f
 #endif
 
 #ifndef GAME_PROJECTION_NEAR
@@ -88,7 +104,8 @@ struct MeshDrawer
 
 struct PlayerData
 {
-	std::string stageName;
+	std::string stageName = "";
+	std::string useMechaData = "";
 };
 
 static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)
@@ -102,10 +119,10 @@ static inline ChVec4 RectToGameWindow(const ChVec4 _rect)
 {
 	ChVec4 res = _rect;
 
-	res.left = res.left / GAME_WINDOW_WITDH;
+	res.left = res.left / GAME_WINDOW_WIDTH;
 	res.left = (res.left * 2.0f) - 1.0f;
 
-	res.right = res.right / GAME_WINDOW_WITDH;
+	res.right = res.right / GAME_WINDOW_WIDTH;
 	res.right = (res.right * 2.0f) - 1.0f;
 
 	res.top = res.top / GAME_WINDOW_HEIGHT;
