@@ -16,23 +16,21 @@
 
 #include"../BaseMecha/CPU/CPULooker.h"
 
-#define PLAYER_MECHA_FILE_NAME ""
-
 //想定するメカオブジェクトの最大数//
-#define MAX_MECHA_OBJECT_COUNT 50
+#define MAX_MECHA_OBJECT_COUNT 10
 
 #define BASE_FPS 60
-#define GRAVITY_POWER 9.8f
-#define DEBUG_FLG 1
+#define GRAVITY_POWER 9.8f / 2.0f 
+#define DEBUG_FLG 0
 
 #ifndef PARTS_DIRECTORY
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
 
-#define INIT_SMOKE_DISPERSAL_POWER 10.0f
+#define INIT_SMOKE_DISPERSAL_POWER 5.0f
 #define INIT_SMOKE_ALPHA_POWER 0.5f
 
-#define DISPLAY_FPS_FLG 1
+#define DISPLAY_FPS_FLG 0
 #define DISPLAY_NOW_BULLET_NUM_FLG 0
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -41,6 +39,8 @@
 
 void GameFrame::Init()
 {
+	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
+
 	script = ChPtr::Make_S<GameScript>();
 	InitScriptFunction();
 	ChSystem::SysManager().SetFPS(BASE_FPS);
@@ -67,7 +67,7 @@ void GameFrame::Init()
 	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 10);
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
-	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	smokeEffectList->SetMaxColorPower(0.8f);
 	smokeEffectList->SetMinColorPower(0.6f);
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
@@ -104,7 +104,7 @@ void GameFrame::Init()
 
 	{
 		ChMat_11 proMat;
-		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
+		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
 
 		projectionMat = proMat;
 
@@ -121,7 +121,7 @@ void GameFrame::Init()
 
 	enemyMarker.CreateRenderTarget(
 		ChD3D11::D3D11Device(),
-		GAME_WINDOW_WITDH_LONG, GAME_WINDOW_HEIGHT_LONG);
+		GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 }
 
@@ -368,6 +368,13 @@ void GameFrame::Update()
 
 	mechas = mechaList.GetObjectList<BaseMecha>();
 
+	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+	if (windows->IsPushKey(VK_ESCAPE))
+	{
+		windows->Release();
+		return;
+	}
+
 #if DEBUG_FLG
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
@@ -390,6 +397,8 @@ void GameFrame::Update()
 	//auto&& lookTarget =
 		//looker->GetLookTypeMechas(CPUObjectLooker::MemberType::Enemy, CPUObjectLooker::DistanceType::Near, CPUObjectLooker::DamageSizeType::None);
 
+#if DISPLAY_FPS_FLG
+
 	box.SetText("FPS:" +
 		std::to_string(ChSystem::SysManager().GetNowFPSPoint()) +
 		"\r\n" +
@@ -403,6 +412,7 @@ void GameFrame::Update()
 		std::to_string(mechaList.GetObjectCount())
 	);
 
+#endif
 	DrawFunction();
 
 }
@@ -558,7 +568,7 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	auto&& mecha = mechaList.SetObject<BaseMecha>("");
 
-	mecha->Create(ChVec2(GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT), meshDrawer, this);
+	mecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, this);
 
 	mecha->Load(ChD3D11::D3D11Device(), argment[0]);
 

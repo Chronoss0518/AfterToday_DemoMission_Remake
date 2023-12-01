@@ -69,7 +69,7 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string
 	std::string text = "";
 
 	{
-		ChCpp::File<> file;
+		ChCpp::CharFile file;
 		file.FileOpen(_fileName);
 		text = file.FileReadText();
 	}
@@ -161,7 +161,7 @@ std::string MechaParts::Save(const std::string& _fileName)
 	std::string res = Serialize();
 
 	{
-		ChCpp::File<> file;
+		ChCpp::CharFile file;
 		file.FileOpen(_fileName);
 		file.FileWriteText(res);
 		file.FileClose();

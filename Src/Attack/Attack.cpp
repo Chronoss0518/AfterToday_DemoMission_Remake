@@ -21,7 +21,7 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(MeshDrawer* _drawer, ID3D11Device
 	ChCpp::TextObject textObject;
 
 	{
-		ChCpp::File<> file;
+		ChCpp::CharFile file;
 		file.FileOpen(_fileName);
 		text = file.FileReadText();
 		textObject.SetText(text);

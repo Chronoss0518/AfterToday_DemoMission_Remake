@@ -270,7 +270,7 @@ void CPUController::SaveCPUData(const std::string& _fileName)
 	saveData->SetObject("Attack", cpuAttack->Serialize());
 
 
-	ChCpp::File<> file;
+	ChCpp::CharFile file;
 	file.FileOpen(CPU_DIRECTORY(+_fileName));
 	file.FileWriteText(saveData->GetRawData());
 	file.FileClose();
@@ -282,7 +282,7 @@ void CPUController::LoadCPUData(const std::string& _fileName)
 	std::string textData;
 
 	{
-		ChCpp::File<> file;
+		ChCpp::CharFile file;
 		file.FileOpen(CPU_DIRECTORY(+_fileName));
 		textData = file.FileReadText();
 		file.FileClose();

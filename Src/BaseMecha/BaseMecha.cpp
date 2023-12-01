@@ -15,8 +15,6 @@
 
 #include"CPU/CPULooker.h"
 
-#define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
-
 #define CAMERA_Y_POS 5.0f
 
 #define CENTER_LEN 5.0f
@@ -56,7 +54,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 
 	std::string text = "";
 
-	ChCpp::File<> file;
+	ChCpp::CharFile file;
 	file.FileOpen(SAVE_PATH(+_fileName));
 	text = file.FileReadText();
 	file.FileClose();
@@ -160,7 +158,7 @@ void BaseMecha::Save(const std::string& _fileName)
 
 	res += SavePartsList();
 
-	ChCpp::File<> file;
+	ChCpp::CharFile file;
 	file.FileOpen(SAVE_PATH(+_fileName));
 	file.FileWriteText(res);
 	file.FileClose();
