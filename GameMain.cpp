@@ -83,12 +83,12 @@ int WINAPI WinMain(
 
 	ChD3D::WICBitmapCreatorObj().Init();
 	
-	frameList.SetFrame<SelectFrame>();
-	frameList.SetFrame<TitleFrame>();
-	frameList.SetFrame<StageSelectFrame>();
-	frameList.SetFrame<EditFrame>();
+	//frameList.SetFrame<SelectFrame>();
+	//frameList.SetFrame<TitleFrame>();
+	//frameList.SetFrame<StageSelectFrame>();
+	//frameList.SetFrame<EditFrame>();
 	frameList.SetFrame<GameFrame>();
-	auto gameFrame = frameList.GetNowFrame<TitleFrame>();
+	auto gameFrame = frameList.GetNowFrame<GameFrame>();
 
 	// ƒQ[ƒ€‚ÉŠÖ‚·‚é‰Šú‰»ˆ— ---------------------------
 
