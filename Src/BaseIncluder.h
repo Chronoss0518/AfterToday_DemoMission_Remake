@@ -74,9 +74,9 @@
 #define SCREEN_TO_PROJECTION_X(value) (static_cast<float>(value)/(GAME_WINDOW_WIDTH)) * 2.0f - 1.0f
 #endif
 
-//py = (sy / sh) * -2.0f + 1.0f
+//py = 1.0f - ((sy / sh) * 2.0f)
 #ifndef SCREEN_TO_PROJECTION_Y
-#define SCREEN_TO_PROJECTION_Y(value) (static_cast<float>(value)/(GAME_WINDOW_HEIGHT)) * -2.0f + 1.0f
+#define SCREEN_TO_PROJECTION_Y(value) 1.0f - ((static_cast<float>(value)/(GAME_WINDOW_HEIGHT)) * 2.0f)
 #endif
 
 #ifndef GAME_PROJECTION_NEAR
