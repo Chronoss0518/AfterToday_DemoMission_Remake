@@ -21,11 +21,6 @@ int WINAPI WinMain(
 	, int nCmdshow)
 {
 
-	//Test::CreateSampleFile();
-
-	//return 0;
-
-
 	auto&& system = *ChSystem::SysManager().Init<ChSystem::Windows>();
 
 	ChWin::WindClassObject windClass;
