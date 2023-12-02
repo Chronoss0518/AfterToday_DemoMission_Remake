@@ -19,11 +19,17 @@ public:
 public:
 
 	std::string stagePath = "";
+
 	std::wstring stageName = L"";
+	ChPtr::Shared<ChD3D11::Texture11>stageNameText = nullptr;
+
 	UseImageData stageImage;
 
-	std::wstring targetName = L"";
+	std::wstring targetName = L""; 
+	ChPtr::Shared<ChD3D11::Texture11>targetNameText = nullptr;
+
 	ChPtr::Shared<UseImageData> targetImages[10];
+
 	
 };
 
