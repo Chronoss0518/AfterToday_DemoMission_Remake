@@ -175,9 +175,11 @@ void StageSelectFrame::InitStageData()
 
 	ChD3D::BrushObject stageNameBrush = stageNameTextDrawer.CreateBrush(ChVec4(1.0f));
 	ChD3D::TextFormatObject stageNameFormat = stageNameTextDrawer.CreateTextFormat(L"メイリオ", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 38.0f);
+	stageNameFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
 	ChD3D::BrushObject targetNameBrush = targetNameTextDrawer.CreateBrush(ChVec4(1.0f));
 	ChD3D::TextFormatObject targetNameFormat = targetNameTextDrawer.CreateTextFormat(L"メイリオ", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 26.0f);
+	targetNameFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
 	for (auto&& file : std::filesystem::directory_iterator(STAGE_DATA_DIRECTORY("")))
 	{
