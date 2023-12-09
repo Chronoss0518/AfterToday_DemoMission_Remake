@@ -15,7 +15,7 @@
 
 #include"CPU/CPULooker.h"
 
-#define CAMERA_Y_POS 5.0f
+#define CAMERA_Y_POS 4.0f
 
 #define CENTER_LEN 5.0f
 
@@ -306,6 +306,8 @@ void BaseMecha::BaseMove()
 
 	ChVec3 pos = physics->GetPosition();
 	ChVec3 normal = (pos - centerPos);
+	normal.y = 0.0f;
+	centerPos.y = pos.y + CAMERA_Y_POS;
 
 	testCollider.SetPosition(pos);
 
