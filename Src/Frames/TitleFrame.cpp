@@ -24,7 +24,7 @@ void TitleFrame::Init()
 	meshDrawer.Init(device);
 
 	ChMat_11 proMat,viewMat;
-	proMat.CreateProjectionMat(60.0f,GAME_WINDOW_WITDH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
+	proMat.CreateProjectionMat(60.0f,GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
 
 	meshDrawer.SetCullMode(D3D11_CULL_NONE);
 	ChVec3 camPos = ChVec3(0.0f, 10.0f, 0.0f);
@@ -87,18 +87,18 @@ void TitleFrame::Draw3D()
 	tmpMat.SetScalling(10.0f);
 
 	tmpMat.SetPosition(0.0f, -23.0f, 10.0f);
-	meshDrawer.Draw(deviceContext, *room, (ChMat_11)tmpMat);
+	meshDrawer.Draw(*room, (ChMat_11)tmpMat);
 
 	tmpMat.Identity();
 	tmpMat.SetPosition(0.0f, -8.0f, 10.0f);
 
-	meshDrawer.Draw(deviceContext, *desk, (ChMat_11)tmpMat);
+	meshDrawer.Draw(*desk, (ChMat_11)tmpMat);
 
 	tmpMat.Identity();
 	tmpMat.SetRotationXAxis(ChMath::ToRadian(-10.0f));
 	tmpMat.SetPosition(ChVec3(0.0f, 0.0f, 5.0f));
 
-	meshDrawer.Draw(deviceContext, *msd, (ChMat_11)tmpMat);
+	meshDrawer.Draw(*msd, (ChMat_11)tmpMat);
 
 	meshDrawer.DrawEnd();
 }
