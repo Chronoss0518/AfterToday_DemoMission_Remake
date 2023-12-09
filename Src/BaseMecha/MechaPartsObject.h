@@ -135,8 +135,8 @@ private:
 	GameFrame* frame = nullptr;
 
 	std::vector<ChPtr::Shared<ExternalFunction>>externulFunctions;
-
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
+
 	unsigned long useAttackType = 0;
 
 	ChPtr::Shared<PositionObject>positionObject = nullptr;

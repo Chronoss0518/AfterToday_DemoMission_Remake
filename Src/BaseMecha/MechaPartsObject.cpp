@@ -16,6 +16,12 @@ void MechaPartsObject::Release()
 		if (function == nullptr)continue;
 		function->Release();
 	}
+
+	for (auto&& function : weaponFunctions)
+	{
+		if (function == nullptr)continue;
+		function->Release();
+	}
 }
 
 void MechaPartsObject::Update()
