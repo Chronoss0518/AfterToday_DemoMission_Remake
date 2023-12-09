@@ -7,6 +7,10 @@ public:
 
 	void Init(HINSTANCE hInst, int nCmdshow);
 
+	int Update();
+
+	void Release();
+
 public:
 
 private:
@@ -14,10 +18,7 @@ private:
 	ChWin::WindObject window;
 	ChWin::WindClassObject windClass;
 
-	
-
 	ChD3D11::DirectX3D11 d3dApi;
-
 	ChCpp::FrameList frameList;
 
 };
