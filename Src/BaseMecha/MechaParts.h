@@ -5,11 +5,7 @@
 #include <string.h>
 
 #ifndef GET_CLASS_NAME
-#ifdef _WINDOWS
-#define GET_CLASS_NAME(cls) &typeid(cls).name()[6]
-#else
-#define GET_CLASS_NAME(cls) typeid(cls).name() 
-#endif
+#define GET_CLASS_NAME(cls) #cls
 #endif
 
 
@@ -117,7 +113,6 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame) = 0;
-
 
 public://Get Functions//
 

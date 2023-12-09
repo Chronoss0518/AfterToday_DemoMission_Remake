@@ -46,7 +46,6 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName)
 {
-
 	auto&& loadPartss = LoadPartsList();
 	auto it = loadPartss.find(_fileName);
 	if (it != loadPartss.end())
