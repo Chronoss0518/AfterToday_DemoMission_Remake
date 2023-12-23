@@ -1,5 +1,7 @@
 #pragma once
 
+#include"../../Frames/StageDataStructure.h"
+
 class StageData
 {
 	struct UseImageData
@@ -18,7 +20,7 @@ public:
 
 public:
 
-	std::string stagePath = "";
+	ChPtr::Shared<StageDataStructure>stageDatas = ChPtr::Make_S<StageDataStructure>();
 
 	std::wstring stageName = L"";
 	ChPtr::Shared<ChD3D11::Texture11>stageNameText = nullptr;

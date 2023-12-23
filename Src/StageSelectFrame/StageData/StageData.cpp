@@ -18,7 +18,7 @@ void StageData::LoadData(const std::string& _stageFilePath)
 	if (jsonObject == nullptr)return;
 
 	auto stagePathJson = jsonObject->GetJsonString("StagePath");
-	if (stagePathJson != nullptr)stagePath = stagePathJson->GetString();
+	if (stagePathJson != nullptr)stageDatas->stageName = stagePathJson->GetString();
 
 	auto stageNameJson = jsonObject->GetJsonString("StageName");
 	if (stageNameJson != nullptr)stageName = ChStr::UTF8ToWString(stageNameJson->GetString());
@@ -51,7 +51,12 @@ void StageData::SaveData(const std::string& _stageFilePath)
 {
 	auto res = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	res->SetObject("StagePath", ChCpp::JsonString::CreateObject(stagePath));
+	res->SetObject("StageScriptPath", ChCpp::JsonString::CreateObject(stageDatas->stageScriptPath));
+	res->SetObject("SuccessFee", ChCpp::JsonNumber::CreateObject(stageDatas->resultData->successFee));
+	res->SetObject("AdditionalCompensation", ChCpp::JsonNumber::CreateObject(stageDatas->resultData->additionalCompensation));
+	res->SetObject("AdditionalCompensationExplanation", ChCpp::JsonString::CreateObject(stageDatas->resultData->additionalCompensationExplanation));
+	res->SetObject("SpecialPayReduction", ChCpp::JsonNumber::CreateObject(stageDatas->resultData->specialPayReduction));
+	res->SetObject("SpecialPayReductionExplanation", ChCpp::JsonString::CreateObject(stageDatas->resultData->specialPayReductionExplanation));
 
 	res->SetObject("StageName", ChCpp::JsonString::CreateObject(ChStr::UTF8ToString(stageName)));
 
@@ -70,6 +75,7 @@ void StageData::SaveData(const std::string& _stageFilePath)
 	res->SetObject("TargetImages", targetImageList);
 
 	res->SetObject("TargetName", ChCpp::JsonString::CreateObject(ChStr::UTF8ToString(targetName)));
+
 
 	{
 		ChCpp::CharFile file;
