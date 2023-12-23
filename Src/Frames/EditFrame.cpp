@@ -15,7 +15,7 @@
 constexpr char const* initTitle = "non title";
 
 
-void EditFrame::Init()
+void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 

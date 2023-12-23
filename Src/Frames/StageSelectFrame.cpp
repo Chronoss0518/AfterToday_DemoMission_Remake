@@ -60,7 +60,7 @@
 #define TARGET_NAME_DRAW_Y 52
 
 
-void StageSelectFrame::Init()
+void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
@@ -215,6 +215,10 @@ void StageSelectFrame::InitStageData()
 	stageNameTextDrawer.Release();
 
 	targetNameTextDrawer.Release();
+
+	stageNameBitmap.Release();
+
+	targetNameBitmap.Release();
 
 }
 

@@ -6,7 +6,7 @@
 #define SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Select/") current_path
 #define SELECT_MESH_DIRECTORY(current_path) MESH_DIRECTORY("Select/") current_path
 
-void SelectFrame::Init()
+void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 

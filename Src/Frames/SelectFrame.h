@@ -4,7 +4,7 @@ class SelectFrame :public ChCpp::BaseFrame
 {
 public:
 
-	void Init()override;
+	void Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)override;
 
 	void Release()override;
 

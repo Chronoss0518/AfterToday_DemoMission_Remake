@@ -20,8 +20,8 @@
 #define MAX_MECHA_OBJECT_COUNT 10
 
 #define BASE_FPS 60
-#define GRAVITY_POWER 9.8f / 2.0f 
-#define DEBUG_FLG 0
+#define GRAVITY_POWER 9.8f
+#define DEBUG_FLG false
 
 #ifndef PARTS_DIRECTORY
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
@@ -30,15 +30,19 @@
 #define INIT_SMOKE_DISPERSAL_POWER 5.0f
 #define INIT_SMOKE_ALPHA_POWER 0.5f
 
-#define DISPLAY_FPS_FLG 0
+#define DISPLAY_FPS_FLG false
 #define DISPLAY_NOW_BULLET_NUM_FLG 0
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //GameÉÅÉ\ÉbÉh
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void GameFrame::Init()
+void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
+	std::string stageName = "stage1.chs";
+	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
+	if (sendData != nullptr)stageName = sendData->stageName;
+
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 	script = ChPtr::Make_S<GameScript>();
@@ -46,9 +50,8 @@ void GameFrame::Init()
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
-	PhysicsMachine::SetBaseSpeed(1);
 	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
-	PhysicsMachine::SetAirRegist(0.1f);
+	PhysicsMachine::SetAirRegist(0.2f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 
@@ -68,8 +71,8 @@ void GameFrame::Init()
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
 	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	smokeEffectList->SetMaxColorPower(0.8f);
-	smokeEffectList->SetMinColorPower(0.6f);
+	smokeEffectList->SetMaxColorPower(0.5f);
+	smokeEffectList->SetMinColorPower(0.3f);
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
 	smokeEffectList->SetInitialDispersalPower(1.0f);
 
@@ -113,7 +116,7 @@ void GameFrame::Init()
 		smokeEffectList->SetProjectionMatrix(proMat);
 	}
 
-	LoadStage();
+	LoadStage(stageName);
 
 	drawMecha = mechaList.GetObjectList<BaseMecha>()[mechaView].lock();
 
@@ -304,16 +307,16 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 }
 
 
-void GameFrame::LoadStage()
+void GameFrame::LoadStage(std::string& _stageScriptName)
 {
 
-	auto playerData = BaseFrame::GetData<PlayerData>();
+	auto playerData = ChPtr::SharedSafeCast<PlayerData>(BaseFrame::GetData());
 
 	std::string stageScript = "";
 
 	{
 		ChCpp::File<char> file;
-		file.FileOpen(STAGE_DIRECTORY(+playerData->stageName));
+		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName));
 
 		stageScript = file.FileReadText();
 
@@ -537,6 +540,12 @@ void GameFrame::Render2D(void)
 
 	float enelgyParcec = static_cast<float>(drawMecha->GetNowEnelgy()) / drawMecha->GetMaxEnelgy();
 
+	uiDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	uiDrawer.Draw(*centerUITexture, centerUISprite);
+
+	uiDrawer.DrawEnd();
+
 	gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
 
 	gageDrawer.DrawStart(ChD3D11::D3D11DC());
@@ -552,18 +561,10 @@ void GameFrame::Render2D(void)
 	gageDrawer.Draw(*receveDamageUITexture, centerUISprite);
 
 	gageDrawer.DrawEnd();
-
-	uiDrawer.DrawStart(ChD3D11::D3D11DC());
-
-	uiDrawer.Draw(*centerUITexture, centerUISprite);
-
-	uiDrawer.DrawEnd();
-
 }
 
 void GameFrame::AddMecha(const std::string& _text)
 {
-
 	auto argment = ChStr::Split(_text, " ");
 
 	auto&& mecha = mechaList.SetObject<BaseMecha>("");

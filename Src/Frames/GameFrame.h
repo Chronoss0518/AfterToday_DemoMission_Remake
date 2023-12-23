@@ -2,6 +2,8 @@
 #ifndef _GameFrame
 #define _GameFrame
 
+#include"StageDataStructure.h"
+
 class AttackObject;
 class BaseMecha;
 class GameScript;
@@ -40,7 +42,7 @@ public:
 private:
 
 	ChCpp::PolygonCollider collider;
-
+	
 };
 
 class GameFrame:public ChCpp::BaseFrame
@@ -51,7 +53,7 @@ public:
 
 	~GameFrame() { Release(); };
 
-	void Init()override;
+	void Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)override;
 
 	void Release()override;
 
@@ -67,7 +69,7 @@ private:
 
 	void LoadScript(const std::string& _text);
 
-	void LoadStage();
+	void LoadStage(std::string& _stageScriptName);
 
 public:
 
@@ -129,7 +131,6 @@ private:
 		Effect,Obj
 	};
 
-
 	void CamUpdate();
 
 	ChCpp::ObjectList mapList;
@@ -160,8 +161,6 @@ private:
 	ChPtr::Shared<ChD3D11::Texture11> receveDamageUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	ChD3D11::Sprite11 centerUISprite;
 
-	
-
 	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	bool gameEndFlg = false;
 
@@ -180,10 +179,10 @@ private:
 	ChD3D11::CB::CBLight11 light;
 	MeshDrawer meshDrawer;
 
-	// 3D•`‰æ
+	// 3D•`‰æ //
 	void Render3D(void);
 
-	// 2D•`‰æ
+	// 2D•`‰æ //
 	void Render2D(void);
 
 	ChPtr::Shared<GameScript> script = nullptr;
