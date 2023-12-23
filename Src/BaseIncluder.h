@@ -17,7 +17,7 @@
 #endif
 
 #ifndef USE_CPU_THREAD
-#define USE_CPU_THREAD false
+#define USE_CPU_THREAD true
 #endif
 
 #ifndef TARGET_DIRECTORY 
@@ -102,9 +102,9 @@ struct MeshDrawer
 	ChD3D11::Shader::BaseDrawMesh11 drawer;
 };
 
-struct PlayerData
+struct PlayerData:public ChCpp::SaveDataClass
 {
-	std::string stageName = "";
+	std::string playerName = "";
 	std::string useMechaData = "";
 };
 
