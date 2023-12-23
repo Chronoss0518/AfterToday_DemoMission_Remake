@@ -398,6 +398,6 @@ FodyWeavers.xsd
 *.sln.iml
 *.lnk
 
-/debug/
-/release/
+/Debug/
+/Release/
 *.exe
