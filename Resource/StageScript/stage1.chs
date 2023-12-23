@@ -8,17 +8,17 @@ Initialize
 Play Battle1.wav
 SetControllerUsing False
 SetControllerUsing True
-Loop Loop1
+//Loop Loop1
 SkipIfMore 1 0 -m
 GameOver
 SkipIfMore 1 0 -e
-End Loop1
+//End Loop1
 Play MainBattle1.wav
 Loop Loop2
 SkipIfLess 1 3 -t 1
-LoadMecha GuardianRobot.amf -u enemy -p 0.0,700.0,0.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 1 -cc mob.cpu
+LoadMecha GuardianRobot.amf -u enemy -p 60.0,700.0,60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 1 -cc mob.cpu
 SkipIfLess 1 3 -t 0
-LoadMecha AirRobot.amf -u member -p 0.0,700.0,0.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
+LoadMecha AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
 SkipIfMore 1 0 -m
 GameOver
 End Loop2
