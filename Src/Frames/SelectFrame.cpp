@@ -60,18 +60,18 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	nextFrameFunction[NextButtonType::Battle] = [&]()
 	{
-		ChangeFrame(ChStd::EnumCast(FrameNo::Game));
+		ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
 	};
 
 	nextFrameFunction[NextButtonType::Edit] = [&]()
 	{
-
+		//ChangeFrame(ChStd::EnumCast(FrameNo::Edit));
 	};
 
 
 	nextFrameFunction[NextButtonType::Setting] = [&]()
 	{
-
+		//ChangeFrame(ChStd::EnumCast(FrameNo::Setting));
 	};
 
 }
@@ -146,6 +146,7 @@ void SelectFrame::Update()
 	UpdateFunction();
 
 	DrawFunction();
+
 }
 
 void SelectFrame::UpdateMouse()
