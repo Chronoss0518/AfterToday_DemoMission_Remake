@@ -14,15 +14,13 @@ public:
 
 private:
 
-	void InitStagePreImageSpritePosition(ID3D11Device* _device);
-
-	void InitTargetPreImageSpritePosition(ID3D11Device* _device);
-
 	void InitStageData();
 
 	void DrawFunction();
 
 	void DrawStageData(const StageData& _stageData);
+
+	void DrawStageSelect();
 
 	void UpdateFunction();
 
@@ -32,6 +30,12 @@ private:
 
 	void UpdateController();
 
+	enum class DisplayType
+	{
+		Select,//ëIëâÊñ //
+		Detalied//è⁄ç◊âÊñ 
+	};
+
 	enum class ActionType
 	{
 		UpSelect,
@@ -39,11 +43,11 @@ private:
 		Decision
 	};
 
+	DisplayType type = DisplayType::Select;
+
 	std::vector<ActionType> inputDataList;
 
 	std::vector<ChPtr::Shared<StageData>>stageDataList;
-
-	ChD3D11::Sprite11 stagePreImageSprite[5];
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
@@ -54,9 +58,5 @@ private:
 	ChD3D11::Sprite11 stageNameSprite;
 
 	ChD3D11::Sprite11 stageImageSprite;
-
-	ChD3D11::Sprite11 targetNameSprite;
-
-	ChD3D11::Sprite11 targetImageSprite[10];
 
 };
