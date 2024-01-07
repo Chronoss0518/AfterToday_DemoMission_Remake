@@ -41,7 +41,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	std::string stageName = "stage1.chs";
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
-	if (sendData != nullptr)stageName = sendData->stageName;
+	if (sendData != nullptr)stageName = sendData->stageScriptPath;
 
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
