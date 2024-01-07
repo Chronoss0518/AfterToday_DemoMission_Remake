@@ -92,6 +92,7 @@ enum class FrameNo :unsigned long
 	Title,
 	Select,
 	Game,
+	SelectStage,
 	Edit,
 	Setting,
 };
