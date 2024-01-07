@@ -570,8 +570,8 @@ void CPUObjectLooker::Draw2D()
 
 			sprite.SetPos(ChD3D11::SpritePositionName::LeftTop, ChVec2(square->left, square->top));
 			sprite.SetPos(ChD3D11::SpritePositionName::RightTop, ChVec2(square->right, square->top));
-			sprite.SetPos(ChD3D11::SpritePositionName::RightDown, ChVec2(square->right, square->bottom));
-			sprite.SetPos(ChD3D11::SpritePositionName::LeftDown, ChVec2(square->left, square->bottom));
+			sprite.SetPos(ChD3D11::SpritePositionName::RightBottom, ChVec2(square->right, square->bottom));
+			sprite.SetPos(ChD3D11::SpritePositionName::LeftBottom, ChVec2(square->left, square->bottom));
 
 			ChD3D11::TextureBase11* base = &mapTexture_Cube;
 
@@ -580,7 +580,7 @@ void CPUObjectLooker::Draw2D()
 			if (map->objectName == "Cube_002")base = &mapTexture_Cube_002;
 			if (map->objectName == "Plane_002")base = &mapTexture_Plane_002;
 
-			spriteDrawer.Draw(dc, *base, sprite);
+			spriteDrawer.Draw(*base, sprite);
 
 		}
 	}
@@ -593,10 +593,10 @@ void CPUObjectLooker::Draw2D()
 			{
 				sprite.SetPos(ChD3D11::SpritePositionName::LeftTop, ChVec2(square->left, square->top));
 				sprite.SetPos(ChD3D11::SpritePositionName::RightTop, ChVec2(square->right, square->top));
-				sprite.SetPos(ChD3D11::SpritePositionName::RightDown, ChVec2(square->right, square->bottom));
-				sprite.SetPos(ChD3D11::SpritePositionName::LeftDown, ChVec2(square->left, square->bottom));
+				sprite.SetPos(ChD3D11::SpritePositionName::RightBottom, ChVec2(square->right, square->bottom));
+				sprite.SetPos(ChD3D11::SpritePositionName::LeftBottom, ChVec2(square->left, square->bottom));
 
-				spriteDrawer.Draw(dc, mechaTexture, sprite);
+				spriteDrawer.Draw(mechaTexture, sprite);
 
 			}
 		}
