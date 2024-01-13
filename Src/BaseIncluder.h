@@ -87,6 +87,13 @@
 #define GAME_PROJECTION_FAR 10000.0f
 #endif
 
+#ifndef SPRITE_INIT
+#define SPRITE_INIT(_SPRITE,_RECT) \
+_SPRITE.Init(); \
+_SPRITE.SetInitPosition(); \
+_SPRITE.SetPosRect(_RECT)
+#endif
+
 enum class FrameNo :unsigned long
 {
 	Title,
@@ -107,6 +114,23 @@ struct PlayerData:public ChCpp::SaveDataClass
 {
 	std::string playerName = "";
 	std::string useMechaData = "";
+};
+
+struct TextSprite
+{
+	ChD3D11::Sprite11 sprite;
+	ChPtr::Shared<ChD3D11::Texture11> textImage = nullptr;
+};
+
+struct ImageSprite
+{
+	ChD3D11::Sprite11 sprite;
+	ChD3D11::Texture11 image;
+};
+
+struct SelectImageSprite : public ImageSprite
+{
+	bool selectFlg = false;
 };
 
 static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)
