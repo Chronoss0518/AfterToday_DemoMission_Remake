@@ -507,7 +507,7 @@ void CPUObjectLooker::Init()
 	//drawPosition.SetTopLeftPos(ChVec2(0.6f, 0.7f));
 	drawPosition.SetTopLeftPos(ChVec2(-1.0f, 1.0f));
 
-	sprite.Init(device);
+	sprite.Init();
 	sprite.SetInitPosition();
 }
 

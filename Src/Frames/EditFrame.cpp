@@ -44,7 +44,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	rightPanel->Init(ChD3D11::D3D11Device(), drawTexter);
 	rightPanel->SetPanelListBackGround(&panelBackGround, rightPanelRect);
 
-	panelSprite.Init(ChD3D11::D3D11Device());
+	panelSprite.Init();
 	panelSprite.SetInitPosition();
 }
 

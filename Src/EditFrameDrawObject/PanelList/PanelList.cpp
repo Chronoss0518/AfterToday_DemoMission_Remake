@@ -8,8 +8,8 @@
 void PanelList::Init(ID3D11Device* _device, ChD3D::DirectFontBase& _textDrawer)
 {
 	if (ChPtr::NullCheck(_device))return;
-	titlePanelSprite.Init(_device);
-	panelListBackGroundSprite.Init(_device);
+	titlePanelSprite.Init();
+	panelListBackGroundSprite.Init();
 
 	panelTextFormat = _textDrawer.CreateTextFormat(L"ÉÅÉCÉäÉI", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 72.0f);
 
