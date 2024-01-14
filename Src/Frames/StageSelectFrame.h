@@ -14,22 +14,6 @@ public:
 
 private:
 
-	void InitStageData();
-
-	void DrawFunction();
-
-	void DrawStageData(const StageData& _stageData);
-
-	void DrawStageSelect();
-
-	void UpdateFunction();
-
-	void UpdateMouse();
-
-	void UpdateKeyboard();
-
-	void UpdateController();
-
 	enum class DisplayType
 	{
 		Select,//‘I‘ð‰æ–Ê//
@@ -40,8 +24,42 @@ private:
 	{
 		UpSelect,
 		DownSelect,
-		Decision
+		Decision,
+		Cancel
 	};
+
+	enum class SelectSpriteType
+	{
+		UpButton,
+		DownButton,
+		StagePanel
+	};
+
+private:
+
+	void InitStageData(const StageData& _stageData);
+
+	void InitStageDataList();
+
+	void InitStageSelectDisplay();
+
+	void DrawFunction();
+
+	void DrawStageData();
+
+	void DrawStageSelect();
+
+	void UpdateFunction();
+
+	void UpdateStageData(const ActionType& _type);
+
+	void UpdateStageSelect(const ActionType& _type);
+
+	void UpdateMouse();
+
+	void UpdateKeyboard();
+
+	void UpdateController();
 
 	DisplayType type = DisplayType::Select;
 
@@ -51,12 +69,31 @@ private:
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
-	int nowSelect = 0;
+	int nowSelectStage = 0;
+	SelectSpriteType selectSpriteType = SelectSpriteType::StagePanel;
 
 	ChD3D11::Texture11 notImageTexture;
 
-	ChD3D11::Sprite11 stageNameSprite;
+	ChD3D11::Texture11 stagePanelBackground;
 
-	ChD3D11::Sprite11 stageImageSprite;
+	//StageSelectDisplay//
+	SelectImageSprite stageSelectUpButton;
+	SelectImageSprite stageSelectDownButton;
+	ImageSprite stageSelectPanelList;
+	ImageSprite displayMap;
+	ChD3D11::Sprite11 description;
 
+	//StageDetailedDisplay//
+	SelectImageSprite startButton;
+	SelectImageSprite editButton;
+	SelectImageSprite loadButton;
+	SelectImageSprite cancelButton;
+	TextSprite stageName;
+	ChD3D11::Sprite11 stageImage;
+	TextSprite drawSuccessFee;
+	TextSprite missionTime_d;
+	SelectImageSprite stageDescription;
+	TextSprite stageDescriptionText;
+
+	bool firstFlg = true;
 };
