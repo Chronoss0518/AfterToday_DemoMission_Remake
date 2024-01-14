@@ -46,17 +46,10 @@ private:
 	ChD3D11::Sprite11 descriptionWindowSprite;
 	
 	ChD3D11::Texture11 selectEdge;
-	ChD3D11::Sprite11 selectSprite[NEXT_BUTTON_TYPE_COUNT];
+	ChD3D11::Sprite11 selectSprite;
 	
-	ChD3D11::Texture11 toBattle;
-	ChD3D11::Sprite11 toBattleButtonSprite;
+	ImageSprite toButton[NEXT_BUTTON_TYPE_COUNT];
 	
-	ChD3D11::Texture11 toEdit;
-	ChD3D11::Sprite11 toEditButtonSprite;
-
-	ChD3D11::Texture11 toSetting;
-	ChD3D11::Sprite11 toSettingButtonSprite;
-
 	ChD3D11::Texture11 description[NEXT_BUTTON_TYPE_COUNT];
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;

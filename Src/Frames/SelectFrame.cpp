@@ -6,6 +6,16 @@
 #define SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Select/") current_path
 #define SELECT_MESH_DIRECTORY(current_path) MESH_DIRECTORY("Select/") current_path
 
+#define BUTTON_X_POSITION 340.0f
+
+#define GAME_BUTTON_Y_POSITION 62.0f
+#define EDIT_BUTTON_Y_POSITION 232.0f
+#define SETTING_BUTTON_Y_POSITION 401.0f
+
+#define BUTTON_WIDTH 600.0f + BUTTON_X_POSITION
+#define BUTTON_HEIGHT(Y_POSITION) 100.0f + Y_POSITION
+
+
 void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -14,49 +24,27 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	spriteShader.Init(device);
 
-	descriptionWindowSprite.Init(device);
-	descriptionWindowSprite.SetInitPosition();
-	descriptionWindowSprite.SetPosRect(RectToGameWindow(ChVec4(0.0f, 544.0f, 1280.0f, 544.0f + 176.0f)));
+	SPRITE_INIT(descriptionWindowSprite, RectToGameWindow(ChVec4(0.0f, 544.0f, GAME_WINDOW_WIDTH, 544.0f + 176.0f)));
+
 
 	selectEdge.CreateTexture(SELECT_TEXTURE_DIRECTORY("SelectButtonEdge.png"), device);
 
-
-	toBattle.CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButton.png"), device);
+	toButton[ChStd::EnumCast(NextButtonType::Battle)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButton.png"), device);
 	description[ChStd::EnumCast(NextButtonType::Battle)].CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButtonDescription_jp.png"), device);
 
-	toBattleButtonSprite.Init(device);
-	toBattleButtonSprite.SetInitPosition();
-	toBattleButtonSprite.SetPosRect(RectToGameWindow(ChVec4(340.0f, 62.0f, 600.0f + 340.0f, 62.0f + 100.0f)));
-	
-	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].Init(device);
-	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].SetInitPosition();
-	selectSprite[ChStd::EnumCast(NextButtonType::Battle)].SetPosRect(RectToGameWindow(ChVec4(340.0f - 5.0f, 62.0f - 5.0f, 600.0f + 340.0f + 5.0f, 62.0f + 100.0f + 5.0f)));
-
-
-	toEdit.CreateTexture(SELECT_TEXTURE_DIRECTORY("EditButton.png"), device);
+	toButton[ChStd::EnumCast(NextButtonType::Edit)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("EditButton.png"), device);
 	description[ChStd::EnumCast(NextButtonType::Edit)].CreateTexture(SELECT_TEXTURE_DIRECTORY("EditButtonDescription_jp.png"), device);
 
-	toEditButtonSprite.Init(device);
-	toEditButtonSprite.SetInitPosition();
-	toEditButtonSprite.SetPosRect(RectToGameWindow(ChVec4(340.0f, 232.0f, 600.0f + 340.0f, 232.0f + 100.0f)));
-
-	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].Init(device);
-	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].SetInitPosition();
-	selectSprite[ChStd::EnumCast(NextButtonType::Edit)].SetPosRect(RectToGameWindow(ChVec4(340.0f - 5.0f, 232.0f - 5.0f, 600.0f + 340.0f + 5.0f, 232.0f + 100.0f + 5.0f)));
-
-
-	toSetting.CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButton.png"), device);
+	toButton[ChStd::EnumCast(NextButtonType::Setting)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButton.png"), device);
 	description[ChStd::EnumCast(NextButtonType::Setting)].CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButtonDescription_jp.png"), device);
 
-	toSettingButtonSprite.Init(device);
-	toSettingButtonSprite.SetInitPosition();
-	toSettingButtonSprite.SetPosRect(RectToGameWindow(ChVec4(340.0f, 401.0f, 600.0f + 340.0f, 401.0f + 100.0f)));
+	selectSprite.Init();
 
-	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].Init(device);
-	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].SetInitPosition();
-	selectSprite[ChStd::EnumCast(NextButtonType::Setting)].SetPosRect(RectToGameWindow(ChVec4(340.0f - 5.0f, 401.0f - 5.0f, 600.0f + 340.0f + 5.0f, 401.0f + 100.0f + 5.0f)));
+	SPRITE_INIT(toButton[ChStd::EnumCast(NextButtonType::Battle)].sprite, RectToGameWindow(ChVec4(BUTTON_X_POSITION, GAME_BUTTON_Y_POSITION, BUTTON_WIDTH, BUTTON_HEIGHT(GAME_BUTTON_Y_POSITION))));
 
+	SPRITE_INIT(toButton[ChStd::EnumCast(NextButtonType::Edit)].sprite, RectToGameWindow(ChVec4(BUTTON_X_POSITION, EDIT_BUTTON_Y_POSITION, BUTTON_WIDTH, BUTTON_HEIGHT(EDIT_BUTTON_Y_POSITION))));
 
+	SPRITE_INIT(toButton[ChStd::EnumCast(NextButtonType::Setting)].sprite, RectToGameWindow(ChVec4(BUTTON_X_POSITION, SETTING_BUTTON_Y_POSITION, BUTTON_WIDTH, BUTTON_HEIGHT(SETTING_BUTTON_Y_POSITION))));
 
 	nextFrameFunction[NextButtonType::Battle] = [&]()
 	{
@@ -90,11 +78,12 @@ void SelectFrame::DrawFunction()
 	spriteShader.DrawStart(dc);
 
 
+	for (auto&& imageSprite : toButton)
+	{
+		spriteShader.Draw(imageSprite.image, imageSprite.sprite);
+	}
 
-	spriteShader.Draw(toBattle, toBattleButtonSprite);
-	spriteShader.Draw(toEdit, toEditButtonSprite);
-	spriteShader.Draw(toSetting, toSettingButtonSprite);
-	spriteShader.Draw(selectEdge, selectSprite[nowSelect]);
+	spriteShader.Draw(selectEdge, selectSprite);
 
 
 	spriteShader.Draw(description[nowSelect], descriptionWindowSprite);
@@ -109,16 +98,14 @@ void SelectFrame::UpdateFunction()
 	UpdateKeyboard();
 	UpdateMouse();
 
-	if (firstFlg)
-	{
-
-		inputDataList.clear();
-		firstFlg = false;
-		return;
-	}
-
 	for (auto&& inputData : inputDataList)
 	{
+		if (inputData == ActionType::Decision)
+		{
+			nextFrameFunction[(NextButtonType)nowSelect]();
+			break;
+		}
+
 		if (inputData == ActionType::UpSelect)
 		{
 			nowSelect--;
@@ -131,11 +118,6 @@ void SelectFrame::UpdateFunction()
 
 		nowSelect = (nowSelect + NEXT_BUTTON_TYPE_COUNT) % NEXT_BUTTON_TYPE_COUNT;
 
-		if (inputData == ActionType::Decision)
-		{
-			nextFrameFunction[(NextButtonType)nowSelect]();
-		}
-
 	}
 
 	inputDataList.clear();
@@ -143,7 +125,25 @@ void SelectFrame::UpdateFunction()
 
 void SelectFrame::Update()
 {
+	if (firstFlg)
+	{
+		inputDataList.clear();
+		firstFlg = false;
+		return;
+	}
+
 	UpdateFunction();
+
+	ChVec4 rect = toButton[nowSelect].sprite.GetPosRect();
+
+	float w = 5.0f / GAME_WINDOW_WIDTH * 2.0f;
+	float h = 5.0f / GAME_WINDOW_HEIGHT * 2.0f;
+
+	rect.top += h;
+	rect.left -= w;
+	rect.bottom -= h;
+	rect.right += w;
+	selectSprite.SetPosRect(rect);
 
 	DrawFunction();
 
@@ -166,21 +166,12 @@ void SelectFrame::UpdateMouse()
 
 	if (std::abs(mouseMove.x) <= 1 && std::abs(mouseMove.y) <= 1)return;
 
-	if (IsMoucePosOnSprite(toBattleButtonSprite))
+	for (int i = 0; i < NEXT_BUTTON_TYPE_COUNT; i++)
 	{
-		nowSelect = ChStd::EnumCast(NextButtonType::Battle);
+		if (!IsMoucePosOnSprite(toButton[i].sprite))continue;
+		nowSelect = i;
+		break;
 	}
-
-	if (IsMoucePosOnSprite(toEditButtonSprite))
-	{
-		nowSelect = ChStd::EnumCast(NextButtonType::Edit);
-	}
-
-	if (IsMoucePosOnSprite(toSettingButtonSprite))
-	{
-		nowSelect = ChStd::EnumCast(NextButtonType::Setting);
-	}
-
 }
 
 void SelectFrame::UpdateKeyboard()
