@@ -5,7 +5,7 @@
 
 #define J_STAGE_NAME "StageName"
 #define J_STAGE_SCRIPT_PATH "StageScriptPath"
-#define J_STAGE_LOCATIN_NAME "StageLoacationName"
+#define J_STAGE_LOCATIN_NAME "StageLocationName"
 #define J_STAGE_IMAGE_PATH "StageImager"
 #define J_STAGE_MISSION_TIME "MissionTimeSeccond"
 #define J_SUCCESS_FEE "SuccessFee"
