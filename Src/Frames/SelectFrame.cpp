@@ -28,6 +28,7 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 
 	selectEdge.CreateTexture(SELECT_TEXTURE_DIRECTORY("SelectButtonEdge.png"), device);
+	comingSoonTexture.CreateTexture(SELECT_TEXTURE_DIRECTORY("Coming Soon.png"), device);
 
 	toButton[ChStd::EnumCast(NextButtonType::Battle)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButton.png"), device);
 	description[ChStd::EnumCast(NextButtonType::Battle)].CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButtonDescription_jp.png"), device);
@@ -37,8 +38,6 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	toButton[ChStd::EnumCast(NextButtonType::Setting)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButton.png"), device);
 	description[ChStd::EnumCast(NextButtonType::Setting)].CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButtonDescription_jp.png"), device);
-
-	selectSprite.Init();
 
 	SPRITE_INIT(toButton[ChStd::EnumCast(NextButtonType::Battle)].sprite, RectToGameWindow(ChVec4(BUTTON_X_POSITION, GAME_BUTTON_Y_POSITION, BUTTON_WIDTH, BUTTON_HEIGHT(GAME_BUTTON_Y_POSITION))));
 
@@ -77,14 +76,15 @@ void SelectFrame::DrawFunction()
 
 	spriteShader.DrawStart(dc);
 
+	spriteShader.Draw(selectEdge, toButton[nowSelect].sprite);
+
+	spriteShader.Draw(comingSoonTexture, toButton[ChStd::EnumCast(NextButtonType::Edit)].sprite);
+	spriteShader.Draw(comingSoonTexture, toButton[ChStd::EnumCast(NextButtonType::Setting)].sprite);
 
 	for (auto&& imageSprite : toButton)
 	{
 		spriteShader.Draw(imageSprite.image, imageSprite.sprite);
 	}
-
-	spriteShader.Draw(selectEdge, selectSprite);
-
 
 	spriteShader.Draw(description[nowSelect], descriptionWindowSprite);
 	spriteShader.DrawEnd();
@@ -135,15 +135,6 @@ void SelectFrame::Update()
 	UpdateFunction();
 
 	ChVec4 rect = toButton[nowSelect].sprite.GetPosRect();
-
-	float w = 5.0f / GAME_WINDOW_WIDTH * 2.0f;
-	float h = 5.0f / GAME_WINDOW_HEIGHT * 2.0f;
-
-	rect.top += h;
-	rect.left -= w;
-	rect.bottom -= h;
-	rect.right += w;
-	selectSprite.SetPosRect(rect);
 
 	DrawFunction();
 

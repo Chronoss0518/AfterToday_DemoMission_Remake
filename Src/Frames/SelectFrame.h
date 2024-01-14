@@ -46,7 +46,7 @@ private:
 	ChD3D11::Sprite11 descriptionWindowSprite;
 	
 	ChD3D11::Texture11 selectEdge;
-	ChD3D11::Sprite11 selectSprite;
+	ChD3D11::Texture11 comingSoonTexture;
 	
 	ImageSprite toButton[NEXT_BUTTON_TYPE_COUNT];
 	
