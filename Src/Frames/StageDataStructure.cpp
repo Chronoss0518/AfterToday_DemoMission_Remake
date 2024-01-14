@@ -7,6 +7,7 @@
 #define J_STAGE_SCRIPT_PATH "StageScriptPath"
 #define J_STAGE_LOCATIN_NAME "StageLoacationName"
 #define J_STAGE_IMAGE_PATH "StageImager"
+#define J_STAGE_MISSION_TIME "MissionTimeSeccond"
 #define J_SUCCESS_FEE "SuccessFee"
 #define J_DRAW_SUCCESS_FEE "DrawSuccessFee"
 #define J_ADDITIONAL_COMPENSATION "AdditionalCompensation"
@@ -31,16 +32,19 @@ void StageDataStructure::Load(const std::string& _filePath)
 	if (jsonObject == nullptr)return;
 
 	auto stageNameJson = jsonObject->GetJsonString(J_STAGE_NAME);
-	if (stageNameJson != nullptr)stageName = *stageNameJson;
+	if (stageNameJson != nullptr)stageName = stageNameJson->GetString();
 
 	auto stageImageJson = jsonObject->GetJsonString(J_STAGE_IMAGE_PATH);
-	if (stageImageJson != nullptr)stageImagePath = *stageImageJson;
+	if (stageImageJson != nullptr)stageImagePath = stageImageJson->GetString();
 
 	auto stageLocationNameJson = jsonObject->GetJsonString(J_STAGE_LOCATIN_NAME);
-	if (stageLocationNameJson != nullptr)stageLocationName = *stageLocationNameJson;
+	if (stageLocationNameJson != nullptr)stageLocationName = stageLocationNameJson->GetString();
 
 	auto stageScriptPathJson = jsonObject->GetJsonString(J_STAGE_SCRIPT_PATH);
-	if (stageScriptPathJson != nullptr)stageScriptPath = *stageScriptPathJson;
+	if (stageScriptPathJson != nullptr)stageScriptPath = stageScriptPathJson->GetString();
+
+	auto missionTimeSeccondJson = jsonObject->GetJsonNumber(J_STAGE_MISSION_TIME);
+	if (missionTimeSeccondJson != nullptr)missionTimeSeccond = *missionTimeSeccondJson;
 
 	auto successFeeJson = jsonObject->GetJsonNumber(J_SUCCESS_FEE);
 	if (successFeeJson != nullptr)resultData->successFee = *successFeeJson;
@@ -53,13 +57,13 @@ void StageDataStructure::Load(const std::string& _filePath)
 	if (additionalCompensationJson != nullptr)resultData->additionalCompensation = *additionalCompensationJson;
 
 	auto additionalCompensationExplanationJson = jsonObject->GetJsonString(J_ADDITIONAL_COMPENSATION_EXPLANATION);
-	if (additionalCompensationExplanationJson != nullptr)resultData->additionalCompensationExplanation = *additionalCompensationExplanationJson;
+	if (additionalCompensationExplanationJson != nullptr)resultData->additionalCompensationExplanation = additionalCompensationExplanationJson->GetString();
 
 	auto specialPayReductionJson = jsonObject->GetJsonNumber(J_SPECIAL_PAY_REDUCTION);
 	if (specialPayReductionJson != nullptr)resultData->specialPayReduction = *specialPayReductionJson;
 
 	auto specialPayReductionExplanationJson = jsonObject->GetJsonString(J_SPECIAL_PAY_REDUCTION_EXPLANATION);
-	if (specialPayReductionExplanationJson != nullptr)resultData->specialPayReductionExplanation = *specialPayReductionExplanationJson;
+	if (specialPayReductionExplanationJson != nullptr)resultData->specialPayReductionExplanation = specialPayReductionExplanationJson->GetString();
 
 }
 

@@ -36,6 +36,9 @@ struct StageDataStructure : public ChCpp::SendDataClass
 	//Stage‚ÌScriptPath//
 	std::string stageScriptPath = "";
 
+	//Stage‚ÌìíŠÔ(s)//
+	unsigned long missionTimeSeccond = 0;
+	
 	//Stage‚Ì–¼Ì//
 	std::string stageName = "";
 
