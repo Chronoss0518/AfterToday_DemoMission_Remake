@@ -121,6 +121,16 @@ private:
 
 	void SetAllControllerFlg(bool _flg);
 
+	bool allControllFlg = true;
+
+	void MissionStartAnimation();
+	bool missionStartAnimationFlg = false;
+
+	void Aniamtion();
+	bool animationFlg = false;
+
+	void Success();
+
 	bool initFlg = false;
 
 	ChMat_11 viewMat;
@@ -186,6 +196,7 @@ private:
 	void Render2D(void);
 
 	ChPtr::Shared<GameScript> script = nullptr;
+	bool pauseFlg = false;
 
 	ChWin::TextBox box;
 

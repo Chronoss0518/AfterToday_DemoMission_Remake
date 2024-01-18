@@ -139,10 +139,10 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction("Play", [&](const std::string& _text) {
 		auto argment = ChStr::Split(_text, " ");
 
-	if (nowPlayAudio != "")audios[nowPlayAudio]->Stop();
+		if (nowPlayAudio != "")audios[nowPlayAudio]->Stop();
 
-	nowPlayAudio = argment[0];
-	audios[nowPlayAudio]->Play();
+		nowPlayAudio = argment[0];
+		audios[nowPlayAudio]->Play();
 		});
 
 	script->SetFunction("Stop", [&](const std::string& _text) {
@@ -198,6 +198,18 @@ void GameFrame::InitScriptFunction()
 			if (!testFlg)return;
 
 			SetAllControllerFlg(setFlg);
+		});
+
+	script->SetFunction("MissionStart", [&](const std::string& _text) {
+		missionStartAnimationFlg = true;
+		});
+
+	script->SetFunction("Animation", [&](const std::string& _text) {
+		animationFlg = true;
+		});
+
+	script->SetFunction("Success", [&](const std::string& _text) {
+		Success();
 		});
 
 	//target < inputNum//
@@ -367,7 +379,8 @@ void GameFrame::Update()
 
 	UpdateFunction();
 
-	script->UpdateScript();
+	if(!pauseFlg)
+		script->UpdateScript();
 
 	mechas = mechaList.GetObjectList<BaseMecha>();
 
@@ -424,9 +437,11 @@ void GameFrame::Update()
 
 void GameFrame::UpdateFunction()
 {
-	mechaList.ObjectUpdateBegin();
-
-	mechaList.ObjectUpdate();
+	if (allControllFlg)
+	{
+		mechaList.ObjectUpdateBegin();
+		mechaList.ObjectUpdate();
+	}
 
 	bulletList.ObjectUpdate();
 
@@ -561,6 +576,9 @@ void GameFrame::Render2D(void)
 	gageDrawer.Draw(*receveDamageUITexture, centerUISprite);
 
 	gageDrawer.DrawEnd();
+
+	mechaList.ObjectDraw2D();
+
 }
 
 void GameFrame::AddMecha(const std::string& _text)
@@ -570,8 +588,6 @@ void GameFrame::AddMecha(const std::string& _text)
 	auto&& mecha = mechaList.SetObject<BaseMecha>("");
 
 	mecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, this);
-
-	mecha->Load(ChD3D11::D3D11Device(), argment[0]);
 
 	unsigned char teamNo = 0;
 
@@ -662,6 +678,7 @@ void GameFrame::AddMecha(const std::string& _text)
 			if (!cpuFlg)
 			{
 				playerFlg = true;
+				mecha->Load(ChD3D11::D3D11Device(), PLAYER_MECHA_PATH(+argment[0]));
 			}
 			continue;
 		}
@@ -672,6 +689,8 @@ void GameFrame::AddMecha(const std::string& _text)
 				cpuFlg = true;
 				i++;
 				cpuLoadData = argment[i];
+
+				mecha->Load(ChD3D11::D3D11Device(), CPU_MECHA_PATH(+argment[0]));
 			}
 			continue;
 		}
@@ -682,6 +701,9 @@ void GameFrame::AddMecha(const std::string& _text)
 			continue;
 		}
 	}
+
+
+
 
 	mecha->SetPosition(position);
 	mecha->SetRotation(rotation);
@@ -1001,6 +1023,8 @@ unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
 
 void GameFrame::SetAllControllerFlg(bool _flg)
 {
+	allControllFlg = _flg;
+	return;
 	for (auto&& mecha : mechaList.GetObjectList())
 	{
 		if (mecha.expired())continue;
@@ -1010,4 +1034,31 @@ void GameFrame::SetAllControllerFlg(bool _flg)
 		if (controller == nullptr)continue;
 		controller->SetUsing(_flg);
 	}
+}
+
+void GameFrame::MissionStartAnimation()
+{
+	if (!missionStartAnimationFlg)return;
+	SetAllControllerFlg(false);
+	pauseFlg = true;
+
+
+
+}
+
+void GameFrame::Aniamtion()
+{
+	if (!animationFlg)return;
+	SetAllControllerFlg(false);
+	pauseFlg = true;
+
+
+
+}
+
+void GameFrame::Success()
+{
+	SetAllControllerFlg(false);
+	pauseFlg = true;
+
 }
