@@ -49,8 +49,12 @@
 #define CPU_DIRECTORY(current_path) TARGET_DIRECTORY("CPUCharactor/" current_path) 
 #endif
 
-#ifndef SAVE_PATH
-#define SAVE_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
+#ifndef PLAYER_MECHA_PATH
+#define PLAYER_MECHA_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
+#endif
+
+#ifndef CPU_MECHA_PATH
+#define CPU_MECHA_PATH(_fileName) TARGET_DIRECTORY("StageScript/CPU/" _fileName)
 #endif
 
 #ifndef GAME_WINDOW_WIDTH
@@ -94,14 +98,60 @@ _SPRITE.SetInitPosition(); \
 _SPRITE.SetPosRect(_RECT)
 #endif
 
+
+#ifndef USE_TITLE_FRAME_FLG
+#define USE_TITLE_FRAME_FLG 0
+#endif
+
+#ifndef USE_SELECT_FRAME_FLG
+#define USE_SELECT_FRAME_FLG 1
+#endif
+
+#ifndef USE_STAGE_SELECT_FRAME_FLG
+#define USE_STAGE_SELECT_FRAME_FLG 1
+#endif
+
+#ifndef USE_GAME_FRAME_FLG
+#define USE_GAME_FRAME_FLG 1
+#endif
+
+#ifndef USE_EDIT_FRAME_FLG
+#define USE_EDIT_FRAME_FLG 0
+#endif
+
+#ifndef USE_SETTING_FRAME_FLG
+#define USE_SETTING_FRAME_FLG 0
+#endif
+
+#ifndef USE_RESULT_FRAME_FLG
+#define USE_RESULT_FRAME_FLG 0
+#endif
+
+
+
 enum class FrameNo :unsigned long
 {
+#if USE_TITLE_FRAME_FLG
 	Title,
+#endif
+#if USE_SELECT_FRAME_FLG
 	Select,
-	Game,
+#endif
+#if USE_STAGE_SELECT_FRAME_FLG
 	SelectStage,
+#endif
+#if USE_GAME_FRAME_FLG
+	Game,
+#endif
+#if USE_EDIT_FRAME_FLG
 	Edit,
+#endif
+#if USE_SETTING_FRAME_FLG
 	Setting,
+#endif
+#if USE_RESULT_FRAME_FLG
+	Result,
+#endif
 };
 
 struct MeshDrawer
@@ -116,21 +166,10 @@ struct PlayerData:public ChCpp::SaveDataClass
 	std::string useMechaData = "";
 };
 
-struct TextSprite
-{
-	ChD3D11::Sprite11 sprite;
-	ChPtr::Shared<ChD3D11::Texture11> textImage = nullptr;
-};
-
 struct ImageSprite
 {
 	ChD3D11::Sprite11 sprite;
 	ChD3D11::Texture11 image;
-};
-
-struct SelectImageSprite : public ImageSprite
-{
-	bool selectFlg = false;
 };
 
 static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)

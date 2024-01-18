@@ -70,20 +70,36 @@ int WINAPI WinMain(
 
 	ChCpp::FrameList frameList;
 
-	PlayerData testData;
+	auto testData = ChPtr::Make_S<StageDataStructure>();
 
-	testData.stageName = "stage1.chs";
+	testData->stageScriptPath = "stage1.chs";
 
-	frameList.SaveData(&testData);
+	frameList.SetSendData(testData);
 
 	ChD3D::WICBitmapCreatorObj().Init();
-	
-	//frameList.SetFrame<SelectFrame>();
-	//frameList.SetFrame<TitleFrame>();
-	//frameList.SetFrame<StageSelectFrame>();
-	//frameList.SetFrame<EditFrame>();
-	frameList.SetFrame<GameFrame>();
-	auto gameFrame = frameList.GetNowFrame<GameFrame>();
+
+#if USE_TITLE_FRAME_FLG
+	frameList.SetFrame<TitleFrame>();
+#endif
+#if USE_SELECT_FRAME_FLG
+		frameList.SetFrame<SelectFrame>();
+#endif
+#if USE_STAGE_SELECT_FRAME_FLG
+		frameList.SetFrame<StageSelectFrame>();
+#endif
+#if USE_GAME_FRAME_FLG
+		frameList.SetFrame<GameFrame>();
+#endif
+#if USE_EDIT_FRAME_FLG
+		frameList.SetFrame<EditFrame>();
+#endif
+#if USE_SETTING_FRAME_FLG
+		frameList.SetFrame<SettingFrame>();
+#endif
+#if USE_RESULT_FRAME_FLG
+		frameList.SetFrame<ResultFrame>();
+#endif
+	//auto gameFrame = frameList.GetNowFrame<GameFrame>();
 
 	// ƒQ[ƒ€‚ÉŠÖ‚·‚é‰Šú‰»ˆ— ---------------------------
 
@@ -100,6 +116,7 @@ int WINAPI WinMain(
 	frameList.Release();
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();
+	ChD3D::WICBitmapCreatorObj().Release();
 
 	return (int)system.GetReturnMassage()->wParam;
 }
