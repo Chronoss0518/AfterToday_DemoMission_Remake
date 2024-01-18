@@ -1,0 +1,9 @@
+8
+Resource/RobotParts/Body/Air.mpd
+Resource/RobotParts/Head/Air.mpd Head0
+Resource/RobotParts/Foot/Air.mpd Foot0
+Resource/RobotParts/RArm/Air.mpd RightArm0
+Resource/RobotParts/LArm/Air.mpd LeftArm0
+Resource/RobotParts/Boost/Air.mpd Boost0
+Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon0 R*
+Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon1 L*

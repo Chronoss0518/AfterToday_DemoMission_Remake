@@ -1,0 +1,8 @@
+7
+Resource/RobotParts/Body/Normal.mpd
+Resource/RobotParts/Head/Normal.mpd Head0
+Resource/RobotParts/Foot/Normal.mpd Foot0
+Resource/RobotParts/RArm/Normal.mpd RightArm0
+Resource/RobotParts/LArm/Normal.mpd LeftArm0
+Resource/RobotParts/Boost/Normal.mpd Boost0
+Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon0 R*
