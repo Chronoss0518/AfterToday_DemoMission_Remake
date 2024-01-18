@@ -54,6 +54,9 @@ private:
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
+	ChD3D::XInputController controller;
+	bool beforePushFlg = false;
+
 	int nowSelect = ChStd::EnumCast(NextButtonType::Battle);
 
 	bool firstFlg = true;

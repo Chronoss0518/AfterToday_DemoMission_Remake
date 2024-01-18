@@ -61,6 +61,7 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		//ChangeFrame(ChStd::EnumCast(FrameNo::Setting));
 	};
 
+	controller.Init();
 }
 
 void SelectFrame::Release()
@@ -97,6 +98,7 @@ void SelectFrame::UpdateFunction()
 
 	UpdateKeyboard();
 	UpdateMouse();
+	UpdateController();
 
 	for (auto&& inputData : inputDataList)
 	{
@@ -188,6 +190,35 @@ void SelectFrame::UpdateKeyboard()
 
 void SelectFrame::UpdateController()
 {
+	controller.Update();
+
+	if (controller.GetAFlg())
+	{
+		inputDataList.push_back(ActionType::Decision);
+	}
+
+	bool isPushFlg = false;
+	
+	if (controller.GetUpFlg() || controller.GetLYStick() > 0.3f)
+	{
+		if(!beforePushFlg)
+			inputDataList.push_back(ActionType::UpSelect);
+
+		beforePushFlg = true;
+		isPushFlg = true;
+	}
+
+	if (controller.GetDownFlg() || controller.GetLYStick() < -0.3f)
+	{
+		if (!beforePushFlg)
+			inputDataList.push_back(ActionType::DownSelect);
+
+		beforePushFlg = true;
+		isPushFlg = true;
+	}
+
+	if (isPushFlg)return;
+	beforePushFlg = false;
 
 }
 
