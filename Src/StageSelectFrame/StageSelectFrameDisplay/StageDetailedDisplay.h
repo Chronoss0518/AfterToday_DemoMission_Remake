@@ -18,42 +18,52 @@ public:
 
 	void OnDisplay()override;
 
-private:
+	void SetSelectData(const FromStageSelectFrameData& _selectData)override;
 
-	enum class SelectSpriteType
+	void GetSelectData(FromStageSelectFrameData& _selectData)override;
+
+public:
+
+	enum class MenuButtonType
 	{
-		UpButton,
-		DownButton,
-		StagePanel
+		Start,
+		Edit,
+		Load,
+		Cancel
 	};
 
-	enum class StageSelectButtonType
+public:
+
+	inline void SetMenuType(const MenuButtonType& _type)
 	{
-		Up, Down, None
-	};
-
-private:
-
-	void InitPositions();
+		nowSelect = ChStd::EnumCast(_type);
+	}
 
 private:
 
 	void UpdateMouse();
 
-	void UpdateKeyboard();
+private:
 
-	void UpdateController();
+	void CreateStageNameTextImage(StageData& _stageData);
+
+	void CreateStageDescriptionTextImage(StageData& _stageData);
+
+	void CreateStageStrategyOverviewTextImage(StageData& _stageData);
 
 private:
 
-	SelectImageSprite startButton;
-	SelectImageSprite editButton;
-	SelectImageSprite loadButton;
-	SelectImageSprite cancelButton;
-	TextSprite stageName;
+	static constexpr int MENU_BUTTON_TYPE = 4;
+	int nowSelect = ChStd::EnumCast(MenuButtonType::Start);
+
+	ImageSprite button[MENU_BUTTON_TYPE];
+	ChD3D11::Texture11 buttonSelect;
+	ChD3D11::Texture11 comingSoonImage;
+
+	ImageSprite stageName;
 	ChD3D11::Sprite11 stageImage;
-	TextSprite drawSuccessFee;
-	TextSprite missionTime_d;
-	SelectImageSprite stageDescription;
-	TextSprite stageDescriptionText;
+	ImageSprite stageDescription;
+
+	ImageSprite strategyOverview;
+	ImageSprite strategyOverviewText;
 };

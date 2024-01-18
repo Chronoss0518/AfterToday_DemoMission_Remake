@@ -2,10 +2,6 @@
 
 #include"../../Frames/StageSelectFrame.h"
 
-#ifndef PANEL_DRAW_COUNT
-#define PANEL_DRAW_COUNT 4
-#endif
-
 class StageSelectDisplay : public StageSelectFrame::StageSelectFrameDisplay 
 {
 public:
@@ -19,6 +15,10 @@ public:
 	void UpdateAction(const StageSelectFrame::ActionType& _action)override;
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)override;
+
+	void SetSelectData(const FromStageSelectFrameData& _selectData)override;
+
+	void GetSelectData(FromStageSelectFrameData& _selectData)override;
 
 private:
 
@@ -38,17 +38,15 @@ private:
 
 	void UpdateMouse();
 
-	void UpdateKeyboard();
-
-	void UpdateController();
-
 private:
+
+	static constexpr int PANEL_DRAW_COUNT = 4;
 
 	SelectSpriteType selectSpriteType = SelectSpriteType::StagePanel;
 
 	int drawNowSelect = 0;
 
-	SelectImageSprite stageSelectButton[ChStd::EnumCast(StageSelectButtonType::None)];
+	ImageSprite stageSelectButton[ChStd::EnumCast(StageSelectButtonType::None)];
 	ChD3D11::Texture11 buttonSelectImage;
 
 	StageSelectButtonType selectType = StageSelectButtonType::None;

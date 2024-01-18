@@ -28,31 +28,30 @@
 
 void StageSelectDisplay::Init()
 {
-
 	auto&& device = ChD3D11::D3D11Device();
 
-	stagePanelBackground.CreateTexture(SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
+	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
 
 	SPRITE_INIT(
 		stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Up)].sprite,
 		RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, SELECT_UP_BUTTON_TOP, SELECT_PANEL_RIGHT, SELECT_PANEL_BUTTON_BOTTOM(SELECT_UP_BUTTON_TOP))));
-	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Up)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("UPButton.png"), device);
+	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Up)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("UPButton.png"), device);
 
 	SPRITE_INIT(
 		stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Down)].sprite,
 		RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, SELECT_DOWN_BUTTON_TOP, SELECT_PANEL_RIGHT, SELECT_PANEL_BUTTON_BOTTOM(SELECT_DOWN_BUTTON_TOP))));
-	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Down)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("DownButton.png"), device);
-	buttonSelectImage.CreateTexture(SELECT_TEXTURE_DIRECTORY("ButtonSelect.png"), device);
+	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Down)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("DownButton.png"), device);
+	buttonSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("ButtonSelect.png"), device);
 
 	SPRITE_INIT(displayMap.sprite, RectToGameWindow(ChVec4::FromRect(DISPLAY_MAP_LEFT, DISPLAY_MAP_TOP, DISPLAY_MAP_RIGHT, DISPLAY_MAP_BOTTOM)));
-	displayMap.image.CreateTexture(SELECT_TEXTURE_DIRECTORY("Map(NoImage).png"), device);
+	displayMap.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Map(NoImage).png"), device);
 
 	SPRITE_INIT(description, RectToGameWindow(ChVec4::FromRect(DESCRIPTION_LEFT, DESCRIPTION_TOP, DESCRIPTION_RIGHT, DESCRIPTION_BOTTOM)));
 
 	SPRITE_INIT(stageSelectPanelList.sprite, RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, SELECT_PANEL_LIST_TOP, SELECT_PANEL_RIGHT, SELECT_PANEL_LIST_BOTTOM)));
-	stageSelectPanelList.image.CreateTexture(SELECT_TEXTURE_DIRECTORY("SelectRange.png"), device);
-	stagePanelBackground.CreateTexture(SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
-	panelSelectImage.CreateTexture(SELECT_TEXTURE_DIRECTORY("PanelSelect.png"), device);
+	stageSelectPanelList.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("SelectRange.png"), device);
+	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
+	panelSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("PanelSelect.png"), device);
 
 	float top = SELECT_PANEL_LIST_TOP;
 	float bottom = SELECT_PANEL_LIST_TOP + STAGE_SELECT_PANEL_HEIGHT;
@@ -65,6 +64,7 @@ void StageSelectDisplay::Init()
 		top += STAGE_SELECT_PANEL_HEIGHT;
 		bottom = top + STAGE_SELECT_PANEL_HEIGHT;
 	}
+
 }
 
 void StageSelectDisplay::Release()
@@ -76,8 +76,6 @@ void StageSelectDisplay::Update()
 {
 
 	UpdateMouse();
-	UpdateKeyboard();
-	UpdateController();
 }
 
 void StageSelectDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
@@ -127,12 +125,10 @@ void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 		if(ChStd::EnumCast(selectType) == i)
 			_drawer.Draw(buttonSelectImage, stageSelectButton[i].sprite);
 
-		_drawer.Draw(stagePanelBackground, stageSelectButton[i].sprite);
 		_drawer.Draw(stageSelectButton[i].image, stageSelectButton[i].sprite);
 	}
 
 	_drawer.Draw(displayMap.image, displayMap.sprite);
-
 
 	_drawer.Draw(panelSelectImage, selectStageSprite[(selectStageData - drawNowSelect) % PANEL_DRAW_COUNT]);
 
@@ -149,6 +145,15 @@ void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 }
 
+void StageSelectDisplay::SetSelectData(const FromStageSelectFrameData& _selectData)
+{
+	drawNowSelect = _selectData.selectDrawTop;
+}
+
+void StageSelectDisplay::GetSelectData(FromStageSelectFrameData& _selectData)
+{
+	_selectData.selectDrawTop = drawNowSelect;
+}
 
 void StageSelectDisplay::UpdateMouse()
 {
@@ -185,30 +190,4 @@ void StageSelectDisplay::UpdateMouse()
 		SetNowStageSelect(i + drawNowSelect);
 		break;
 	}
-}
-
-void StageSelectDisplay::UpdateKeyboard()
-{
-
-	auto&& manager = ChSystem::SysManager();
-
-	if (manager.IsPushKeyNoHold(VK_RETURN))
-	{
-		AddAction(StageSelectFrame::ActionType::Decision);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_UP))
-	{
-		AddAction(StageSelectFrame::ActionType::UpSelect);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_DOWN))
-	{
-		AddAction(StageSelectFrame::ActionType::DownSelect);
-	}
-}
-
-void StageSelectDisplay::UpdateController()
-{
-
 }
