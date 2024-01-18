@@ -67,18 +67,18 @@ void PlayerController::Init()
 	
 	controller.Init();
 
-	controllerTypes[XInputTypeNames::A] = InputName::Attack;
-	controllerTypes[XInputTypeNames::B] = InputName::Avo;
-	controllerTypes[XInputTypeNames::X] = InputName::MapOnOff;
-	controllerTypes[XInputTypeNames::Y] = InputName::Boost;
+	controllerTypes[XInputTypeNames::A] = InputName::Up;
+	controllerTypes[XInputTypeNames::B] = InputName::Boost;
+	controllerTypes[XInputTypeNames::X] = InputName::Avo;
+	controllerTypes[XInputTypeNames::Y] = InputName::MapOnOff;
 	controllerTypes[XInputTypeNames::LTop] = InputName::Front;
 	controllerTypes[XInputTypeNames::LLeft] = InputName::Left;
 	controllerTypes[XInputTypeNames::LDown] = InputName::Back;
 	controllerTypes[XInputTypeNames::LRight] = InputName::Right;
-	controllerTypes[XInputTypeNames::RTop] = InputName::None;
-	controllerTypes[XInputTypeNames::RLeft] = InputName::None;
-	controllerTypes[XInputTypeNames::RDown] = InputName::None;
-	controllerTypes[XInputTypeNames::RRight] = InputName::None;
+	controllerTypes[XInputTypeNames::RTop] = InputName::CameraDownRotation;
+	controllerTypes[XInputTypeNames::RLeft] = InputName::LeftRotation;
+	controllerTypes[XInputTypeNames::RDown] = InputName::CameraUpRotation;
+	controllerTypes[XInputTypeNames::RRight] = InputName::RightRotation;
 	controllerTypes[XInputTypeNames::L1] = InputName::LAttack;
 	controllerTypes[XInputTypeNames::L2] = InputName::LWDChange;
 	controllerTypes[XInputTypeNames::L3] = InputName::LReload;
@@ -114,16 +114,70 @@ void PlayerController::XInputUpdate()
 	controller.Update();
 
 	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
-	if (controller.GetBFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::B]);
-	if (controller.GetXFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::X]);
-	if (controller.GetYFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Y]);
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
 	
+	if (controller.GetBFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::B]);
+	
+	if (controller.GetXFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::X]);
+	
+	if (controller.GetYFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Y]);
+
+	if (controller.GetUpFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Up]);
+	if (controller.GetDownFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Down]);
+	if (controller.GetLeftFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Left]);
+	if (controller.GetRightFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Right]);
+
+	if (controller.GetBackFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Back]);
+	if (controller.GetStartFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Start]);
+
+	if (controller.GetR1Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R1]);
+	if (controller.GetR2Trigger() > moveSensitivility)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R2]);
+	if (controller.GetR3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R3]);
+
+	if (controller.GetL1Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L1]);
+	if (controller.GetL2Trigger() > moveSensitivility)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L2]);
+	if (controller.GetL3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L3]);
+
+
+	if (controller.GetLXStick() + moveSensitivility > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LRight]);
+	}
+
+	if (moveSensitivility - controller.GetLXStick() > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LLeft]);
+	}
+
+	if (moveSensitivility - controller.GetLYStick() > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LDown]);
+	}
+
+	if (controller.GetLYStick() + moveSensitivility > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LTop]);
+	}
+
+	if (controller.GetRXStick() + moveSensitivility > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RRight]);
+	}
+
+	if (moveSensitivility - controller.GetRXStick() > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RLeft]);
+	}
+
+	if (moveSensitivility - controller.GetRYStick() > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RDown]);
+	}
+
+	if (controller.GetRYStick() + moveSensitivility > 0.0f)
+	{
+		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RTop]);
+	}
+
 
 }
 
