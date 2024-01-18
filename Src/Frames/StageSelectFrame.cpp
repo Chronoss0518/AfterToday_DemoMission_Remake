@@ -22,6 +22,9 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Select)] = ChPtr::Make_S<StageSelectDisplay>();
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Detailed)] = ChPtr::Make_S<StageDetailedDisplay>();
+	
+	controller.Init();
+	controller.Update();
 
 	for (auto&& display : stageSelectFrameDisplay)
 	{
@@ -32,6 +35,18 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	notImageTexture.CreateColorTexture(device, ChVec4::FromColor(0.7f, 0.7f, 0.7f, 1.0f), 1, 1);
 
 	InitStageDataList();
+
+	if (_sendData == nullptr)return;
+	auto&& beforeData = ChPtr::SharedSafeCast<FromStageSelectFrameData>(_sendData);
+	if (beforeData == nullptr)return;
+
+	nowSelectStage = beforeData->selectStage;
+	for (auto&& display : stageSelectFrameDisplay)
+	{
+		display->SetSelectData(*beforeData);
+	}
+
+
 }
 
 void StageSelectFrame::InitStageDataList()
@@ -189,8 +204,12 @@ void StageSelectFrame::DrawFunction()
 
 void StageSelectFrame::UpdateFunction()
 {
+	controller.Update();
 
 	stageSelectFrameDisplay[ChStd::EnumCast(type)]->Update();
+	UpdateKeyboard();
+	UpdateController();
+
 
 	DisplayType beforeDisplayType = type;
 
@@ -200,10 +219,7 @@ void StageSelectFrame::UpdateFunction()
 		auto&& inputData = inputDataList[i];
 		if (inputData == ActionType::Cancel)
 		{
-			if (type == DisplayType::Select)
-				BaseFrame::ChangeFrame(ChStd::EnumCast(FrameNo::Select));
-
-			type = DisplayType::Select;
+			Cancel();
 			break;
 		}
 
@@ -211,7 +227,7 @@ void StageSelectFrame::UpdateFunction()
 
 		if (type != beforeDisplayType)
 		{
-			stageSelectFrameDisplay[ChStd::EnumCast(type)]->Init();
+			stageSelectFrameDisplay[ChStd::EnumCast(type)]->OnDisplay();
 			break;
 		}
 	}
@@ -220,11 +236,95 @@ void StageSelectFrame::UpdateFunction()
 
 }
 
+void StageSelectFrame::UpdateKeyboard()
+{
+
+	auto&& manager = ChSystem::SysManager();
+
+	if (manager.IsPushKeyNoHold(VK_RETURN))
+	{
+		inputDataList.push_back(ActionType::Decision);
+	}
+
+	if (manager.IsPushKeyNoHold(VK_UP))
+	{
+		inputDataList.push_back(ActionType::UpSelect);
+	}
+
+	if (manager.IsPushKeyNoHold(VK_DOWN))
+	{
+		inputDataList.push_back(ActionType::DownSelect);
+	}
+}
+
+void StageSelectFrame::UpdateController()
+{
+
+	bool isPushFlg = false;
+
+	if (controller.GetAFlg())
+	{
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Decision)))
+			inputDataList.push_back(ActionType::Decision);
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
+		isPushFlg = true;
+	}
+
+	if (controller.GetBFlg())
+	{
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Cancel)))
+			inputDataList.push_back(ActionType::Cancel);
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Cancel));
+		isPushFlg = true;
+	}
+
+	if (controller.GetUpFlg() || controller.GetLYStick() > 0.3f)
+	{
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::UpSelect)))
+			inputDataList.push_back(ActionType::UpSelect);
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::UpSelect));
+		isPushFlg = true;
+	}
+
+	if (controller.GetDownFlg() || controller.GetLYStick() < -0.3f)
+	{
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::DownSelect)))
+			inputDataList.push_back(ActionType::DownSelect);
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::DownSelect));
+		isPushFlg = true;
+	}
+
+	if (isPushFlg)return;
+	conntrollerPushKey.SetAllDownFlg();
+}
+
+void StageSelectFrame::SetGameFrame()
+{
+	SendData(stageDataList[nowSelectStage]->stageDatas);
+	ChangeFrame(ChStd::EnumCast(FrameNo::Game));
+}
+
+void StageSelectFrame::SetEditFrame()
+{
+	auto&& stageSelectData = ChPtr::Make_S<FromStageSelectFrameData>();
+
+	stageSelectData->selectStage = nowSelectStage;
+
+	for (auto&& display : stageSelectFrameDisplay)
+	{
+		display->GetSelectData(*stageSelectData);
+	}
+
+	SendData(stageSelectData);
+	//ChangeFrame(ChStd::EnumCast(FrameNo::Edit));
+}
+
 void StageSelectFrame::Update()
 {
 	if (firstFlg)
 	{
 		inputDataList.clear();
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
 		firstFlg = false;
 		return;
 	}
@@ -234,9 +334,10 @@ void StageSelectFrame::Update()
 	DrawFunction();
 }
 
-
-void StageSelectFrame::StageSelectFrameDisplay::GameStart()
+void StageSelectFrame::Cancel()
 {
-	frame->SendData(frame->stageDataList[frame->nowSelectStage]->stageDatas);
-	frame->ChangeFrame(ChStd::EnumCast(FrameNo::Game));
+	if (type == DisplayType::Select)
+		BaseFrame::ChangeFrame(ChStd::EnumCast(FrameNo::Select));
+
+	type = DisplayType::Select;
 }

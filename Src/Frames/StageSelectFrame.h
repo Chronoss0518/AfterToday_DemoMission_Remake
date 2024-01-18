@@ -1,11 +1,13 @@
 #pragma once
 
+#include"FromStageSelectFrameData.h"
+
 #ifndef STAGE_IMAGE_TEXTURE_DIRECTORY
 #define STAGE_IMAGE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageImage/") current_path
 #endif
 
-#ifndef SELECT_TEXTURE_DIRECTORY
-#define SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageSelect/") current_path
+#ifndef STAGE_SELECT_TEXTURE_DIRECTORY
+#define STAGE_SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageSelect/") current_path
 #endif
 
 #ifndef STAGE_SELECT_PANEL_WIDTH
@@ -76,6 +78,10 @@ public:
 
 		virtual void OnDisplay(){}
 
+		virtual void SetSelectData(const FromStageSelectFrameData& _selectData) = 0;
+
+		virtual void GetSelectData(FromStageSelectFrameData& _selectData) = 0;
+
 	public:
 
 		inline void SetStageSelectFrame(StageSelectFrame* _frame)
@@ -93,6 +99,17 @@ public:
 		{
 			frame->nowSelectStage = _nowSelectStage;
 		}
+
+		inline void SetGameFrame()
+		{
+			frame->SetGameFrame();
+		}
+
+		inline void SetEditFrame()
+		{
+			frame->SetEditFrame();
+		}
+
 
 	public:
 
@@ -122,6 +139,12 @@ public:
 		{
 			return frame->notImageTexture;
 		}
+	protected:
+
+		inline void Cancel()
+		{
+			frame->Cancel();
+		}
 
 	protected:
 
@@ -138,10 +161,6 @@ public:
 
 			frame->nowSelectStage = frame->nowSelectStage % frame->stageDataList.size();
 		}
-
-	protected:
-
-		void GameStart();
 
 	private:
 
@@ -164,9 +183,28 @@ private:
 
 	void UpdateFunction();
 
+	void UpdateKeyboard();
+
+	void UpdateController();
+
+private:
+
+	void SetGameFrame();
+
+	void SetEditFrame();
+
+private:
+
+	void Cancel();
+
+private:
+
 	DisplayType type = DisplayType::Select;
 
 	std::vector<ActionType> inputDataList;
+
+	ChD3D::XInputController controller;
+	ChCpp::BitBool conntrollerPushKey;
 
 	std::vector<ChPtr::Shared<StageData>>stageDataList;
 
