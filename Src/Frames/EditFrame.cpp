@@ -106,11 +106,10 @@ void EditFrame::CreateNewFile()
 void EditFrame::CreateLoadFileList()
 {
 
-	for (auto&& file : std::filesystem::directory_iterator(SAVE_PATH("")))
+	for (auto&& file : std::filesystem::directory_iterator(PLAYER_MECHA_PATH("")))
 	{
 		std::wstring path = (file.path().c_str());
 	}
-
 
 }
 

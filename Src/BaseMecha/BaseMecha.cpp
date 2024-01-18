@@ -55,7 +55,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 	std::string text = "";
 
 	ChCpp::CharFile file;
-	file.FileOpen(SAVE_PATH(+_fileName));
+	file.FileOpen(_fileName);
 	text = file.FileReadText();
 	file.FileClose();
 
@@ -159,7 +159,7 @@ void BaseMecha::Save(const std::string& _fileName)
 	res += SavePartsList();
 
 	ChCpp::CharFile file;
-	file.FileOpen(SAVE_PATH(+_fileName));
+	file.FileOpen(_fileName);
 	file.FileWriteText(res);
 	file.FileClose();
 
@@ -344,6 +344,15 @@ void BaseMecha::Draw3D()
 	}
 
 	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
+
+}
+
+void BaseMecha::Draw2D()
+{
+	if (ChPtr::NullCheck(frame))return;
+
+	
+
 
 }
 

@@ -65,6 +65,8 @@ public://Override Functions//
 
 	void Draw3D()override;
 
+	void Draw2D()override;
+
 public:
 
 	void DrawUI();
