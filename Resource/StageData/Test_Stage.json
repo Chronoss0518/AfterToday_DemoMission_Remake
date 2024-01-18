@@ -3,6 +3,7 @@
   "StageName": "Test Stage",
   "StageScriptPath": "stage1.chs",
   "StageLocationName": "Test Locale",
+  "StageStrategyOverview": "Test Stage",
   "MissionTimeSeccond" :  600,
   "SuccessFee": 10000,
   "DrawSuccessFee" : 10000,
