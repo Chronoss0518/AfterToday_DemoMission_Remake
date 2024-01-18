@@ -48,4 +48,7 @@ struct StageDataStructure : public ChCpp::SendDataClass
 	//Stage‚Ì’n–¼//
 	std::string stageLocationName = "";
 
+	//Stage‚Ì“à—e//
+	std::string stageStrategyOverview = "";
+
 };

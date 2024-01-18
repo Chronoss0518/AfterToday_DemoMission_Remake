@@ -7,12 +7,14 @@
 #define J_STAGE_SCRIPT_PATH "StageScriptPath"
 #define J_STAGE_LOCATIN_NAME "StageLocationName"
 #define J_STAGE_IMAGE_PATH "StageImager"
+#define J_STAGE_STRATEGY_OVERVIEW "StageStrategyOverview"
 #define J_STAGE_MISSION_TIME "MissionTimeSeccond"
 #define J_SUCCESS_FEE "SuccessFee"
 #define J_DRAW_SUCCESS_FEE "DrawSuccessFee"
 #define J_ADDITIONAL_COMPENSATION "AdditionalCompensation"
 #define J_ADDITIONAL_COMPENSATION_EXPLANATION "AdditionalCompensationExplanation"
 #define J_SPECIAL_PAY_REDUCTION "SpecialPayReduction"
+#define J_SPECIAL_PAY_REDUCTION_EXPLANATION "SpecialPayReductionExplanation"
 #define J_SPECIAL_PAY_REDUCTION_EXPLANATION "SpecialPayReductionExplanation"
 
 void StageDataStructure::Load(const std::string& _filePath)
@@ -42,6 +44,9 @@ void StageDataStructure::Load(const std::string& _filePath)
 
 	auto stageScriptPathJson = jsonObject->GetJsonString(J_STAGE_SCRIPT_PATH);
 	if (stageScriptPathJson != nullptr)stageScriptPath = stageScriptPathJson->GetString();
+
+	auto stageStrategyOverviewJson = jsonObject->GetJsonString(J_STAGE_STRATEGY_OVERVIEW);
+	if (stageStrategyOverviewJson != nullptr)stageStrategyOverview = stageStrategyOverviewJson->GetString();
 
 	auto missionTimeSeccondJson = jsonObject->GetJsonNumber(J_STAGE_MISSION_TIME);
 	if (missionTimeSeccondJson != nullptr)missionTimeSeccond = *missionTimeSeccondJson;
@@ -79,6 +84,10 @@ void StageDataStructure::Save(const std::string& _filePath)
 	res->SetObject(J_STAGE_LOCATIN_NAME, ChCpp::JsonString::CreateObject(stageLocationName));
 
 	res->SetObject(J_STAGE_SCRIPT_PATH, ChCpp::JsonString::CreateObject(stageScriptPath));
+
+	res->SetObject(J_STAGE_STRATEGY_OVERVIEW, ChCpp::JsonString::CreateObject(stageStrategyOverview));
+
+	res->SetObject(J_STAGE_MISSION_TIME, ChCpp::JsonNumber::CreateObject(missionTimeSeccond));
 
 	res->SetObject(J_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(resultData->successFee));
 
