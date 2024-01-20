@@ -205,6 +205,8 @@ private:
 	ChPtr::Shared<GameScript> script = nullptr;
 	bool scriptPauseFlg = false;
 
+	ChPtr::Shared<ResultStructure>resultData = nullptr;
+
 	ChWin::TextBox box;
 
 	bool isFrameUpdate = false;

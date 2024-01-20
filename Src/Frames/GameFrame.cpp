@@ -45,6 +45,8 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
 
+	resultData = sendData->resultData;
+
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 	script = ChPtr::Make_S<GameScript>();
@@ -249,10 +251,12 @@ void GameFrame::InitScriptFunction()
 
 	script->SetFunction("Success", [&](const std::string& _text) {
 
+		messageBox->SetMessage(L"COM", L"作戦終了。\n 帰投してください", static_cast<unsigned long>(BASE_FPS * 5.0f), static_cast<unsigned long>(BASE_FPS * 0.25f));
 		successFlg = true;
 		});
 
 	script->SetFunction("Failed", [&](const std::string& _text) {
+		messageBox->SetMessage(L"COM", L"作戦は失敗しました。", static_cast<unsigned long>(BASE_FPS * 5.0f), static_cast<unsigned long>(BASE_FPS * 0.25f));
 		failedFlg = true;
 		});
 
@@ -267,7 +271,7 @@ void GameFrame::InitScriptFunction()
 			unsigned long targetNum = GettargetNum(args);
 			if (targetNum >= base)return;
 
-			script->SetNowScriptCount(script->GetScriptCount() + skip);
+			script->SetSkipCount(skip);
 		});
 
 
@@ -282,7 +286,7 @@ void GameFrame::InitScriptFunction()
 
 			if (targetNum > base)return;
 
-			script->SetNowScriptCount(script->GetScriptCount() + skip);
+			script->SetSkipCount(skip);
 		});
 
 	//target == inputNum//
@@ -296,7 +300,7 @@ void GameFrame::InitScriptFunction()
 
 			if (targetNum != base)return;
 
-			script->SetNowScriptCount(script->GetScriptCount() + skip);
+			script->SetSkipCount(skip);
 		});
 
 	//target >= inputNum//
@@ -310,7 +314,7 @@ void GameFrame::InitScriptFunction()
 
 			if (targetNum < base)return;
 
-			script->SetNowScriptCount(script->GetScriptCount() + skip);
+			script->SetSkipCount(skip);
 		});
 
 	//target > inputNum//
@@ -324,7 +328,7 @@ void GameFrame::InitScriptFunction()
 
 			if (targetNum <= base)return;
 
-			script->SetNowScriptCount(script->GetScriptCount() + skip);
+			script->SetSkipCount(skip);
 		});
 
 
@@ -536,6 +540,9 @@ void GameFrame::UpdateFunction()
 
 	}
 
+	Success();
+	Failed();
+
 	messageBox->Update();
 }
 
@@ -605,8 +612,11 @@ void GameFrame::Render2D(void)
 
 	messageBox->Draw(uiDrawer);
 
-	uiDrawer.Draw(*centerUITexture, centerUISprite);
-
+	if (!successFlg)
+	{
+		uiDrawer.Draw(*centerUITexture, centerUISprite);
+	}
+	
 	uiDrawer.DrawEnd();
 
 	gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
@@ -1105,8 +1115,9 @@ void GameFrame::Success()
 	if (messageBox->IsDrawMessage())return;
 
 
+	SendData(resultData);
 	ChangeFrame(ChStd::EnumCast(FrameNo::Result));
-	allControllFlg = true;
+	allControllFlg = false;
 }
 
 void GameFrame::Failed()
@@ -1115,7 +1126,11 @@ void GameFrame::Failed()
 	scriptPauseFlg = true;
 
 
-
-
-	allControllFlg = true;
+	if (messageBox->IsDrawMessage())return;
+	
+	resultData->successFee = 0;
+	SendData(resultData);
+	ChangeFrame(ChStd::EnumCast(FrameNo::Result));
+	scriptPauseFlg = false;
+	allControllFlg = false;
 }
