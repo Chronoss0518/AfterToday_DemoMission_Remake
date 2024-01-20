@@ -1,12 +1,12 @@
 Resource/XFile/RobotsParts/Head/Air.x
 0.500000
 0.500000
-Camera:{
+CameraData:{
 30.000000
 1
 
 }
-Scope:{
+ScopeData:{
 60.000000
 1
 

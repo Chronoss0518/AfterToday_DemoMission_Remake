@@ -1,12 +1,12 @@
 Resource/XFile/RobotsParts/Head/Normal.x
 1.000000
 1.000000
-Camera:{
+CameraData:{
 30.000000
 1
 Head_Bone_CameraPos
 }
-Scope:{
+ScopeData:{
 60.000000
 1
 Head_Bone_CameraPos

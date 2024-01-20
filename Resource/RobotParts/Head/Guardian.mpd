@@ -1,12 +1,12 @@
 Resource/XFile/RobotsParts/Head/Guardian.x
 2.000000
 2.000000
-Camera:{
+CameraData:{
 30.000000
 1
 
 }
-Scope:{
+ScopeData:{
 60.000000
 1
 
