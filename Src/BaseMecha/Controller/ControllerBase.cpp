@@ -138,46 +138,45 @@ void PlayerController::XInputUpdate()
 	if (controller.GetL3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L3]);
 
 
-	if (controller.GetLXStick() < -moveSensitivility)
+	if (controller.GetLXStick() > moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LRight]);
 	}
 
-	if (controller.GetLXStick() > moveSensitivility)
+	if (controller.GetLXStick() < -moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LLeft]);
 	}
 
-	if (controller.GetLYStick() > moveSensitivility)
+	if (controller.GetLYStick() < -moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LDown]);
 	}
 
-	if (controller.GetLYStick() < -moveSensitivility)
+	if (controller.GetLYStick() > moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LTop]);
 	}
 
-	if (controller.GetRXStick() < -moveSensitivility)
+	if (controller.GetRXStick() > moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RRight]);
 	}
 
-	if (controller.GetRXStick() > moveSensitivility)
+	if (controller.GetRXStick() < -moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RLeft]);
 	}
 
-	if (controller.GetRYStick() > moveSensitivility)
+	if (controller.GetRYStick() < -moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RDown]);
 	}
 
-	if (controller.GetRYStick() < -moveSensitivility)
+	if (controller.GetRYStick() > moveSensitivility)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RTop]);
 	}
-
 
 }
 
