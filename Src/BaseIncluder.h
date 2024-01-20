@@ -124,7 +124,7 @@ _SPRITE.SetPosRect(_RECT)
 #endif
 
 #ifndef USE_RESULT_FRAME_FLG
-#define USE_RESULT_FRAME_FLG 0
+#define USE_RESULT_FRAME_FLG 1
 #endif
 
 
