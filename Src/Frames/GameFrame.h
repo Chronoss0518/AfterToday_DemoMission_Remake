@@ -119,17 +119,23 @@ private:
 
 	void DrawFunction();
 
-	void SetAllControllerFlg(bool _flg);
-
 	bool allControllFlg = true;
 
 	void MissionStartAnimation();
 	bool missionStartAnimationFlg = false;
 
+	void SetAnimation(const std::string& _animationFilePath);
 	void Aniamtion();
 	bool animationFlg = false;
 
+	void SetDrawMessage(const std::string& _message,long _afterFrameCountPar60FPS);
+	void DrawMessage();
+
 	void Success();
+	bool successFlg = false;
+
+	void Failed();
+	bool failedFlg = false;
 
 	bool initFlg = false;
 
@@ -196,7 +202,7 @@ private:
 	void Render2D(void);
 
 	ChPtr::Shared<GameScript> script = nullptr;
-	bool pauseFlg = false;
+	bool scriptPauseFlg = false;
 
 	ChWin::TextBox box;
 

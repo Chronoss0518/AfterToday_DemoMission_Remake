@@ -197,7 +197,7 @@ void GameFrame::InitScriptFunction()
 
 			if (!testFlg)return;
 
-			SetAllControllerFlg(setFlg);
+			allControllFlg = setFlg;
 		});
 
 	script->SetFunction("MissionStart", [&](const std::string& _text) {
@@ -205,11 +205,17 @@ void GameFrame::InitScriptFunction()
 		});
 
 	script->SetFunction("Animation", [&](const std::string& _text) {
+		SetAnimation(_text);
 		animationFlg = true;
 		});
 
 	script->SetFunction("Success", [&](const std::string& _text) {
-		Success();
+
+		successFlg = true;
+		});
+
+	script->SetFunction("Failed", [&](const std::string& _text) {
+		failedFlg = true;
 		});
 
 	//target < inputNum//
@@ -379,7 +385,7 @@ void GameFrame::Update()
 
 	UpdateFunction();
 
-	if(!pauseFlg)
+	if(!scriptPauseFlg)
 		script->UpdateScript();
 
 	mechas = mechaList.GetObjectList<BaseMecha>();
@@ -430,7 +436,6 @@ void GameFrame::Update()
 
 #endif
 	DrawFunction();
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1021,44 +1026,62 @@ unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
 
 }
 
-void GameFrame::SetAllControllerFlg(bool _flg)
-{
-	allControllFlg = _flg;
-	return;
-	for (auto&& mecha : mechaList.GetObjectList())
-	{
-		if (mecha.expired())continue;
-		auto&& mechaObject = mecha.lock();
-		if (mechaObject == nullptr)continue;
-		auto&& controller = mechaObject->GetComponent<ControllerBase>();
-		if (controller == nullptr)continue;
-		controller->SetUsing(_flg);
-	}
-}
-
 void GameFrame::MissionStartAnimation()
 {
 	if (!missionStartAnimationFlg)return;
-	SetAllControllerFlg(false);
-	pauseFlg = true;
+	scriptPauseFlg = true;
 
 
+
+	allControllFlg = true;
+}
+
+void GameFrame::SetAnimation(const std::string& _animationFilePath)
+{
 
 }
 
 void GameFrame::Aniamtion()
 {
 	if (!animationFlg)return;
-	SetAllControllerFlg(false);
-	pauseFlg = true;
+	allControllFlg = false;
+	scriptPauseFlg = true;
 
 
 
+
+	allControllFlg = true;
 }
 
 void GameFrame::Success()
 {
-	SetAllControllerFlg(false);
-	pauseFlg = true;
+	if (!successFlg)return;
+	scriptPauseFlg = true;
+
+
+
+
+	ChangeFrame(ChStd::EnumCast(FrameNo::Result));
+	allControllFlg = true;
+}
+
+void GameFrame::Failed()
+{
+	if (!failedFlg)return;
+	scriptPauseFlg = true;
+
+
+
+
+	allControllFlg = true;
+}
+
+void SetDrawMessage(const std::string& _message, long _afterFrameCountPar60FPS)
+{
+
+}
+
+void DrawMessage()
+{
 
 }
