@@ -14,6 +14,8 @@ struct LookSquareValue;
 class ShotEffectList;
 class SmokeEffectList;
 
+class GameInMessageBox;
+
 struct MapObject : public ChCpp::BaseObject
 {
 	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
@@ -128,9 +130,6 @@ private:
 	void Aniamtion();
 	bool animationFlg = false;
 
-	void SetDrawMessage(const std::string& _message,long _afterFrameCountPar60FPS);
-	void DrawMessage();
-
 	void Success();
 	bool successFlg = false;
 
@@ -194,6 +193,8 @@ private:
 
 	ChD3D11::CB::CBLight11 light;
 	MeshDrawer meshDrawer;
+
+	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
 
 	// 3D•`‰æ //
 	void Render3D(void);

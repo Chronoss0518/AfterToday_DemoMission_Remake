@@ -16,6 +16,8 @@
 
 #include"../BaseMecha/CPU/CPULooker.h"
 
+#include"../GameInMessageBox/GameInMessageBox.h"
+
 //想定するメカオブジェクトの最大数//
 #define MAX_MECHA_OBJECT_COUNT 10
 
@@ -126,6 +128,10 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		ChD3D11::D3D11Device(),
 		GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
+
+	messageBox = ChPtr::Make_S<GameInMessageBox>();
+	messageBox->Init(ChD3D11::D3D11Device());
+	
 }
 
 void GameFrame::InitScriptFunction()
@@ -198,6 +204,38 @@ void GameFrame::InitScriptFunction()
 			if (!testFlg)return;
 
 			allControllFlg = setFlg;
+		});
+
+	script->SetFunction("Message", [&](const std::string& _text) {
+
+		auto&& texts = ChStr::Split(_text, " ");
+
+		std::wstring messenger = L"COM", message = ChStr::UTF8ToWString(texts[0]);
+		long afterFrame = 20 * BASE_FPS, messageAddFrame = 0;
+
+		for (unsigned long i = 1; i < texts.size() - 1; i++)
+		{
+			
+			if (texts[i] == "--messenger")
+			{
+				i++;
+				messenger = ChStr::UTF8ToWString(texts[i]);
+			}
+
+			if (texts[i] == "--addFrame")
+			{
+				i++;
+				messageAddFrame = static_cast<long>(ChStr::GetFloatingFromText<float>(texts[i]) * BASE_FPS);
+			}
+
+			if (texts[i] == "--afterFrame")
+			{
+				i++;
+				afterFrame = static_cast<long>(ChStr::GetFloatingFromText<float>(texts[i]) * BASE_FPS);
+			}
+		}
+
+		messageBox->SetMessage(messenger,message,afterFrame,messageAddFrame);
 		});
 
 	script->SetFunction("MissionStart", [&](const std::string& _text) {
@@ -498,6 +536,7 @@ void GameFrame::UpdateFunction()
 
 	}
 
+	messageBox->Update();
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -560,7 +599,11 @@ void GameFrame::Render2D(void)
 
 	float enelgyParcec = static_cast<float>(drawMecha->GetNowEnelgy()) / drawMecha->GetMaxEnelgy();
 
+
+
 	uiDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	messageBox->Draw(uiDrawer);
 
 	uiDrawer.Draw(*centerUITexture, centerUISprite);
 
@@ -1059,6 +1102,7 @@ void GameFrame::Success()
 	scriptPauseFlg = true;
 
 
+	if (messageBox->IsDrawMessage())return;
 
 
 	ChangeFrame(ChStd::EnumCast(FrameNo::Result));
@@ -1074,14 +1118,4 @@ void GameFrame::Failed()
 
 
 	allControllFlg = true;
-}
-
-void SetDrawMessage(const std::string& _message, long _afterFrameCountPar60FPS)
-{
-
-}
-
-void DrawMessage()
-{
-
 }
