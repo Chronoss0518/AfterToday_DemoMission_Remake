@@ -59,6 +59,12 @@ void GameScript::UpdateScript()
 		script = scripts[nowScriptCount];
 		nowScriptCount++;
 	} while (script[0] == '/' && script[1] == '/');
+
+	if (skipCount > 0)
+	{
+		skipCount--;
+		return;
+	}
 	
 	auto scriptArgs = ChStr::Split(script, " ");
 	auto function = scriptFunctions.find(scriptArgs[0]);

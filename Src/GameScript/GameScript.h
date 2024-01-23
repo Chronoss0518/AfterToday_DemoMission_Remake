@@ -16,6 +16,8 @@ public:
 
 	void SetFunction(const std::string& _type,const std::function<void(const std::string&)>& _function);
 
+	void SetSkipCount(unsigned long _skipCount) { skipCount = _skipCount; }
+
 	void SetNowScriptCount(unsigned long _scriptCount) { nowScriptCount = _scriptCount; }
 
 	void SetLoopPos(const std::string& _name) { loopPosList[_name] = nowScriptCount; }
@@ -48,6 +50,7 @@ private:
 	}
 
 	unsigned long nowScriptCount = 0;
+	unsigned long skipCount = 0;
 	std::map<std::string, unsigned long>loopPosList;
 
 	ChCpp::TextObject scripts;
