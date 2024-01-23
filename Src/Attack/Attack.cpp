@@ -5,7 +5,7 @@
 #include"Attack.h"
 #include"AttackObject.h"
 
-ChPtr::Shared<Attack> Attack::CreateAttackData(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
 {
 	auto&& attackList = LoadAttackList();
 
@@ -46,7 +46,9 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(MeshDrawer* _drawer, ID3D11Device
 
 void Attack::AllRelease()
 {
-	LoadAttackList().clear();
+	auto&& attackList = LoadAttackList();
+	if (attackList.empty())return;
+	attackList.clear();
 }
 
 void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
@@ -174,7 +176,7 @@ void Attack::MoveBulletObject(AttackObject& _bullet)
 void Attack::Draw(const ChMat_11& _mat)
 {
 	if (bullet == nullptr)return;
-	drawer->drawer.Draw(*bullet, _mat);
+	drawer->Draw(*bullet, _mat);
 }
 
 unsigned long BulletData::Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos)

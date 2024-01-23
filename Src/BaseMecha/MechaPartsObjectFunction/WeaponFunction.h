@@ -61,7 +61,7 @@ class SwordFunction : public WeaponFunction
 {
 public:
 
-	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
+	void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 
@@ -90,7 +90,7 @@ class GunFunction : public WeaponFunction
 {
 public:
 
-	void Init(MeshDrawer* _drawer, ID3D11Device* _device)override;
+	void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 

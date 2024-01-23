@@ -40,7 +40,7 @@ BaseMecha::~BaseMecha()
 
 }
 
-void BaseMecha::Create(const ChVec2& _viewSize, MeshDrawer& _drawer, GameFrame* _frame)
+void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11& _drawer, GameFrame* _frame)
 {
 	viewSize = _viewSize;
 	drawer = &_drawer;
@@ -454,7 +454,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	dir.Normalize();
 
-	unsigned long cutCount = (moveLen / hitSize) + 1;
+	unsigned long cutCount = static_cast<unsigned long>(moveLen / hitSize) + 1;
 
 	testAttackCollider.SetScalling(hitSize);
 

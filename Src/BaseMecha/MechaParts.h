@@ -25,13 +25,20 @@ public:
 		return ins;
 	}
 
+	inline static void ClearPartsList()
+	{
+		auto&& partsList = LoadPartsList();
+		if (partsList.empty())return;
+		partsList.clear();
+	}
+
 private:
 
 	unsigned long CreateDatas(BaseMecha& _base, ChCpp::TextObject& _textObject, unsigned long _linePos);
 
 public://Serialize Deserialize//
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _fileName);
 
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
@@ -53,7 +60,7 @@ public://Set Functions//
 
 	bool SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name);
 
-	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
+	inline void SetMeshDrawer(ChD3D11::Shader::BaseDrawMesh11* _drawer) { drawer = _drawer; }
 
 public://Get Function//
 
@@ -69,7 +76,7 @@ public://Get Function//
 
 	inline std::string GetThisFileName() { return thisFileName; }
 
-	inline MeshDrawer* GetMeshDrawer() { return drawer; }
+	inline ChD3D11::Shader::BaseDrawMesh11* GetMeshDrawer() { return drawer; }
 
 public:
 
@@ -90,7 +97,7 @@ private:
 	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
 	ChLMat defaultFrameMat;
 
-	MeshDrawer* drawer = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
 
 	static std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 

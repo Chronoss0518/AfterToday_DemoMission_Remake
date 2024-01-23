@@ -42,7 +42,7 @@ void SwordFunction::AttackFunction()
 
 }
 
-void SwordFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
+void SwordFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)
 {
 
 	//attackData = Attack::CreateAttackData(_drawer, _device, swordData->GetObjectName());
@@ -102,7 +102,7 @@ void GunFunction::AttackFunction()
 	StartSubFunction();
 }
 
-void GunFunction::Init(MeshDrawer* _drawer, ID3D11Device* _device)
+void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)
 {
 	nowBulletNum = gunData->GetBulletNum();
 

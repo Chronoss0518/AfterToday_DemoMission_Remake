@@ -85,7 +85,7 @@ public://SerializeDeserialize//
 
 public://Create Function//
 
-	void Create(const ChVec2& _viewSize, MeshDrawer& _drawer, GameFrame* _frame);
+	void Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11& _drawer, GameFrame* _frame);
 
 public:
 
@@ -264,7 +264,7 @@ protected:
 
 	std::string mechaName = "";
 
-	MeshDrawer* drawer = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;

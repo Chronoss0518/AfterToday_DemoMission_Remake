@@ -162,7 +162,7 @@ class ExternalFunction
 
 public:
 
-	virtual void Init(MeshDrawer* _drawer, ID3D11Device* _device) {};
+	virtual void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device) {};
 
 	virtual void Release() {};
 

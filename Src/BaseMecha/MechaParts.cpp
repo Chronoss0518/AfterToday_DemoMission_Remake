@@ -44,7 +44,7 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	PARTS_DATA_CREATER(ExtraPos),
 };
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, MeshDrawer* _drawer, GameFrame* _frame, const std::string& _fileName)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _fileName)
 {
 	auto&& loadPartss = LoadPartsList();
 	auto it = loadPartss.find(_fileName);
@@ -120,7 +120,7 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 {
 
 	std::string typeName = _textObject.GetTextLine(_linePos);
-	if (typeName.empty())return _linePos + 1;
+	if (typeName.length() <= 0)return _linePos + 1;
 	typeName.pop_back();
 	typeName.pop_back();
 	auto createFunction = createFunctions.find(typeName);
@@ -195,7 +195,7 @@ std::string MechaParts::Serialize()
 void MechaParts::Draw(const ChMat_11& _mat)
 {
 	if (model == nullptr)return;
-	drawer->drawer.Draw(*model, _mat);
+	drawer->Draw(*model, _mat);
 }
 
 unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)

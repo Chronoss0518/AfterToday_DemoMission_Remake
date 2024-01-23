@@ -31,7 +31,7 @@ public:
 
 
 
-	static ChPtr::Shared<Attack> CreateAttackData(MeshDrawer* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName);
 
 	static void AllRelease();
 
@@ -53,7 +53,7 @@ public://Serialize Deserialize\\
 
 public:
 
-	inline void SetMeshDrawer(MeshDrawer* _drawer) { drawer = _drawer; }
+	inline void SetMeshDrawer(ChD3D11::Shader::BaseDrawMesh11* _drawer) { drawer = _drawer; }
 
 public:
 
@@ -98,7 +98,7 @@ protected:
 	ChCpp::BitBool attackType;
 	ChPtr::Shared<AttackBase> externulFunction[5] = { nullptr,nullptr,nullptr,nullptr,nullptr };
 
-	MeshDrawer* drawer = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
 
 private:
 

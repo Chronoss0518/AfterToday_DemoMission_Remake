@@ -154,12 +154,6 @@ enum class FrameNo :unsigned long
 #endif
 };
 
-struct MeshDrawer
-{
-	ID3D11DeviceContext* dc = nullptr;
-	ChD3D11::Shader::BaseDrawMesh11 drawer;
-};
-
 struct PlayerData:public ChCpp::SaveDataClass
 {
 	std::string playerName = "";
@@ -216,4 +210,19 @@ static inline bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
 	if (tmpRect.IsOnPoint(mousePos))res = true;
 
 	return res;
+}
+
+static inline std::wstring CreateMoneyText(const std::wstring& _money)
+{
+	std::wstring result = L"";
+
+	for (unsigned long i = 0; i < _money.length(); i++)
+	{
+		result += _money[i];
+		if (i + 1 >= _money.length())break;
+		if ((_money.length() - i - 1) % 3 != 0)continue;
+		result += L",";
+	}
+
+	return result;
 }
