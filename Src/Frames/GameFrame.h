@@ -63,8 +63,6 @@ public:
 
 private:
 
-	void StartFrame();
-
 	void InitScriptFunction();
 
 	void SetHitMap(ChPtr::Shared<MapObject> _map);
@@ -162,10 +160,10 @@ private:
 	ChCpp::ObjectList mechaList;
 	std::vector<ChPtr::Weak<BaseMecha>>mechas;
 	std::map<unsigned long, unsigned long>mechaPartyCounter;
+
 	unsigned char playerParty = 0;
 	unsigned long mechaView = 0;
 	ChCpp::ObjectList bulletList;
-	ChCpp::ObjectList mapObjects;
 
 	ChPtr::Shared<BaseMecha>drawMecha = nullptr;
 	ChD3D11::Shader::CircleCullingSprite11 gageDrawer;
@@ -187,12 +185,13 @@ private:
 	ChPtr::Shared<EffectObjectShader> cloudEffectShader = nullptr;
 	ChPtr::Shared<EffectObjectShader> waterSplashEffectShader = nullptr;
 	ChPtr::Shared<EffectObjectShader> enemyMarkerShader = nullptr;
+	ChPtr::Shared<EffectObjectShader> fireShader = nullptr;
 
 	ChD3D11::RenderTarget11 enemyMarker;
 	ChD3D11::RenderTarget11 baseMarker;
 
 	ChD3D11::CB::CBLight11 light;
-	MeshDrawer meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
 

@@ -5,7 +5,9 @@
 #include"../AllStruct.h"
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
+#include"../BaseMecha/MechaParts.h"
 #include"../Attack/AttackObject.h"
+#include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
 #include"GameFrame.h"
 
@@ -64,11 +66,15 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	box.SetEnableFlg(false);
 #endif
 
-	meshDrawer.drawer.Init(ChD3D11::D3D11Device());
-	meshDrawer.drawer.SetCullMode(D3D11_CULL_BACK);
+	meshDrawer.Init(ChD3D11::D3D11Device());
+	meshDrawer.SetCullMode(D3D11_CULL_BACK);
 
 	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
 	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
+
+	fireShader = ChPtr::Make_S<EffectObjectShader>();
+	fireShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
+	fireShader->SetEffectTexture(TEXTURE_DIRECTORY(""), 1, 1);
 
 	shotEffectList = ChPtr::Make_S<ShotEffectList>();
 	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 10);
@@ -115,7 +121,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 		projectionMat = proMat;
 
-		meshDrawer.drawer.SetProjectionMatrix(proMat);
+		meshDrawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
 		smokeEffectList->SetProjectionMatrix(proMat);
 	}
@@ -250,8 +256,7 @@ void GameFrame::InitScriptFunction()
 		});
 
 	script->SetFunction("Success", [&](const std::string& _text) {
-
-		messageBox->SetMessage(L"COM", L"作戦終了。\n 帰投してください", static_cast<unsigned long>(BASE_FPS * 5.0f), static_cast<unsigned long>(BASE_FPS * 0.25f));
+		messageBox->SetMessage(L"COM", L"作戦終了です。\n 帰投してください", static_cast<unsigned long>(BASE_FPS * 5.0f), static_cast<unsigned long>(BASE_FPS * 0.25f));
 		successFlg = true;
 		});
 
@@ -418,6 +423,12 @@ void GameFrame::Release()
 	mechaList.ClearObject();
 	bulletList.ClearObject();
 	mapList.ClearObject();
+	mechaList.ClearObject();
+	hitMapList.clear();
+	audios.clear();
+	PhysicsMachine::ClearFieldList();
+	MechaParts::ClearPartsList();
+	Attack::AllRelease();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -522,7 +533,7 @@ void GameFrame::UpdateFunction()
 
 		auto viewMat = drawMecha->GetViewMat();
 
-		meshDrawer.drawer.SetViewMatrix(viewMat);
+		meshDrawer.SetViewMatrix(viewMat);
 
 		shotEffectList->SetViewMatrix(viewMat);
 
@@ -577,26 +588,24 @@ void GameFrame::DrawFunction()
 
 void GameFrame::Render3D(void)
 {
-	meshDrawer.dc = ChD3D11::D3D11DC();
+	meshDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	meshDrawer.drawer.DrawStart(meshDrawer.dc);
-
-	light.SetPSDrawData(meshDrawer.dc);
+	light.SetPSDrawData(ChD3D11::D3D11DC());
 
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
 		auto mapModel = weakMapModel.lock();
-		meshDrawer.drawer.Draw(*mapModel->model, (ChMat_11)mapModel->mat);
+		meshDrawer.Draw(*mapModel->model, (ChMat_11)mapModel->mat);
 	}
 
 	mechaList.ObjectDraw3D();
 
 	bulletList.ObjectDraw3D();
 
-	meshDrawer.drawer.DrawEnd();
+	meshDrawer.DrawEnd();
 
-	shotEffectList->Draw(meshDrawer.dc);
-	smokeEffectList->Draw(meshDrawer.dc);
+	shotEffectList->Draw(ChD3D11::D3D11DC());
+	smokeEffectList->Draw(ChD3D11::D3D11DC());
 
 }
 
@@ -612,28 +621,32 @@ void GameFrame::Render2D(void)
 
 	messageBox->Draw(uiDrawer);
 
-	if (!successFlg)
+	if (!successFlg && !failedFlg)
 	{
 		uiDrawer.Draw(*centerUITexture, centerUISprite);
 	}
 	
 	uiDrawer.DrawEnd();
 
-	gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
+	if (!successFlg && !failedFlg)
+	{
+		gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
 
-	gageDrawer.DrawStart(ChD3D11::D3D11DC());
+		gageDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	gageDrawer.Draw(*enelgyUITexture, centerUISprite);
+		gageDrawer.Draw(*enelgyUITexture, centerUISprite);
 
-	gageDrawer.DrawEnd();
+		gageDrawer.DrawEnd();
 
-	gageDrawer.SetDrawValue(damageParcec * -0.5f);
+		gageDrawer.SetDrawValue(damageParcec * -0.5f);
 
-	gageDrawer.DrawStart(ChD3D11::D3D11DC());
+		gageDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	gageDrawer.Draw(*receveDamageUITexture, centerUISprite);
+		gageDrawer.Draw(*receveDamageUITexture, centerUISprite);
 
-	gageDrawer.DrawEnd();
+		gageDrawer.DrawEnd();
+
+	}
 
 	mechaList.ObjectDraw2D();
 
@@ -653,12 +666,28 @@ void GameFrame::AddMecha(const std::string& _text)
 	bool cpuFlg = false;
 
 	std::string cpuLoadData = "";
+	std::string loadFile = "";
+
+	{
+
+		auto&& saveData = BaseFrame::GetData();
+		auto&& playerData = ChPtr::SharedSafeCast<PlayerData>(saveData);
+		if (playerData != nullptr)
+		{
+			loadFile = playerData->useMechaData;
+		}
+	}
 
 	ChVec3 position;
 	ChVec3 rotation;
 
-	for (unsigned long i = 1; i < argment.size(); i++)
+	for (unsigned long i = 0; i < argment.size(); i++)
 	{
+		if (argment[i] == "-l" || argment[i] == "-load")
+		{
+			i++;
+			loadFile = argment[i];
+		}
 		if (argment[i] == "-u" || argment[i] == "--username")
 		{
 			i++;
@@ -736,7 +765,6 @@ void GameFrame::AddMecha(const std::string& _text)
 			if (!cpuFlg)
 			{
 				playerFlg = true;
-				mecha->Load(ChD3D11::D3D11Device(), PLAYER_MECHA_PATH(+argment[0]));
 			}
 			continue;
 		}
@@ -748,7 +776,6 @@ void GameFrame::AddMecha(const std::string& _text)
 				i++;
 				cpuLoadData = argment[i];
 
-				mecha->Load(ChD3D11::D3D11Device(), CPU_MECHA_PATH(+argment[0]));
 			}
 			continue;
 		}
@@ -768,6 +795,7 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	if (playerFlg)
 	{
+		mecha->Load(ChD3D11::D3D11Device(), PLAYER_MECHA_PATH(+loadFile));
 		mecha->SetComponent<PlayerController>();
 		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
 		cpuObjectLooker->SetGameFrame(this);
@@ -778,6 +806,7 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	if (cpuFlg)
 	{
+		mecha->Load(ChD3D11::D3D11Device(), CPU_MECHA_PATH(+loadFile));
 		auto cpuController = mecha->SetComponent<CPUController>();
 		cpuController->LoadCPUData(cpuLoadData);
 		cpuController->SetGameFrame(this);
