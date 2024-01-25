@@ -130,6 +130,7 @@ void SelectFrame::Update()
 	if (firstFlg)
 	{
 		inputDataList.clear();
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
 		firstFlg = false;
 		return;
 	}
@@ -192,33 +193,34 @@ void SelectFrame::UpdateController()
 {
 	controller.Update();
 
+	bool isPushFlg = false;
+
 	if (controller.GetAFlg())
 	{
-		inputDataList.push_back(ActionType::Decision);
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Decision)))
+			inputDataList.push_back(ActionType::Decision);
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
+		isPushFlg = true;
 	}
 
-	bool isPushFlg = false;
-	
 	if (controller.GetUpFlg() || controller.GetLYStick() > 0.3f)
 	{
-		if(!beforePushFlg)
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::UpSelect)))
 			inputDataList.push_back(ActionType::UpSelect);
-
-		beforePushFlg = true;
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::UpSelect));
 		isPushFlg = true;
 	}
 
 	if (controller.GetDownFlg() || controller.GetLYStick() < -0.3f)
 	{
-		if (!beforePushFlg)
+		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::DownSelect)))
 			inputDataList.push_back(ActionType::DownSelect);
-
-		beforePushFlg = true;
+		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::DownSelect));
 		isPushFlg = true;
 	}
 
 	if (isPushFlg)return;
-	beforePushFlg = false;
+	conntrollerPushKey.SetAllDownFlg();
 
 }
 

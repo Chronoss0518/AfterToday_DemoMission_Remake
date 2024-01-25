@@ -55,7 +55,7 @@ private:
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
 	ChD3D::XInputController controller;
-	bool beforePushFlg = false;
+	ChCpp::BitBool conntrollerPushKey;
 
 	int nowSelect = ChStd::EnumCast(NextButtonType::Battle);
 
