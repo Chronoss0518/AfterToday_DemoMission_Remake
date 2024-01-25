@@ -76,7 +76,7 @@ private:
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
 	ChPtr::Shared<BaseMecha>editMecha = nullptr;
-	MeshDrawer meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 	ChD3D::DirectFontFromDXGISurface drawTexter;
 
 	std::string fileName = "";
