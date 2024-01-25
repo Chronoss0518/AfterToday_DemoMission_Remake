@@ -245,7 +245,7 @@ void CPUController::Init()
 	cpuAttack->SetRightWeapons(LookObj()->GetComponent<RightWeaponComponent>());
 	cpuAttack->SetLeftWeapons(LookObj()->GetComponent<LeftWeaponComponent>());
 
-	SampleCreate();
+	//SampleCreate();
 }
 
 void CPUController::UpdateBegin()
