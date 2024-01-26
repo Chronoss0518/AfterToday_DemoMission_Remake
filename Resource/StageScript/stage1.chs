@@ -1,47 +1,48 @@
-//í“¬BGM‚ğ’Ç‰Á//
+//æˆ¦é—˜BGMã‚’è¿½åŠ //
 LoadBGM Battle1.wav -l
-//í“¬BGM‚ğ’Ç‰Á//
+//æˆ¦é—˜BGMã‚’è¿½åŠ //
 LoadBGM MainBattle1.wav -l -ls 220 -le 647
-//ƒ}ƒbƒvƒIƒuƒWƒFƒNƒg‚Ì’Ç‰Á//
+//ãƒãƒƒãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¿½åŠ //
 LoadMap TestField.x -s 100.0,100.0,100.0 -h
-//ƒ}ƒbƒvƒIƒuƒWƒFƒNƒg‚Ì’Ç‰Á//
+//ãƒãƒƒãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¿½åŠ //
 LoadMap TestField2.x -s 100.0,100.0,100.0
-//ƒ}ƒbƒvã‚ÉƒƒJ‚ğ”z’u(Player)//
-LoadMecha AirRobot.amf -u player -p 0.0,200.0,0.0 -pc -t 0
-//ƒ}ƒbƒvã‚ÉƒƒJ‚ğ”z’u//
-LoadMecha GuardianRobot.amf -u enemyTest -p 0.0,200.0,0.0 -t 1 -cc mob.cpu
-//‰Šú‰»‚ªI‚í‚é‚Ü‚Å‘Ò‹@//
+//ãƒãƒƒãƒ—ä¸Šã«ãƒ¡ã‚«ã‚’é…ç½®(Player)//
+LoadMecha -u player -p 0.0,700.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0
+//ãƒãƒƒãƒ—ä¸Šã«ãƒ¡ã‚«ã‚’é…ç½®//
+LoadMecha -l GuardianRobot.amf -u enemyTest -p 0.0,700.0,0.0 -t 1 -cc mob.cpu
+//åˆæœŸåŒ–ãŒçµ‚ã‚ã‚‹ã¾ã§å¾…æ©Ÿ//
 Initialize
-//Battle1.wav‚ğÄ¶//
+//Battle1.wavã‚’å†ç”Ÿ//
 Play Battle1.wav
-//Controller‚©‚ç‚Ì“ü—Í‚ğó‚¯•t‚¯‚é‚©‚Ìİ’è//
-SetControllerUsing False
-//Controller‚©‚ç‚Ì“ü—Í‚ğó‚¯•t‚¯‚é‚©‚Ìİ’è//
-SetControllerUsing True
-//Loop‚ÌŠJn//
-//Loop Loop1
-//ƒ`[ƒ€ƒƒ“ƒo[‚ª1ˆÈã‚Ìê‡‚ÍŸ‚ÌƒR[ƒh‚ğƒXƒLƒbƒv‚·‚é//
-SkipIfMore 1 0 -m
-//ƒXƒe[ƒW¸”s‚ğ’Ê’B‚·‚é//
+Message ä½œæˆ¦é–‹å§‹ã ã€‚é…ã‚Œã‚‹ãªã‚ˆã€‚ --messenger operator --addFrame 0.5 --afterFrame 10.0
+//SetControllerUsing false
+//Loopã®é–‹å§‹//
+Loop Loop1
+//ãƒãƒ¼ãƒ ãƒ¡ãƒ³ãƒãƒ¼ãŒ1ä»¥ä¸Šã®å ´åˆã¯æ¬¡ã®ã‚³ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹//
+SkipIfSmaller 2 0 -m
+//ã‚¹ãƒ†ãƒ¼ã‚¸å¤±æ•—ã‚’é€šé”ã™ã‚‹//
+SetControllerUsing false
 Failed
-//“G‚Ìƒƒ“ƒo[‚ª1ˆÈã‚Ìê‡‚ÍŸ‚ÌƒR[ƒh‚ğƒXƒLƒbƒv‚·‚é//
+//æ•µã®ãƒ¡ãƒ³ãƒãƒ¼ãŒ1ä»¥ä¸Šã®å ´åˆã¯æ¬¡ã®ã‚³ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹//
 SkipIfMore 1 0 -e
-//Loop‚ğŒJ‚è•Ô‚·–½—ß//
-//End Loop1
-//MainBattle1.wav‚ğÄ¶//
+//Loopã‚’ç¹°ã‚Šè¿”ã™å‘½ä»¤//
+End Loop1
+SetControllerUsing false
+Success
+//MainBattle1.wavã‚’å†ç”Ÿ//
 Play MainBattle1.wav
-//Loop‚ÌŠJn//
+//Loopã®é–‹å§‹//
 Loop Loop2
-//ƒ`[ƒ€Type1‚Ìƒƒ“ƒo[‚ª3ˆÈã‚Ìê‡‚ÍŸ‚ÌƒR[ƒh‚ğƒXƒLƒbƒv‚·‚é//
-SkipIfLess 1 3 -t 1
-LoadMecha GuardianRobot.amf -u enemy -p 60.0,700.0,60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 1 -cc mob.cpu
-//ƒ`[ƒ€Type0‚Ìƒƒ“ƒo[‚ª3ˆÈã‚Ìê‡‚ÍŸ‚ÌƒR[ƒh‚ğƒXƒLƒbƒv‚·‚é//
-SkipIfLess 1 3 -t 0
-LoadMecha AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
-//ƒ`[ƒ€ƒƒ“ƒo[‚ª1ˆÈã‚Ìê‡‚ÍŸ‚ÌƒR[ƒh‚ğƒXƒLƒbƒv‚·‚é//
-SkipIfMore 1 0 -m
-//ƒXƒe[ƒW¸”s‚ğ’Ê’B‚·‚é//
+//ãƒãƒ¼ãƒ Type1ã®ãƒ¡ãƒ³ãƒãƒ¼ãŒ3ä»¥ä¸Šã®å ´åˆã¯æ¬¡ã®ã‚³ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹//
+SkipIfLess 1 2 -t 1
+LoadMecha -l GuardianRobot.amf -u enemy -p 60.0,700.0,60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 1 -cc mob.cpu
+//ãƒãƒ¼ãƒ Type0ã®ãƒ¡ãƒ³ãƒãƒ¼ãŒ3ä»¥ä¸Šã®å ´åˆã¯æ¬¡ã®ã‚³ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹//
+SkipIfLess 1 2 -t 0
+LoadMecha -l AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
+//ãƒãƒ¼ãƒ ãƒ¡ãƒ³ãƒãƒ¼ãŒ1ä»¥ä¸Šã®å ´åˆã¯æ¬¡ã®ã‚³ãƒ¼ãƒ‰ã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹//
+SkipIfSmaller 1 0 -m
+//ã‚¹ãƒ†ãƒ¼ã‚¸å¤±æ•—ã‚’é€šé”ã™ã‚‹//
 Failed
-//Loop‚ğŒJ‚è•Ô‚·–½—ß//
+//Loopã‚’ç¹°ã‚Šè¿”ã™å‘½ä»¤//
 End Loop2
 Success
