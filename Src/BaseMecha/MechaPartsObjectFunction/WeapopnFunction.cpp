@@ -85,7 +85,9 @@ void GunFunction::AttackFunction()
 
 		attackObject->SetBulletData(attackData.get());
 		attackObject->SetFrame(frame);
-		attackObject->SetBaseMecha(mecha);
+		
+		attackObject->SetBaseMechaNo(mecha->GetMechaNo());
+		attackObject->SetTeamNo(mecha->GetTeamNo());
 		attackObject->Init(tmpMat);
 		frame->AddBullet(attackObject);
 
