@@ -159,6 +159,8 @@ public://Set Function//
 
 	void SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name, unsigned long _no);
 
+	void SetHitEffectDrawFrame();
+
 public://Get Function//
 
 	ChVec3 GetPosition();
@@ -198,6 +200,10 @@ public://Get Function//
 	inline float GetMaxDamageGage() { return durable; }
 
 	inline float GetDamage() { return nowDurable; }
+
+	inline long GetHitEffectDrawFrame() { return hitEffectDrawFrame; }
+
+	long GetHitEffectDrawStartFrame();
 
 public:
 
@@ -273,6 +279,8 @@ protected:
 
 	float viewHorizontal = 0.0f;
 	float maxViewHorizontal = 85.0f;
+
+	long hitEffectDrawFrame = -1;
 
 	bool breakFlg = false;
 };

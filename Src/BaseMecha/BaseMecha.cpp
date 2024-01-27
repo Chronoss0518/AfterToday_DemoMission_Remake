@@ -19,6 +19,8 @@
 
 #define CENTER_LEN 5.0f
 
+#define HIT_EFFECT_DRAW_FRAME static_cast<long>(BASE_FPS * 2.0f)
+
 static const std::string partsTypeName[]
 {
 	"Body","Head","Foot","RightArm","LeftArm","Boost","Weapon","Extra"
@@ -46,7 +48,7 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11&
 	drawer = &_drawer;
 	frame = _frame;
 	physics->Init();
-	mechasNo = frame->GetMechaList().GetObjectCount();
+	mechasNo = frame->GetMechas().size();
 }
 
 void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
@@ -259,6 +261,9 @@ void BaseMecha::MoveEnd()
 	if (objectLooker == nullptr)return;
 
 	objectLooker->SetViewMatrix(viewMat);
+
+	if (hitEffectDrawFrame < 0)return;
+	hitEffectDrawFrame--;
 }
 
 void BaseMecha::DrawUI()
@@ -394,6 +399,12 @@ void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name,
 	_parts.GetBaseObject()->GetMesh().SetFrameTransform(ChLMat());
 }
 
+void BaseMecha::SetHitEffectDrawFrame()
+{
+	//if (hitEffectDrawFrame >= 0)return;
+	hitEffectDrawFrame = HIT_EFFECT_DRAW_FRAME;
+}
+
 void BaseMecha::AddMoveVector(const ChVec3& _moveVecAdd)
 {
 	physics->AddMovePowerVector(_moveVecAdd);
@@ -432,10 +443,19 @@ unsigned long BaseMecha::GetTeamNo()
 	return controller->GetTeamNo();
 }
 
+long BaseMecha::GetHitEffectDrawStartFrame()
+{
+	return HIT_EFFECT_DRAW_FRAME;
+}
+
 void BaseMecha::TestBulletHit(AttackObject& _obj)
 {
-	if (_obj.GetBaseMecha() == this)return;
+	if (_obj.IsUseMechaTest(mechasNo))return;
 	if (_obj.IsHit())return;
+	if (_obj.IsUseMechaTeamTest(GetTeamNo()))
+	{
+		if (!frame->IsFriendryFireFlg())return;
+	}
 	if (IsBreak())return;
 
 	ChVec3 dir = _obj.GetMovePower();

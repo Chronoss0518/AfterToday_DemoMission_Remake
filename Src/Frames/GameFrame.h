@@ -2,6 +2,10 @@
 #ifndef _GameFrame
 #define _GameFrame
 
+#ifndef BASE_FPS
+#define BASE_FPS 60
+#endif
+
 #include"StageDataStructure.h"
 
 class AttackObject;
@@ -93,6 +97,10 @@ public:
 
 public:
 
+	void SetMessage(const std::wstring& _messenger, const std::wstring& _message,unsigned long _afterFrame, unsigned long _messageAddFrame);
+
+public:
+
 	ChCpp::ObjectList& GetMechaList() { return mechaList; }
 
 	std::vector<ChPtr::Weak<BaseMecha>>& GetMechas() { return mechas; }
@@ -109,6 +117,10 @@ public:
 
 public:
 
+	inline bool IsFriendryFireFlg() { return isFrendryFireFlg; }
+
+public:
+
 	void BreakMecha(BaseMecha* _mecha);
 
 private:
@@ -116,6 +128,8 @@ private:
 	unsigned long GettargetNum(std::vector<std::string>& _args);
 
 	void UpdateFunction();
+
+	void DrawFunctionBegin();
 
 	void DrawFunction();
 
@@ -130,6 +144,7 @@ private:
 
 	void Success();
 	bool successFlg = false;
+	long successPauseCount = -1;
 
 	void Failed();
 	bool failedFlg = false;
@@ -165,9 +180,12 @@ private:
 	unsigned long mechaView = 0;
 	ChCpp::ObjectList bulletList;
 
-	ChPtr::Shared<BaseMecha>drawMecha = nullptr;
+	BaseMecha* drawMecha = nullptr;
 	ChD3D11::Shader::CircleCullingSprite11 gageDrawer;
 	ChD3D11::Shader::BaseDrawSprite11 uiDrawer;
+	ChD3D11::Sprite11 uiSprite;
+	ImageSprite hitIcon;
+
 
 	ChPtr::Shared<ChD3D11::Texture11> centerUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	ChPtr::Shared<ChD3D11::Texture11> enelgyUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
@@ -190,8 +208,13 @@ private:
 	ChD3D11::RenderTarget11 enemyMarker;
 	ChD3D11::RenderTarget11 baseMarker;
 
+	ChD3D11::RenderTarget11 rt2D;
+	ChD3D11::RenderTarget11 rt3D;
+	ChD3D11::DepthStencilTexture11 dsTex;
+
 	ChD3D11::CB::CBLight11 light;
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	bool isFrendryFireFlg = false;
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
 
@@ -203,6 +226,7 @@ private:
 
 	ChPtr::Shared<GameScript> script = nullptr;
 	bool scriptPauseFlg = false;
+	bool scriptPauseOnMessageFlg = false;
 
 	ChPtr::Shared<ResultStructure>resultData = nullptr;
 
