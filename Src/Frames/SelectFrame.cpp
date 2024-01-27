@@ -18,6 +18,10 @@
 
 void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
+	auto&& mouse = ChWin::Mouse();
+	mouse.SetVisibleFlg(true);
+	mouse.SetCenterFixedFlg(false);
+
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	auto&& device = ChD3D11::D3D11Device();

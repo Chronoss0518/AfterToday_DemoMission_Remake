@@ -397,10 +397,9 @@ void ResultFrame::UpdateMouse()
 		inputDataList.push_back(ActionType::Decision);
 	}
 
-	auto&& mouce = ChWin::Mouse();
-	mouce.Update();
+	mouse->Update();
 
-	auto&& mouseMove = mouce.GetMoveValue();
+	auto&& mouseMove = mouse->GetMoveValue();
 	if (std::abs(mouseMove.x) <= 1 && std::abs(mouseMove.y) <= 1)return;
 
 	for (int i = 0; i < SELECT_BUTTON_TYPE_COUNT; i++)

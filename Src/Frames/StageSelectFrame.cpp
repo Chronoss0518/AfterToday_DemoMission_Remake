@@ -17,6 +17,10 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
+	auto&& mouse = ChWin::Mouse();
+	mouse.SetVisibleFlg(true);
+	mouse.SetCenterFixedFlg(false);
+
 	auto&& device = ChD3D11::D3D11Device();
 	spriteShader.Init(device);
 
@@ -101,17 +105,7 @@ void StageSelectFrame::InitStageDataList()
 		auto stageData = ChPtr::Make_S<StageData>();
 		stageData->LoadData(path);
 
-		std::wstring tmp = std::to_wstring(stageData->stageDatas->drawSuccessFee);
-
-		std::wstring successFee = L"$";
-
-		for (unsigned long i = 0; i < tmp.length(); i++)
-		{
-			successFee += tmp[i];
-			if (i + 1 >= tmp.length())break;
-			if ((tmp.length() - i - 1) % 3 != 0)continue;
-			successFee += L",";
-		}
+		std::wstring successFee = L"$" + CreateMoneyText(std::to_wstring(stageData->stageDatas->drawSuccessFee));
 
 		std::wstring location =
 			L"ìí’nˆæ|" + ChStr::UTF8ToWString(stageData->stageDatas->stageLocationName);
