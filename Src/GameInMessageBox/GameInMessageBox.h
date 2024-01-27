@@ -14,6 +14,10 @@ public:
 
 	inline bool IsDrawMessage() { return afterFrameCount > 0; }
 
+	void EndSetDrawMessage();
+
+	void EndAfterTime();
+
 	void SetMessage(const std::wstring& _messenger, const std::wstring& _message, unsigned long _afterFrame, unsigned long _messageAddFrame);
 
 private:

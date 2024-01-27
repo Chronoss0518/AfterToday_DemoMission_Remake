@@ -31,7 +31,7 @@ void GameInMessageBox::Init(ID3D11Device* _device)
 	messengerDrawer.drawer.SetClearDisplayFlg(true);
 	messengerDrawer.drawer.SetClearDisplayColor(ChVec4(0.0f));
 	messengerDrawer.brush = messengerDrawer.drawer.CreateBrush(ChVec4(1.0f));
-	messengerDrawer.format = messengerDrawer.drawer.CreateTextFormat(L"メイリオ", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, MESSENGER_TEXT_SIZE);
+	messengerDrawer.format = messengerDrawer.drawer.CreateTextFormat(L"メイリオ", nullptr, DWRITE_FONT_WEIGHT_BLACK, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, MESSENGER_TEXT_SIZE);
 	messengerDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	messengerDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
@@ -43,7 +43,7 @@ void GameInMessageBox::Init(ID3D11Device* _device)
 	messageDrawer.drawer.SetClearDisplayFlg(true);
 	messageDrawer.drawer.SetClearDisplayColor(ChVec4(0.0f));
 	messageDrawer.brush = messageDrawer.drawer.CreateBrush(ChVec4(1.0f));
-	messageDrawer.format = messageDrawer.drawer.CreateTextFormat(L"メイリオ", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, MESSAGE_TEXT_SIZE);
+	messageDrawer.format = messageDrawer.drawer.CreateTextFormat(L"メイリオ", nullptr, DWRITE_FONT_WEIGHT_BLACK, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, MESSAGE_TEXT_SIZE);
 	messageDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	messageDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
@@ -56,7 +56,7 @@ void GameInMessageBox::Init(ID3D11Device* _device)
 
 void GameInMessageBox::Release()
 {
-
+	EndAfterTime();
 }
 
 void GameInMessageBox::Update()
@@ -78,8 +78,7 @@ void GameInMessageBox::Update()
 	afterFrameCount--;
 
 	if (afterFrameCount >= 0)return;
-	nowTextTexture = nullptr;
-	messengerText.image.Release();
+	EndAfterTime();
 }
 
 void GameInMessageBox::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
@@ -93,11 +92,27 @@ void GameInMessageBox::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 		nextTextTexture = nullptr;
 	}
 
+	_drawer.Draw(messageBox.image, messageBox.sprite);
+
 	_drawer.Draw(*nowTextTexture, messageTextSprite);
-	
+
 	_drawer.Draw(messengerText.image, messengerText.sprite);
 
-	_drawer.Draw(messageBox.image, messageBox.sprite);
+}
+
+void GameInMessageBox::EndSetDrawMessage()
+{
+	messageAddCount = 0;
+	drawMessage = message;
+	nextTextTexture = ChPtr::Make_S<ChD3D11::Texture11>();
+	CreateText(*nextTextTexture, messageDrawer, drawMessage, ChVec4::FromRect(0.0f, 0.0f, MESSAGE_BOX_WIDTH - MESSAGE_TEXT_PADDING * 2.0f, MESSAGE_BOX_HEIGHT - MESSENGER_BOX_HEIGHT - MESSAGE_TEXT_PADDING * 2.0f));
+}
+
+void GameInMessageBox::EndAfterTime()
+{
+	afterFrameCount = -1;
+	nowTextTexture = nullptr;
+	messengerText.image.Release();
 }
 
 void GameInMessageBox::SetMessage(const std::wstring& _messenger, const std::wstring& _message, unsigned long _afterFrame, unsigned long _messageAddFrame)
@@ -105,10 +120,24 @@ void GameInMessageBox::SetMessage(const std::wstring& _messenger, const std::wst
 	if (_message.length() <= 0)return;
 	if (_messenger.length() <= 0)return;
 
+	std::wstring testMessage = L"";
+	for (unsigned long i = 0; i < _message.length(); i++)
+	{
+		if (_message[i] == L'\\')
+		{
+			if (_message[i + 1] == L'n')
+			{
+				testMessage += L'\n';
+				i++;
+				continue;
+			}
+		}
+		testMessage += _message[i];
+	}
 	messageAddFrame = _messageAddFrame;
 	messageAddCount = messageAddFrame;
 	afterFrameCount = _afterFrame;
-	message = _message;
+	message = testMessage;
 	drawMessage = message[0];
 
 	if (messageAddFrame <= 0)
