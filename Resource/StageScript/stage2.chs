@@ -14,7 +14,7 @@ LoadMecha -l GuardianRobot.amf -u enemyTest -p 0.0,700.0,0.0 -t 1 -cc mob.cpu
 Initialize
 //Battle1.wavを再生//
 Play Battle1.wav
-Message 作戦開始。\n目標は、あの金色の機体だ。惑わされるなよ。 --messenger operator --addFrame 0.5 --afterFrame 10.0
+Message 作戦開始だ。遅れるなよ。 --messenger operator --addFrame 0.5 --afterFrame 10.0
 //SetControllerUsing false
 //Loopの開始//
 Loop Loop1
@@ -28,4 +28,21 @@ SkipIfMore 1 0 -e
 //Loopを繰り返す命令//
 End Loop1
 SetControllerUsing false
+Success
+//MainBattle1.wavを再生//
+Play MainBattle1.wav
+//Loopの開始//
+Loop Loop2
+//チームType1のメンバーが3以上の場合は次のコードをスキップする//
+SkipIfLess 1 2 -t 1
+LoadMecha -l GuardianRobot.amf -u enemy -p 60.0,700.0,60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 1 -cc mob.cpu
+//チームType0のメンバーが3以上の場合は次のコードをスキップする//
+SkipIfLess 1 2 -t 0
+LoadMecha -l AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
+//チームメンバーが1以上の場合は次のコードをスキップする//
+SkipIfSmaller 1 0 -m
+//ステージ失敗を通達する//
+Failed
+//Loopを繰り返す命令//
+End Loop2
 Success

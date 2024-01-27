@@ -1,7 +1,7 @@
 {
   "StageImage": "",
   "StageName": "Test Stage",
-  "StageScriptPath": "stage1.chs",
+  "StageScriptPath": "test_stage.chs",
   "StageLocationName": "Test Locale",
   "StageStrategyOverview": "Test Stage",
   "MissionTimeSeccond" :  600,

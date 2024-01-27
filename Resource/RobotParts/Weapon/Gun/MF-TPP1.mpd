@@ -4,10 +4,10 @@ Resource/XFile/RobotsParts/Weapon/GunSample.x
 GunData:{
 Armature_ShotPos
 SE_Shot.v2.wav
-3
+5
 1
 30
-3
+5
 30
 20
 Resource/RobotParts/Weapon/Bullet/standard_1968.bod

@@ -14,6 +14,7 @@
     "UseBoostLengthFromUnBattle": 400
   },
   "MovePositionSelector": {
+    "CombatModeOff": 2000,
     "IsTargetPositionInAreaLength": 20,
     "OperatorPositions": [
       {
@@ -21,7 +22,7 @@
         "Distance": 20,
         "OperationPoint": {
           "X": 0,
-          "Y": 200,
+          "Y": 700,
           "Z": 0
         }
       }
