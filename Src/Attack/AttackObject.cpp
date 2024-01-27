@@ -58,3 +58,12 @@ void AttackObject::Draw3D()
 	collider.SetRotation(physics->GetRotation());
 	data->Draw(draw);
 }
+
+void AttackObject::UpdateHit()
+{
+	auto&& mechaList = frame->GetMechas();
+	if (mechaList.size() <= mechasNo)return;
+	auto&& mecha = mechaList[mechasNo];
+	if (mecha.expired())return;
+	mecha.lock()->SetHitEffectDrawFrame();
+}

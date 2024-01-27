@@ -193,6 +193,7 @@ void BulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 	if (_bullet.hitFlg)
 	{
+		_bullet.UpdateHit();
 		_bullet.Destroy();
 		return;
 	}
