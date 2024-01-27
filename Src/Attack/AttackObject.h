@@ -6,6 +6,7 @@ class BoostBulletData;
 class HighExplosiveBulletData;
 class MissileData;
 class GameFrame;
+class ControllerBase;
 
 class AttackObject :public ChCpp::BaseObject
 {
@@ -29,7 +30,9 @@ public:
 
 	inline void SetFrame(GameFrame* _frame) { frame = _frame; }
 
-	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
+	inline void SetBaseMechaNo(unsigned long _no) { mechasNo = _no; }
+
+	inline void SetTeamNo(unsigned long _no) { teamNo = _no; }
 
 	inline void SetPosition(const ChVec3& _pos) { physics->SetPosition(_pos); }
 
@@ -49,8 +52,6 @@ public:
 
 	float GetHitSize();
 
-	BaseMecha* GetBaseMecha() { return mecha; }
-
 	inline GameFrame& GetFrame() { return *frame; }
 
 	inline ChCpp::SphereCollider& GetCollider() { return collider; }
@@ -59,6 +60,10 @@ public:
 
 	bool IsHit() { return hitFlg; }
 
+	bool IsUseMechaTest(unsigned long _no) { return mechasNo == _no; }
+
+	bool IsUseMechaTeamTest(unsigned long _no) { return teamNo == _no; }
+
 public:
 
 	void Update()override;
@@ -66,6 +71,10 @@ public:
 	void Move()override;
 
 	void Draw3D()override;
+
+public:
+
+	void UpdateHit();
 
 protected:
 
@@ -76,9 +85,10 @@ private:
 	ChCpp::SphereCollider collider;
 
 	GameFrame* frame = nullptr;
+	unsigned long teamNo = -1;
+	unsigned long mechasNo = -1;
 	Attack* data = nullptr;
 	bool hitFlg = false;
-	BaseMecha* mecha = nullptr;
 	unsigned long nowCreateSmokeCount = 0;
 
 	float dispersalPower = 0.5f;
