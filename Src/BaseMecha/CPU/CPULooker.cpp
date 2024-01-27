@@ -659,8 +659,10 @@ void CPUObjectLooker::FindMecha()
 
 	for (unsigned long i = 0; i < baseMechaList.size(); i++)
 	{
-		auto otherMecha = baseMechaList[i].lock();
-		if (otherMecha.get() == LookObj())continue;
+		auto&& tmpMecha = baseMechaList[i];
+		if (tmpMecha.expired())continue;
+		auto&& otherMecha = tmpMecha.lock();
+		if (otherMecha->GetMechaNo() == LookObj<BaseMecha>()->GetMechaNo())continue;
 		unsigned long memberType = ChStd::EnumCast(MemberType::Enemy);
 		auto controller = otherMecha->GetComponent<ControllerBase>();
 		if (controller == nullptr)continue;
