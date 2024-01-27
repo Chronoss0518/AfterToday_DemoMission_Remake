@@ -19,7 +19,8 @@
 #include"CPUAction/CPUAttack.h"
 #include"CPUAction/CPUMoveInput.h"
 
-#define DEFAULT_CURSOL_MOVE_SIZE 0.2f
+#define DEFAULT_CURSOL_MOVE_SIZE 0.4f
+#define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
 
 void ControllerBase::Input(const InputName _inputFlgName)
 {
@@ -36,7 +37,7 @@ void PlayerController::Init()
 	windSize.w = static_cast<float>(windows.GetWindWidth());
 	
 	mouse->SetCenterFixedFlg(true);
-	mouse->SetVisibleFlg(true);
+	mouse->SetVisibleFlg(false);
 
 	keyTypes[VK_SPACE] = InputName::Up;
 	keyTypes[VK_SHIFT] = InputName::Avo;
@@ -130,50 +131,50 @@ void PlayerController::XInputUpdate()
 	if (controller.GetStartFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Start]);
 
 	if (controller.GetR1Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R1]);
-	if (controller.GetR2Trigger() > moveSensitivility)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R2]);
+	if (controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R2]);
 	if (controller.GetR3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R3]);
 
 	if (controller.GetL1Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L1]);
-	if (controller.GetL2Trigger() > moveSensitivility)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L2]);
+	if (controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L2]);
 	if (controller.GetL3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L3]);
 
 
-	if (controller.GetLXStick() > moveSensitivility)
+	if (controller.GetLXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LRight]);
 	}
 
-	if (controller.GetLXStick() < -moveSensitivility)
+	if (controller.GetLXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LLeft]);
 	}
 
-	if (controller.GetLYStick() < -moveSensitivility)
+	if (controller.GetLYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LDown]);
 	}
 
-	if (controller.GetLYStick() > moveSensitivility)
+	if (controller.GetLYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LTop]);
 	}
 
-	if (controller.GetRXStick() > moveSensitivility)
+	if (controller.GetRXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RRight]);
 	}
 
-	if (controller.GetRXStick() < -moveSensitivility)
+	if (controller.GetRXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RLeft]);
 	}
 
-	if (controller.GetRYStick() < -moveSensitivility)
+	if (controller.GetRYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RDown]);
 	}
 
-	if (controller.GetRYStick() > moveSensitivility)
+	if (controller.GetRYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
 		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RTop]);
 	}

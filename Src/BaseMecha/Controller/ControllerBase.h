@@ -79,7 +79,7 @@ private:
 	InputName cursolInput[ChStd::EnumCast(CursolMoveTypeName::None)] = {InputName::None,InputName::None,InputName::None,InputName::None};
 	InputName wheelInput[2]{ InputName::None,InputName::None };
 	ChWin::MouseController* mouse = &ChWin::Mouse();
-	float moveSensitivility = 0.3f;
+	float moveSensitivility = 0.9f;
 	ChVec2 nowPos = ChVec2();
 	ChVec2 windSize = ChVec2();
 };
