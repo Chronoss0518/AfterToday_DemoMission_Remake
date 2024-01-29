@@ -17,10 +17,6 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
-	auto&& mouse = ChWin::Mouse();
-	mouse.SetVisibleFlg(true);
-	mouse.SetCenterFixedFlg(false);
-
 	auto&& device = ChD3D11::D3D11Device();
 	spriteShader.Init(device);
 
