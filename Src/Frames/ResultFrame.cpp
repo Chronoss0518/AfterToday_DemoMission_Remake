@@ -44,8 +44,6 @@
 
 void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
-	mouse->SetCenterFixedFlg(false);
-	mouse->SetVisibleFlg(true);
 	float color = (0xaa * 1.0f) / (0xff * 1.0f);
 
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(color, color, color, 1.0f));
