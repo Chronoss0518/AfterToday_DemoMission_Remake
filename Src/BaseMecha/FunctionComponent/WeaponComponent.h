@@ -19,7 +19,12 @@ public:
 	std::vector<ChPtr::Weak<WeaponFunction>> GetRegistWeaponList();
 
 	std::vector<ChPtr::Weak<MechaPartsObject>> GetWeaponMechaPartsList();
-	
+
+	std::wstring GetWeaponName();
+
+	std::wstring GetNowBulletNum();
+
+	std::wstring GetReloadCount();
 
 public:
 

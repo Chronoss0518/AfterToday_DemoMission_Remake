@@ -96,6 +96,12 @@ public:
 
 	unsigned long GetUseAttackType() { return useAttackType; }
 
+	std::wstring GetWeaponName();
+
+	std::wstring GetNowBulletNum();
+
+	std::wstring GetReloadCount();
+
 public:
 
 	void Update();

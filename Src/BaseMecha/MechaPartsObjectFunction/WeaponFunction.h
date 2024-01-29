@@ -42,8 +42,19 @@ public:
 
 	virtual void SetData(WeaponData* _data) = 0;
 
-protected:
+public:
 
+	static constexpr const wchar_t* const GetDefaultBulletNum() { return L"-"; }
+
+	static constexpr const wchar_t* const GetDefaultReloadCount() { return L"-"; }
+
+	virtual std::wstring GetWeaponName() { return L""; }
+
+	virtual std::wstring GetBulletNum() = 0;
+
+	virtual std::wstring GetReloadCount() = 0;
+
+protected:
 
 	WeaponData* data = nullptr;
 
@@ -70,9 +81,13 @@ public:
 	//‚¿è•”•ª‚Æ“g‚Ì‹æØ‚è•”•ª//
 	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _hitStart) { hitObjectStart = _hitStart; }
 
-private:
-
 	void SetData(WeaponData* _data)override;
+
+public:
+
+	inline std::wstring GetBulletNum()override { return GetDefaultBulletNum(); }
+
+	inline std::wstring GetReloadCount()override { return GetDefaultReloadCount(); }
 
 private:
 
@@ -103,9 +118,13 @@ public:
 	//’e‚ªo‚Ä‚­‚éêŠ//
 	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }
 
-private:
-
 	void SetData(WeaponData* _data)override;
+
+public:
+
+	std::wstring GetBulletNum()override;
+
+	std::wstring GetReloadCount()override;
 
 private:
 

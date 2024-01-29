@@ -24,6 +24,42 @@ void MechaPartsObject::Release()
 	}
 }
 
+std::wstring MechaPartsObject::GetWeaponName()
+{
+	std::wstring result = ChStr::UTF8ToWString(baseParts->GetThisFileName());
+
+	unsigned long extensionStringPos = result.find_last_of('.');
+	unsigned long fileNameLength = result.length();
+
+	for (unsigned long i = extensionStringPos; i < fileNameLength; i++)
+	{
+		result.pop_back();
+	}
+	
+
+	if (!weaponFunctions.empty())
+		if (weaponFunctions.size() > useAttackType)
+			result += weaponFunctions[useAttackType]->GetWeaponName();
+
+	return result;
+}
+
+std::wstring MechaPartsObject::GetNowBulletNum()
+{
+	if (weaponFunctions.empty())return WeaponFunction::GetDefaultBulletNum();
+	if (weaponFunctions.size() <= useAttackType)return WeaponFunction::GetDefaultBulletNum();
+
+	return weaponFunctions[useAttackType]->GetBulletNum();
+}
+
+std::wstring MechaPartsObject::GetReloadCount()
+{
+	if (weaponFunctions.empty())return WeaponFunction::GetDefaultReloadCount();
+	if (weaponFunctions.size() <= useAttackType)return WeaponFunction::GetDefaultReloadCount();
+
+	return weaponFunctions[useAttackType]->GetReloadCount();
+}
+
 void MechaPartsObject::Update()
 {
 	for (auto&& func : externulFunctions)

@@ -11,6 +11,9 @@
 
 #define SE_VOLUME_SIZE 0.1f
 
+#define NOW_BULLET_NUM_TEXT_COUNT 5
+#define NOW_MAGAZINE_TEXT_COUNT 2
+
 void WeaponFunction::Release()
 {
 	se.Release();
@@ -156,4 +159,30 @@ void GunFunction::PosUpdate()
 	if (shotPos == nullptr)return;
 
 	lastShotPos = shotPos->GetDrawLHandMatrix();
+}
+
+std::wstring GunFunction::GetBulletNum()
+{
+	std::wstring res = std::to_wstring(nowBulletNum);
+
+	unsigned long len = res.length();
+	for (unsigned long i = len; i < NOW_BULLET_NUM_TEXT_COUNT; i++)
+	{
+		res = L'0' + res;
+	}
+
+	return res;
+}
+
+std::wstring GunFunction::GetReloadCount()
+{
+	std::wstring res = std::to_wstring(nowMagazineNum);
+
+	unsigned long len = res.length();
+	for (unsigned long i = len; i < NOW_MAGAZINE_TEXT_COUNT; i++)
+	{
+		res = L'0' + res;
+	}
+
+	return res;
 }

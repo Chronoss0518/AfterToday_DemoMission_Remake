@@ -72,6 +72,20 @@ std::vector<ChPtr::Weak<MechaPartsObject>> WeaponComponent::GetWeaponMechaPartsL
 	return res;
 }
 
+std::wstring WeaponComponent::GetWeaponName()
+{
+	return weapon[useWeaponNo]->GetWeaponName();
+}
+
+std::wstring WeaponComponent::GetNowBulletNum()
+{
+	return weapon[useWeaponNo]->GetNowBulletNum();
+}
+
+std::wstring WeaponComponent::GetReloadCount()
+{
+	return weapon[useWeaponNo]->GetReloadCount();
+}
 
 void WeaponComponent::Attack()
 {
