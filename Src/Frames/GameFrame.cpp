@@ -1,14 +1,17 @@
 #include"../BaseIncluder.h"
 
 #include"../Shader/EffectObject/EffectObjectShader.h"
+#include"../Shader/EffectSprite/EffectSpriteShader.h"
 
 #include"../AllStruct.h"
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../BaseMecha/MechaParts.h"
+#include"../BaseMecha/FunctionComponent/WeaponComponents.h"
 #include"../Attack/AttackObject.h"
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
+#include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
 #include"GameFrame.h"
 
 #include"../BaseMecha/Controller/ControllerBase.h"
@@ -30,6 +33,10 @@
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
 
+#ifndef FIELD_DIRECTORY
+#define FIELD_DIRECTORY(current_path) MESH_DIRECTORY("Field/" current_path)
+#endif
+
 #define INIT_SMOKE_DISPERSAL_POWER 5.0f
 #define INIT_SMOKE_ALPHA_POWER 0.5f
 
@@ -49,8 +56,15 @@
 
 #define CENTER_UI_TOP 110.0f
 #define CENTER_UI_LEFT 390.0f
-#define CENTER_UI_BOTTOM CENTER_UI_TOP + 500.0f
-#define CENTER_UI_RIGHT CENTER_UI_LEFT + 500.0f
+#define CENTER_UI_SIZE 500.0f
+#define CENTER_UI_BOTTOM CENTER_UI_TOP + CENTER_UI_SIZE
+#define CENTER_UI_RIGHT CENTER_UI_LEFT + CENTER_UI_SIZE
+
+#define SHOT_TARGET_MARKER_SIZE 10.0f
+#define SHOT_TARGET_DISTANCE 5.0f
+
+#define ENEMY_TARGET_MARKER_SIZE 112.0f
+#define ENEMY_TARGET_RANGE_COEFFICIENT 0.8f
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //GameÉÅÉ\ÉbÉh
@@ -85,6 +99,31 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	meshDrawer.SetCullMode(D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(true);
 
+	lightBloomeDrawer.Init(ChD3D11::D3D11Device());
+	lightBloomeDrawer.SetAlphaBlendFlg(true);
+	lightBloomeDrawer.SetBlurPower(15);
+	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT));
+
+	shotTargetDrawer.Init(ChD3D11::D3D11Device());
+	shotTargetDrawer.SetCullMode(D3D11_CULL_BACK);
+	shotTargetDrawer.SetAlphaBlendFlg(true);
+	
+	shotTargetBorad.Init(ChD3D11::D3D11Device());
+	shotTargetBorad.SetInitSquare();
+
+	ChVec4 rect = ChVec4::FromRect((GAME_WINDOW_WIDTH - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_HEIGHT - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_WIDTH + SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_HEIGHT + SHOT_TARGET_MARKER_SIZE) * 0.5f);
+	rect = RectToGameWindow(rect);
+
+	for (unsigned long i = 0; i < 4; i++)
+	{
+		ChVec3 pos = shotTargetBorad.GetPos(i);
+		pos.z = SHOT_TARGET_DISTANCE;
+		shotTargetBorad.SetPos(i, pos);
+	}
+
+	shotTargetMarkerTex.CreateTexture(TEXTURE_DIRECTORY("ATKCurrsol.png"), ChD3D11::D3D11Device());
+
+
 	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
 	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
 
@@ -102,16 +141,22 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
 	smokeEffectList->SetInitialDispersalPower(1.0f);
 
-	enemyMarkerShader = ChPtr::Make_S<EffectObjectShader>();
+	enemyMarkerShader = ChPtr::Make_S<EffectSpriteShader>();
 	enemyMarkerShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT);
+	enemyMarkerShader->SetEffectTexture(ChStr::UTF8ToWString(TEXTURE_DIRECTORY("Ts.png")),1,1);
+	enemyMarkerShader->SetObjectSize(ChVec2(ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_WIDTH, ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_HEIGHT));
+	for (unsigned long i = 0; i < MAX_MECHA_OBJECT_COUNT; i++)
+	{
+		enemyMarkerShader->SetEffectColor(ChVec4(1.0f), i);
+	}
 
 	light.Init(ChD3D11::D3D11Device());
 	light.SetUseLightFlg(true);
-	light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
+	light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.5f);
 
-	centerUITexture->CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBarFrame.png"));
-	receveDamageUITexture->CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Damage.png"));
-	enelgyUITexture->CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Enelgy.png"));
+	centerUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBarFrame.png"));
+	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Damage.png"));
+	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Enelgy.png"));
 
 	gageDrawer.Init(ChD3D11::D3D11Device());
 
@@ -122,9 +167,12 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	centerUISprite.SetInitPosition();
 	centerUISprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(CENTER_UI_LEFT, CENTER_UI_TOP, CENTER_UI_RIGHT, CENTER_UI_BOTTOM)));
 	centerUISprite.SetUVPos(0, ChVec2(0.0f, 1.0f));
-	centerUISprite.SetUVPos(1, ChVec2(1.0f, 1.0f));;
+	centerUISprite.SetUVPos(1, ChVec2(1.0f, 1.0f));
 	centerUISprite.SetUVPos(2, ChVec2(1.0f, 0.0f));
 	centerUISprite.SetUVPos(3, ChVec2(0.0f, 0.0f));
+
+	testTextureSprite.Init();
+	testTextureSprite.SetPosRect(ChVec4::FromRect(0.1f,-0.1f,0.9f,-0.9f));
 
 	hitIcon.sprite.Init();
 	hitIcon.sprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(HIT_ICON_LEFT, HIT_ICON_TOP, HIT_ICON_RIGHT, HIT_ICON_BOTTOM)));
@@ -139,23 +187,23 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		meshDrawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
 		smokeEffectList->SetProjectionMatrix(proMat);
+		shotTargetDrawer.SetProjectionMatrix(proMat);
 	}
 
 	LoadStage(stageName);
 
-	enemyMarkerTexture->CreateTexture(TEXTURE_DIRECTORY("Ts.png"), ChD3D11::D3D11Device());
-
-	enemyMarker.CreateRenderTarget(
-		ChD3D11::D3D11Device(),
-		GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-
 
 	messageBox = ChPtr::Make_S<GameInMessageBox>();
 	messageBox->Init(ChD3D11::D3D11Device());
+
+	weaponDataDrawer = ChPtr::Make_S<WeaponDataDrawUI>();
+	weaponDataDrawer->Init(ChD3D11::D3D11Device());
 	
 	rt2D.CreateRenderTarget(ChD3D11::D3D11Device(),GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rt3D.CreateRenderTarget(ChD3D11::D3D11Device(), GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rtHighLightMap.CreateRenderTarget(ChD3D11::D3D11Device(), GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	dsTex.CreateDepthBuffer(ChD3D11::D3D11Device(), GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	fadeOutTexture.CreateColorTexture(ChD3D11::D3D11Device(), ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f), 1, 1);
 
 	uiSprite.Init(); 
 	uiSprite.SetInitPosition();
@@ -458,6 +506,11 @@ void GameFrame::Release()
 	PhysicsMachine::ClearFieldList();
 	MechaParts::ClearPartsList();
 	Attack::AllRelease();
+
+	auto&& mouse = ChWin::Mouse();
+	mouse.SetVisibleFlg(true);
+	mouse.SetCenterFixedFlg(false);
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -476,13 +529,6 @@ void GameFrame::Update()
 
 	if(!scriptPauseFlg)
 		script->UpdateScript();
-
-	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-	if (windows->IsPushKey(VK_ESCAPE))
-	{
-		windows->Release();
-		return;
-	}
 
 #if DEBUG_FLG
 
@@ -567,6 +613,12 @@ void GameFrame::UpdateFunction()
 	Failed();
 
 	messageBox->Update();
+	weaponDataDrawer->Update();
+
+	for (unsigned long i = 0; i < ENEMY_TARGET_MARKER_SIZE; i++)
+	{
+		enemyMarkerShader->SetEffectDisplayFlg(false,i);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -586,24 +638,45 @@ void GameFrame::DrawFunction()
 	mechaList.ObjectDrawBegin();
 
 	rt3D.SetBackColor(ChD3D11::D3D11DC(), ChVec4::FromColor(0.0f, 0.0f, 1.0f, 1.0f));
+	rtHighLightMap.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f,0.0f,0.0f,0.0f));
 	rt2D.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f));
 	dsTex.ClearDepthBuffer(ChD3D11::D3D11DC());
 
 	ChD3D11::Shader11().DrawStart();
 
-	ID3D11RenderTargetView* renderTargetView = rt3D.GetRTView();
-	ChD3D11::D3D11DC()->OMSetRenderTargets(1, &renderTargetView, dsTex.GetDSView());
 	Render3D();
-	renderTargetView = rt2D.GetRTView();
+	ID3D11RenderTargetView* renderTargetView = rt2D.GetRTView();
 	ChD3D11::D3D11DC()->OMSetRenderTargets(1, &renderTargetView,nullptr);
+
+	enemyMarkerShader->DrawStart(ChD3D11::D3D11DC());
+
+	enemyMarkerShader->Draw(ChD3D11::D3D11DC());
+
+	enemyMarkerShader->DrawEnd();
+
 	Render2D();
 
 	renderTargetView = rt3D.GetRTView();
 	ChD3D11::D3D11DC()->OMSetRenderTargets(1, &renderTargetView, nullptr);
+	//lightBloomeDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	//lightBloomeDrawer.Draw(rtHighLightMap, uiSprite);
+
+	//lightBloomeDrawer.DrawEnd();
 
 	uiDrawer.DrawStart(ChD3D11::D3D11DC());
 
 	uiDrawer.Draw(rt2D, uiSprite);
+
+	if (successFlg)
+	{
+		ChVec4 fadeOutColor = ChVec4(1.0f);
+		fadeOutColor.a =(SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
+		audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
+		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
+	}
+
+	uiDrawer.Draw(rtHighLightMap, testTextureSprite);
 
 	uiDrawer.DrawEnd();
 
@@ -625,10 +698,45 @@ void GameFrame::DrawFunctionBegin()
 	auto viewMat = drawMecha->GetViewMat();
 
 	meshDrawer.SetViewMatrix(viewMat);
+	
+	shotTargetDrawer.SetViewMatrix(viewMat);
+
+	shotTargetdrawBaseMatrix.SetPosition(drawMecha->GetPosition());
+	shotTargetdrawBaseMatrix.SetRotationYAxis(ChMath::ToRadian(drawMecha->GetRotation().y));
+	shotTargetdrawBaseMatrix.SetScalling(SHOT_TARGET_MARKER_SIZE);
 
 	shotEffectList->SetViewMatrix(viewMat);
 
 	smokeEffectList->SetViewMatrix(viewMat);
+
+	auto&& objectLooker = drawMecha->GetComponent<CPUObjectLooker>();
+	if (objectLooker != nullptr)
+	{
+
+		ChLMat vpMat = viewMat * projectionMat;
+
+		auto&& list = objectLooker->GetLookMechaList();
+
+
+		for (unsigned long i = 0; i < list.size(); i++)
+		{
+			auto&& mecha = mechas[list[i]];
+			if (mecha.expired())continue;
+			auto&& mechaPointer = mecha.lock();
+
+			ChVec4 position = vpMat.Transform(mechaPointer->GetPosition());
+			position /= position.w;
+
+			ChVec2 tmp = position;
+			tmp.Abs();
+			if (tmp.y > CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_HEIGHT || tmp.x > (CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_WIDTH))continue;
+
+			enemyMarkerShader->SetEffectPosition(position, i);
+			enemyMarkerShader->SetEffectDisplayFlg(true, i);
+
+		}
+
+	}
 
 	viewMat.Inverse();
 
@@ -639,29 +747,61 @@ void GameFrame::DrawFunctionBegin()
 	ChVec3 dir = ChVec3(0.25f, -0.5f, 0.25f);
 	dir.Normalize();
 	light.SetLightDir(dir);
+	
+	auto&& rightWeaponComponent = drawMecha->GetComponent<RightWeaponComponent>();
+	if (rightWeaponComponent != nullptr)
+	{
+		weaponDataDrawer->SetWeaponName(rightWeaponComponent->GetWeaponName(), WeaponDataDrawUI::DRAW_TYPE::Right);
+		weaponDataDrawer->SetNowBulletNum(rightWeaponComponent->GetNowBulletNum(), WeaponDataDrawUI::DRAW_TYPE::Right);
+		weaponDataDrawer->SetReloadCount(rightWeaponComponent->GetReloadCount(), WeaponDataDrawUI::DRAW_TYPE::Right);
+	}
+
+	auto&& leftWeaponComponent = drawMecha->GetComponent<LeftWeaponComponent>();
+	if (leftWeaponComponent != nullptr)
+	{
+		weaponDataDrawer->SetWeaponName(leftWeaponComponent->GetWeaponName(), WeaponDataDrawUI::DRAW_TYPE::Left);
+		weaponDataDrawer->SetNowBulletNum(leftWeaponComponent->GetNowBulletNum(), WeaponDataDrawUI::DRAW_TYPE::Left);
+		weaponDataDrawer->SetReloadCount(leftWeaponComponent->GetReloadCount(), WeaponDataDrawUI::DRAW_TYPE::Left);
+	}
 
 }
 
 void GameFrame::Render3D(void)
 {
+	light.SetUseLightFlg(true);
+	light.SetPSDrawData(ChD3D11::D3D11DC());
+	
+
+	ID3D11RenderTargetView* meshRT[] = { rt3D.GetRTView() , rtHighLightMap.GetRTView() };
+	ChD3D11::D3D11DC()->OMSetRenderTargets(1, meshRT, dsTex.GetDSView());
+
 	meshDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	light.SetPSDrawData(ChD3D11::D3D11DC());
+	mechaList.ObjectDraw3D();
 
+	bulletList.ObjectDraw3D();
+	
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
 		auto mapModel = weakMapModel.lock();
 		meshDrawer.Draw(*mapModel->model, (ChMat_11)mapModel->mat);
 	}
 
-	mechaList.ObjectDraw3D();
-
-	bulletList.ObjectDraw3D();
-
 	meshDrawer.DrawEnd();
 
 	shotEffectList->Draw(ChD3D11::D3D11DC());
 	smokeEffectList->Draw(ChD3D11::D3D11DC());
+
+	light.SetUseLightFlg(false);
+	light.SetPSDrawData(ChD3D11::D3D11DC());
+
+	ChD3D11::D3D11DC()->OMSetRenderTargets(1, meshRT, nullptr);
+
+	shotTargetDrawer.DrawStart(ChD3D11::D3D11DC());
+
+	shotTargetDrawer.Draw(shotTargetMarkerTex, shotTargetBorad, (ChMat_11)shotTargetdrawBaseMatrix);
+
+	shotTargetDrawer.DrawEnd();
 
 }
 
@@ -670,29 +810,32 @@ void GameFrame::Render2D(void)
 
 	if (ChPtr::NotNullCheck(drawMecha))
 	{
-		float damageParcec = drawMecha->GetDamage() / drawMecha->GetMaxDamageGage();
+		float damageParcec = static_cast<float>(drawMecha->GetDamage()) / drawMecha->GetMaxDamageGage();
 
 		float enelgyParcec = static_cast<float>(drawMecha->GetNowEnelgy()) / drawMecha->GetMaxEnelgy();
 
 		if (!successFlg && !failedFlg)
 		{
+			OutputDebugString(("Enelgy Parcec" + std::to_string(enelgyParcec * 0.5f) + "\n").c_str());
 			gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
 
 			gageDrawer.DrawStart(ChD3D11::D3D11DC());
 
-			gageDrawer.Draw(*enelgyUITexture, centerUISprite);
+			gageDrawer.Draw(enelgyUITexture, centerUISprite);
 
 			gageDrawer.DrawEnd();
 
+			OutputDebugString(("Damage Parcec" + std::to_string(enelgyParcec * 0.5f) + "\n").c_str());
 			gageDrawer.SetDrawValue(damageParcec * -0.5f);
 
 			gageDrawer.DrawStart(ChD3D11::D3D11DC());
 
-			gageDrawer.Draw(*receveDamageUITexture, centerUISprite);
+			gageDrawer.Draw(receveDamageUITexture, centerUISprite);
 
 			gageDrawer.DrawEnd();
 
 		}
+
 	}
 
 	uiDrawer.DrawStart(ChD3D11::D3D11DC());
@@ -701,7 +844,9 @@ void GameFrame::Render2D(void)
 
 	if (!successFlg && !failedFlg)
 	{
-		uiDrawer.Draw(*centerUITexture, centerUISprite);
+		uiDrawer.Draw(centerUITexture, centerUISprite);
+		weaponDataDrawer->Draw(uiDrawer);
+
 	}
 
 	if (ChPtr::NotNullCheck(drawMecha))
@@ -716,8 +861,6 @@ void GameFrame::Render2D(void)
 	}
 
 	uiDrawer.DrawEnd();
-
-	mechaList.ObjectDraw2D();
 
 }
 
@@ -907,11 +1050,11 @@ void GameFrame::AddField(const std::string& _text)
 
 	if (argment[0].substr(pos) == ".x") {
 		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
+		loader.CreateModel(mainMap->model, FIELD_DIRECTORY(+argment[0]));
 	}
 	else if (argment[0].substr(pos) == ".obj") {
 		ChCpp::ModelLoader::ObjFile loader;
-		loader.CreateModel(mainMap->model, MESH_DIRECTORY(+argment[0]));
+		loader.CreateModel(mainMap->model, FIELD_DIRECTORY(+argment[0]));
 	}
 	else
 	{
@@ -973,11 +1116,11 @@ void GameFrame::AddSkyObject(const std::string& _text)
 	unsigned long pos = argment[0].find_last_of(".");
 	if (argment[0].substr(pos) == ".x") {
 		ChCpp::ModelLoader::XFile loader;
-		loader.CreateModel(skySphere, MESH_DIRECTORY(+argment[0]));
+		loader.CreateModel(skySphere, FIELD_DIRECTORY(+argment[0]));
 	}
 	else if (argment[0].substr(pos) == ".obj") {
 		ChCpp::ModelLoader::ObjFile loader;
-		loader.CreateModel(skySphere, MESH_DIRECTORY(+argment[0]));
+		loader.CreateModel(skySphere, FIELD_DIRECTORY(+argment[0]));
 	}
 	else
 	{
@@ -1076,11 +1219,6 @@ void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVect
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow)
 {
 	smokeEffectList->AddSmokeEffect(_pos, _moveVector, _initDispersalpower, _initAlphaPow);
-}
-
-void GameFrame::SetMessage(const std::wstring& _messenger, const std::wstring& _message, unsigned long _afterFrame, unsigned long _messageAddFrame)
-{
-	messageBox->SetMessage(_messenger, _message, _afterFrame, _messageAddFrame);
 }
 
 std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix)

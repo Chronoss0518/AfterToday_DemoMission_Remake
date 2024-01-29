@@ -12,6 +12,8 @@ class AttackObject;
 class BaseMecha;
 class GameScript;
 class EffectObjectShader;
+class EffectSpriteShader;
+class WeaponComponent;
 
 struct LookSquareValue;
 
@@ -19,6 +21,8 @@ class ShotEffectList;
 class SmokeEffectList;
 
 class GameInMessageBox;
+class WeaponDataDrawUI;
+
 
 struct MapObject : public ChCpp::BaseObject
 {
@@ -94,10 +98,6 @@ public:
 	void AddSmokeEffectObject(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower);
 
 	void AddSmokeEffectObject(const ChVec3& _pos,const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow);
-
-public:
-
-	void SetMessage(const std::wstring& _messenger, const std::wstring& _message,unsigned long _afterFrame, unsigned long _messageAddFrame);
 
 public:
 
@@ -183,16 +183,21 @@ private:
 	BaseMecha* drawMecha = nullptr;
 	ChD3D11::Shader::CircleCullingSprite11 gageDrawer;
 	ChD3D11::Shader::BaseDrawSprite11 uiDrawer;
+	ChD3D11::Shader::BasicBlurShader11 lightBloomeDrawer;
 	ChD3D11::Sprite11 uiSprite;
 	ImageSprite hitIcon;
 
-
-	ChPtr::Shared<ChD3D11::Texture11> centerUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
-	ChPtr::Shared<ChD3D11::Texture11> enelgyUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
-	ChPtr::Shared<ChD3D11::Texture11> receveDamageUITexture = ChPtr::Make_S<ChD3D11::Texture11>();
+	ChD3D11::Shader::BaseDrawPolygonBoard11 shotTargetDrawer;
+	ChD3D11::PolygonBoard11 shotTargetBorad;
+	ChD3D11::Texture11 shotTargetMarkerTex;
+	ChLMat shotTargetdrawBaseMatrix;
+	
+	ChD3D11::Texture11 centerUITexture;
+	ChD3D11::Texture11 enelgyUITexture;
+	ChD3D11::Texture11 receveDamageUITexture;
 	ChD3D11::Sprite11 centerUISprite;
 
-	ChPtr::Shared<ChD3D11::Texture11>enemyMarkerTexture = ChPtr::Make_S<ChD3D11::Texture11>();
+
 	bool gameEndFlg = false;
 
 	ChLMat projectionMat;
@@ -202,14 +207,14 @@ private:
 
 	ChPtr::Shared<EffectObjectShader> cloudEffectShader = nullptr;
 	ChPtr::Shared<EffectObjectShader> waterSplashEffectShader = nullptr;
-	ChPtr::Shared<EffectObjectShader> enemyMarkerShader = nullptr;
 	ChPtr::Shared<EffectObjectShader> fireShader = nullptr;
 
-	ChD3D11::RenderTarget11 enemyMarker;
-	ChD3D11::RenderTarget11 baseMarker;
+	ChPtr::Shared<EffectSpriteShader> enemyMarkerShader = nullptr;
 
 	ChD3D11::RenderTarget11 rt2D;
 	ChD3D11::RenderTarget11 rt3D;
+	ChD3D11::RenderTarget11 rtHighLightMap;
+	ChD3D11::Texture11 fadeOutTexture;
 	ChD3D11::DepthStencilTexture11 dsTex;
 
 	ChD3D11::CB::CBLight11 light;
@@ -217,6 +222,10 @@ private:
 	bool isFrendryFireFlg = false;
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
+	ChPtr::Shared<WeaponDataDrawUI> weaponDataDrawer = nullptr;
+
+
+	ChD3D11::Sprite11 testTextureSprite;
 
 	// 3D•`‰æ //
 	void Render3D(void);
