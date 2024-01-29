@@ -9,6 +9,7 @@
 struct OutColor
 {
 	float4 color : SV_Target0;
+    float4 highLightMap : SV_Target1;
 };
 
 void FrustumCulling(float4 _pos);
@@ -33,9 +34,22 @@ OutColor main(In_Pixel _pixel)
 
 	res.color = baseTex.Sample(baseSmp, _pixel.uv) * _pixel.color;
 	clip(res.color.a - alphaTestNum);
-	res.color.rgb *= luminescencePower;
-
-	res.color.rgb = GetLightColor(res, _pixel);
+    res.highLightMap.a = res.color.a;
+    res.highLightMap.rgb = res.color.rgb *= luminescencePower;
+    res.highLightMap.r = max(res.highLightMap.r - 1.0f, 0.0f);
+    res.highLightMap.g = max(res.highLightMap.g - 1.0f, 0.0f);
+    res.highLightMap.b = max(res.highLightMap.b - 1.0f, 0.0f);
+    
+    res.highLightMap.a =
+		res.highLightMap.r > 0.0f ||
+		res.highLightMap.g > 0.0f ||
+		res.highLightMap.b > 0.0f ?
+		res.highLightMap.a : 0.0f;
+	
+	res.color.rgb = 
+		res.highLightMap.a > 0.0f ?
+		res.color.rgb :
+		GetLightColor(res, _pixel);
 
 	return res;
 }

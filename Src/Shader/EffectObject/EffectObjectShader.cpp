@@ -297,8 +297,11 @@ void EffectObjectShader::Draw(ID3D11DeviceContext* _dc)
 	if (ChPtr::NullCheck(_dc))return;
 	if (effectTexture == nullptr)return;
 
-	if(alphaBlendTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc);
-
+	if (alphaBlendTestFlg)
+	{
+		float factor[] = { 0.1f,0.1f,0.1f,0.1f };
+		ChD3D11::Shader::SampleShaderBase11::SetShaderBlender(_dc, factor);
+	}
 	if (!useDepthStencilTestFlg)ChD3D11::Shader::SampleShaderBase11::SetShaderDepthStencilTester(_dc);
 
 	gsBuf.SetToGeometryShader(_dc);

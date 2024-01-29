@@ -73,9 +73,9 @@ public:
 
 	unsigned long GetMaxEffectCount() { return effectPosList.size(); }
 
-	In_Vertex GetEffectPos(unsigned long _num)
+	EOS_In_Vertex GetEffectPos(unsigned long _num)
 	{ 
-		In_Vertex res;
+		EOS_In_Vertex res;
 		if (_num < effectPosList.size())
 		{
 			res.pos = effectPosList[_num].pos;
@@ -103,8 +103,8 @@ private:
 	bool alphaBlendTestFlg = false;
 	bool useDepthStencilTestFlg = true;
 	bool vbUpdateFlg = true;
-	std::vector<In_Vertex> effectPosList;
-	ChD3D11::VertexBuffer11<In_Vertex> vb;
+	std::vector<EOS_In_Vertex> effectPosList;
+	ChD3D11::VertexBuffer11<EOS_In_Vertex> vb;
 
 	ChPtr::Shared<ChD3D11::TextureBase11> effectTexture = nullptr;
 

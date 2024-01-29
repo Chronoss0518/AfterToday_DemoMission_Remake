@@ -31,7 +31,7 @@ using uint2 = ChMath::Vector2Base<unsigned int>;
 
 #endif
 
-struct In_Vertex
+struct EOS_In_Vertex
 {
 	float3 pos Se_POSITION(0);
 	float3 v_normal Se_NORMAL(0);

@@ -5,7 +5,7 @@
 #include"EffectObjectShader.hlsli"
 
 In_Geometry main(
-	In_Vertex _vertex
+	EOS_In_Vertex _vertex
 )
 {
 	In_Geometry res;
