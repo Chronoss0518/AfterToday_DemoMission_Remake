@@ -76,6 +76,8 @@ public://Get Function//
 
 	inline std::string GetThisFileName() { return thisFileName; }
 
+	inline std::string GetThisFilePath() { return thisFilePath; }
+
 	inline ChD3D11::Shader::BaseDrawMesh11* GetMeshDrawer() { return drawer; }
 
 public:
@@ -91,6 +93,7 @@ private:
 	float mass = 1.0f;
 
 	std::string thisFileName = "";
+	std::string thisFilePath = "";
 
 	float groundHeight = 0.0f;
 

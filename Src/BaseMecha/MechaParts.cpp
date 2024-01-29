@@ -75,7 +75,12 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string
 
 	if (text.empty())return;
 
-	thisFileName = _fileName;
+	thisFilePath = _fileName;
+	
+	if (thisFilePath.find("/"))
+	{
+		thisFileName = thisFilePath.substr(thisFilePath.find_last_of("/") + 1);
+	}
 
 	Deserialize(_base, _device, text);
 }
@@ -95,7 +100,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		std::string tmp = textObject.GetTextLine(0);
 		loader.CreateModel(model, tmp);
 		defaultFrameMat = model->GetFrameTransformLMat();
-		if (thisFileName.find("Foot/") != thisFileName.find("Body/"))
+		if (thisFilePath.find("Foot/") != thisFilePath.find("Body/"))
 		{
 			auto test = model->GetInitAllFrameMinPos().y;
 			if (groundHeight > test)
