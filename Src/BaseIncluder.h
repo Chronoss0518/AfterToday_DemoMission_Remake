@@ -166,6 +166,13 @@ struct ImageSprite
 	ChD3D11::Texture11 image;
 };
 
+struct TextDrawerWICBitmap{
+	ChD3D::DirectFontFromWICBitmap drawer;
+	ChD3D::TextFormatObject format;
+	ChD3D::BrushObject brush;
+	ChD3D::WICBitmapObject bitmap;
+};
+
 static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)
 {
 	if (_meshObject == nullptr)return;
