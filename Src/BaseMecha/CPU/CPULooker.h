@@ -154,6 +154,8 @@ public:
 
 	unsigned long GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize);
 
+	std::vector<unsigned long> GetLookMechaList() { return lookMechaList; }
+
 public:
 	
 	bool IsEndUpdate() { return !updateFlg; }
@@ -202,6 +204,6 @@ private:
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteDrawer;
 
-	std::vector<ChPtr::Weak<BaseMecha>>lookMechaList;
+	std::vector<unsigned long>lookMechaList;
 
 };

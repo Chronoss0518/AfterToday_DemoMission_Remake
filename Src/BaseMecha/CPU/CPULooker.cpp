@@ -473,7 +473,7 @@ void CPUObjectLooker::Init()
 
 				updateFlg = false;
 
-				OutputDebugString(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
+				//OutputDebugString(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
 			}
 		});
 #endif
@@ -514,7 +514,7 @@ void CPUObjectLooker::Init()
 void CPUObjectLooker::DrawBegin()
 {
 	nowUpdateCount = (nowUpdateCount + 1) % updateCount;
-
+	if(!lookMechaList.empty())lookMechaList.clear();
 
 	if (nowUpdateCount <= 0)
 	{
@@ -707,6 +707,11 @@ void CPUObjectLooker::FindMecha()
 		}
 
 		if (!lookFlg)continue;
+
+		if (memberType == ChStd::EnumCast(MemberType::Enemy))
+		{
+			lookMechaList.push_back(i);
+		}
 
 		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
 		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
