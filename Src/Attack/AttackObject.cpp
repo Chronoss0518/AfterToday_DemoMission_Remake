@@ -48,7 +48,7 @@ void AttackObject::Move()
 void AttackObject::Draw3D()
 {
 	ChLMat tmp = ChLMat();
-	tmp.SetScalling(ChVec3(10.0f));
+	//tmp.SetScalling(ChVec3(10.0f));
 	tmp.SetPosition(physics->GetPosition());
 	tmp.SetRotation(physics->GetRotation());
 	ChMat_11 draw;
