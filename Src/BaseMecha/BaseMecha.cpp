@@ -48,6 +48,7 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11&
 	drawer = &_drawer;
 	frame = _frame;
 	physics->Init();
+	if (ChPtr::NullCheck(_frame))return;
 	mechasNo = frame->GetMechas().size();
 }
 
@@ -264,13 +265,6 @@ void BaseMecha::MoveEnd()
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
-}
-
-void BaseMecha::DrawUI()
-{
-	auto&& leftWeaponData = GetComponent<LeftWeaponComponent>();
-
-	auto&& rightWeaponData = GetComponent<RightWeaponComponent>();
 }
 
 void BaseMecha::DrawWeaponComponent(ChPtr::Shared<WeaponComponent> _component)
