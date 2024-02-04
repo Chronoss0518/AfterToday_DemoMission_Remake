@@ -13,6 +13,5 @@ private:
 
 	ChPtr::Shared<MechaPartsObject>cameraPos = nullptr;
 
-	bool 
 
 };
