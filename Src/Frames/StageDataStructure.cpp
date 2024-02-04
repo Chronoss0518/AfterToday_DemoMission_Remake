@@ -44,9 +44,36 @@ void StageDataStructure::Load(const std::string& _filePath)
 
 	auto stageScriptPathJson = jsonObject->GetJsonString(J_STAGE_SCRIPT_PATH);
 	if (stageScriptPathJson != nullptr)stageScriptPath = stageScriptPathJson->GetString();
+	std::string test = "";
 
 	auto stageStrategyOverviewJson = jsonObject->GetJsonString(J_STAGE_STRATEGY_OVERVIEW);
-	if (stageStrategyOverviewJson != nullptr)stageStrategyOverview = stageStrategyOverviewJson->GetString();
+	if (stageStrategyOverviewJson != nullptr)test = stageStrategyOverviewJson->GetString();
+
+	std::string u8crlf = ChStr::UTF8ToString(L"\n");
+	
+	bool crlfFlg = true;
+
+	for (unsigned long i = 0; i < test.size();i++)
+	{
+		crlfFlg = true;
+		
+		for (unsigned long j = 0; j < u8crlf.size(); j++)
+		{
+			if (test[i] == u8crlf[j])continue;
+			crlfFlg = false;
+			break;
+		}
+		if (crlfFlg)
+		{
+			stageStrategyOverview += "\n";
+
+			i += u8crlf.length();
+
+			continue;
+		}
+
+		stageStrategyOverview += test[i];
+	}
 
 	auto missionTimeSeccondJson = jsonObject->GetJsonNumber(J_STAGE_MISSION_TIME);
 	if (missionTimeSeccondJson != nullptr)missionTimeSeccond = *missionTimeSeccondJson;
