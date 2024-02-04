@@ -1,9 +1,9 @@
 {
   "StageImage": "",
-  "StageName": "Test Stage",
+  "StageName": "Air型の撃破",
   "StageScriptPath": "stage1.chs",
   "StageLocationName": "Test Locale",
-  "StageStrategyOverview": "Test Stage",
+  "StageStrategyOverview": "ここではAir型の試験に望んでもらう。\nAir型は軽量機にして、速度を重視した機体である。\n今回はAir型を2機用意している。片方に搭乗し、テストに参加してもらう",
   "MissionTimeSeccond": 0,
   "SuccessFee": 10000,
   "DrawSuccessFee": 10000,

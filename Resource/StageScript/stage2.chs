@@ -1,7 +1,5 @@
 //戦闘BGMを追加//
-LoadBGM Battle1.wav -l
-//戦闘BGMを追加//
-LoadBGM MainBattle1.wav -l -ls 220 -le 647
+LoadBGM reconnaissance.wav -l
 //マップオブジェクトの追加//
 LoadMap ExaminationHall.x -s 50.0,50.0,50.0 -h
 //マップ上にメカを配置(Player)//
@@ -11,7 +9,7 @@ LoadMecha -l GuardianRobot.amf -u enemyTest -p 0.0,700.0,0.0 -t 1 -cc mob.cpu
 //初期化が終わるまで待機//
 Initialize
 //Battle1.wavを再生//
-Play Battle1.wav
+Play reconnaissance.wav
 Message 作戦開始。\n目標は、あの金色の機体だ。 --messenger operator --addFrame 0.1 --afterFrame 5.0 --stop
 Message 相手は防御重視の機体だ。\nできる限り相手の攻撃を避けてこちらの攻撃を当てていけ。 --messenger operator --addFrame 0.1 --afterFrame 5.0
 //SetControllerUsing false

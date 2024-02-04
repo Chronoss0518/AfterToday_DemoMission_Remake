@@ -1,8 +1,9 @@
 {
   "StageImage": "",
-  "StageName": "Test Stage2",
+  "StageName": "Guardian型の撃破",
   "StageScriptPath": "stage2.chs",
-  "StageLocationName": "Test Locale2",
+  "StageLocationName": "Test Locale",
+  "StageStrategyOverview": "ここではGuardian型の試験に望んでもらう。\nGuardian型は重量機にして、防御を重視した機体である。\n君にはこの機体の性能テストに付き合ってもらう。",
   "MissionTimeSeccond": 0,
   "SuccessFee": 10000,
   "DrawSuccessFee": 10000,
