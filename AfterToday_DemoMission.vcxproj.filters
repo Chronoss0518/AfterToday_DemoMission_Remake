@@ -40,12 +40,6 @@
     <Filter Include="PartsDatas">
       <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameFrame\Shader\EffectShader">
-      <UniqueIdentifier>{81796727-ddd4-48a0-a47c-0f74c8840675}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameFrame\Shader\EffectShader\hlsl">
-      <UniqueIdentifier>{0dd7760d-6d33-4461-902c-f5abbfa4c943}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EditFrame">
       <UniqueIdentifier>{22c703ec-8ae8-477f-a776-d405670315c1}</UniqueIdentifier>
     </Filter>
@@ -55,11 +49,38 @@
     <Filter Include="StageSelectFrame">
       <UniqueIdentifier>{9013f333-56b7-4649-b693-782783018d35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StageData">
+      <UniqueIdentifier>{278612e1-4167-4bcf-9eab-7d4d3444614b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\CPUData">
+      <UniqueIdentifier>{4af2371d-3c4c-48b4-9bcd-66f649fa9ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Effect">
+      <UniqueIdentifier>{d49fe6ff-935d-41d7-9fd1-bfe97ef5f8e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Mecha">
+      <UniqueIdentifier>{c7cb4ded-cc4a-4b18-96a4-7f48ddc7f20f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Mecha\PlayerMecha">
+      <UniqueIdentifier>{d00ec477-75e3-4935-b3aa-6dafd00ce3d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Mecha\CPUMecha">
+      <UniqueIdentifier>{180f6186-52a4-429b-84de-b8ff4f812904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectSpriteShader">
+      <UniqueIdentifier>{244e7f23-aafe-4087-9561-3494e1e806d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectObjectShader">
+      <UniqueIdentifier>{81796727-ddd4-48a0-a47c-0f74c8840675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectObjectShader\hlsl">
+      <UniqueIdentifier>{0dd7760d-6d33-4461-902c-f5abbfa4c943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectSpriteShader\hlsl">
+      <UniqueIdentifier>{791ff853-cfff-4245-b2c4-fe612512ac56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\AllStruct.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseIncluder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -135,12 +156,6 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsObject.h">
       <Filter>GameFrame</Filter>
     </ClInclude>
-    <ClInclude Include="Src\EffectObjects\ShotEffectList\ShotEffectList.h">
-      <Filter>GameFrame</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.h">
-      <Filter>GameFrame</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Shader\TextureEffectShader\TextureEffectShader.h">
       <Filter>GameFrame</Filter>
     </ClInclude>
@@ -169,7 +184,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Shader\EffectObject\EffectObjectShader.h">
-      <Filter>GameFrame\Shader\EffectShader</Filter>
+      <Filter>GameFrame\Shader\EffectObjectShader</Filter>
     </ClInclude>
     <ClInclude Include="Src\Frames\EditFrame.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -189,9 +204,48 @@
     <ClInclude Include="Src\StageSelectFrame\StageData\StageData.h">
       <Filter>StageSelectFrame</Filter>
     </ClInclude>
+    <ClInclude Include="Src\AllStruct.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\ResultFrame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\StageDataStructure.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h">
+      <Filter>StageSelectFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h">
+      <Filter>StageSelectFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\FromStageSelectFrameData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameInMessageBox\GameInMessageBox.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EffectObjects\ShotEffectList\ShotEffectList.h">
+      <Filter>GameFrame\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.h">
+      <Filter>GameFrame\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EffectObjects\BurnEffectList\BurnEffectList.h">
+      <Filter>GameFrame\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Shader\EffectSprite\EffectSpriteShader.h">
+      <Filter>GameFrame\Shader\EffectSpriteShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LoadDisplay\LoadDisplay.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Frames\TitleFrame.cpp">
@@ -257,12 +311,6 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp">
       <Filter>GameFrame</Filter>
     </ClCompile>
-    <ClCompile Include="Src\EffectObjects\ShotEffectList\ShotEffectList.cpp">
-      <Filter>GameFrame</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.cpp">
-      <Filter>GameFrame</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Shader\TextureEffectShader\TextureEffectShader.cpp">
       <Filter>GameFrame</Filter>
     </ClCompile>
@@ -291,7 +339,7 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Shader\EffectObject\EffectObjectShader.cpp">
-      <Filter>GameFrame\Shader\EffectShader</Filter>
+      <Filter>GameFrame\Shader\EffectObjectShader</Filter>
     </ClCompile>
     <ClCompile Include="Src\Frames\EditFrame.cpp">
       <Filter>ソース ファイル</Filter>
@@ -311,21 +359,63 @@
     <ClCompile Include="Src\StageSelectFrame\StageData\StageData.cpp">
       <Filter>StageSelectFrame</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Frames\ResultFrame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\StageDataStructure.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.cpp">
+      <Filter>StageSelectFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.cpp">
+      <Filter>StageSelectFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameInMessageBox\GameInMessageBox.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectObjects\ShotEffectList\ShotEffectList.cpp">
+      <Filter>GameFrame\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.cpp">
+      <Filter>GameFrame\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp">
+      <Filter>GameFrame\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Shader\EffectSprite\EffectSpriteShader.cpp">
+      <Filter>GameFrame\Shader\EffectSpriteShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
-      <Filter>GameFrame\Shader\EffectShader\hlsl</Filter>
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\PSEffectObject.hlsl">
-      <Filter>GameFrame\Shader\EffectShader\hlsl</Filter>
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\GSEffectObject.hlsl">
-      <Filter>GameFrame\Shader\EffectShader\hlsl</Filter>
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\PSEffectSprite.hlsl">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\VSEffectSprite.hlsl">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\GSEffectSprite.hlsl">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Shader\EffectObject\HLSL\EffectObjectShader.hlsli">
-      <Filter>GameFrame\Shader\EffectShader\hlsl</Filter>
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
     </None>
     <None Include="Resource\StageScript\stage1.chs">
       <Filter>StageScript</Filter>
@@ -380,6 +470,54 @@
     </None>
     <None Include="Resource\RobotParts\Weapon\Gun\MF-TPP1.mpd">
       <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage2.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\RobotParts\Head\Air.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\Head\Guardian.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\Head\Normal.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\CPUCharactor\mob.cpu">
+      <Filter>GameFrame\CPUData</Filter>
+    </None>
+    <None Include="Resource\StageScript\stage2.chs">
+      <Filter>StageScript</Filter>
+    </None>
+    <None Include="Resource\StageScript\test_stage.chs">
+      <Filter>StageScript</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\AirRobot.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\GuardianRobot.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\NormalRobot.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\StageScript\CPU\GuardianRobot.amf">
+      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+    </None>
+    <None Include="Resource\StageScript\CPU\NormalRobot.amf">
+      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+    </None>
+    <None Include="Resource\StageScript\CPU\AirRobot.amf">
+      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+    </None>
+    <None Include="Src\Shader\EffectSprite\HLSL\EffectSpriteShader.hlsli">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage_Wave.json">
+      <Filter>StageData</Filter>
     </None>
   </ItemGroup>
 </Project>

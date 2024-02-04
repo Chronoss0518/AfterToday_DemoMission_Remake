@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -51,17 +51,27 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelObject\PanelObject.h" />
+    <ClInclude Include="Src\EffectObjects\BurnEffectList\BurnEffectList.h" />
     <ClInclude Include="Src\EffectObjects\ShotEffectList\ShotEffectList.h" />
     <ClInclude Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.h" />
     <ClInclude Include="Src\Frames\EditFrame.h" />
+    <ClInclude Include="Src\Frames\FromStageSelectFrameData.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
+    <ClInclude Include="Src\Frames\StageDataStructure.h" />
+    <ClInclude Include="Src\Frames\ResultFrame.h" />
     <ClInclude Include="Src\Frames\SelectFrame.h" />
     <ClInclude Include="Src\Frames\StageSelectFrame.h" />
     <ClInclude Include="Src\Frames\TitleFrame.h" />
+    <ClInclude Include="Src\GameInMessageBox\GameInMessageBox.h" />
     <ClInclude Include="Src\GameScript\GameScript.h" />
+    <ClInclude Include="Src\LoadDisplay\LoadDisplay.h" />
     <ClInclude Include="Src\Shader\EffectObject\EffectObjectShader.h" />
+    <ClInclude Include="Src\Shader\EffectSprite\EffectSpriteShader.h" />
     <ClInclude Include="Src\Shader\TextureEffectShader\TextureEffectShader.h" />
     <ClInclude Include="Src\StageSelectFrame\StageData\StageData.h" />
+    <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h" />
+    <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h" />
+    <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h" />
     <ClInclude Include="TestGameLoop.h" />
   </ItemGroup>
   <ItemGroup>
@@ -71,7 +81,7 @@
     <ClCompile Include="..\PhysicsMachineTest\Physics_GroundPower.cpp" />
     <ClCompile Include="..\PhysicsMachineTest\Physics_MaterialPower.cpp" />
     <ClCompile Include="..\PhysicsMachineTest\Physics_WaterPower.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\Attack\Attack.cpp" />
     <ClCompile Include="Src\Attack\AttackObject.cpp" />
@@ -94,17 +104,26 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeapopnFunction.cpp" />
     <ClCompile Include="Src\EditFrameDrawObject\PanelList\PanelList.cpp" />
     <ClCompile Include="Src\EditFrameDrawObject\PanelObject\PanelObject.cpp" />
+    <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp" />
     <ClCompile Include="Src\EffectObjects\ShotEffectList\ShotEffectList.cpp" />
     <ClCompile Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.cpp" />
     <ClCompile Include="Src\Frames\EditFrame.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
+    <ClCompile Include="Src\Frames\ResultFrame.cpp" />
     <ClCompile Include="Src\Frames\SelectFrame.cpp" />
+    <ClCompile Include="Src\Frames\StageDataStructure.cpp" />
     <ClCompile Include="Src\Frames\StageSelectFrame.cpp" />
     <ClCompile Include="Src\Frames\TitleFrame.cpp" />
+    <ClCompile Include="Src\GameInMessageBox\GameInMessageBox.cpp" />
     <ClCompile Include="Src\GameScript\GameScript.cpp" />
+    <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp" />
     <ClCompile Include="Src\Shader\EffectObject\EffectObjectShader.cpp" />
+    <ClCompile Include="Src\Shader\EffectSprite\EffectSpriteShader.cpp" />
     <ClCompile Include="Src\Shader\TextureEffectShader\TextureEffectShader.cpp" />
     <ClCompile Include="Src\StageSelectFrame\StageData\StageData.cpp" />
+    <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.cpp" />
+    <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.cpp" />
+    <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\GSEffectObject.hlsl">
@@ -157,8 +176,51 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\GSEffectSprite.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\PSEffectSprite.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\VSEffectSprite.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resource\CPUCharactor\mob.cpu" />
     <None Include="Resource\RobotParts\Body\Air.mpd" />
     <None Include="Resource\RobotParts\Body\Guardian.mpd" />
     <None Include="Resource\RobotParts\Body\Normal.mpd" />
@@ -168,6 +230,9 @@
     <None Include="Resource\RobotParts\Foot\Air.mpd" />
     <None Include="Resource\RobotParts\Foot\Guardian.mpd" />
     <None Include="Resource\RobotParts\Foot\Normal.mpd" />
+    <None Include="Resource\RobotParts\Head\Air.mpd" />
+    <None Include="Resource\RobotParts\Head\Guardian.mpd" />
+    <None Include="Resource\RobotParts\Head\Normal.mpd" />
     <None Include="Resource\RobotParts\LArm\Air.mpd" />
     <None Include="Resource\RobotParts\LArm\Guardian.mpd" />
     <None Include="Resource\RobotParts\LArm\Normal.mpd" />
@@ -176,8 +241,20 @@
     <None Include="Resource\RobotParts\RArm\Normal.mpd" />
     <None Include="Resource\RobotParts\Weapon\Bullet\standard_1968.bod" />
     <None Include="Resource\RobotParts\Weapon\Gun\MF-TPP1.mpd" />
+    <None Include="Resource\Save\AssemMechaFrame\AirRobot.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\GuardianRobot.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\NormalRobot.amf" />
+    <None Include="Resource\StageData\Test_Stage.json" />
+    <None Include="Resource\StageData\Test_Stage2.json" />
+    <None Include="Resource\StageData\Test_Stage_Wave.json" />
+    <None Include="Resource\StageScript\CPU\AirRobot.amf" />
+    <None Include="Resource\StageScript\CPU\GuardianRobot.amf" />
+    <None Include="Resource\StageScript\CPU\NormalRobot.amf" />
     <None Include="Resource\StageScript\stage1.chs" />
+    <None Include="Resource\StageScript\stage2.chs" />
+    <None Include="Resource\StageScript\test_stage.chs" />
     <None Include="Src\Shader\EffectObject\HLSL\EffectObjectShader.hlsli" />
+    <None Include="Src\Shader\EffectSprite\HLSL\EffectSpriteShader.hlsli" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -239,7 +316,11 @@
     <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -254,6 +335,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <EntryPointSymbol>
@@ -266,12 +348,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -281,6 +365,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -295,6 +380,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
