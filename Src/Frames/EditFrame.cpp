@@ -5,6 +5,8 @@
 #include"../BaseMecha/MechaParts.h"
 #include"../BaseMecha/MechaPartsObject.h"
 
+#include"../LoadDisplay/LoadDisplay.h"
+
 #include"../EditFrameDrawObject/PanelList/PanelList.h"
 
 #define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Edit/") current_path

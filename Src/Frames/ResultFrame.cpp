@@ -414,19 +414,19 @@ void ResultFrame::UpdateKeyboard()
 {
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_RETURN))
+	if (manager.IsPushKeyNoHold(VK_RETURN)|| manager.IsPushKeyNoHold(VK_SPACE))
 	{
 		inputDataList.push_back(ActionType::Decision);
 		buttonSelectType = ChStd::EnumCast(ActionType::Decision);
 	}
 
-	if (manager.IsPushKeyNoHold(VK_LEFT))
+	if (manager.IsPushKeyNoHold(VK_LEFT) || manager.IsPushKeyNoHold('A'))
 	{
 		inputDataList.push_back(ActionType::LeftSelect);
 		buttonSelectType = ChStd::EnumCast(ActionType::Decision);
 	}
 
-	if (manager.IsPushKeyNoHold(VK_RIGHT))
+	if (manager.IsPushKeyNoHold(VK_RIGHT) || manager.IsPushKeyNoHold('D'))
 	{
 		inputDataList.push_back(ActionType::RightSelect);
 		buttonSelectType = ChStd::EnumCast(ActionType::Decision);

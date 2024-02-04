@@ -44,10 +44,10 @@
 #define DISPLAY_NOW_BULLET_NUM_FLG 0
 
 //SF = Success and Failed
-#define SF_MESSAGE_AFTER_FRAME static_cast<unsigned long>(BASE_FPS * 3.0f)
-#define SF_MESSAGE_ADD_MESSAGE_FRAME static_cast<unsigned long>(BASE_FPS * 0.25f)
+#define SF_MESSAGE_AFTER_FRAME static_cast<unsigned long>(BASE_FPS * 1.5f)
+#define SF_MESSAGE_ADD_MESSAGE_FRAME static_cast<unsigned long>(BASE_FPS * 0.125f)
 
-#define SUCCESS_PAUSE_COUNT static_cast<unsigned long>(BASE_FPS * 10.0f)
+#define SUCCESS_PAUSE_COUNT static_cast<unsigned long>(BASE_FPS * 5.0f)
 
 #define HIT_ICON_TOP 209.0f
 #define HIT_ICON_LEFT 565.0f
@@ -76,6 +76,10 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
 
+	auto&& mouse = ChWin::Mouse();
+	mouse.SetVisibleFlg(false);
+	mouse.SetCenterFixedFlg(true);
+
 	resultData = sendData->resultData;
 
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
@@ -101,7 +105,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	lightBloomeDrawer.Init(ChD3D11::D3D11Device());
 	lightBloomeDrawer.SetAlphaBlendFlg(true);
-	lightBloomeDrawer.SetBlurPower(15);
+	lightBloomeDrawer.SetBlurPower(10);
 	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT));
 
 	shotTargetDrawer.Init(ChD3D11::D3D11Device());
@@ -152,7 +156,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	light.Init(ChD3D11::D3D11Device());
 	light.SetUseLightFlg(true);
-	light.SetDirectionLightData(true, ChVec3(1.0f, 1.0f, 1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.5f);
+	light.SetDirectionLightData(true, ChVec3(1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 
 	centerUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBarFrame.png"));
 	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Damage.png"));
@@ -638,10 +642,11 @@ void GameFrame::DrawFunction()
 	mechaList.ObjectDrawBegin();
 
 	rt3D.SetBackColor(ChD3D11::D3D11DC(), ChVec4::FromColor(0.0f, 0.0f, 1.0f, 1.0f));
-	rtHighLightMap.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f,0.0f,0.0f,0.0f));
+	rtHighLightMap.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f, 0.0f, 0.0f, 0.0f));
 	rt2D.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f));
 	dsTex.ClearDepthBuffer(ChD3D11::D3D11DC());
 
+	uiDrawer.SetAlphaBlendFlg(true);
 	ChD3D11::Shader11().DrawStart();
 
 	Render3D();
@@ -658,11 +663,6 @@ void GameFrame::DrawFunction()
 
 	renderTargetView = rt3D.GetRTView();
 	ChD3D11::D3D11DC()->OMSetRenderTargets(1, &renderTargetView, nullptr);
-	//lightBloomeDrawer.DrawStart(ChD3D11::D3D11DC());
-
-	//lightBloomeDrawer.Draw(rtHighLightMap, uiSprite);
-
-	//lightBloomeDrawer.DrawEnd();
 
 	uiDrawer.DrawStart(ChD3D11::D3D11DC());
 
@@ -676,7 +676,7 @@ void GameFrame::DrawFunction()
 		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
 	}
 
-	uiDrawer.Draw(rtHighLightMap, testTextureSprite);
+	//uiDrawer.Draw(rtHighLightMap, testTextureSprite);
 
 	uiDrawer.DrawEnd();
 
@@ -744,7 +744,7 @@ void GameFrame::DrawFunctionBegin()
 	//ChD3D::XAudioManager().InitMatrix(ChLMat());
 	ChD3D::XAudioManager().InitMatrix(viewMat);
 
-	ChVec3 dir = ChVec3(0.25f, -0.5f, 0.25f);
+	ChVec3 dir = ChVec3(0.0f, -1.0f, 0.0f);
 	dir.Normalize();
 	light.SetLightDir(dir);
 	
@@ -770,10 +770,9 @@ void GameFrame::Render3D(void)
 {
 	light.SetUseLightFlg(true);
 	light.SetPSDrawData(ChD3D11::D3D11DC());
-	
 
 	ID3D11RenderTargetView* meshRT[] = { rt3D.GetRTView() , rtHighLightMap.GetRTView() };
-	ChD3D11::D3D11DC()->OMSetRenderTargets(1, meshRT, dsTex.GetDSView());
+	ChD3D11::D3D11DC()->OMSetRenderTargets(2, meshRT, dsTex.GetDSView());
 
 	meshDrawer.DrawStart(ChD3D11::D3D11DC());
 
@@ -790,15 +789,20 @@ void GameFrame::Render3D(void)
 	meshDrawer.DrawEnd();
 
 	shotEffectList->Draw(ChD3D11::D3D11DC());
+
 	smokeEffectList->Draw(ChD3D11::D3D11DC());
+
+	ChD3D11::D3D11DC()->OMSetRenderTargets(1, meshRT, nullptr);
+
+	lightBloomeDrawer.DrawStart(ChD3D11::D3D11DC());
+	lightBloomeDrawer.Draw(rtHighLightMap, uiSprite);
+	lightBloomeDrawer.DrawEnd();
 
 	light.SetUseLightFlg(false);
 	light.SetPSDrawData(ChD3D11::D3D11DC());
 
-	ChD3D11::D3D11DC()->OMSetRenderTargets(1, meshRT, nullptr);
-
 	shotTargetDrawer.DrawStart(ChD3D11::D3D11DC());
-
+	
 	shotTargetDrawer.Draw(shotTargetMarkerTex, shotTargetBorad, (ChMat_11)shotTargetdrawBaseMatrix);
 
 	shotTargetDrawer.DrawEnd();
@@ -816,7 +820,6 @@ void GameFrame::Render2D(void)
 
 		if (!successFlg && !failedFlg)
 		{
-			OutputDebugString(("Enelgy Parcec" + std::to_string(enelgyParcec * 0.5f) + "\n").c_str());
 			gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
 
 			gageDrawer.DrawStart(ChD3D11::D3D11DC());
@@ -825,7 +828,6 @@ void GameFrame::Render2D(void)
 
 			gageDrawer.DrawEnd();
 
-			OutputDebugString(("Damage Parcec" + std::to_string(enelgyParcec * 0.5f) + "\n").c_str());
 			gageDrawer.SetDrawValue(damageParcec * -0.5f);
 
 			gageDrawer.DrawStart(ChD3D11::D3D11DC());
@@ -879,6 +881,7 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	std::string cpuLoadData = "";
 	std::string loadFile = "";
+	bool loadCPUFlg = false;
 
 	{
 
@@ -899,6 +902,7 @@ void GameFrame::AddMecha(const std::string& _text)
 		{
 			i++;
 			loadFile = argment[i];
+			loadCPUFlg = true;
 		}
 		if (argment[i] == "-u" || argment[i] == "--username")
 		{
@@ -1005,9 +1009,10 @@ void GameFrame::AddMecha(const std::string& _text)
 	mecha->SetPosition(position);
 	mecha->SetRotation(rotation);
 
+	mecha->Load(ChD3D11::D3D11Device(), loadCPUFlg ? CPU_MECHA_PATH(+loadFile) : PLAYER_MECHA_PATH(+loadFile));
+
 	if (playerFlg)
-	{
-		mecha->Load(ChD3D11::D3D11Device(), PLAYER_MECHA_PATH(+loadFile));
+	{	
 		mecha->SetComponent<PlayerController>();
 		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
 		cpuObjectLooker->SetGameFrame(this);
@@ -1018,7 +1023,6 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	if (cpuFlg)
 	{
-		mecha->Load(ChD3D11::D3D11Device(), CPU_MECHA_PATH(+loadFile));
 		auto cpuController = mecha->SetComponent<CPUController>();
 		cpuController->LoadCPUData(cpuLoadData);
 		cpuController->SetGameFrame(this);

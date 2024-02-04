@@ -4,6 +4,8 @@
 #include"StageSelectFrame.h"
 #include"../StageSelectFrame/StageData/StageData.h"
 
+#include"../LoadDisplay/LoadDisplay.h"
+
 #include"../StageSelectFrame/StageSelectFrameDisplay/StageSelectDisplay.h"
 #include"../StageSelectFrame/StageSelectFrameDisplay/StageDetailedDisplay.h"
 
@@ -46,7 +48,9 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		display->SetSelectData(*beforeData);
 	}
 
+	light.Init(ChD3D11::D3D11Device());
 
+	mechaLoader = nullptr;
 }
 
 void StageSelectFrame::InitStageDataList()
@@ -231,17 +235,17 @@ void StageSelectFrame::UpdateKeyboard()
 
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_RETURN))
+	if (manager.IsPushKeyNoHold(VK_RETURN) || manager.IsPushKeyNoHold(VK_SPACE))
 	{
 		inputDataList.push_back(ActionType::Decision);
 	}
 
-	if (manager.IsPushKeyNoHold(VK_UP))
+	if (manager.IsPushKeyNoHold(VK_UP) || manager.IsPushKeyNoHold('W'))
 	{
 		inputDataList.push_back(ActionType::UpSelect);
 	}
 
-	if (manager.IsPushKeyNoHold(VK_DOWN))
+	if (manager.IsPushKeyNoHold(VK_DOWN) || manager.IsPushKeyNoHold('S'))
 	{
 		inputDataList.push_back(ActionType::DownSelect);
 	}

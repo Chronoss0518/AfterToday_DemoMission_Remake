@@ -27,7 +27,7 @@
 #define STAGE_SELECT_DESCRIPTION_HEIGHT 166.0f
 #endif
 
-
+class LoadDisplay;
 class StageData;
 
 class StageSelectFrame :public ChCpp::BaseFrame
@@ -148,18 +148,26 @@ public:
 
 	protected:
 
-		inline void UpNowSelectStage()
+		inline bool UpNowSelectStage()
 		{
 			frame->nowSelectStage--;
 
+			bool res = frame->nowSelectStage < 0;
+
 			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size()) % frame->stageDataList.size();
+
+			return res;
 		}
 
-		inline void DownNowSelectStage()
+		inline bool DownNowSelectStage()
 		{
 			frame->nowSelectStage++;
 
-			frame->nowSelectStage = frame->nowSelectStage % frame->stageDataList.size();
+			bool res = frame->nowSelectStage >= frame->stageDataList.size();
+
+			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size()) % frame->stageDataList.size();
+
+			return res;
 		}
 
 	private:
@@ -210,6 +218,9 @@ private:
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
+	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::CB::CBLight11 light;
+
 	int nowSelectStage = 0;
 
 	ChD3D11::Texture11 notImageTexture;
@@ -217,6 +228,7 @@ private:
 
 	ChPtr::Shared<StageSelectFrameDisplay>stageSelectFrameDisplay[2];
 
+	ChPtr::Shared<LoadDisplay>mechaLoader = nullptr;
 
 	bool firstFlg = true;
 };
