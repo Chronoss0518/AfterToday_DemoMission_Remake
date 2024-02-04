@@ -9,6 +9,7 @@
 #include"Src/Frames/SelectFrame.h"
 #include"Src/Frames/EditFrame.h"
 #include"Src/Frames/StageSelectFrame.h"
+#include"Src/Frames/ResultFrame.h"
 
 #include"Src/BaseMecha/Controller/ControllerBase.h"
 #include "Src/StageSelectFrame/StageData/StageData.h"
@@ -41,7 +42,8 @@ int WINAPI WinMain(
 			creater.SetInitSize(s_screen);
 
 			system.Init(creater,
-				"AfterToday_DemoMission",
+//				"AfterToday_DemoMission",
+				"MechanizedWar TestProject",
 				windClass.GetWindClassName(),
 				hInst,
 				nCmdshow);
@@ -76,6 +78,14 @@ int WINAPI WinMain(
 
 	frameList.SetSendData(testData);
 
+	auto playerData = ChPtr::Make_S<PlayerData>();
+
+	//playerData->useMechaData = "AirRobot.amf";
+	//playerData->useMechaData = "GuardianRobot.amf";
+	playerData->useMechaData = "NormalRobot.amf";
+
+	frameList.SaveData(playerData);
+
 	ChD3D::WICBitmapCreatorObj().Init();
 
 #if USE_TITLE_FRAME_FLG
@@ -106,6 +116,13 @@ int WINAPI WinMain(
 	while (system.IsUpdate())
 	{
 		if (!ChSystem::SysManager().FPSProcess())continue;
+
+		if (system.IsPushKeyNoHold(VK_ESCAPE))
+		{
+			system.Release();
+			break;
+		}
+
 		frameList.Update();
 		//Test::Update();
 		ChD3D::XAudioManager().Update();
