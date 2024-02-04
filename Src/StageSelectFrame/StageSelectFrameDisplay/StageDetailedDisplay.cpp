@@ -169,6 +169,11 @@ void StageDetailedDisplay::UpdateMouse()
 	{
 		AddAction(StageSelectFrame::ActionType::Decision);
 	}
+	if (manager.IsPushKeyNoHold(VK_RBUTTON))
+	{
+		AddAction(StageSelectFrame::ActionType::Cancel);
+	}
+
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
@@ -234,19 +239,9 @@ void StageDetailedDisplay::CreateStageDescriptionTextImage(StageData& _stageData
 
 	ChD3D::BrushObject brush = textDrawer.CreateBrush(ChVec4(1.0f));
 	ChD3D::TextFormatObject format = textDrawer.CreateTextFormat(L"ƒƒCƒŠƒI", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 40.0f);
-	format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);;
 
-	std::wstring tmp = std::to_wstring(_stageData.stageDatas->drawSuccessFee);
-
-	std::wstring successFee = L"¬Œ÷•ñV|";
-
-	for (unsigned long i = 0; i < tmp.length(); i++)
-	{
-		successFee += tmp[i];
-		if (i + 1 >= tmp.length())break;
-		if ((tmp.length() - i - 1) % 3 != 0)continue;
-		successFee += L",";
-	}
+	std::wstring successFee = L"¬Œ÷•ñV|" + CreateMoneyText(std::to_wstring(_stageData.stageDatas->drawSuccessFee));
 
 	std::wstring hh = std::to_wstring(static_cast<unsigned long>(_stageData.stageDatas->missionTimeSeccond / 60 / 60));
 	if (hh.length() < 2)hh += L"0";

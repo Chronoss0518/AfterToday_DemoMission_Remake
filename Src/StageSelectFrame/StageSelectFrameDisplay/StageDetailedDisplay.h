@@ -66,4 +66,5 @@ private:
 
 	ImageSprite strategyOverview;
 	ImageSprite strategyOverviewText;
+
 };

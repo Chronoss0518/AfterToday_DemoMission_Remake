@@ -28,6 +28,7 @@
 
 void StageSelectDisplay::Init()
 {
+
 	auto&& device = ChD3D11::D3D11Device();
 
 	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
@@ -94,7 +95,7 @@ void StageSelectDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
 			AddAction(StageSelectFrame::ActionType::DownSelect);
 			return;
 		}
-
+		if (GetNowSelectCount() >= GetStageDataList().size())return;
 		SetDisplayType(StageSelectFrame::DisplayType::Detailed);
 		return;
 	}
@@ -102,12 +103,24 @@ void StageSelectDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
 	if (_type == StageSelectFrame::ActionType::UpSelect)
 	{
 		UpNowSelectStage();
+		
+		if (GetNowSelectCount() < drawNowSelect || GetNowSelectCount() + drawNowSelect >= PANEL_DRAW_COUNT)
+		{
+			drawNowSelect = GetNowSelectCount();
+		}
 	}
 
 	if (_type == StageSelectFrame::ActionType::DownSelect)
 	{
 		DownNowSelectStage();
+
+		if (GetNowSelectCount() >= drawNowSelect + PANEL_DRAW_COUNT)
+		{
+			drawNowSelect = GetNowSelectCount() + PANEL_DRAW_COUNT - 1;
+		}
 	}
+
+
 
 }
 
@@ -135,12 +148,12 @@ void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	for (unsigned long i = 0; i < drawCount; i++)
 	{
-		_drawer.Draw(stageDataList[drawNowSelect + i]->selectPanel, selectStageSprite[i]);
+		_drawer.Draw(stageDataList[(drawNowSelect + i) % stageDataList.size()]->selectPanel, selectStageSprite[i]);
 	}
 
 	_drawer.Draw(stageSelectPanelList.image, stageSelectPanelList.sprite);
 
-	if (drawCount <= selectStageData)return;
+	if (stageDataList.size() <= selectStageData)return;
 	_drawer.Draw(stageDataList[selectStageData]->description, description);
 
 }
@@ -163,6 +176,11 @@ void StageSelectDisplay::UpdateMouse()
 	if (manager.IsPushKeyNoHold(VK_LBUTTON))
 	{
 		AddAction(StageSelectFrame::ActionType::Decision);
+	}
+
+	if (manager.IsPushKeyNoHold(VK_RBUTTON))
+	{
+		AddAction(StageSelectFrame::ActionType::Cancel);
 	}
 
 	auto&& mouce = ChWin::Mouse();
