@@ -73,12 +73,16 @@ void CPUTargetSelector::Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUC
 
 	lookTargetFlg = false;
 	targetNo = -1;
+
+	auto&& mechaList = _frame.GetMechas();
+
 	for (auto&& selectFunction : functions)
 	{
 		unsigned long test = selectFunction->Update(_looker, _frame, _controller);
 
-		//OutputDebugString(("TestTargetNo :" + std::to_string(test) + "\n").c_str());
-		if (test >= _frame.GetMechaList().GetObjectCount())continue;
+		if (test >= mechaList.size())continue;
+		auto&& testMecha = mechaList[test];
+		if (testMecha.expired())continue;
 		targetNo = test;
 		lookTargetFlg = true;
 		break;

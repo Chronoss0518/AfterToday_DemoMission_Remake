@@ -160,6 +160,7 @@ void CPUMovePositionSelector::UpdateLookTarget(CPUTargetSelector& _selector, Gam
 	auto&& mechaList = _frame.GetMechaList().GetObjectList<BaseMecha>();
 	if (mechaList.size() <= _selector.GetTargetNo())return;
 	targetMecha = mechaList[_selector.GetTargetNo()];
+	if (targetMecha.expired())return;
 	auto&& mecha = targetMecha.lock();
 	if (mecha == nullptr)return;
 
@@ -202,7 +203,6 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 	{
 		isDamageFlg = isBattleFlg = true;
 		point = lastLookPoint = mecha->GetDamageDir() * (isTargetPositionInAreaLength + 100.0f);
-		OutputDebugString(("CPUMovePositionSelector GetDamageDir x{: " + std::to_string(mecha->GetDamageDir().x) + "} y{: " + std::to_string(mecha->GetDamageDir().y) + "} z{: " + std::to_string(mecha->GetDamageDir().z) + "}\n").c_str());
 	}
 
 	if (isBattleFlg)
