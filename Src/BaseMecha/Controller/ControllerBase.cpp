@@ -19,7 +19,7 @@
 #include"CPUAction/CPUAttack.h"
 #include"CPUAction/CPUMoveInput.h"
 
-#define DEFAULT_CURSOL_MOVE_SIZE 0.4f
+#define MIN_CURSOL_LEN_PARCEC 0.01f
 #define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
 
 void ControllerBase::Input(const InputName _inputFlgName)
@@ -35,9 +35,8 @@ void PlayerController::Init()
 	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 	windSize.h = static_cast<float>(windows.GetWindHeight());
 	windSize.w = static_cast<float>(windows.GetWindWidth());
-	
-	mouse->SetCenterFixedFlg(true);
-	mouse->SetVisibleFlg(false);
+	baseLen = (windSize.h < windSize.w ? windSize.h : windSize.w);
+
 
 	keyTypes[VK_SPACE] = InputName::Up;
 	keyTypes[VK_SHIFT] = InputName::Avo;
@@ -185,35 +184,43 @@ void PlayerController::CursolUpdate()
 {
 	mouse->Update();
 	
-	nowPos += mouse->GetMoveValueToChVec2();
+	ChVec2 vector = mouse->GetNowPosToChVec2() -= (windSize / 2.0f);
+	vector /= baseLen;
+
+	if (vector.x > 1.0f)vector.x = 1.0f;
+	if (vector.x < -1.0f)vector.x = -1.0f;
+	if (vector.y > 1.0f)vector.y = 1.0f;
+	if (vector.y < -1.0f)vector.y = -1.0f;
+
+	vector *= moveSensitivility;
 	
-	ChVec2 vector = nowPos;
+	nowPos += vector;
 
-	CursolFunction(vector.x, windSize.w, CursolMoveTypeName::Right, CursolMoveTypeName::Left);
-	CursolFunction(vector.y, windSize.h, CursolMoveTypeName::Up, CursolMoveTypeName::Down);
+	CursolFunction(vector.x, CursolMoveTypeName::Right, CursolMoveTypeName::Left);
+	CursolFunction(vector.y, CursolMoveTypeName::Up, CursolMoveTypeName::Down);
 
-	nowPos -= vector;
 }
 
-void PlayerController::CursolFunction(float& _value, const float _windSize, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus)
+void PlayerController::CursolFunction(float& _value, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus)
 {
-	float mathMoveSencsitivility = 1.0f - moveSensitivility;
 
-	float mathWindSize = _windSize * mathMoveSencsitivility * DEFAULT_CURSOL_MOVE_SIZE;
+	if (std::abs(_value) < MIN_CURSOL_LEN_PARCEC)
+	{
+		_value = 0.0f;
+		return;
+	}
 
 	auto targetMecha = LookObj<BaseMecha>();
-	if (std::abs(_value) > mathWindSize)
+	if (_value > MIN_CURSOL_LEN_PARCEC)
 	{
-		if (_value > 0)
-		{
-			targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
-			_value -= mathWindSize;
-		}
-		else
-		{
-			targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
-			_value += mathWindSize;
-		}
+		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
+		_value -= MIN_CURSOL_LEN_PARCEC;
+	}
+
+	if (_value <-MIN_CURSOL_LEN_PARCEC)
+	{
+		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
+		_value += MIN_CURSOL_LEN_PARCEC;
 	}
 }
 
