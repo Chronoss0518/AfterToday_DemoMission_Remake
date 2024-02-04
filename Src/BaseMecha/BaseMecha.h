@@ -67,10 +67,6 @@ public://Override Functions//
 
 	void Draw2D()override;
 
-public:
-
-	void DrawUI();
-
 private:
 
 	void DrawWeaponComponent(ChPtr::Shared<WeaponComponent> _component);
