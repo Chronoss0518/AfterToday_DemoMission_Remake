@@ -44,7 +44,7 @@ private:
 
 	SelectSpriteType selectSpriteType = SelectSpriteType::StagePanel;
 
-	int drawNowSelect = 0;
+	unsigned long drawNowSelect = 0;
 
 	ImageSprite stageSelectButton[ChStd::EnumCast(StageSelectButtonType::None)];
 	ChD3D11::Texture11 buttonSelectImage;

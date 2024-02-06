@@ -100,28 +100,26 @@ void StageSelectDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
 		return;
 	}
 
+	auto&& stageDataList = GetStageDataList();
 	if (_type == StageSelectFrame::ActionType::UpSelect)
 	{
-		UpNowSelectStage();
-		
-		if (GetNowSelectCount() < drawNowSelect || GetNowSelectCount() + drawNowSelect >= PANEL_DRAW_COUNT)
+		if (GetNowSelectCount() == drawNowSelect)
 		{
-			drawNowSelect = GetNowSelectCount();
+			drawNowSelect = (drawNowSelect + stageDataList.size() - 1) % stageDataList.size();
 		}
+
+		UpNowSelectStage();
 	}
 
 	if (_type == StageSelectFrame::ActionType::DownSelect)
 	{
-		DownNowSelectStage();
-
-		if (GetNowSelectCount() >= drawNowSelect + PANEL_DRAW_COUNT)
+		if (GetNowSelectCount() == ((drawNowSelect + PANEL_DRAW_COUNT - 1) % stageDataList.size()))
 		{
-			drawNowSelect = GetNowSelectCount() + PANEL_DRAW_COUNT - 1;
+			drawNowSelect = (drawNowSelect + 1) % stageDataList.size();
 		}
+
+		DownNowSelectStage();
 	}
-
-
-
 }
 
 void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
@@ -143,7 +141,7 @@ void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	_drawer.Draw(displayMap.image, displayMap.sprite);
 
-	_drawer.Draw(panelSelectImage, selectStageSprite[(selectStageData - drawNowSelect) % PANEL_DRAW_COUNT]);
+	_drawer.Draw(panelSelectImage, selectStageSprite[((selectStageData + stageDataList.size() - drawNowSelect) % stageDataList.size()) % PANEL_DRAW_COUNT]);
 
 
 	for (unsigned long i = 0; i < drawCount; i++)
