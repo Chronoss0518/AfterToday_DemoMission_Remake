@@ -120,7 +120,7 @@ public:
 
 	protected:
 
-		inline int GetNowSelectCount()
+		inline unsigned long GetNowSelectCount()
 		{
 			return frame->nowSelectStage;
 		}
@@ -150,22 +150,18 @@ public:
 
 		inline bool UpNowSelectStage()
 		{
-			frame->nowSelectStage--;
+			bool res = static_cast<int>(frame->nowSelectStage) - 1< 0;
 
-			bool res = frame->nowSelectStage < 0;
-
-			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size()) % frame->stageDataList.size();
+			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size() - 1) % frame->stageDataList.size();
 
 			return res;
 		}
 
 		inline bool DownNowSelectStage()
 		{
-			frame->nowSelectStage++;
+			bool res = frame->nowSelectStage + 1 >= frame->stageDataList.size();
 
-			bool res = frame->nowSelectStage >= frame->stageDataList.size();
-
-			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size()) % frame->stageDataList.size();
+			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size() + 1) % frame->stageDataList.size();
 
 			return res;
 		}
@@ -221,7 +217,7 @@ private:
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 	ChD3D11::CB::CBLight11 light;
 
-	int nowSelectStage = 0;
+	unsigned long nowSelectStage = 0;
 
 	ChD3D11::Texture11 notImageTexture;
 
