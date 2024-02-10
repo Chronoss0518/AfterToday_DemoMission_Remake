@@ -6,7 +6,7 @@ struct LoaderPanel
 {
 	ChPtr::Shared<BaseMecha>mecha = nullptr;
 	ChD3D11::RenderTarget11 mechaTexture;
-	ImageSprite panelName;
+	ChD3D11::Texture11 panelName;
 	std::string path = "";
 };
 
@@ -37,7 +37,7 @@ public:
 
 public:
 
-	void Open(ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11& _meshDrawer);
+	void Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _dc, bool _releaseFlg);
 
 	void Close();
 
@@ -47,6 +47,8 @@ private:
 
 	enum class ActionType
 	{
+		LeftSelect,
+		RightSelect,
 		UpSelect,
 		DownSelect,
 		Decision,
@@ -55,37 +57,62 @@ private:
 
 	enum class SelectSpriteType
 	{
-		UpButton,
-		DownButton,
+		LeftButton,
+		RightButton,
 		LoadPanel
+	};
+
+	enum class BottomButtonType
+	{
+		Decision,
+		Cancel,
+		None,
 	};
 
 	enum class SelectButtonType
 	{
-		Up, Down, None
+		Left, Right, None
 	};
 
+	struct LoadPanelSprite
+	{
+		ChD3D11::Sprite11 backGround;
+		ChD3D11::Sprite11 mechaPreview;
+		ChD3D11::Sprite11 mechaName;
+	};
 
 private:
+
+	static constexpr int PANEL_DRAW_COUNT = 3;
 
 	bool openFlg = false;
 	
 	std::vector<ChPtr::Shared<LoaderPanel>>loadMechaList;
-
-
 	SelectSpriteType selectSpriteType = SelectSpriteType::LoadPanel;
+	unsigned long drawNowSelect = 0;
+	unsigned long selectPanel = 0;
 
-	int drawNowSelect = 0;
+	ImageSprite window;
+	ImageSprite mainWindow;
 
-	std::string loadPath = "";
+	LoadPanelSprite loadPanelSpriteList[PANEL_DRAW_COUNT];
+	ChD3D11::Texture11 loadPanelImage;
+	ChD3D11::Texture11 selectLoadPanelImage;
 
-	ImageSprite stageSelectButton[ChStd::EnumCast(SelectButtonType::None)];
-	ChD3D11::Texture11 buttonSelectImage;
+	ImageSprite panelSelectButton[ChStd::EnumCast(SelectButtonType::None)];
+	ChD3D11::Texture11 selectPanelSelectButtonImage;
+	SelectButtonType selectButton = SelectButtonType::None;
 
-	SelectButtonType selectType = SelectButtonType::None;
+	ImageSprite bottomButton[ChStd::EnumCast(BottomButtonType::None)];
+	ChD3D11::Texture11 selectBottomButtonImage;
+	BottomButtonType selectBottomButton = BottomButtonType::None;
 
-	static constexpr int PANEL_DRAW_COUNT = 4;
-	ChD3D11::Sprite11 selectMechaList[PANEL_DRAW_COUNT];
-	ChD3D11::Texture11 panelSelectImage;
+	ChVec4 backColor = ChVec4::FromColor(0.2f, 0.2f, 0.5f, 1.0f);
+	ID3D11Device* device = nullptr;
+	ChD3D11::DepthStencilTexture11 dsTex;
 
+	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::CB::CBLight11 light;
+
+	ChD3D11::Sprite11 testSprite;
 };
