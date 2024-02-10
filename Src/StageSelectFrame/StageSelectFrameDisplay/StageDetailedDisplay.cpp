@@ -85,6 +85,7 @@ void StageDetailedDisplay::Update()
 
 void StageDetailedDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
 {
+
 	if (_type == StageSelectFrame::ActionType::Decision)
 	{
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Start))
@@ -92,7 +93,10 @@ void StageDetailedDisplay::UpdateAction(const StageSelectFrame::ActionType& _typ
 
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Edit))
 			SetEditFrame();
-		
+
+		if (nowSelect == ChStd::EnumCast(MenuButtonType::Load))
+			OpenLoadDisplay();
+
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Cancel))
 			Cancel();
 	}
