@@ -9,6 +9,8 @@
 #include"../StageSelectFrame/StageSelectFrameDisplay/StageSelectDisplay.h"
 #include"../StageSelectFrame/StageSelectFrameDisplay/StageDetailedDisplay.h"
 
+#include"../LoadDisplay/LoadDisplay.h"
+
 #define PANEL_TEXT_SIDE_PADDING 5.0f
 #define PANEL_TEXT_WIDTH STAGE_SELECT_DESCRIPTION_WIDTH - (PANEL_TEXT_SIDE_PADDING * 2)
 #define PANEL_TEXT_HEIGHT STAGE_SELECT_PANEL_HEIGHT * 0.5f
@@ -19,8 +21,14 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
+
 	auto&& device = ChD3D11::D3D11Device();
 	spriteShader.Init(device);
+
+	loadDisplay = ChPtr::Make_S<LoadDisplay>();
+	loadDisplay->Init(device);
+
+
 
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Select)] = ChPtr::Make_S<StageSelectDisplay>();
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Detailed)] = ChPtr::Make_S<StageDetailedDisplay>();
@@ -48,9 +56,6 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		display->SetSelectData(*beforeData);
 	}
 
-	light.Init(ChD3D11::D3D11Device());
-
-	mechaLoader = nullptr;
 }
 
 void StageSelectFrame::InitStageDataList()
@@ -173,6 +178,7 @@ void StageSelectFrame::InitStageDataList()
 
 void StageSelectFrame::Release()
 {
+	loadDisplay->Release();
 	for (unsigned char i = 0; i < 2; i++)
 	{
 		stageSelectFrameDisplay[i]->Release();
@@ -182,13 +188,23 @@ void StageSelectFrame::Release()
 
 void StageSelectFrame::DrawFunction()
 {
+	
 	auto&& dc = ChD3D11::D3D11DC();
-
 	ChD3D11::Shader11().DrawStart();
+
+	dc->OMGetRenderTargets(1, &rtView, nullptr);
 
 	spriteShader.DrawStart(dc);
 
 	stageSelectFrameDisplay[ChStd::EnumCast(type)]->Draw(spriteShader);
+
+	spriteShader.DrawEnd();
+
+	dc->OMSetRenderTargets(1, &rtView, nullptr);
+
+	spriteShader.DrawStart(dc);
+
+	loadDisplay->Draw(spriteShader);
 
 	spriteShader.DrawEnd();
 
@@ -198,6 +214,8 @@ void StageSelectFrame::DrawFunction()
 
 void StageSelectFrame::UpdateFunction()
 {
+	if (loadDisplay->Update())return;
+
 	controller.Update();
 
 	stageSelectFrameDisplay[ChStd::EnumCast(type)]->Update();
@@ -335,3 +353,16 @@ void StageSelectFrame::Cancel()
 
 	type = DisplayType::Select;
 }
+
+void StageSelectFrame::OpenLoadDisplay()
+{
+	auto&& dc = ChD3D11::D3D11DC();
+	auto&& playerData = ChPtr::SharedSafeCast<PlayerData>(GetData());
+	loadDisplay->Open(playerData != nullptr ? playerData->useMechaData : "", dc, false);
+}
+
+void StageSelectFrame::StageSelectFrameDisplay::OpenLoadDisplay()
+{
+	frame->OpenLoadDisplay();
+}
+

@@ -148,6 +148,10 @@ public:
 
 	protected:
 
+		void OpenLoadDisplay();
+
+	protected:
+
 		inline bool UpNowSelectStage()
 		{
 			bool res = static_cast<int>(frame->nowSelectStage) - 1< 0;
@@ -201,7 +205,13 @@ private:
 
 	void Cancel();
 
+	void OpenLoadDisplay();
+
 private:
+
+	ChPtr::Shared<LoadDisplay>loadDisplay = nullptr;
+
+	ID3D11RenderTargetView* rtView = nullptr;
 
 	DisplayType type = DisplayType::Select;
 
@@ -214,17 +224,12 @@ private:
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
-	ChD3D11::CB::CBLight11 light;
-
 	unsigned long nowSelectStage = 0;
 
 	ChD3D11::Texture11 notImageTexture;
 
 
 	ChPtr::Shared<StageSelectFrameDisplay>stageSelectFrameDisplay[2];
-
-	ChPtr::Shared<LoadDisplay>mechaLoader = nullptr;
 
 	bool firstFlg = true;
 };
