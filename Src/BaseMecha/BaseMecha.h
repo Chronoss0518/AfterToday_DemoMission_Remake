@@ -201,6 +201,8 @@ public://Get Function//
 
 	long GetHitEffectDrawStartFrame();
 
+	inline std::string GetMechaName() { return mechaName; }
+
 public:
 
 	inline bool IsBreak() { return breakFlg; }

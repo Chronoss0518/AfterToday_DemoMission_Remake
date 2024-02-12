@@ -76,12 +76,12 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 
 void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject)
 {
-
-	unsigned long count = std::atol(_textObject.GetTextLine(0).c_str());
+	mechaName = _textObject.GetTextLine(0);
+	unsigned long count = std::atol(_textObject.GetTextLine(1).c_str());
 
 	for (unsigned long i = 0; i < count; i++)
 	{
-		auto texts = ChStr::Split(_textObject.GetTextLine(i + 1), " ");
+		auto texts = ChStr::Split(_textObject.GetTextLine(i + 2), " ");
 
 		auto parts = MechaParts::LoadParts(*this, _device, drawer, frame, texts[0]);
 		parts->SetFrame(frame);
@@ -170,7 +170,8 @@ void BaseMecha::Save(const std::string& _fileName)
 
 std::string BaseMecha::SavePartsList()
 {
-	std::string res = std::to_string(mechaParts.size()) + "\n";
+	std::string res = mechaName + "\n";
+	res += std::to_string(mechaParts.size()) + "\n";
 	for (auto&& parts : mechaParts)
 	{
 		std::string positionName = "";
