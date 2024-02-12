@@ -25,6 +25,15 @@
 #define	TARGET_DIRECTORY(current_path) "Resource/" current_path
 #endif
 
+#ifndef SAVE_DIRECTORY
+#define SAVE_DIRECTORY(current_path) TARGET_DIRECTORY("Save/" current_path) 
+#endif
+
+#ifndef PLAYER_USE_MECHA_PATH
+#define PLAYER_USE_MECHA_PATH SAVE_DIRECTORY("Player.amf") 
+#endif
+
+
 #ifndef SOUND_DIRECTORY
 #define SOUND_DIRECTORY(current_path) TARGET_DIRECTORY("Sound/" current_path) 
 #endif
@@ -50,7 +59,7 @@
 #endif
 
 #ifndef PLAYER_MECHA_PATH
-#define PLAYER_MECHA_PATH(_fileName) TARGET_DIRECTORY("Save/AssemMechaFrame/" _fileName)
+#define PLAYER_MECHA_PATH(_fileName) SAVE_DIRECTORY("AssemMechaFrame/" _fileName)
 #endif
 
 #ifndef CPU_MECHA_PATH
@@ -157,7 +166,6 @@ enum class FrameNo :unsigned long
 struct PlayerData:public ChCpp::SaveDataClass
 {
 	std::string playerName = "";
-	std::string useMechaData = "";
 };
 
 struct ImageSprite

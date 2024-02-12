@@ -225,4 +225,5 @@ private:
 	ChPtr::Shared<StageSelectFrameDisplay>stageSelectFrameDisplay[2];
 
 	ChD3D::XInputController controller;
+
 };
