@@ -1,5 +1,7 @@
 #pragma once
 
+#include"../Frames/MenuBase.h"
+
 class BaseMecha;
 
 struct LoaderPanel
@@ -10,22 +12,26 @@ struct LoaderPanel
 	std::string path = "";
 };
 
-class LoadDisplay
+class LoadDisplay :public MenuBase
 {
 
 public:
 
-	void Init(ID3D11Device* _device);
+	void Init(ID3D11Device* _device, ChD3D::XInputController* _controller);
 
 	void Release();
 
 public:
 
-	std::string GetSelectMechaPath();
+	inline ChPtr::Shared<LoaderPanel> GetSelectMecha() { return selectPanel; }
 
 public:
 
 	bool Update();
+
+	void UpdateAction(ActionType _type);
+
+	void UpdateMouse()override;
 
 public:
 
@@ -41,19 +47,7 @@ public:
 
 	void Close();
 
-	void Select();
-
 private:
-
-	enum class ActionType
-	{
-		LeftSelect,
-		RightSelect,
-		UpSelect,
-		DownSelect,
-		Decision,
-		Cancel
-	};
 
 	enum class SelectSpriteType
 	{
@@ -83,14 +77,16 @@ private:
 
 private:
 
-	static constexpr int PANEL_DRAW_COUNT = 3;
+	static constexpr unsigned long PANEL_DRAW_COUNT = 3;
 
 	bool openFlg = false;
-	
+
 	std::vector<ChPtr::Shared<LoaderPanel>>loadMechaList;
 	SelectSpriteType selectSpriteType = SelectSpriteType::LoadPanel;
 	unsigned long drawNowSelect = 0;
-	unsigned long selectPanel = 0;
+	unsigned long selectPanelNo = 0;
+	unsigned long initSelectPanel = 0;
+	ChPtr::Shared<LoaderPanel> selectPanel = nullptr;
 
 	ImageSprite window;
 	ImageSprite mainWindow;
@@ -105,7 +101,7 @@ private:
 
 	ImageSprite bottomButton[ChStd::EnumCast(BottomButtonType::None)];
 	ChD3D11::Texture11 selectBottomButtonImage;
-	BottomButtonType selectBottomButton = BottomButtonType::None;
+	unsigned long selectBottomButton = ChStd::EnumCast(BottomButtonType::None);
 
 	ChVec4 backColor = ChVec4::FromColor(0.2f, 0.2f, 0.5f, 1.0f);
 	ID3D11Device* device = nullptr;
@@ -113,6 +109,4 @@ private:
 
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 	ChD3D11::CB::CBLight11 light;
-
-	ChD3D11::Sprite11 testSprite;
 };

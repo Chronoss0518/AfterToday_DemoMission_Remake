@@ -56,17 +56,16 @@
 #define BOTTOM_BUTTON_RIGHT_LEFT 740.0f
 #define BOTTOM_BUTTON_RIGHT_RIGHT  BOTTOM_BUTTON_RIGHT_LEFT + BOTTOM_BUTTON_WIDTH
 
-void LoadDisplay::Init(ID3D11Device* _device)
+void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controller)
 {
+	MenuBase::InitMenu(_controller);
+
 	device = _device;
 	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_WINDOW_WIDTH), static_cast<unsigned long>(GAME_WINDOW_HEIGHT));
 
 	meshDrawer.Init(_device);
 	meshDrawer.SetCullMode(D3D11_CULL_MODE::D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(false);
-
-	testSprite.Init();
-	testSprite.SetPosRect(ChVec4::FromRect(-1.0f,1.0f,1.0f,-1.0f ));
 
 	light.Init(ChD3D11::D3D11Device());
 	light.SetUseLightFlg(true);
@@ -140,16 +139,127 @@ void LoadDisplay::Release()
 	MechaParts::ClearPartsList();
 }
 
-std::string LoadDisplay::GetSelectMechaPath()
-{
-	return loadMechaList[selectPanel]->path;
-}
-
 bool LoadDisplay::Update()
 {
 	if (!openFlg)return false;
 
+	UpdateFunction();
+
 	return true;
+}
+
+void LoadDisplay::UpdateAction(ActionType _type)
+{
+
+	if (_type == ActionType::Decision)
+	{
+		if (selectButton == SelectButtonType::Left)
+		{
+			AddActionType(ActionType::Left);
+			return;
+		}
+
+		if (selectButton == SelectButtonType::Right)
+		{
+			AddActionType(ActionType::Right);
+			return;
+		}
+
+		if (static_cast<BottomButtonType>(selectBottomButton) == BottomButtonType::Cancel)
+		{
+			AddActionType(ActionType::Cancel);
+			return;
+		}
+
+		selectPanel = loadMechaList[selectPanelNo];
+		Close();
+		SetLoopBreakTrue();
+		return;
+	}
+
+	if (_type == ActionType::Cancel)
+	{
+		selectPanel = loadMechaList[initSelectPanel];
+		Close();
+		SetLoopBreakTrue();
+		return;
+	}
+
+	if (_type == ActionType::Up || _type == ActionType::Down)
+	{
+		selectBottomButton = ChStd::EnumCast(static_cast<BottomButtonType>(selectBottomButton) == BottomButtonType::None ? BottomButtonType::Decision : BottomButtonType::None);
+		return;
+	}
+
+	if (static_cast<BottomButtonType>(selectBottomButton) != BottomButtonType::None)
+	{
+		if (_type == ActionType::Left || _type == ActionType::Right)
+		{
+			selectBottomButton = (selectBottomButton + 1) % ChStd::EnumCast(BottomButtonType::None);
+		}
+		return;
+	}
+
+	if (_type == ActionType::Right)
+	{
+		if (PANEL_DRAW_COUNT < loadMechaList.size())
+		{
+			if (selectPanelNo == drawNowSelect + PANEL_DRAW_COUNT)
+				drawNowSelect = (drawNowSelect + 1) % loadMechaList.size();
+		}
+
+		selectPanelNo = (selectPanelNo + 1) % loadMechaList.size();
+	}
+
+	if (_type == ActionType::Left)
+	{
+		if (PANEL_DRAW_COUNT < loadMechaList.size())
+		{
+			if (selectPanelNo == drawNowSelect)
+				drawNowSelect = (drawNowSelect + loadMechaList.size() - 1) % loadMechaList.size();
+		}
+
+		selectPanelNo = (selectPanelNo + loadMechaList.size() - 1) % loadMechaList.size();
+	}
+}
+
+void LoadDisplay::UpdateMouse()
+{
+
+	auto&& manager = ChSystem::SysManager();
+
+	MouseTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+
+	auto&& mouce = ChWin::Mouse();
+	mouce.Update();
+
+	auto&& mouseMove = mouce.GetMoveValue();
+
+	if (std::abs(mouseMove.x) <= 1 && std::abs(mouseMove.y) <= 1)return;
+
+	selectButton = SelectButtonType::None;
+	selectBottomButton = ChStd::EnumCast(BottomButtonType::None);
+
+	for (int i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	{
+		if (!IsMoucePosOnSprite(panelSelectButton[i].sprite))continue;
+		selectButton = static_cast<SelectButtonType>(i);
+		return;
+	}
+
+	for (int i = 0; i < ChStd::EnumCast(BottomButtonType::None); i++)
+	{
+		if (!IsMoucePosOnSprite(bottomButton[i].sprite))continue;
+		selectBottomButton = i;
+		return;
+	}
+
+	for (int i = 0; i < PANEL_DRAW_COUNT; i++)
+	{
+		if (!IsMoucePosOnSprite(loadPanelSpriteList[i].backGround))continue;
+		selectPanelNo = (i + drawNowSelect) % loadMechaList.size();
+		return;
+	}
 }
 
 void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
@@ -174,7 +284,7 @@ void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 	for (unsigned long i = 0; i < ChStd::EnumCast(BottomButtonType::None); i++)
 	{
 		_spriteShader.Draw(bottomButton[i].image, bottomButton[i].sprite);
-		if (ChStd::EnumCast(selectBottomButton) != i)continue;
+		if (selectBottomButton != i)continue;
 		_spriteShader.Draw(selectBottomButtonImage, bottomButton[i].sprite);
 	}
 
@@ -182,9 +292,10 @@ void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 	{
 		_spriteShader.Draw(loadPanelImage, loadPanelSpriteList[i].backGround);
 		_spriteShader.Draw(loadMechaList[(i + drawNowSelect) % loadMechaList.size()]->mechaTexture, loadPanelSpriteList[i].mechaPreview);
-	}
 
-	//_spriteShader.Draw(loadMechaList[0]->mechaTexture, testSprite);
+		if (((i + drawNowSelect) % loadMechaList.size()) != selectPanelNo)continue;
+		_spriteShader.Draw(selectLoadPanelImage, loadPanelSpriteList[i].backGround);
+	}
 }
 
 void LoadDisplay::Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _dc, bool _releaseFlg)
@@ -192,12 +303,14 @@ void LoadDisplay::Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _
 	drawNowSelect = 0;
 
 	unsigned long loopCount = 0;
+	std::string nowSelectPath = PLAYER_MECHA_PATH(+_nowSelectPath);
+	nowSelectPath = ChStr::UTF8ToString(ChStr::UTF8ToWString(nowSelectPath));
 
 	for (auto&& file : std::filesystem::directory_iterator(PLAYER_MECHA_PATH("")))
 	{
 		std::string path = ChStr::UTF8ToString((file.path().c_str()));
 
-		selectPanel = _nowSelectPath != path ? selectPanel : loopCount;
+		initSelectPanel = drawNowSelect = selectPanelNo = nowSelectPath != path ? selectPanelNo : loopCount;
 
 		auto&& loadMecha = ChPtr::Make_S<LoaderPanel>();
 		loadMecha->mecha = ChPtr::Make_S<BaseMecha>();
@@ -242,9 +355,4 @@ void LoadDisplay::Close()
 		loadMechaList.clear();
 
 	openFlg = false;
-}
-
-void LoadDisplay::Select()
-{
-
 }
