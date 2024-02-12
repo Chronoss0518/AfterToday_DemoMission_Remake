@@ -5,6 +5,7 @@
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../BaseMecha/MechaParts.h"
+#include"../Attack/Attack.h"
 
 #include"LoadDisplay.h"
 
@@ -28,6 +29,12 @@
 #define MECHA_PREVIEW_HEIGHT 220.0f
 #define MECHA_PREVIEW_LEFT 8.0f
 #define MECHA_PREVIEW_TOP 10.0f
+
+#define MECHA_NAME_TEXT_WIDTH 150.0f
+#define MECHA_NAME_TEXT_HEIGHT 80.0f
+#define MECHA_NAME_TEXT_LEFT 8.0f
+#define MECHA_NAME_TEXT_TOP 235.0f
+#define MECHA_NAME_TEXT_FONT_SIZE 16.0f
 
 #define UP_BUTTON_TOP 100.0f
 #define UP_BUTTON_BOTTOM 320.0f + UP_BUTTON_TOP
@@ -115,12 +122,42 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 		rect = ChVec4::FromRect(panelLeft + MECHA_PREVIEW_LEFT, UP_BUTTON_TOP + MECHA_PREVIEW_TOP, panelLeft + MECHA_PREVIEW_LEFT + MECHA_PREVIEW_WIDTH, UP_BUTTON_TOP + MECHA_PREVIEW_TOP + MECHA_PREVIEW_HEIGHT);
 		SPRITE_INIT(loadPanelSpriteList[i].mechaPreview, RectToGameWindow(rect));
 
+		rect = ChVec4::FromRect(panelLeft + MECHA_NAME_TEXT_LEFT, UP_BUTTON_TOP + MECHA_NAME_TEXT_TOP, panelLeft + MECHA_NAME_TEXT_LEFT + MECHA_NAME_TEXT_WIDTH, UP_BUTTON_TOP + MECHA_NAME_TEXT_TOP + MECHA_NAME_TEXT_HEIGHT);
+		SPRITE_INIT(loadPanelSpriteList[i].mechaName, RectToGameWindow(rect));
+
 		panelLeft = panelRight + SELECT_PANEL_ALIGN;
 		panelRight = panelLeft + SELECT_PANEL_WIDTH;
 	}
 
 	loadPanelImage.CreateTexture(LOAD_IMAGE_DIRECTORY("LoadMechaPanel.png"), device);
 	selectLoadPanelImage.CreateTexture(LOAD_IMAGE_DIRECTORY("PanelSelect.png"), device);
+
+
+	textDrawer.bitmap = ChD3D::WICBitmapCreatorObj().CreateBitmapObject(
+		static_cast<unsigned long>(MECHA_NAME_TEXT_WIDTH),
+		static_cast<unsigned long>(MECHA_NAME_TEXT_HEIGHT));
+
+	textDrawer.drawer.Init(
+		static_cast<unsigned long>(MECHA_NAME_TEXT_WIDTH),
+		static_cast<unsigned long>(MECHA_NAME_TEXT_HEIGHT),
+		textDrawer.bitmap,
+		ChD3D::DirectFontBase::LocaleNameId::Japanese);
+	textDrawer.drawer.SetClearDisplayColor(ChVec4(0.0f));
+	textDrawer.drawer.SetClearDisplayFlg(true);
+
+	textDrawer.brush = textDrawer.drawer.CreateBrush(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
+	textDrawer.format = textDrawer.drawer.CreateTextFormat(
+		L"ÉÅÉCÉäÉI",
+		nullptr,
+		DWRITE_FONT_WEIGHT_BOLD,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		MECHA_NAME_TEXT_FONT_SIZE
+	);
+
+	textDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	textDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+
 
 	{
 		ChMat_11 tmpMat;
@@ -135,8 +172,10 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 
 void LoadDisplay::Release()
 {
-	loadMechaList.clear();
+	if(!loadMechaList.empty())
+		loadMechaList.clear();
 	MechaParts::ClearPartsList();
+	Attack::AllRelease();
 }
 
 bool LoadDisplay::Update()
@@ -165,13 +204,15 @@ void LoadDisplay::UpdateAction(ActionType _type)
 			return;
 		}
 
+		if (static_cast<BottomButtonType>(selectBottomButton) == BottomButtonType::None)return;
+
 		if (static_cast<BottomButtonType>(selectBottomButton) == BottomButtonType::Cancel)
 		{
 			AddActionType(ActionType::Cancel);
 			return;
 		}
 
-		selectPanel = loadMechaList[selectPanelNo];
+		Load();
 		Close();
 		SetLoopBreakTrue();
 		return;
@@ -179,7 +220,6 @@ void LoadDisplay::UpdateAction(ActionType _type)
 
 	if (_type == ActionType::Cancel)
 	{
-		selectPanel = loadMechaList[initSelectPanel];
 		Close();
 		SetLoopBreakTrue();
 		return;
@@ -204,7 +244,7 @@ void LoadDisplay::UpdateAction(ActionType _type)
 	{
 		if (PANEL_DRAW_COUNT < loadMechaList.size())
 		{
-			if (selectPanelNo == drawNowSelect + PANEL_DRAW_COUNT)
+			if (selectPanelNo == ((drawNowSelect + PANEL_DRAW_COUNT - 1) % loadMechaList.size()))
 				drawNowSelect = (drawNowSelect + 1) % loadMechaList.size();
 		}
 
@@ -258,6 +298,7 @@ void LoadDisplay::UpdateMouse()
 	{
 		if (!IsMoucePosOnSprite(loadPanelSpriteList[i].backGround))continue;
 		selectPanelNo = (i + drawNowSelect) % loadMechaList.size();
+		selectBottomButton = ChStd::EnumCast(BottomButtonType::Decision);
 		return;
 	}
 }
@@ -292,33 +333,33 @@ void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 	{
 		_spriteShader.Draw(loadPanelImage, loadPanelSpriteList[i].backGround);
 		_spriteShader.Draw(loadMechaList[(i + drawNowSelect) % loadMechaList.size()]->mechaTexture, loadPanelSpriteList[i].mechaPreview);
+		_spriteShader.Draw(loadMechaList[(i + drawNowSelect) % loadMechaList.size()]->panelName, loadPanelSpriteList[i].mechaName);
 
 		if (((i + drawNowSelect) % loadMechaList.size()) != selectPanelNo)continue;
 		_spriteShader.Draw(selectLoadPanelImage, loadPanelSpriteList[i].backGround);
 	}
 }
 
-void LoadDisplay::Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _dc, bool _releaseFlg)
+void LoadDisplay::Open(ID3D11DeviceContext* _dc, bool _releaseFlg)
 {
 	drawNowSelect = 0;
 
 	unsigned long loopCount = 0;
-	std::string nowSelectPath = PLAYER_MECHA_PATH(+_nowSelectPath);
-	nowSelectPath = ChStr::UTF8ToString(ChStr::UTF8ToWString(nowSelectPath));
+
 
 	for (auto&& file : std::filesystem::directory_iterator(PLAYER_MECHA_PATH("")))
 	{
-		std::string path = ChStr::UTF8ToString((file.path().c_str()));
-
-		initSelectPanel = drawNowSelect = selectPanelNo = nowSelectPath != path ? selectPanelNo : loopCount;
-
 		auto&& loadMecha = ChPtr::Make_S<LoaderPanel>();
+		loadMecha->path = ChStr::UTF8ToString((file.path().c_str()));
+
 		loadMecha->mecha = ChPtr::Make_S<BaseMecha>();
+
 		loadMecha->mecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, nullptr);
+
 		loadMecha->mecha->SetPosition(ChVec3(0.0f));
 		loadMecha->mecha->SetRotation(ChVec3(0.0f));
 
-		loadMecha->mecha->Load(device, path);
+		loadMecha->mecha->Load(device, loadMecha->path);
 
 		loadMecha->mechaTexture.CreateRenderTarget(device, static_cast<unsigned long>(GAME_WINDOW_WIDTH), static_cast<unsigned long>(GAME_WINDOW_HEIGHT));
 		loadMecha->mechaTexture.SetBackColor(_dc, backColor);
@@ -335,6 +376,19 @@ void LoadDisplay::Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _
 
 		meshDrawer.DrawEnd();
 
+		textDrawer.drawer.DrawStart();
+		
+		textDrawer.drawer.DrawToScreen(
+			ChStr::UTF8ToWString(loadMecha->mecha->GetMechaName()),
+			textDrawer.format,
+			textDrawer.brush,
+			ChVec4::FromRect(0.0f, 0.0f, MECHA_NAME_TEXT_WIDTH, MECHA_NAME_TEXT_HEIGHT)
+		);
+
+		textDrawer.drawer.DrawEnd();
+
+		loadMecha->panelName.CreateColorTexture(device,textDrawer.bitmap.GetBitmap());
+
 		loadMechaList.push_back(loadMecha);
 
 		loopCount++;
@@ -343,7 +397,6 @@ void LoadDisplay::Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _
 
 		loadMecha->mecha = nullptr;
 	}
-
 	
 	openFlg = true;
 
@@ -354,5 +407,21 @@ void LoadDisplay::Close()
 	if (loadMechaList.empty())
 		loadMechaList.clear();
 
+
 	openFlg = false;
+}
+
+void LoadDisplay::Load()
+{
+
+	std::string fileText = "";
+
+	ChCpp::CharFile file;
+	file.FileOpen(loadMechaList[selectPanelNo]->path);
+	fileText = file.FileReadText();
+	file.FileClose();
+
+	file.FileOpen(PLAYER_USE_MECHA_PATH);
+	file.FileWriteText(fileText);
+	file.FileClose();
 }

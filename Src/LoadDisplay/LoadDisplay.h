@@ -23,10 +23,6 @@ public:
 
 public:
 
-	inline ChPtr::Shared<LoaderPanel> GetSelectMecha() { return selectPanel; }
-
-public:
-
 	bool Update();
 
 	void UpdateAction(ActionType _type);
@@ -43,9 +39,13 @@ public:
 
 public:
 
-	void Open(const std::string& _nowSelectPath, ID3D11DeviceContext* _dc, bool _releaseFlg);
+	void Open(ID3D11DeviceContext* _dc, bool _releaseFlg);
 
 	void Close();
+
+private:
+
+	void Load();
 
 private:
 
@@ -85,8 +85,6 @@ private:
 	SelectSpriteType selectSpriteType = SelectSpriteType::LoadPanel;
 	unsigned long drawNowSelect = 0;
 	unsigned long selectPanelNo = 0;
-	unsigned long initSelectPanel = 0;
-	ChPtr::Shared<LoaderPanel> selectPanel = nullptr;
 
 	ImageSprite window;
 	ImageSprite mainWindow;
@@ -94,6 +92,8 @@ private:
 	LoadPanelSprite loadPanelSpriteList[PANEL_DRAW_COUNT];
 	ChD3D11::Texture11 loadPanelImage;
 	ChD3D11::Texture11 selectLoadPanelImage;
+
+	TextDrawerWICBitmap textDrawer;
 
 	ImageSprite panelSelectButton[ChStd::EnumCast(SelectButtonType::None)];
 	ChD3D11::Texture11 selectPanelSelectButtonImage;
