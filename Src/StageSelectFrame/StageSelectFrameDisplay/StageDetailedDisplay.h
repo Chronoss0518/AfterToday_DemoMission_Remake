@@ -65,6 +65,7 @@ private:
 	ImageSprite button[MENU_BUTTON_TYPE];
 	ChD3D11::Texture11 buttonSelect;
 	ChD3D11::Texture11 comingSoonImage;
+	ChD3D11::Texture11 unUsedMethodImage;
 
 	ImageSprite stageName;
 	ChD3D11::Sprite11 stageImage;
