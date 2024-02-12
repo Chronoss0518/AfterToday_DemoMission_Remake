@@ -12,7 +12,7 @@ public:
 
 	void Update()override;
 
-	void UpdateAction(const StageSelectFrame::ActionType& _action)override;
+	void UpdateAction(MenuBase::ActionType _action)override;
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)override;
 
@@ -53,6 +53,12 @@ private:
 
 private:
 
+	void Load();
+
+	void Edit();
+
+private:
+
 	static constexpr int MENU_BUTTON_TYPE = 4;
 	int nowSelect = ChStd::EnumCast(MenuButtonType::Start);
 
@@ -67,4 +73,5 @@ private:
 	ImageSprite strategyOverview;
 	ImageSprite strategyOverviewText;
 
+	bool useLoadAndEdit = true;
 };

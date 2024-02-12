@@ -75,24 +75,23 @@ void StageSelectDisplay::Release()
 
 void StageSelectDisplay::Update()
 {
-
 	UpdateMouse();
 }
 
-void StageSelectDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
+void StageSelectDisplay::UpdateAction(MenuBase::ActionType _type)
 {
 
-	if (_type == StageSelectFrame::ActionType::Decision)
+	if (_type == MenuBase::ActionType::Decision)
 	{
 		if (selectSpriteType == SelectSpriteType::UpButton)
 		{
-			AddAction(StageSelectFrame::ActionType::UpSelect);
+			AddAction(MenuBase::ActionType::Up);
 			return;
 		}
 
 		if (selectSpriteType == SelectSpriteType::DownButton)
 		{
-			AddAction(StageSelectFrame::ActionType::DownSelect);
+			AddAction(MenuBase::ActionType::Down);
 			return;
 		}
 		if (GetNowSelectCount() >= GetStageDataList().size())return;
@@ -101,23 +100,27 @@ void StageSelectDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
 	}
 
 	auto&& stageDataList = GetStageDataList();
-	if (_type == StageSelectFrame::ActionType::UpSelect)
+	if (_type == MenuBase::ActionType::Up)
 	{
-		if (GetNowSelectCount() == drawNowSelect)
+		if (PANEL_DRAW_COUNT < stageDataList.size())
 		{
-			drawNowSelect = (drawNowSelect + stageDataList.size() - 1) % stageDataList.size();
+			if (GetNowSelectCount() == drawNowSelect)
+			{
+				drawNowSelect = (drawNowSelect + stageDataList.size() - 1) % stageDataList.size();
+			}
 		}
-
 		UpNowSelectStage();
 	}
 
-	if (_type == StageSelectFrame::ActionType::DownSelect)
+	if (_type == MenuBase::ActionType::Down)
 	{
-		if (GetNowSelectCount() == ((drawNowSelect + PANEL_DRAW_COUNT - 1) % stageDataList.size()))
+		if (PANEL_DRAW_COUNT < stageDataList.size())
 		{
-			drawNowSelect = (drawNowSelect + 1) % stageDataList.size();
+			if (GetNowSelectCount() == ((drawNowSelect + PANEL_DRAW_COUNT - 1) % stageDataList.size()))
+			{
+				drawNowSelect = (drawNowSelect + 1) % stageDataList.size();
+			}
 		}
-
 		DownNowSelectStage();
 	}
 }
@@ -168,18 +171,12 @@ void StageSelectDisplay::GetSelectData(FromStageSelectFrameData& _selectData)
 
 void StageSelectDisplay::UpdateMouse()
 {
-
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_LBUTTON))
-	{
-		AddAction(StageSelectFrame::ActionType::Decision);
-	}
 
-	if (manager.IsPushKeyNoHold(VK_RBUTTON))
-	{
-		AddAction(StageSelectFrame::ActionType::Cancel);
-	}
+	AddAction(MenuBase::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+
+	AddAction(MenuBase::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();

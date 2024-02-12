@@ -21,14 +21,14 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
+	controller.Init();
+	MenuBase::InitMenu(&controller);
 
 	auto&& device = ChD3D11::D3D11Device();
 	spriteShader.Init(device);
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
-	loadDisplay->Init(device);
-
-
+	loadDisplay->Init(device, &controller);
 
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Select)] = ChPtr::Make_S<StageSelectDisplay>();
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Detailed)] = ChPtr::Make_S<StageDetailedDisplay>();
@@ -143,8 +143,6 @@ void StageSelectFrame::InitStageDataList()
 
 		stageData->selectPanel.CreateColorTexture(device, stagePanelBitmap.GetBitmap());
 
-
-
 		descriptionTextDrawer.DrawStart();
 
 		descriptionTextDrawer.DrawToScreen(
@@ -184,6 +182,8 @@ void StageSelectFrame::Release()
 		stageSelectFrameDisplay[i]->Release();
 		stageSelectFrameDisplay[i] = nullptr;
 	}
+
+	controller.Release();
 }
 
 void StageSelectFrame::DrawFunction()
@@ -212,102 +212,28 @@ void StageSelectFrame::DrawFunction()
 
 }
 
-void StageSelectFrame::UpdateFunction()
+void StageSelectFrame::UpdateAction(ActionType _type)
 {
-	if (loadDisplay->Update())return;
-
-	controller.Update();
-
-	stageSelectFrameDisplay[ChStd::EnumCast(type)]->Update();
-	UpdateKeyboard();
-	UpdateController();
-
-
 	DisplayType beforeDisplayType = type;
 
-
-	for (unsigned long i = 0;i < inputDataList.size(); i++)
+	if (_type == ActionType::Cancel)
 	{
-		auto&& inputData = inputDataList[i];
-		if (inputData == ActionType::Cancel)
-		{
-			Cancel();
-			break;
-		}
-
-		stageSelectFrameDisplay[ChStd::EnumCast(type)]->UpdateAction(inputData);
-
-		if (type != beforeDisplayType)
-		{
-			stageSelectFrameDisplay[ChStd::EnumCast(type)]->OnDisplay();
-			break;
-		}
+		Cancel();
+		SetLoopBreakTrue();
 	}
 
-	inputDataList.clear();
+	stageSelectFrameDisplay[ChStd::EnumCast(type)]->UpdateAction(_type);
 
-}
-
-void StageSelectFrame::UpdateKeyboard()
-{
-
-	auto&& manager = ChSystem::SysManager();
-
-	if (manager.IsPushKeyNoHold(VK_RETURN) || manager.IsPushKeyNoHold(VK_SPACE))
+	if (type != beforeDisplayType)
 	{
-		inputDataList.push_back(ActionType::Decision);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_UP) || manager.IsPushKeyNoHold('W'))
-	{
-		inputDataList.push_back(ActionType::UpSelect);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_DOWN) || manager.IsPushKeyNoHold('S'))
-	{
-		inputDataList.push_back(ActionType::DownSelect);
+		stageSelectFrameDisplay[ChStd::EnumCast(type)]->OnDisplay();
+		SetLoopBreakTrue();
 	}
 }
 
-void StageSelectFrame::UpdateController()
+void StageSelectFrame::UpdateMouse()
 {
-
-	bool isPushFlg = false;
-
-	if (controller.GetAFlg())
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Decision)))
-			inputDataList.push_back(ActionType::Decision);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-		isPushFlg = true;
-	}
-
-	if (controller.GetBFlg())
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Cancel)))
-			inputDataList.push_back(ActionType::Cancel);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Cancel));
-		isPushFlg = true;
-	}
-
-	if (controller.GetUpFlg() || controller.GetLYStick() > 0.3f)
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::UpSelect)))
-			inputDataList.push_back(ActionType::UpSelect);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::UpSelect));
-		isPushFlg = true;
-	}
-
-	if (controller.GetDownFlg() || controller.GetLYStick() < -0.3f)
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::DownSelect)))
-			inputDataList.push_back(ActionType::DownSelect);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::DownSelect));
-		isPushFlg = true;
-	}
-
-	if (isPushFlg)return;
-	conntrollerPushKey.SetAllDownFlg();
+	stageSelectFrameDisplay[ChStd::EnumCast(type)]->Update();
 }
 
 void StageSelectFrame::SetGameFrame()
@@ -333,15 +259,11 @@ void StageSelectFrame::SetEditFrame()
 
 void StageSelectFrame::Update()
 {
-	if (firstFlg)
-	{
-		inputDataList.clear();
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-		firstFlg = false;
-		return;
-	}
 
-	UpdateFunction();
+	if (!loadDisplay->Update())
+	{
+		UpdateFunction();
+	}
 
 	DrawFunction();
 }

@@ -19,6 +19,10 @@
 void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	
+	controller.Init();
+
+	MenuBase::InitMenu(&controller);
 
 	auto&& device = ChD3D11::D3D11Device();
 
@@ -61,12 +65,11 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		//ChangeFrame(ChStd::EnumCast(FrameNo::Setting));
 	};
 
-	controller.Init();
 }
 
 void SelectFrame::Release()
 {
-
+	controller.Release();
 }
 
 void SelectFrame::DrawFunction()
@@ -93,47 +96,29 @@ void SelectFrame::DrawFunction()
 	ChD3D11::Shader11().DrawEnd();
 }
 
-void SelectFrame::UpdateFunction()
+void SelectFrame::UpdateAction(ActionType _type)
 {
-
-	UpdateKeyboard();
-	UpdateMouse();
-	UpdateController();
-
-	for (auto&& inputData : inputDataList)
+	if (_type == ActionType::Decision)
 	{
-		if (inputData == ActionType::Decision)
-		{
-			nextFrameFunction[(NextButtonType)nowSelect]();
-			break;
-		}
-
-		if (inputData == ActionType::UpSelect)
-		{
-			nowSelect--;
-		}
-
-		if (inputData == ActionType::DownSelect)
-		{
-			nowSelect++;
-		}
-
-		nowSelect = (nowSelect + NEXT_BUTTON_TYPE_COUNT) % NEXT_BUTTON_TYPE_COUNT;
-
+		nextFrameFunction[(NextButtonType)nowSelect]();
+		SetLoopBreakTrue();
 	}
 
-	inputDataList.clear();
+	if (_type == ActionType::Up)
+	{
+
+		nowSelect = (nowSelect + NEXT_BUTTON_TYPE_COUNT - 1) % NEXT_BUTTON_TYPE_COUNT;
+	}
+
+	if (_type == ActionType::Down)
+	{
+		nowSelect = (nowSelect + 1) % NEXT_BUTTON_TYPE_COUNT;
+	}
+
 }
 
 void SelectFrame::Update()
 {
-	if (firstFlg)
-	{
-		inputDataList.clear();
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-		firstFlg = false;
-		return;
-	}
 
 	UpdateFunction();
 
@@ -148,10 +133,7 @@ void SelectFrame::UpdateMouse()
 
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_LBUTTON))
-	{
-		inputDataList.push_back(ActionType::Decision);
-	}
+	MenuBase::MouseTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
@@ -166,65 +148,4 @@ void SelectFrame::UpdateMouse()
 		nowSelect = i;
 		break;
 	}
-}
-
-void SelectFrame::UpdateKeyboard()
-{
-
-	auto&& manager = ChSystem::SysManager();
-
-	if (manager.IsPushKeyNoHold(VK_RETURN) || manager.IsPushKeyNoHold(VK_SPACE))
-	{
-		inputDataList.push_back(ActionType::Decision);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_UP) || manager.IsPushKeyNoHold('W'))
-	{
-		inputDataList.push_back(ActionType::UpSelect);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_DOWN) || manager.IsPushKeyNoHold('S'))
-	{
-		inputDataList.push_back(ActionType::DownSelect);
-	}
-}
-
-void SelectFrame::UpdateController()
-{
-	controller.Update();
-
-	bool isPushFlg = false;
-
-	if (controller.GetAFlg())
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Decision)))
-			inputDataList.push_back(ActionType::Decision);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-		isPushFlg = true;
-	}
-
-	if (controller.GetUpFlg() || controller.GetLYStick() > 0.3f)
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::UpSelect)))
-			inputDataList.push_back(ActionType::UpSelect);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::UpSelect));
-		isPushFlg = true;
-	}
-
-	if (controller.GetDownFlg() || controller.GetLYStick() < -0.3f)
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::DownSelect)))
-			inputDataList.push_back(ActionType::DownSelect);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::DownSelect));
-		isPushFlg = true;
-	}
-
-	if (isPushFlg)return;
-	conntrollerPushKey.SetAllDownFlg();
-
-}
-
-void SelectFrame::SetScript()
-{
-
 }

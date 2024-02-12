@@ -16,6 +16,7 @@
 #define J_SPECIAL_PAY_REDUCTION "SpecialPayReduction"
 #define J_SPECIAL_PAY_REDUCTION_EXPLANATION "SpecialPayReductionExplanation"
 #define J_SPECIAL_PAY_REDUCTION_EXPLANATION "SpecialPayReductionExplanation"
+#define J_SELECT_MODEL_FLG "SelectModelFlg"
 
 void StageDataStructure::Load(const std::string& _filePath)
 {
@@ -97,6 +98,9 @@ void StageDataStructure::Load(const std::string& _filePath)
 	auto specialPayReductionExplanationJson = jsonObject->GetJsonString(J_SPECIAL_PAY_REDUCTION_EXPLANATION);
 	if (specialPayReductionExplanationJson != nullptr)resultData->specialPayReductionExplanation = specialPayReductionExplanationJson->GetString();
 
+	auto selectModelFlgJson = jsonObject->GetJsonBoolean(J_SELECT_MODEL_FLG);
+	if (selectModelFlgJson != nullptr)selectModelFlg = *selectModelFlgJson;
+
 }
 
 void StageDataStructure::Save(const std::string& _filePath)
@@ -127,6 +131,8 @@ void StageDataStructure::Save(const std::string& _filePath)
 	res->SetObject(J_SPECIAL_PAY_REDUCTION, ChCpp::JsonNumber::CreateObject(resultData->specialPayReduction));
 	
 	res->SetObject(J_SPECIAL_PAY_REDUCTION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->specialPayReductionExplanation));
+
+	res->SetObject(J_SELECT_MODEL_FLG, ChCpp::JsonBoolean::CreateObject(selectModelFlg));
 
 	{
 		ChCpp::CharFile file;

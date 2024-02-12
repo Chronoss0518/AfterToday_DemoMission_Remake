@@ -83,35 +83,34 @@ void StageDetailedDisplay::Update()
 	UpdateMouse();
 }
 
-void StageDetailedDisplay::UpdateAction(const StageSelectFrame::ActionType& _type)
+void StageDetailedDisplay::UpdateAction(MenuBase::ActionType _type)
 {
 
-	if (_type == StageSelectFrame::ActionType::Decision)
+	if (_type == MenuBase::ActionType::Decision)
 	{
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Start))
 			SetGameFrame();
 
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Edit))
-			SetEditFrame();
+			Edit();
 
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Load))
-			OpenLoadDisplay();
+			Load();
 
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Cancel))
 			Cancel();
 	}
 
-	if (_type == StageSelectFrame::ActionType::UpSelect)
+	if (_type == MenuBase::ActionType::Up)
 	{
-		nowSelect--;
+		nowSelect = (nowSelect + MENU_BUTTON_TYPE - 1) % MENU_BUTTON_TYPE;
 	}
 
-	if (_type == StageSelectFrame::ActionType::DownSelect)
+	if (_type == MenuBase::ActionType::Down)
 	{
-		nowSelect++;
+		nowSelect = (nowSelect + 1) % MENU_BUTTON_TYPE;
 	}
 
-	nowSelect = (nowSelect + MENU_BUTTON_TYPE) % MENU_BUTTON_TYPE;
 }
 
 void StageDetailedDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
@@ -162,21 +161,16 @@ void StageDetailedDisplay::OnDisplay()
 	CreateStageDescriptionTextImage(stageData);
 	CreateStageStrategyOverviewTextImage(stageData);
 
+	useLoadAndEdit = stageData.stageDatas->selectModelFlg;
 }
-
 
 void StageDetailedDisplay::UpdateMouse()
 {
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_LBUTTON))
-	{
-		AddAction(StageSelectFrame::ActionType::Decision);
-	}
-	if (manager.IsPushKeyNoHold(VK_RBUTTON))
-	{
-		AddAction(StageSelectFrame::ActionType::Cancel);
-	}
+	AddAction(StageSelectFrame::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+
+	AddAction(StageSelectFrame::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
 
 
 	auto&& mouce = ChWin::Mouse();
@@ -302,4 +296,16 @@ void StageDetailedDisplay::CreateStageStrategyOverviewTextImage(StageData& _stag
 	bitmap.Release();
 
 
+}
+
+void StageDetailedDisplay::Load()
+{
+	if (!useLoadAndEdit)return;
+	OpenLoadDisplay();
+}
+
+void StageDetailedDisplay::Edit()
+{
+	if (!useLoadAndEdit)return;
+	SetEditFrame();
 }

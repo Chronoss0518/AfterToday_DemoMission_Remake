@@ -776,15 +776,15 @@ void GameFrame::Render3D(void)
 
 	meshDrawer.DrawStart(ChD3D11::D3D11DC());
 
-	mechaList.ObjectDraw3D();
-
-	bulletList.ObjectDraw3D();
-	
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
 		auto mapModel = weakMapModel.lock();
 		meshDrawer.Draw(*mapModel->model, (ChMat_11)mapModel->mat);
 	}
+
+	mechaList.ObjectDraw3D();
+
+	bulletList.ObjectDraw3D();
 
 	meshDrawer.DrawEnd();
 

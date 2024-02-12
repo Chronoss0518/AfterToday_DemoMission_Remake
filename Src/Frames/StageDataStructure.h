@@ -51,4 +51,6 @@ struct StageDataStructure : public ChCpp::SendDataClass
 	//Stageの内容//
 	std::string stageStrategyOverview = "";
 
+	//Mechaをロードおよび編集ができるためのフラグ//
+	bool selectModelFlg = true;
 };

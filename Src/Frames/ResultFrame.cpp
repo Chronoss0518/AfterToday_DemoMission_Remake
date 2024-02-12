@@ -55,13 +55,13 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	resultTitle.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Result_Title_JP.png")));
 	SPRITE_INIT(resultTitle.sprite, RectToGameWindow(ChVec4::FromRect(RESULT_TITLE_LEFT,RESULT_TITLE_TOP, RESULT_TITLE_RIGHT, RESULT_TITLE_BOTTOM)));
 	
-	SPRITE_INIT(button[ChStd::EnumCast(ActionType::LeftSelect)].sprite, RectToGameWindow(ChVec4::FromRect(BUTTON_LEFT_LEFT, BUTTON_TOP, BUTTON_LEFT_LEFT + BUTTON_WIDTH, BUTTON_BOTTOM)));
-	button[ChStd::EnumCast(ActionType::LeftSelect)].image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeLeftButton.png")));
-	button[ChStd::EnumCast(ActionType::LeftSelect)].select.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeLeftButton_Select.png")));
+	SPRITE_INIT(button[ChStd::EnumCast(SelectButtonType::Left)].sprite, RectToGameWindow(ChVec4::FromRect(BUTTON_LEFT_LEFT, BUTTON_TOP, BUTTON_LEFT_LEFT + BUTTON_WIDTH, BUTTON_BOTTOM)));
+	button[ChStd::EnumCast(SelectButtonType::Left)].image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeLeftButton.png")));
+	button[ChStd::EnumCast(SelectButtonType::Left)].select.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeLeftButton_Select.png")));
 
-	SPRITE_INIT(button[ChStd::EnumCast(ActionType::RightSelect)].sprite, RectToGameWindow(ChVec4::FromRect(BUTTON_RIGHT_LEFT, BUTTON_TOP, BUTTON_RIGHT_LEFT + BUTTON_WIDTH, BUTTON_BOTTOM)));
-	button[ChStd::EnumCast(ActionType::RightSelect)].image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeRightButton.png")));
-	button[ChStd::EnumCast(ActionType::RightSelect)].select.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeRightButton_Select.png")));
+	SPRITE_INIT(button[ChStd::EnumCast(SelectButtonType::Right)].sprite, RectToGameWindow(ChVec4::FromRect(BUTTON_RIGHT_LEFT, BUTTON_TOP, BUTTON_RIGHT_LEFT + BUTTON_WIDTH, BUTTON_BOTTOM)));
+	button[ChStd::EnumCast(SelectButtonType::Right)].image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeRightButton.png")));
+	button[ChStd::EnumCast(SelectButtonType::Right)].select.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeRightButton_Select.png")));
 
 	float top = BLOCK_TOP;
 	float bottom = top + BLOCK_HEIGHT;
@@ -103,65 +103,47 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	spriteShader.Init(device);
 
 	controller.Init();
+
+	MenuBase::InitMenu(&controller);
 }
 
 void ResultFrame::Release()
 {
-
+	controller.Release();
 }
 
 void ResultFrame::Update()
 {
-	if (!initFlg)
-	{
-		inputDataList.clear();
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-		initFlg = true;
-	}
 
 	UpdateFunction();
 
 	DrawFunction();
 }
 
-void ResultFrame::UpdateFunction()
+void ResultFrame::UpdateAction(ActionType _type)
 {
-	UpdateMouse();
-	UpdateKeyboard();
-	UpdateController();
-
-
-	for (unsigned long i = 0;i<inputDataList.size();i++)
+	if (_type == ActionType::Left || _type == ActionType::Right)
 	{
-		auto&& inputData = inputDataList[i];
-
-		if (inputData == ActionType::LeftSelect || inputData == ActionType::RightSelect)
-		{
-			exprlationType++;
-		}
-
-		if (inputData == ActionType::Decision)
-		{
-			if (buttonSelectType == ChStd::EnumCast(ActionType::LeftSelect))
-			{
-				inputDataList.push_back(ActionType::LeftSelect);
-				continue;
-			}
-			if (buttonSelectType == ChStd::EnumCast(ActionType::RightSelect))
-			{
-				inputDataList.push_back(ActionType::RightSelect);
-				continue;
-			}
-			ChangeFrame(ChStd::EnumCast(FrameNo::Select));
-			break;
-		}
-
-
+		exprlationType = (exprlationType + 1)% EXPLANATION_TYPE_COUNT;
 	}
 
-	exprlationType = exprlationType % EXPLANATION_TYPE_COUNT;
+	if (_type == ActionType::Decision)
+	{
+		if (buttonSelectType == SelectButtonType::Left)
+		{
+			AddActionType(ActionType::Left);
+			return;
+		}
+		if (buttonSelectType == SelectButtonType::Right)
+		{
+			AddActionType(ActionType::Right);
+			return;
+		}
+		ChangeFrame(ChStd::EnumCast(FrameNo::Select));
+		SetLoopBreakTrue();
+	}
 
-	inputDataList.clear();
+
 }
 
 void ResultFrame::DrawFunction()
@@ -182,7 +164,7 @@ void ResultFrame::DrawFunction()
 
 	for (unsigned long i = 0; i < SELECT_BUTTON_TYPE_COUNT; i++)
 	{
-		if (buttonSelectType == i)
+		if (buttonSelectType == static_cast<SelectButtonType>(i))
 		{
 			spriteShader.Draw(button[i].select, button[i].sprite);
 			continue;
@@ -390,10 +372,7 @@ void ResultFrame::UpdateMouse()
 {
 	auto&& manager = ChSystem::SysManager();
 
-	if (manager.IsPushKeyNoHold(VK_LBUTTON))
-	{
-		inputDataList.push_back(ActionType::Decision);
-	}
+	MouseTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
 
 	mouse->Update();
 
@@ -403,70 +382,9 @@ void ResultFrame::UpdateMouse()
 	for (int i = 0; i < SELECT_BUTTON_TYPE_COUNT; i++)
 	{
 		if (!IsMoucePosOnSprite(button[i].sprite))continue;
-		buttonSelectType = i;
+		buttonSelectType = static_cast<SelectButtonType>(i);
 		return;
 	}
 
-	buttonSelectType = ChStd::EnumCast(ActionType::Decision);
-}
-
-void ResultFrame::UpdateKeyboard()
-{
-	auto&& manager = ChSystem::SysManager();
-
-	if (manager.IsPushKeyNoHold(VK_RETURN)|| manager.IsPushKeyNoHold(VK_SPACE))
-	{
-		inputDataList.push_back(ActionType::Decision);
-		buttonSelectType = ChStd::EnumCast(ActionType::Decision);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_LEFT) || manager.IsPushKeyNoHold('A'))
-	{
-		inputDataList.push_back(ActionType::LeftSelect);
-		buttonSelectType = ChStd::EnumCast(ActionType::Decision);
-	}
-
-	if (manager.IsPushKeyNoHold(VK_RIGHT) || manager.IsPushKeyNoHold('D'))
-	{
-		inputDataList.push_back(ActionType::RightSelect);
-		buttonSelectType = ChStd::EnumCast(ActionType::Decision);
-	}
-}
-
-void ResultFrame::UpdateController()
-{
-	controller.Update();
-
-	bool isPushFlg = false;
-
-	if (controller.GetAFlg() || controller.GetStartFlg())
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::Decision)))
-			inputDataList.push_back(ActionType::Decision);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-		isPushFlg = true;
-	}
-
-	if (controller.GetLeftFlg() || controller.GetLXStick() < -0.3f)
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::LeftSelect)))
-			inputDataList.push_back(ActionType::LeftSelect);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::LeftSelect));
-		isPushFlg = true;
-	}
-
-	if (controller.GetRightFlg() || controller.GetLXStick() > 0.3f)
-	{
-		if (!conntrollerPushKey.GetBitFlg(ChStd::EnumCast(ActionType::RightSelect)))
-			inputDataList.push_back(ActionType::RightSelect);
-		conntrollerPushKey.SetBitTrue(ChStd::EnumCast(ActionType::RightSelect));
-		isPushFlg = true;
-	}
-
-	if (isPushFlg) 
-	{
-		buttonSelectType = ChStd::EnumCast(ActionType::Decision);
-		return;
-	}
-	conntrollerPushKey.SetAllDownFlg();
+	buttonSelectType = SelectButtonType::None;
 }

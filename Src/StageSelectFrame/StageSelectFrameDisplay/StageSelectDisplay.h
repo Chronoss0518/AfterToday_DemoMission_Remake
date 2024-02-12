@@ -12,7 +12,7 @@ public:
 
 	void Update()override;
 
-	void UpdateAction(const StageSelectFrame::ActionType& _action)override;
+	void UpdateAction(MenuBase::ActionType _action)override;
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)override;
 

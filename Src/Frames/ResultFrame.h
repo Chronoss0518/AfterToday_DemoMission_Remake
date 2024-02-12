@@ -1,8 +1,10 @@
 #pragma once
 
+#include"MenuBase.h"
+
 struct ResultStructure;
 
-class ResultFrame : public ChCpp::BaseFrame
+class ResultFrame : public ChCpp::BaseFrame,public MenuBase
 {
 public:
 
@@ -35,11 +37,11 @@ private:
 
 
 	static constexpr unsigned long SELECT_BUTTON_TYPE_COUNT = 2;
-	enum class ActionType
+	enum class SelectButtonType
 	{
-		LeftSelect,
-		RightSelect,
-		Decision
+		Left,
+		Right,
+		None
 	};
 
 private:
@@ -61,17 +63,15 @@ private:
 		ChD3D11::Texture11 select;
 	};
 
+protected:
+
+	void UpdateAction(ActionType _type)override;
+
+	void UpdateMouse()override;
+
 private:
 
-	void UpdateFunction();
-
 	void DrawFunction();
-
-	void UpdateMouse();
-
-	void UpdateKeyboard();
-
-	void UpdateController();
 
 	void CreateBlockData(ID3D11Device* _device, const ResultStructure& _result);
 
@@ -97,14 +97,10 @@ private:
 
 private:
 
-	std::vector<ActionType> inputDataList;
-
 	ChPtr::Shared<ResultStructure> resultData = nullptr;
 	long finalIncome = 0;
 
 	ChD3D::XInputController controller;
-	ChCpp::BitBool conntrollerPushKey;
-	bool initFlg = false;
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
@@ -117,7 +113,7 @@ private:
 	ChD3D11::Sprite11 explanationTextSprite;
 	DrawExplanationImage explanation[EXPLANATION_TYPE_COUNT];
 
-	int buttonSelectType = ChStd::EnumCast(ActionType::Decision);
+	SelectButtonType buttonSelectType = SelectButtonType::None;
 	ButtonImage button[SELECT_BUTTON_TYPE_COUNT];
 	ChWin::MouseController* mouse = &ChWin::Mouse();
 };

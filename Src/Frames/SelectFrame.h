@@ -1,6 +1,8 @@
 #pragma once
 
-class SelectFrame :public ChCpp::BaseFrame
+#include"MenuBase.h"
+
+class SelectFrame :public ChCpp::BaseFrame,public MenuBase
 {
 public:
 
@@ -11,25 +13,12 @@ public:
 	void Update()override;
 
 private:
-
-	void SetScript();
-
+	
 	void DrawFunction();
 
-	void UpdateFunction();
+	void UpdateAction(ActionType _type)override;
 
-	void UpdateMouse();
-
-	void UpdateKeyboard();
-
-	void UpdateController();
-
-	enum class ActionType
-	{
-		UpSelect,
-		DownSelect,
-		Decision
-	};
+	void UpdateMouse()override;
 
 	enum class NextButtonType
 	{
@@ -39,7 +28,6 @@ private:
 	};
 
 	static constexpr int NEXT_BUTTON_TYPE_COUNT = 3;
-	std::vector<ActionType> inputDataList;
 	std::map<NextButtonType,std::function<void(void)>>nextFrameFunction;
 
 	ChD3D11::Texture11 backGround;
@@ -55,9 +43,7 @@ private:
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
 	ChD3D::XInputController controller;
-	ChCpp::BitBool conntrollerPushKey;
 
 	int nowSelect = ChStd::EnumCast(NextButtonType::Battle);
 
-	bool firstFlg = true;
 };

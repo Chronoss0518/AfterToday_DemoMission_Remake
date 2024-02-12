@@ -2,6 +2,8 @@
 
 #include"FromStageSelectFrameData.h"
 
+#include"MenuBase.h"
+
 #ifndef STAGE_IMAGE_TEXTURE_DIRECTORY
 #define STAGE_IMAGE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageImage/") current_path
 #endif
@@ -30,7 +32,7 @@
 class LoadDisplay;
 class StageData;
 
-class StageSelectFrame :public ChCpp::BaseFrame
+class StageSelectFrame :public ChCpp::BaseFrame,public MenuBase
 {
 public:
 
@@ -38,14 +40,6 @@ public:
 	{
 		Select,//‘I‘ð‰æ–Ê//
 		Detailed//Ú×‰æ–Ê//
-	};
-
-	enum class ActionType
-	{
-		UpSelect,
-		DownSelect,
-		Decision,
-		Cancel
 	};
 
 	enum class SelectSpriteType
@@ -72,7 +66,7 @@ public:
 
 		virtual void Update() = 0;
 
-		virtual void UpdateAction(const ActionType& _action) = 0;
+		virtual void UpdateAction(ActionType _action) = 0;
 
 		virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer) = 0;
 
@@ -115,7 +109,12 @@ public:
 
 		void AddAction(ActionType _type)
 		{
-			frame->inputDataList.push_back(_type);
+			frame->MenuBase::AddActionType(_type);
+		}
+
+		void AddAction(ActionType _type,bool _inputFlg)
+		{
+			frame->MenuBase::MouseTest(_type, _inputFlg);
 		}
 
 	protected:
@@ -185,15 +184,15 @@ public:
 
 private:
 
+	void UpdateAction(ActionType _type)override;
+
+	void UpdateMouse()override;
+
+private:
+
 	void InitStageDataList();
 
 	void DrawFunction();
-
-	void UpdateFunction();
-
-	void UpdateKeyboard();
-
-	void UpdateController();
 
 private:
 
@@ -215,11 +214,6 @@ private:
 
 	DisplayType type = DisplayType::Select;
 
-	std::vector<ActionType> inputDataList;
-
-	ChD3D::XInputController controller;
-	ChCpp::BitBool conntrollerPushKey;
-
 	std::vector<ChPtr::Shared<StageData>>stageDataList;
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
@@ -228,8 +222,7 @@ private:
 
 	ChD3D11::Texture11 notImageTexture;
 
-
 	ChPtr::Shared<StageSelectFrameDisplay>stageSelectFrameDisplay[2];
 
-	bool firstFlg = true;
+	ChD3D::XInputController controller;
 };
