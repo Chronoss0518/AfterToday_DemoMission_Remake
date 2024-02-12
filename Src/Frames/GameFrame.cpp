@@ -880,18 +880,8 @@ void GameFrame::AddMecha(const std::string& _text)
 	bool cpuFlg = false;
 
 	std::string cpuLoadData = "";
-	std::string loadFile = "";
+	std::string loadFile = PLAYER_USE_MECHA_PATH;
 	bool loadCPUFlg = false;
-
-	{
-
-		auto&& saveData = BaseFrame::GetData();
-		auto&& playerData = ChPtr::SharedSafeCast<PlayerData>(saveData);
-		if (playerData != nullptr)
-		{
-			loadFile = playerData->useMechaData;
-		}
-	}
 
 	ChVec3 position;
 	ChVec3 rotation;
@@ -901,7 +891,7 @@ void GameFrame::AddMecha(const std::string& _text)
 		if (argment[i] == "-l" || argment[i] == "-load")
 		{
 			i++;
-			loadFile = argment[i];
+			loadFile = CPU_MECHA_PATH(+argment[i]);
 			loadCPUFlg = true;
 		}
 		if (argment[i] == "-u" || argment[i] == "--username")
@@ -1009,7 +999,7 @@ void GameFrame::AddMecha(const std::string& _text)
 	mecha->SetPosition(position);
 	mecha->SetRotation(rotation);
 
-	mecha->Load(ChD3D11::D3D11Device(), loadCPUFlg ? CPU_MECHA_PATH(+loadFile) : PLAYER_MECHA_PATH(+loadFile));
+	mecha->Load(ChD3D11::D3D11Device(), loadFile);
 
 	if (playerFlg)
 	{	
