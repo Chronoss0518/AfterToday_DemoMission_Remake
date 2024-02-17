@@ -426,71 +426,11 @@
     <None Include="Resource\StageScript\stage1.chs">
       <Filter>StageScript</Filter>
     </None>
-    <None Include="Resource\RobotParts\Body\Air.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Body\Guardian.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Body\Normal.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Boost\Air.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Boost\Guardian.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Boost\Normal.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Foot\Air.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Foot\Guardian.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Foot\Normal.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\LArm\Air.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\LArm\Guardian.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\LArm\Normal.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\RArm\Air.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\RArm\Guardian.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\RArm\Normal.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Weapon\Bullet\standard_1968.bod">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Weapon\Gun\MF-TPP1.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
     <None Include="Resource\StageData\Test_Stage.json">
       <Filter>StageData</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage2.json">
       <Filter>StageData</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Head\Air.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Head\Guardian.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
-    <None Include="Resource\RobotParts\Head\Normal.mpd">
-      <Filter>PartsDatas</Filter>
     </None>
     <None Include="Resource\CPUCharactor\mob.cpu">
       <Filter>GameFrame\CPUData</Filter>
@@ -539,6 +479,66 @@
     </None>
     <None Include="Resource\Save\AssemMechaFrame\5.amf">
       <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\RobotParts\HT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\LAA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\LAG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\LAT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\MF-TPP1.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\RAA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\RAG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\RAT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\BA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\BG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\BT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\HA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\HG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\Bullet\standard_1968.bod">
+      <Filter>PartsDatas</Filter>
     </None>
   </ItemGroup>
 </Project>

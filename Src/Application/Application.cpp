@@ -65,11 +65,13 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 		ChWin::Mouse().Init(window.GethWnd(), s_screen.w, s_screen.h);
 	}
 
+	/*
 	PlayerData testData;
 
 	testData.stageName = "stage1.chs";
 
 	frameList.SaveData(&testData);
+	*/
 
 	ChD3D::WICBitmapCreatorObj().Init();
 

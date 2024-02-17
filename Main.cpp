@@ -42,7 +42,7 @@ int WINAPI WinMain(
 			creater.SetInitSize(s_screen);
 
 			system.Init(creater,
-//				"AfterToday_DemoMission",
+				//"AfterToday_DemoMission",
 				"MechanizedWar TestProject",
 				windClass.GetWindClassName(),
 				hInst,
@@ -80,10 +80,6 @@ int WINAPI WinMain(
 
 	auto playerData = ChPtr::Make_S<PlayerData>();
 
-	//playerData->useMechaData = "AirRobot.amf";
-	//playerData->useMechaData = "GuardianRobot.amf";
-	playerData->useMechaData = "NormalRobot.amf";
-
 	frameList.SaveData(playerData);
 
 	ChD3D::WICBitmapCreatorObj().Init();
@@ -109,7 +105,6 @@ int WINAPI WinMain(
 #if USE_RESULT_FRAME_FLG
 		frameList.SetFrame<ResultFrame>();
 #endif
-	//auto gameFrame = frameList.GetNowFrame<GameFrame>();
 
 	// ÉQÅ[ÉÄÇ…ä÷Ç∑ÇÈèâä˙âªèàóù ---------------------------
 

@@ -7,10 +7,10 @@
 #include"../Controller/ControllerBase.h"
 #include"CPULooker.h"
 
-#define FEATURE 0
-#define MATH_MATRIX false
+#define FEATURE true
+#define MATH_MATRIX true
 
-#define TEST true
+#define TEST false
 
 unsigned long resetNum = -1;
 
@@ -127,6 +127,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 			position = tmpMat.Transform(position);
 			float w = position.w;
 			position /= w;
+			position.z = w;
 
 
 			if (square.left > position.x)square.left = position.x;
@@ -331,12 +332,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 				float w = position.w;
 				position /= w;
 
-				if (w < 0.0f)
-				{
-					position.x = -position.x;
-					position.y = -position.y;
-				}
-
+				position.z = w;
 #if FEATURE
 
 				if (anchorPos[ChStd::EnumCast(AnchorPosName::LeftTop)].x > position.x &&
@@ -466,7 +462,6 @@ void CPUObjectLooker::Init()
 		{
 			while (!endFlg)
 			{
-				auto time = timeGetTime();
 
 				if (!updateFlg)continue;
 				FindMecha();
@@ -544,8 +539,6 @@ void CPUObjectLooker::DrawBegin()
 
 void CPUObjectLooker::Draw2D()
 {
-
-	return;
 
 	auto dc = ChD3D11::D3D11DC();
 
