@@ -372,7 +372,7 @@ void ResultFrame::UpdateMouse()
 {
 	auto&& manager = ChSystem::SysManager();
 
-	MouseTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	InputTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
 
 	mouse->Update();
 

@@ -104,7 +104,6 @@ public:
 			frame->SetEditFrame();
 		}
 
-
 	public:
 
 		void AddAction(ActionType _type)
@@ -114,7 +113,7 @@ public:
 
 		void AddAction(ActionType _type,bool _inputFlg)
 		{
-			frame->MenuBase::MouseTest(_type, _inputFlg);
+			frame->MenuBase::InputTest(_type, _inputFlg);
 		}
 
 	protected:

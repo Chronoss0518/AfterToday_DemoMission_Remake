@@ -133,7 +133,7 @@ void SelectFrame::UpdateMouse()
 
 	auto&& manager = ChSystem::SysManager();
 
-	MenuBase::MouseTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	MenuBase::InputTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
