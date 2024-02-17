@@ -43,23 +43,13 @@ protected:
 
 protected:
 
-	void ControllerTest(ActionType _action,bool _inputFlg);
-
-	void KeyboardTest(ActionType _action,bool _inputFlg);
-
-	void MouseTest(ActionType _action,bool _inputFlg);
-
-
-private:
-
-	void InputTest(ActionType _action, bool _inputFlg, ChCpp::BitBool& _inputData);
+	void InputTest(ActionType _action, bool _inputFlg);
 
 private:
  
+	ChCpp::BitBool beforeInputMenuType;
+	ChCpp::BitBool afterInputMenuType;
 	ChCpp::BitBool inputMenuType;
-	ChCpp::BitBool controllerInputData;
-	ChCpp::BitBool keyboardInputData;
-	ChCpp::BitBool mouseInputData;
 	ChD3D::XInputController* controller = nullptr;
 
 	bool loopBreakFlg = false;

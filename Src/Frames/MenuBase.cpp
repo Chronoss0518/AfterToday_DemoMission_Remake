@@ -3,20 +3,20 @@
 
 #include"MenuBase.h"
 
+#define STICK_INPUT_SIZE 0.6f
+
 void MenuBase::InitMenu(ChD3D::XInputController* _controller)
 {
-	controllerInputData.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-	keyboardInputData.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
-	mouseInputData.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
+	afterInputMenuType.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
 
 	controller = _controller;
 }
 
 void MenuBase::UpdateFunction()
 {
+	UpdateController();
 	UpdateKeyboard();
 	UpdateMouse();
-	UpdateController();
 
 	for (unsigned char i = 0; i < ACTION_TYPE_COUNT; i++)
 	{
@@ -27,6 +27,9 @@ void MenuBase::UpdateFunction()
 
 	loopBreakFlg = false;
 
+	afterInputMenuType.SetValue(beforeInputMenuType.GetValue());
+	beforeInputMenuType.SetAllDownFlg();
+
 	inputMenuType.SetAllDownFlg();
 }
 
@@ -35,15 +38,15 @@ void MenuBase::UpdateKeyboard()
 
 	auto&& manager = ChSystem::SysManager();
 
-	KeyboardTest(ActionType::Decision, manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE));
+	InputTest(ActionType::Decision, manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE));
 
-	KeyboardTest(ActionType::Up, manager.IsPushKey(VK_UP) || manager.IsPushKey('W'));
+	InputTest(ActionType::Up, manager.IsPushKey(VK_UP) || manager.IsPushKey('W'));
 
-	KeyboardTest(ActionType::Down, manager.IsPushKey(VK_DOWN) || manager.IsPushKey('S'));
+	InputTest(ActionType::Down, manager.IsPushKey(VK_DOWN) || manager.IsPushKey('S'));
 
-	KeyboardTest(ActionType::Left, manager.IsPushKey(VK_LEFT) || manager.IsPushKey('A'));
+	InputTest(ActionType::Left, manager.IsPushKey(VK_LEFT) || manager.IsPushKey('A'));
 
-	KeyboardTest(ActionType::Right, manager.IsPushKey(VK_RIGHT) || manager.IsPushKey('D'));
+	InputTest(ActionType::Right, manager.IsPushKey(VK_RIGHT) || manager.IsPushKey('D'));
 }
 
 void MenuBase::UpdateController()
@@ -51,18 +54,17 @@ void MenuBase::UpdateController()
 	if (ChPtr::NullCheck(controller))return;
 	controller->Update();
 
-	ControllerTest(ActionType::Decision, controller->GetAFlg());
+	InputTest(ActionType::Decision, controller->GetAFlg());
 
-	ControllerTest(ActionType::Cancel, controller->GetBFlg());
+	InputTest(ActionType::Cancel, controller->GetBFlg());
 	
-	ControllerTest(ActionType::Up, controller->GetUpFlg() || controller->GetLYStick() > 0.3f);
+	InputTest(ActionType::Up, controller->GetUpFlg() || controller->GetLYStick() > STICK_INPUT_SIZE);
 	
-	ControllerTest(ActionType::Down, controller->GetDownFlg() || controller->GetLYStick() < -0.3f);
+	InputTest(ActionType::Down, controller->GetDownFlg() || controller->GetLYStick() < -STICK_INPUT_SIZE);
 	
-	ControllerTest(ActionType::Left, controller->GetLeftFlg() || controller->GetLXStick() < -0.3f);
+	InputTest(ActionType::Left, controller->GetLeftFlg() || controller->GetLXStick() < -STICK_INPUT_SIZE);
 	
-	ControllerTest(ActionType::Right, controller->GetRightFlg() || controller->GetLXStick() > 0.3f);
-
+	InputTest(ActionType::Right, controller->GetRightFlg() || controller->GetLXStick() > STICK_INPUT_SIZE);
 }
 
 void MenuBase::AddActionType(ActionType _action)
@@ -70,31 +72,13 @@ void MenuBase::AddActionType(ActionType _action)
 	inputMenuType.SetBitTrue(ChStd::EnumCast(_action));
 }
 
-void MenuBase::ControllerTest(ActionType _action, bool _inputFlg)
+void MenuBase::InputTest(ActionType _action, bool _inputFlg)
 {
-	InputTest(_action, _inputFlg, controllerInputData);
-}
+	if (!_inputFlg)return;
 
-void MenuBase::KeyboardTest(ActionType _action, bool _inputFlg)
-{
-	InputTest(_action, _inputFlg, keyboardInputData);
-}
+	beforeInputMenuType.SetBitTrue(ChStd::EnumCast(_action));
 
-void MenuBase::MouseTest(ActionType _action, bool _inputFlg)
-{
-	InputTest(_action, _inputFlg, mouseInputData);
-}
-
-void MenuBase::InputTest(ActionType _action, bool _inputFlg, ChCpp::BitBool& _inputData)
-{
-	if (!_inputFlg)
-	{
-		_inputData.SetBitFalse(ChStd::EnumCast(_action));
-		return;
-	}
-
-	if (_inputData.GetBitFlg(ChStd::EnumCast(_action)))return;
+	if (afterInputMenuType.GetBitFlg(ChStd::EnumCast(_action)))return;
 
 	AddActionType(_action);
-	_inputData.SetBitTrue(ChStd::EnumCast(_action));
 }
