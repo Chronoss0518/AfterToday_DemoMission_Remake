@@ -57,6 +57,7 @@
     <ClInclude Include="Src\Frames\EditFrame.h" />
     <ClInclude Include="Src\Frames\FromStageSelectFrameData.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
+    <ClInclude Include="Src\Frames\MenuBase.h" />
     <ClInclude Include="Src\Frames\StageDataStructure.h" />
     <ClInclude Include="Src\Frames\ResultFrame.h" />
     <ClInclude Include="Src\Frames\SelectFrame.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.cpp" />
     <ClCompile Include="Src\Frames\EditFrame.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
+    <ClCompile Include="Src\Frames\MenuBase.cpp" />
     <ClCompile Include="Src\Frames\ResultFrame.cpp" />
     <ClCompile Include="Src\Frames\SelectFrame.cpp" />
     <ClCompile Include="Src\Frames\StageDataStructure.cpp" />
@@ -241,11 +243,16 @@
     <None Include="Resource\RobotParts\RArm\Normal.mpd" />
     <None Include="Resource\RobotParts\Weapon\Bullet\standard_1968.bod" />
     <None Include="Resource\RobotParts\Weapon\Gun\MF-TPP1.mpd" />
-    <None Include="Resource\Save\AssemMechaFrame\AirRobot.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\GuardianRobot.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\NormalRobot.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\0.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\1.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\2.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\3.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\4.amf" />
+    <None Include="Resource\Save\AssemMechaFrame\5.amf" />
     <None Include="Resource\StageData\Test_Stage.json" />
     <None Include="Resource\StageData\Test_Stage2.json" />
+    <None Include="Resource\StageData\Test_Stage3.json" />
+    <None Include="Resource\StageData\Test_Stage4.json" />
     <None Include="Resource\StageData\Test_Stage_Wave.json" />
     <None Include="Resource\StageScript\CPU\AirRobot.amf" />
     <None Include="Resource\StageScript\CPU\GuardianRobot.amf" />

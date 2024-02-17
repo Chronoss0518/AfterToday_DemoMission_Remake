@@ -243,6 +243,9 @@
     <ClInclude Include="Src\LoadDisplay\LoadDisplay.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Frames\MenuBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -392,6 +395,9 @@
     <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Frames\MenuBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
@@ -495,15 +501,6 @@
     <None Include="Resource\StageScript\test_stage.chs">
       <Filter>StageScript</Filter>
     </None>
-    <None Include="Resource\Save\AssemMechaFrame\AirRobot.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\GuardianRobot.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\NormalRobot.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
     <None Include="Resource\StageScript\CPU\GuardianRobot.amf">
       <Filter>GameFrame\Mecha\CPUMecha</Filter>
     </None>
@@ -518,6 +515,30 @@
     </None>
     <None Include="Resource\StageData\Test_Stage_Wave.json">
       <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage3.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage4.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\0.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\1.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\2.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\3.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\4.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrame\5.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
     </None>
   </ItemGroup>
 </Project>
