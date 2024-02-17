@@ -1,10 +1,11 @@
-Air
-8
-Resource/RobotParts/CA_01.mpd
-Resource/RobotParts/HA_01.mpd Head0
-Resource/RobotParts/FA_01.mpd Foot0
-Resource/RobotParts/RAA_01.mpd RightArm0
-Resource/RobotParts/LAA_01.mpd LeftArm0
-Resource/RobotParts/BA_01.mpd Boost0
-Resource/RobotParts/MF-TPP1.mpd Weapon0 R*
-Resource/RobotParts/MF-TPP1.mpd Weapon1 L*
+{
+	"Name":"Air",
+	"Core":{
+		"Parts":"Resource/RobotParts/CA_01.mpd",
+		"Armature_HeadPos":{"Parts":"Resource/RobotParts/HA_01.mpd"},
+		"Armature_BodyPos":{"Parts":"Resource/RobotParts/FA_01.mpd"},
+		"Armature_RightArmPos":{"Parts":"Resource/RobotParts/RAA_01.mpd","RightArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","WeaponType":"R"}},
+		"Armature_LeftArmPos":{"Parts":"Resource/RobotParts/LAA_01.mpd"},
+		"Armature_BoostPos":{"Parts":"Resource/RobotParts/BA_01.mpd"},
+	}
+}

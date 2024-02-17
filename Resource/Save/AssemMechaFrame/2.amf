@@ -1,10 +1,11 @@
-Normal
-8
-Resource/RobotParts/BT.mpd
-Resource/RobotParts/HT.mpd Head0
-Resource/RobotParts/FT.mpd Foot0
-Resource/RobotParts/RAT.mpd RightArm0
-Resource/RobotParts/LAT.mpd LeftArm0
-Resource/RobotParts/BT.mpd Boost0
-Resource/RobotParts/MF-TPP1.mpd Weapon0 R*
-Resource/RobotParts/MF-TPP1.mpd Weapon1 L*
+{
+	"Name":"Normal",
+	"Core":{
+		"Parts":"Resource/RobotParts/CT.mpd",
+		"Armature_HeadPos":{"Parts":"Resource/RobotParts/HT.mpd"},
+		"Armature_BodyPos":{"Parts":"Resource/RobotParts/FT.mpd"},
+		"Armature_RightArmPos":{"Parts":"Resource/RobotParts/RAT.mpd","RightArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","WeaponType":"R"}},
+		"Armature_LeftArmPos":{"Parts":"Resource/RobotParts/LAT.mpd","LeftArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","WeaponType":"L"}},
+		"Armature_BoostPos":{"Parts":"Resource/RobotParts/BT.mpd"},
+	}
+}

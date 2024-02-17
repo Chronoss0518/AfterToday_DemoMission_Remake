@@ -1,9 +1,11 @@
-Guardian
-7
-Resource/RobotParts/BG_01.mpd
-Resource/RobotParts/HG_01.mpd Head0
-Resource/RobotParts/FG_01.mpd Foot0
-Resource/RobotParts/RAG_01.mpd RightArm0
-Resource/RobotParts/LAG_01.mpd LeftArm0
-Resource/RobotParts/BG_01.mpd Boost0
-Resource/RobotParts/MF-TPP1.mpd Weapon0 R*
+{
+	"Name":"Guardian",
+	"Core":{
+		"Parts":"Resource/RobotParts/CG_01.mpd",
+		"Armature_HeadPos":{"Parts":"Resource/RobotParts/HG_01.mpd"},
+		"Armature_BodyPos":{"Parts":"Resource/RobotParts/FG_01.mpd"},
+		"Armature_RightArmPos":{"Parts":"Resource/RobotParts/RAG_01.mpd","RightArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","WeaponType":"R"}},
+		"Armature_LeftArmPos":{"Parts":"Resource/RobotParts/LAG_01.mpd"},
+		"Armature_BoostPos":{"Parts":"Resource/RobotParts/BG_01.mpd"},
+	}
+}
