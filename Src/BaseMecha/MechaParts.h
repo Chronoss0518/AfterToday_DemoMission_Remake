@@ -59,11 +59,11 @@ private:
 
 public://Serialize Deserialize//
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject, PartsPosNames _partsPosName);
 
-	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
+	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName, PartsPosNames _partsPosName);
 
-	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text);
+	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text, PartsPosNames _partsPosName);
 
 	std::string Save(const std::string& _fileName);
 

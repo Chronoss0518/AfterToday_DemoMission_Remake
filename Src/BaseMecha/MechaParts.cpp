@@ -45,7 +45,7 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 
 
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject, PartsPosNames _partsPosName)
 {
 	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
 
@@ -61,7 +61,7 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	}
 
 	auto mechaParts = ChPtr::Make_S<MechaParts>();
-	mechaParts->Load(_base, _device, *partsName);
+	mechaParts->Load(_base, _device, *partsName, _partsPosName);
 
 	if (mechaParts->GetThisFileName().empty())return nullptr;
 
@@ -75,7 +75,7 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	return partsObject;
 }
 
-void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName, PartsPosNames _partsPosName)
 {
 	std::string text = "";
 
@@ -94,11 +94,11 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string
 		thisFileName = thisFilePath.substr(thisFilePath.find_last_of("/") + 1);
 	}
 
-	Deserialize(_base, _device, text);
+	Deserialize(_base, _device, text, _partsPosName);
 }
 
 
-void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::string& _text)
+void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::string& _text, PartsPosNames _partsPosName)
 {
 
 	ChCpp::TextObject textObject;
@@ -112,13 +112,11 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		std::string tmp = textObject.GetTextLine(0);
 		loader.CreateModel(model, tmp);
 		defaultFrameMat = model->GetFrameTransformLMat();
-		if (thisFilePath.find("Foot/") != thisFilePath.find("Body/"))
+
+		auto test = model->GetInitAllFrameMinPos().y;
+		if (groundHeight > test)
 		{
-			auto test = model->GetInitAllFrameMinPos().y;
-			if (groundHeight > test)
-			{
-				groundHeight = test;
-			}
+			groundHeight = test;
 		}
 	}
 
@@ -158,20 +156,24 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 			if (jsonObject == nullptr)continue;
 
 
-			auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject);
-
-			if (i == ChStd::EnumCast(PartsPosNames::RArm) || 
-				i == ChStd::EnumCast(PartsPosNames::LArm))
-				childParts->positionObject->SetOutSizdTransform(tmp);
+			auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject,static_cast<PartsPosNames>(i));
 
 			childParts->SetPositoinObject(_partsObject.get(), posData.second);
 			_partsObject->AddChildObject(static_cast<PartsPosNames>(i),posData.first, childParts);
+
+			if (i == ChStd::EnumCast(PartsPosNames::RArm) ||
+				i == ChStd::EnumCast(PartsPosNames::LArm))
+				childParts->positionObject->SetOutSizdTransform(tmp);
+
 		}
 	}
+
+	_partsObject->SetHitSize();
 }
 
 ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
 {
+
 	auto&& parts = SetPartsParameter(_base);
 	parts->SetFrame(_frame);
 	for (auto&& com : GetComponents<PartsDataBase>())

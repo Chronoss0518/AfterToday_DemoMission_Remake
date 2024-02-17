@@ -84,11 +84,10 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
 
-	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
+	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject,MechaParts::PartsPosNames::None);
 
 	testCollider.SetScalling(baseHitSize);
 
-	return;
 }
 
 void BaseMecha::Save(const std::string& _fileName)
@@ -182,19 +181,19 @@ void BaseMecha::AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat)
 void BaseMecha::AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
 {
 	if (_partsObject == nullptr)return;
-	auto&& weap = GetComponentObject<RightWeaponComponent>();
+	auto&& weap = GetComponentObject<LeftWeaponComponent>();
 
 	weap->AddWeapon(_partsObject);
-	_partsObject->SetRWeapon(true);
+	_partsObject->SetLWeapon(true);
 }
 
 void BaseMecha::AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
 {
 	if (_partsObject == nullptr)return;
-	auto&& weap = GetComponentObject<LeftWeaponComponent>();
+	auto&& weap = GetComponentObject<RightWeaponComponent>();
 
 	weap->AddWeapon(_partsObject);
-	_partsObject->SetLWeapon(true);
+	_partsObject->SetRWeapon(true);
 }
 
 ChVec3 BaseMecha::GetViewPos()
@@ -354,6 +353,16 @@ void BaseMecha::UpdateAnchor(unsigned long _no, const ChLMat& _drawMat)
 	if (anchor == nullptr)return;
 
 	anchor->UpdateLookAnchorPosition(_no, _drawMat);
+}
+
+void BaseMecha::SetTestHitSize(const ChVec3& _hitSize)
+{
+	ChVec3 tmpHitSize = _hitSize;
+
+	tmpHitSize.Abs();
+	if (baseHitSize < tmpHitSize.x)baseHitSize = _hitSize.x;
+	if (baseHitSize < tmpHitSize.y)baseHitSize = _hitSize.y;
+	if (baseHitSize < tmpHitSize.z)baseHitSize = _hitSize.z;
 }
 
 void BaseMecha::TestBulletHit(AttackObject& _obj)

@@ -183,6 +183,8 @@ public:
 
 public:
 
+	void SetTestHitSize(const ChVec3& _hitSize);
+
 	void TestBulletHit(AttackObject& _obj);
 
 public:

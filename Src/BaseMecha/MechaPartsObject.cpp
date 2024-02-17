@@ -64,6 +64,19 @@ ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
 	return res;
 }
 
+void MechaPartsObject::SetHitSize()
+{
+
+	ChVector3 tmpHitSize = GetColliderSize();
+	auto positionObject = GetPositionObject();
+
+	if (positionObject != nullptr)tmpHitSize += positionObject->GetDrawLHandMatrix().GetPosition();
+
+	mecha->SetTestHitSize(tmpHitSize);
+
+
+}
+
 std::wstring MechaPartsObject::GetWeaponName()
 {
 	std::wstring result = ChStr::UTF8ToWString(baseParts->GetThisFileName());

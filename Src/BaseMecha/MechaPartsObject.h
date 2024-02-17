@@ -59,6 +59,8 @@ public:
 
 	void SetLookAnchorNo(const unsigned long _no) { lookAnchorNo = _no; }
 
+	void SetHitSize();
+
 public:
 
 	MechaParts* GetBaseObject() { return baseParts; }

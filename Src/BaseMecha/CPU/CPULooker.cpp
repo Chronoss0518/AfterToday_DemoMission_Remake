@@ -10,7 +10,7 @@
 #define FEATURE true
 #define MATH_MATRIX true
 
-#define TEST false
+#define TEST true
 
 unsigned long resetNum = -1;
 
@@ -152,7 +152,6 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 	return res;
 
 }
-
 
 std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix)
 {
@@ -443,7 +442,6 @@ void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat
 	positionList.push_back(lookAnchor);
 
 }
-
 
 unsigned long CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
 {
