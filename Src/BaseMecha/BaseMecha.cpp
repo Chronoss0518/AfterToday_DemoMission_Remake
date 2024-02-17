@@ -268,11 +268,6 @@ void BaseMecha::MoveEnd()
 	hitEffectDrawFrame--;
 }
 
-void BaseMecha::DrawWeaponComponent(ChPtr::Shared<WeaponComponent> _component)
-{
-	if (_component == nullptr)return;
-}
-
 ChVec3 BaseMecha::GetViewPos()
 {
 

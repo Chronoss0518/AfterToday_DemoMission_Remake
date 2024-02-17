@@ -69,8 +69,6 @@ public://Override Functions//
 
 private:
 
-	void DrawWeaponComponent(ChPtr::Shared<WeaponComponent> _component);
-
 	void BaseMove();
 
 public://SerializeDeserialize//
@@ -248,10 +246,11 @@ protected:
 	float groundDistance = 0.0f;
 
 	float durable = 100.0f;
-	//float durable = 10.0f;
 	float nowDurable = 100.0f;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
+
+	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
 	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts;
 	std::vector<ChPtr::Shared<PositionObject>> positions[ChStd::EnumCast(PartsPosNames::None)];
