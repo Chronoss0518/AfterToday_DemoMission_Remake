@@ -14,7 +14,6 @@
 #define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
 #endif
 
-
 #ifndef PARTS_DATA_CREATER
 #define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
 #endif
@@ -44,23 +43,36 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	PARTS_DATA_CREATER(ExtraPos),
 };
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _fileName)
+
+
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
 {
+	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
+
 	auto&& loadPartss = LoadPartsList();
-	auto it = loadPartss.find(_fileName);
+	auto it = loadPartss.find(*partsName);
 	if (it != loadPartss.end())
 	{
-		return (*it).second->SetParameters(_base, _frame);
+		auto&& partsObject = (*it).second->SetParameters(_base, _frame, _jsonObject);
+
+		(*it).second->CreateChild(partsObject, _base, _device, _drawer, _frame, _jsonObject);
+
+		return partsObject;
 	}
 
 	auto mechaParts = ChPtr::Make_S<MechaParts>();
-	mechaParts->Load(_base, _device, _fileName);
+	mechaParts->Load(_base, _device, *partsName);
 
 	if (mechaParts->GetThisFileName().empty())return nullptr;
 
-	loadPartss[_fileName] = mechaParts;
+	loadPartss[*partsName] = mechaParts;
 	mechaParts->SetMeshDrawer(_drawer);
-	return mechaParts->SetParameters(_base, _frame);
+
+	auto&& partsObject = mechaParts->SetParameters(_base, _frame, _jsonObject);
+
+	mechaParts->CreateChild(partsObject,_base, _device, _drawer, _frame, _jsonObject);
+
+	return partsObject;
 }
 
 void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
@@ -120,7 +132,6 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 }
 
-
 unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _textObject, unsigned long _linePos)
 {
 
@@ -128,28 +139,59 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	if (typeName.length() <= 0)return _linePos + 1;
 	typeName.pop_back();
 	typeName.pop_back();
-	auto createFunction = createFunctions.find(typeName);
+	auto&& createFunction = createFunctions.find(typeName);
 	if (createFunction == createFunctions.end())return _linePos + 1;
-	auto parts = (*createFunction).second(*this);
+	auto&& parts = (*createFunction).second(*this);
 	unsigned long linePos = parts->Deserialize(_textObject, _linePos + 1);
 	return linePos;
 }
 
-ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame)
+void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
 {
-	auto parts = SetPartsParameter(_base);
+	ChLMat tmp;
+	tmp.SetRotation(ChVec3(ChMath::ToRadian(-90.0f), 0.0f, 0.0f));
+	for (unsigned char i = 0; i < ChStd::EnumCast(PartsPosNames::None); i++)
+	{
+		for (auto&& posData : positions[i])
+		{
+			auto&& jsonObject = _jsonObject->GetJsonObject(posData.first);
+			if (jsonObject == nullptr)continue;
+
+
+			auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject);
+
+			if (i == ChStd::EnumCast(PartsPosNames::RArm) || 
+				i == ChStd::EnumCast(PartsPosNames::LArm))
+				childParts->positionObject->SetOutSizdTransform(tmp);
+
+			childParts->SetPositoinObject(_partsObject.get(), posData.second);
+			_partsObject->AddChildObject(static_cast<PartsPosNames>(i),posData.first, childParts);
+		}
+	}
+}
+
+ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+{
+	auto&& parts = SetPartsParameter(_base);
 	parts->SetFrame(_frame);
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
 		com->SetPartsParameter(_base, *parts, _frame);
 	}
 
+	AddWeaponData(parts, _base, _jsonObject);
+
+	parts->SetFrame(_frame);
+	parts->SetBaseMecha(&_base);
+
+	parts->CreateAnchor();
+
 	return parts;
 }
 
 ChPtr::Shared<MechaPartsObject>  MechaParts::SetPartsParameter(BaseMecha& _base)
 {
-	auto partsObject = ChPtr::Make_S<MechaPartsObject>();;
+	auto partsObject = ChPtr::Make_S<MechaPartsObject>();
 
 	partsObject->baseParts = this;
 
@@ -195,6 +237,17 @@ std::string MechaParts::Serialize()
 	}
 
 	return res;
+}
+
+void MechaParts::AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+{
+	auto&& jsonBool = _jsonObject->GetJsonBoolean(JSON_PROPEATY_RIGHT_WEAPON);
+	if (jsonBool != nullptr)
+		_base.AddRightWeaponData(_partsObject);
+
+	jsonBool = _jsonObject->GetJsonBoolean(JSON_PROPEATY_LEFT_WEAPON);
+	if (jsonBool != nullptr)
+		_base.AddLeftWeaponData(_partsObject);
 }
 
 void MechaParts::Draw(const ChMat_11& _mat)
@@ -368,43 +421,38 @@ void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, 
 
 void RightArmPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
+	auto&& mechaParts = LookObj<MechaParts>();
 
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::RArm);
+	mechaParts->AddPosition(MechaParts::PartsPosNames::RArm,nextPosName, _targetObject);
+
 }
 
 void LeftArmPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::LArm);
+	auto&& mechaParts = LookObj<MechaParts>();
+
+	mechaParts->AddPosition(MechaParts::PartsPosNames::LArm, nextPosName, _targetObject);
 }
 
 void FootPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::Foot);
+	auto&& mechaParts = LookObj<MechaParts>();
+
+	mechaParts->AddPosition(MechaParts::PartsPosNames::Foot, nextPosName, _targetObject);
 }
 
 void HeadPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::Head);
+	auto&& mechaParts = LookObj<MechaParts>();
+
+	mechaParts->AddPosition(MechaParts::PartsPosNames::Head, nextPosName, _targetObject);
 }
 
 void BoostPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::Boost);
+	auto&& mechaParts = LookObj<MechaParts>();
+
+	mechaParts->AddPosition(MechaParts::PartsPosNames::Boost, nextPosName, _targetObject);
 }
 
 unsigned long BoostBrust::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -528,10 +576,9 @@ void DownBoostBrust::SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::Frame
 
 void WeaponPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::Weapons);
+	auto&& mechaParts = LookObj<MechaParts>();
+
+	mechaParts->AddPosition(MechaParts::PartsPosNames::Weapons, nextPosName, _targetObject);
 }
 
 unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -648,8 +695,7 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 void ExtraPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
 
-	auto obj = ChPtr::Make_S<PositionObject>();
-	obj->haveObject = &_parts;
-	obj->positionObject = _targetObject;
-	_base.AddMechaPartsPos(obj, BaseMecha::PartsPosNames::Extra);
+	auto&& mechaParts = LookObj<MechaParts>();
+
+	mechaParts->AddPosition(MechaParts::PartsPosNames::Extra, nextPosName, _targetObject);
 }

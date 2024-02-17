@@ -21,6 +21,10 @@
 
 #define HIT_EFFECT_DRAW_FRAME static_cast<long>(BASE_FPS * 2.0f)
 
+
+#define JSON_MECHA_NAME "Name"
+#define JSON_CORE "Core"
+
 static const std::string partsTypeName[]
 {
 	"Body","Head","Foot","RightArm","LeftArm","Boost","Weapon","Extra"
@@ -62,93 +66,25 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 	text = file.FileReadText();
 	file.FileClose();
 
-	ChCpp::TextObject textObject;
-	textObject.SetText(text);
+	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject>(ChCpp::JsonBaseType::GetParameter(text));
 
 	SetComponent<LookAnchor>();
 
-	LoadPartsList(_device, textObject);
+	LoadPartsList(_device, jsonObject);
 
 	nowEnelgy = maxEnelgy;
 	nowDurable = durable;
 	physics->SetMass(mass);
 }
 
-void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject)
+void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
 {
-	mechaName = _textObject.GetTextLine(0);
-	unsigned long count = std::atol(_textObject.GetTextLine(1).c_str());
+	if (_jsonObject == nullptr) return;
+	mechaName = *_jsonObject->GetJsonString(JSON_MECHA_NAME);
 
-	for (unsigned long i = 0; i < count; i++)
-	{
-		auto texts = ChStr::Split(_textObject.GetTextLine(i + 2), " ");
+	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
 
-		auto parts = MechaParts::LoadParts(*this, _device, drawer, frame, texts[0]);
-		parts->SetFrame(frame);
-		parts->SetBaseMecha(this);
-
-
-		auto anchor = GetComponent<LookAnchor>();
-
-		parts->SetLookAnchorNo(anchor->GetPositionListCount());
-
-		anchor->AddLookAnchorPosition(parts->GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
-
-		AddMechaParts(parts);
-
-		if (texts.size() <= 1)continue;
-
-		for (auto&& text : texts)
-		{
-
-			bool findFlg = false;
-
-			for (unsigned char j = 0; j < ChStd::EnumCast(PartsPosNames::None); j++)
-			{
-				if (text.find(partsTypeName[j]) == std::string::npos)continue;
-
-				unsigned long no = std::atol(text.substr(partsTypeName[j].size()).c_str());
-				SetPartsPos(*parts, static_cast<PartsPosNames>(j), no);
-				parts->SetPartsPosData(j, no);
-				ChVector3 tmpHitSize = parts->GetColliderSize();
-				auto positionObject = parts->GetPositionObject();
-
-				if (positionObject != nullptr)tmpHitSize += positionObject->positionObject->GetDrawLHandMatrix().GetPosition();
-
-
-				tmpHitSize.Abs();
-				if (baseHitSize < tmpHitSize.x)baseHitSize = tmpHitSize.x;
-				if (baseHitSize < tmpHitSize.y)baseHitSize = tmpHitSize.y;
-				if (baseHitSize < tmpHitSize.z)baseHitSize = tmpHitSize.z;
-
-
-				findFlg = true;
-				break;
-			}
-
-			if (findFlg)continue;
-
-			if (text.find("R*") != std::string::npos)
-			{
-				auto&& weap = GetComponentObject<RightWeaponComponent>();
-
-				weap->AddWeapon(parts);
-				parts->SetRWeapon(true);
-				continue;
-			}
-
-			if (text.find("L*") != std::string::npos)
-			{
-				auto&& weap = GetComponentObject<LeftWeaponComponent>();
-
-				weap->AddWeapon(parts);
-				parts->SetLWeapon(true);
-				continue;
-			}
-
-		}
-
-	}
+	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
 
 	testCollider.SetScalling(baseHitSize);
 
@@ -157,65 +93,33 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _t
 
 void BaseMecha::Save(const std::string& _fileName)
 {
-	std::string res = "";
 
-	res += SavePartsList();
+	ChPtr::Shared<ChCpp::JsonObject> res = SavePartsList();
 
 	ChCpp::CharFile file;
 	file.FileOpen(_fileName);
-	file.FileWriteText(res);
+	file.FileWriteText(res->GetRawData());
 	file.FileClose();
 
 }
 
-std::string BaseMecha::SavePartsList()
+ChPtr::Shared<ChCpp::JsonObject> BaseMecha::SavePartsList()
 {
-	std::string res = mechaName + "\n";
-	res += std::to_string(mechaParts.size()) + "\n";
-	for (auto&& parts : mechaParts)
-	{
-		std::string positionName = "";
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	res->SetObject(JSON_MECHA_NAME, ChCpp::JsonString::CreateObject(mechaName));
+	res->SetObject(JSON_CORE, core->Serialize());
 
-		if (parts->GetPartsPosName() < ChStd::EnumCast(BaseMecha::PartsPosNames::None))
-		{
-			positionName = " " + partsTypeName[parts->GetPartsPosName()];
-			positionName += std::to_string(parts->GetPartsPosNo());
-		}
-
-		std::string weaponName = "";
-
-		if (parts->GetRWeapon())
-		{
-			weaponName = " " + weaponTypeName[0];
-		}
-
-		if (parts->GetLWeapon())
-		{
-			weaponName = " " + weaponTypeName[1];
-		}
-
-		res += parts->GetBaseObject()->GetThisFileName() + positionName + weaponName + "\n";
-	}
 	return res;
 }
 
 void BaseMecha::Release()
 {
-	for (auto&& parts : mechaParts)
-	{
-		if (parts == nullptr)continue;
-		parts->Release();
-	}
-
-	mechaParts.clear();
+	core->Release();
 }
 
 void BaseMecha::Update()
 {
-	for (auto&& parts : mechaParts)
-	{
-		parts->Update();
-	}
+	core->Update();
 }
 
 void BaseMecha::UpdateEnd()
@@ -266,6 +170,31 @@ void BaseMecha::MoveEnd()
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
+}
+
+void BaseMecha::AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat)
+{
+	auto&& anchor = GetComponent<LookAnchor>();
+	if (anchor == nullptr)return;
+	anchor->AddLookAnchorPosition(_size, _drawMat);
+}
+
+void BaseMecha::AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
+{
+	if (_partsObject == nullptr)return;
+	auto&& weap = GetComponentObject<RightWeaponComponent>();
+
+	weap->AddWeapon(_partsObject);
+	_partsObject->SetRWeapon(true);
+}
+
+void BaseMecha::AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
+{
+	if (_partsObject == nullptr)return;
+	auto&& weap = GetComponentObject<LeftWeaponComponent>();
+
+	weap->AddWeapon(_partsObject);
+	_partsObject->SetLWeapon(true);
 }
 
 ChVec3 BaseMecha::GetViewPos()
@@ -319,24 +248,11 @@ void BaseMecha::Draw3D()
 	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	drawMat.SetPosition(physics->GetPosition());
 
-	ChLMat tmp;
-	tmp.SetRotation(ChVec3(ChMath::ToRadian(-90.0f), 0.0f, 0.0f));
-	positions[ChStd::EnumCast(PartsPosNames::RArm)][0]->positionObject->SetOutSizdTransform(tmp);
-	positions[ChStd::EnumCast(PartsPosNames::LArm)][0]->positionObject->SetOutSizdTransform(tmp);
-
 	auto boostComponent = GetComponent<BoostComponent>();
 
 	if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
 
-	auto anchor = GetComponent<LookAnchor>();
-
-	for (auto&& parts : mechaParts)
-	{
-		parts->Draw(drawMat);
-		ChLMat tmpMat;
-		tmpMat = parts->GetLastDrawMat();
-		anchor->UpdateLookAnchorPosition(parts->GetLookAnchorNo(), tmpMat);
-	}
+	core->Draw(drawMat);
 
 	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
 
@@ -373,20 +289,6 @@ void BaseMecha::SetGroundHeight(const float _height)
 	if (physics->GetGroundHeight() < _height)return;
 
 	physics->SetGroundHeight(_height);
-}
-
-void BaseMecha::SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name, unsigned long _no)
-{
-
-	if (_name == PartsPosNames::None)return;
-
-	auto mechaPartsPosList = GetMechaPartsPosList(_name);
-
-	if (mechaPartsPosList.empty())return;
-
-	_parts.SetPositoinObject(mechaPartsPosList[_no]);
-	mechaPartsPosList[_no]->nextParts = &_parts;
-	_parts.GetBaseObject()->GetMesh().SetFrameTransform(ChLMat());
 }
 
 void BaseMecha::SetHitEffectDrawFrame()
@@ -438,6 +340,22 @@ long BaseMecha::GetHitEffectDrawStartFrame()
 	return HIT_EFFECT_DRAW_FRAME;
 }
 
+unsigned long BaseMecha::GetAnchorRegistNum()
+{
+	auto&& anchor = GetComponent<LookAnchor>();
+	if (anchor == nullptr)return 0;
+
+	return anchor->GetPositionListCount();
+}
+
+void BaseMecha::UpdateAnchor(unsigned long _no, const ChLMat& _drawMat)
+{
+	auto&& anchor = GetComponent<LookAnchor>();
+	if (anchor == nullptr)return;
+
+	anchor->UpdateLookAnchorPosition(_no, _drawMat);
+}
+
 void BaseMecha::TestBulletHit(AttackObject& _obj)
 {
 	if (_obj.IsUseMechaTest(mechasNo))return;
@@ -468,10 +386,8 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	testAttackCollider.SetScalling(hitSize);
 
-	bool isHitFlg = false;
-
 	ChVec3 nowVector = dir;
-
+	float damage = 0.0f;
 	float nowPos = 0.0f;
 	for (unsigned long i = 0; i < cutCount; i++)
 	{
@@ -481,19 +397,13 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 		testAttackCollider.SetPosition(pos + nowVector);
 
-		for (auto&& parts : mechaParts)
-		{
-			float damage = parts->GetDamage(testAttackCollider, _obj);
-			if (damage == 0.0f)continue;
-			nowDurable -= damage;
-			isHitFlg = true;
-			//damageDir = testAttackCollider.GetPos() - physics->GetPosition();
-			damageDir = dir * -1.0f;
-			damageDir.Normalize();
-			break;
-		}
+		damage = core->GetDamage(testAttackCollider, _obj);
 
-		if (!isHitFlg)continue;
+		if (damage <= 0.0f)continue;
+		nowDurable -= damage;
+		//damageDir = testAttackCollider.GetPos() - physics->GetPosition();
+		damageDir = dir * -1.0f;
+		damageDir.Normalize();
 		_obj.SetMovePower(nowVector);
 		_obj.SetIsHitTrue();
 

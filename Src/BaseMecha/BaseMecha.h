@@ -11,13 +11,6 @@ class WeaponComponent;
 
 class PhysicsMachine;
 
-struct PositionObject
-{
-	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
-	MechaPartsObject* haveObject = nullptr;
-	MechaPartsObject* nextParts = nullptr;
-};
-
 class BaseMecha :public ChCpp::BaseObject
 {
 public://Inner Struct Class Enum//
@@ -44,11 +37,6 @@ public://Inner Struct Class Enum//
 		MagnificationUp, MagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
 		MapOnOff, None
-	};
-
-	enum class PartsPosNames : unsigned char
-	{
-		Body, Head, Foot, RArm, LArm, Boost, Weapons, Extra, None
 	};
 
 public://Override Functions//
@@ -85,11 +73,11 @@ public:
 
 	void Load(ID3D11Device* _device, const std::string& _fileName);
 
-	void LoadPartsList(ID3D11Device* _device, const ChCpp::TextObject& _textObject);
+	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
 
 	void Save(const std::string& _fileName);
 
-	std::string SavePartsList();
+	ChPtr::Shared<ChCpp::JsonObject> SavePartsList();
 
 public:
 
@@ -102,16 +90,6 @@ public:
 		cameraList.push_back(_camera);
 	}
 
-	inline void AddMechaParts(ChPtr::Shared<MechaPartsObject> _obj)
-	{
-		mechaParts.push_back(_obj);
-	}
-
-	inline void AddMechaPartsPos(ChPtr::Shared<PositionObject> _posObject, const PartsPosNames _name)
-	{
-		positions[ChStd::EnumCast(_name)].push_back(_posObject);
-	}
-
 	inline void AddViewVertical(const float& _x) { viewVertical = std::abs(viewVertical + _x) < maxViewVertical ? viewVertical + _x : viewVertical; }
 
 	inline void AddViewHorizontal(const float& _y) { viewHorizontal = std::abs(viewHorizontal + _y) < maxViewHorizontal ? viewHorizontal + _y : viewHorizontal; }
@@ -121,6 +99,12 @@ public:
 	void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy += _maxEnelgy; }
 
 	void AddChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy += _chargeEnelgy; }
+
+	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
+
+	void AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
+
+	void AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
 
 public:
 
@@ -151,8 +135,6 @@ public://Set Function//
 
 	void SetGroundHeight(const float _height);
 
-	void SetPartsPos(MechaPartsObject& _parts, const PartsPosNames _name, unsigned long _no);
-
 	void SetHitEffectDrawFrame();
 
 public://Get Function//
@@ -160,18 +142,6 @@ public://Get Function//
 	ChVec3 GetPosition();
 
 	ChVec3 GetRotation();
-
-	inline std::vector<ChPtr::Shared<MechaPartsObject>> GetMechaPartsList()
-	{
-		return mechaParts;
-	}
-
-	inline std::vector<ChPtr::Shared<PositionObject>> GetMechaPartsPosList(PartsPosNames _name)
-	{
-		if (_name == PartsPosNames::None)return std::vector<ChPtr::Shared<PositionObject>>();
-
-		return positions[ChStd::EnumCast(_name)];
-	}
 
 	ChLMat GetViewMat() { return viewMat; }
 
@@ -201,9 +171,15 @@ public://Get Function//
 
 	inline std::string GetMechaName() { return mechaName; }
 
+	unsigned long GetAnchorRegistNum();
+
 public:
 
 	inline bool IsBreak() { return breakFlg; }
+
+public:
+
+	void UpdateAnchor(unsigned long _no, const ChLMat& _drawMat);
 
 public:
 
@@ -251,9 +227,6 @@ protected:
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
-
-	std::vector<ChPtr::Shared<MechaPartsObject>>mechaParts;
-	std::vector<ChPtr::Shared<PositionObject>> positions[ChStd::EnumCast(PartsPosNames::None)];
 
 	unsigned long useCameraNo = 0;
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;

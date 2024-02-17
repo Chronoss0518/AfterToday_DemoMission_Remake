@@ -8,8 +8,19 @@
 #define GET_CLASS_NAME(cls) #cls
 #endif
 
-
 #include"BaseMecha.h"
+
+#ifndef JSON_PROPEATY_PARTS_NAME
+#define JSON_PROPEATY_PARTS_NAME "Parts"
+#endif
+
+#ifndef JSON_PROPEATY_RIGHT_WEAPON
+#define JSON_PROPEATY_RIGHT_WEAPON "RightWeapon"
+#endif
+
+#ifndef JSON_PROPEATY_LEFT_WEAPON
+#define JSON_PROPEATY_LEFT_WEAPON "LeftWeapon"
+#endif
 
 class MechaPartsObject;
 class CameraComponent;
@@ -17,6 +28,14 @@ class PartsDataBase;
 
 class MechaParts :public ChCpp::BaseObject
 {
+public:
+
+
+	enum class PartsPosNames : unsigned char
+	{
+		Head, Foot, RArm, LArm, Boost, Weapons, Extra, None
+	};
+
 public:
 
 	static std::map<std::string,ChPtr::Shared<MechaParts>>& LoadPartsList()
@@ -36,9 +55,11 @@ private:
 
 	unsigned long CreateDatas(BaseMecha& _base, ChCpp::TextObject& _textObject, unsigned long _linePos);
 
+	void CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
+
 public://Serialize Deserialize//
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _fileName);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
 
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
@@ -50,15 +71,13 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	ChPtr::Shared<MechaPartsObject>  SetParameters(BaseMecha& _base, GameFrame* _frame);
+	ChPtr::Shared<MechaPartsObject> SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
 
 	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
 
 	void SetHardness(const unsigned long _hardness) { hardness = _hardness; }
 
 	void SetMass(const float _mass) { mass = _mass; }
-
-	bool SetPosition(BaseMecha& _base, ChPtr::Shared<MechaPartsObject> _obj, const BaseMecha::PartsPosNames _name);
 
 	inline void SetMeshDrawer(ChD3D11::Shader::BaseDrawMesh11* _drawer) { drawer = _drawer; }
 
@@ -79,6 +98,15 @@ public://Get Function//
 	inline std::string GetThisFilePath() { return thisFilePath; }
 
 	inline ChD3D11::Shader::BaseDrawMesh11* GetMeshDrawer() { return drawer; }
+
+public:
+
+	inline void AddPosition(PartsPosNames _name,const std::string& _parameter, ChPtr::Shared<ChCpp::FrameObject> _frame)
+	{
+		positions[ChStd::EnumCast(_name)][_parameter] = _frame;
+	}
+
+	void AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
 
 public:
 
@@ -103,6 +131,8 @@ private:
 	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
 
 	static std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
+
+	std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>> positions[ChStd::EnumCast(MechaParts::PartsPosNames::None)];
 
 	constexpr static const char* GetModelNameTag() { return "ModelName:\n"; }
 

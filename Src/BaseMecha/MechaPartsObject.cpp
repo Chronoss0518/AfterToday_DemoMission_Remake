@@ -7,7 +7,16 @@
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
 
+#include"CPU/CPULooker.h"
+
 #include"MechaPartsObjectFunction/WeaponFunction.h"
+
+void MechaPartsObject::CreateAnchor()
+{
+	SetLookAnchorNo(mecha->GetAnchorRegistNum());
+
+	mecha->AddAnchorData(GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
+}
 
 void MechaPartsObject::Release()
 {
@@ -22,6 +31,37 @@ void MechaPartsObject::Release()
 		if (function == nullptr)continue;
 		function->Release();
 	}
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	{
+		for (auto&& partsObject : positions[i])
+		{
+			partsObject.second->Release();
+		}
+		positions[i].clear();
+	}
+}
+
+ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
+{
+	auto&& res = ChPtr::Make_S< ChCpp::JsonObject>();
+	res->SetObject(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonBaseType::GetParameter(baseParts->GetThisFilePath()));
+
+	if (GetRWeapon())
+		res->SetObject(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+
+	if (GetLWeapon())
+		res->SetObject(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	{
+		for (auto&& partsObject : positions[i])
+		{
+			res->SetObject(partsObject.first, partsObject.second->Serialize());
+		}
+	}
+	return res;
 }
 
 std::wstring MechaPartsObject::GetWeaponName()
@@ -71,6 +111,14 @@ void MechaPartsObject::Update()
 	{
 		func->Update();
 	}
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	{
+		for (auto&& partsObject : positions[i])
+		{
+			partsObject.second->Update();
+		}
+	}
 }
 
 void MechaPartsObject::Draw(const ChLMat& _drawMat)
@@ -80,7 +128,7 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	if (positionObject != nullptr)
 	{
-		tmp = positionObject->positionObject->GetDrawLHandMatrix();
+		tmp = positionObject->GetDrawLHandMatrix();
 	}
 	else
 	{
@@ -109,11 +157,16 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 		func->PosUpdate();
 	}
 
-}
+	mecha->UpdateAnchor(GetLookAnchorNo(), lastDrawMat);
 
-void MechaPartsObject::Damage()
-{
-
+	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	{
+		for (auto&& partsObject : positions[i])
+		{
+			if (partsObject.second == nullptr)continue;
+			partsObject.second->Draw(_drawMat);
+		}
+	}
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)
@@ -133,9 +186,23 @@ float MechaPartsObject::GetDamage(AttackObject& _bullet)
 
 float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet)
 {
-	if (!collider.IsHit(&_sphereCollider))return 0.0f;
+	float res = 0.0f;
 
-	float res = 0;
+	if (!collider.IsHit(&_sphereCollider))
+	{
+		for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+		{
+			for (auto&& partsObject : positions[i])
+			{
+				res = partsObject.second->GetDamage(_sphereCollider, _bullet);
+				if (res <= 0.0f)continue;
+				return res;
+			}
+		}
+
+		return res;
+	}
+
 
 	unsigned long tmp = _bullet.GetPenetration() - baseParts->GetHardness();
 

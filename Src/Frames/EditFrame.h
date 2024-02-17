@@ -3,7 +3,7 @@
 class MechaParts;
 class MechaPartsObject;
 
-#include"../BaseMecha/BaseMecha.h"
+#include"../BaseMecha/MechaPartsObject.h"
 
 class PanelList;
 
@@ -34,11 +34,11 @@ public:
 
 public:
 
-	void AddPartsObject(BaseMecha::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts);
+	void AddPartsObject(MechaParts::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts);
 
-	void ChangePartsObejct(BaseMecha::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts);
+	void ChangePartsObejct(MechaParts::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts);
 
-	void RemovePartsObejct(BaseMecha::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts);
+	void RemovePartsObejct(MechaParts::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts);
 
 
 public:
@@ -58,11 +58,11 @@ private:
 	void UpdateFunction();
 
 	ChD3D11::Texture11 loadTitlePanel, partsTitlePanel;
-	ChD3D11::Texture11 partsTitlePanelList[ChStd::EnumCast(BaseMecha::PartsPosNames::None)];
+	ChD3D11::Texture11 partsTitlePanelList[ChStd::EnumCast(MechaParts::PartsPosNames::None)];
 
 	ChD3D11::Texture11 *addButtonTexture = nullptr;
 
-	ChD3D11::Texture11 addMecha, addParts[ChStd::EnumCast(BaseMecha::PartsPosNames::None)];
+	ChD3D11::Texture11 addMecha, addParts[ChStd::EnumCast(MechaParts::PartsPosNames::None)];
 	
 	ChD3D11::Sprite11 panelSprite;
 	ChVec2 panelSize = ChVec2();

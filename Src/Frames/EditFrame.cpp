@@ -131,17 +131,17 @@ void EditFrame::SaveFile()
 	editMecha->Save(fileName);
 }
 
-void EditFrame::AddPartsObject(BaseMecha::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts)
+void EditFrame::AddPartsObject(MechaParts::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts)
 {
 
 }
 
-void EditFrame::ChangePartsObejct(BaseMecha::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts)
+void EditFrame::ChangePartsObejct(MechaParts::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts)
 {
 
 }
 
-void EditFrame::RemovePartsObejct(BaseMecha::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts)
+void EditFrame::RemovePartsObejct(MechaParts::PartsPosNames _name, ChPtr::Shared<MechaPartsObject> _createParts)
 {
 
 }

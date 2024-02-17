@@ -1,14 +1,13 @@
 #pragma once
 
+#include"MechaParts.h"
+
 class GameFrame;
-class BaseMecha;
-class MechaParts;
 class ExternalFunction;
 class WeaponFunction;
 
 class Attack;
 class AttackObject;
-struct PositionObject;
 
 class MechaPartsObject
 {
@@ -18,7 +17,15 @@ public:
 
 public:
 
+	void CreateAnchor();
+
+public:
+
 	void Release();
+
+public:
+
+	ChPtr::Shared<ChCpp::JsonObject> Serialize();
 
 public:
 
@@ -27,9 +34,16 @@ public:
 		weaponFunctions.push_back(_weapon);
 	}
 
+
+	inline void AddChildObject(MechaParts::PartsPosNames _typeName, const std::string& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
+	{
+		if (_partsObject == nullptr)return;
+		positions[ChStd::EnumCast(_typeName)][_objectType] = _partsObject;
+	}
+
 public:
 
-	void SetPositoinObject(ChPtr::Shared<PositionObject>_positionObject) { positionObject = _positionObject; }
+	void SetPositoinObject(MechaPartsObject* _parent, ChPtr::Shared<ChCpp::FrameObject>_positionObject) { positionObject = _positionObject; parentObject = _parent; }
 
 	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
 
@@ -38,8 +52,6 @@ public:
 	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
 
 	void SetLWeapon(const bool _flg) { weaponType.SetBitFlg(1, _flg); }
-
-	void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject);
 
 	void SetFrame(GameFrame* _frame) { frame = _frame; }
 
@@ -53,7 +65,7 @@ public:
 
 	BaseMecha* GetBaseMecha() { return mecha; }
 
-	ChPtr::Shared<PositionObject> GetPositionObject() { return positionObject; }
+	ChPtr::Shared<ChCpp::FrameObject> GetPositionObject() { return positionObject; }
 
 	std::vector<ChPtr::Shared<ExternalFunction>>& GetExternalFunctions()
 	{
@@ -112,10 +124,6 @@ public:
 
 public:
 
-	void Damage();
-
-public:
-
 	void AttackUpdate();
 
 	void StartWeaponSubFunction();
@@ -143,9 +151,13 @@ private:
 	std::vector<ChPtr::Shared<ExternalFunction>>externulFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
 
+	std::map<std::string,ChPtr::Shared<MechaPartsObject>> positions[ChStd::EnumCast(MechaParts::PartsPosNames::None)];
+
 	unsigned long useAttackType = 0;
 
-	ChPtr::Shared<PositionObject>positionObject = nullptr;
+	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
+	MechaPartsObject* parentObject = nullptr;
+
 	ChVec3 baseRot = ChVec3();
 
 	//パーツの解除フラグ//
