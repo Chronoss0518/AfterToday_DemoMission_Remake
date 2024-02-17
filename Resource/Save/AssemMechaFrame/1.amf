@@ -4,8 +4,8 @@
 		"Parts":"Resource/RobotParts/CG_01.mpd",
 		"Armature_HeadPos":{"Parts":"Resource/RobotParts/HG_01.mpd"},
 		"Armature_BodyPos":{"Parts":"Resource/RobotParts/FG_01.mpd"},
-		"Armature_RightArmPos":{"Parts":"Resource/RobotParts/RAG_01.mpd","RightArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","WeaponType":"R"}},
-		"Armature_LeftArmPos":{"Parts":"Resource/RobotParts/LAG_01.mpd","LeftArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","WeaponType":"L"}},
+		"Armature_RightArmPos":{"Parts":"Resource/RobotParts/RAG_01.mpd","RightArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","RightWeapon":true}},
+		"Armature_LeftArmPos":{"Parts":"Resource/RobotParts/LAG_01.mpd","LeftArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd","LeftWeapon":true}},
 		"Armature_BoostPos":{"Parts":"Resource/RobotParts/BG_01.mpd"},
 	}
 }
