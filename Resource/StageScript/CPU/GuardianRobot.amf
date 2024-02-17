@@ -1,9 +1,9 @@
 Guardian
 7
-Resource/RobotParts/Body/Guardian.mpd
-Resource/RobotParts/Head/Guardian.mpd Head0
-Resource/RobotParts/Foot/Guardian.mpd Foot0
-Resource/RobotParts/RArm/Guardian.mpd RightArm0
-Resource/RobotParts/LArm/Guardian.mpd LeftArm0
-Resource/RobotParts/Boost/Guardian.mpd Boost0
-Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon0 R*
+Resource/RobotParts/BG_01.mpd
+Resource/RobotParts/HG_01.mpd Head0
+Resource/RobotParts/FG_01.mpd Foot0
+Resource/RobotParts/RAG_01.mpd RightArm0
+Resource/RobotParts/LAG_01.mpd LeftArm0
+Resource/RobotParts/BG_01.mpd Boost0
+Resource/RobotParts/MF-TPP1.mpd Weapon0 R*

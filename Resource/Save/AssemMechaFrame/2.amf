@@ -1,10 +1,10 @@
 Normal
 8
-Resource/RobotParts/Body/Normal.mpd
-Resource/RobotParts/Head/Normal.mpd Head0
-Resource/RobotParts/Foot/Normal.mpd Foot0
-Resource/RobotParts/RArm/Normal.mpd RightArm0
-Resource/RobotParts/LArm/Normal.mpd LeftArm0
-Resource/RobotParts/Boost/Normal.mpd Boost0
-Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon0 R*
-Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon1 L*
+Resource/RobotParts/BT.mpd
+Resource/RobotParts/HT.mpd Head0
+Resource/RobotParts/FT.mpd Foot0
+Resource/RobotParts/RAT.mpd RightArm0
+Resource/RobotParts/LAT.mpd LeftArm0
+Resource/RobotParts/BT.mpd Boost0
+Resource/RobotParts/MF-TPP1.mpd Weapon0 R*
+Resource/RobotParts/MF-TPP1.mpd Weapon1 L*
