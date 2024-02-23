@@ -280,7 +280,7 @@ void StageSelectFrame::OpenLoadDisplay()
 {
 	auto&& dc = ChD3D11::D3D11DC();
 	auto&& playerData = ChPtr::SharedSafeCast<PlayerData>(GetData());
-	loadDisplay->Open(dc, false);
+	loadDisplay->Open(dc);
 }
 
 void StageSelectFrame::StageSelectFrameDisplay::OpenLoadDisplay()
