@@ -12,7 +12,7 @@
 #define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Edit/") current_path
 #define EDIT_MESH_DIRECTORY(current_path) MESH_DIRECTORY("Edit/") current_path
 
-#define LEFT_PANEL_TITLE_LOAD "Load My Mecha"
+
 
 constexpr char const* initTitle = "non title";
 
@@ -108,10 +108,6 @@ void EditFrame::CreateNewFile()
 void EditFrame::CreateLoadFileList()
 {
 
-	for (auto&& file : std::filesystem::directory_iterator(PLAYER_MECHA_PATH("")))
-	{
-		std::wstring path = (file.path().c_str());
-	}
 
 }
 
