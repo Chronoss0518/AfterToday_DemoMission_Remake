@@ -8,6 +8,7 @@
 void MenuBase::InitMenu(ChD3D::XInputController* _controller)
 {
 	afterInputMenuType.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
+	afterInputMenuType.SetBitTrue(ChStd::EnumCast(ActionType::Cancel));
 
 	controller = _controller;
 }
