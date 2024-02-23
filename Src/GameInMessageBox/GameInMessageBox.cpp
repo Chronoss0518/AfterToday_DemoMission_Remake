@@ -102,6 +102,7 @@ void GameInMessageBox::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 void GameInMessageBox::EndSetDrawMessage()
 {
+	if (drawMessage == message)return;
 	messageAddCount = 0;
 	drawMessage = message;
 	nextTextTexture = ChPtr::Make_S<ChD3D11::Texture11>();
