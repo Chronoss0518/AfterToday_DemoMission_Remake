@@ -45,7 +45,7 @@ void MechaPartsObject::Release()
 ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
 {
 	auto&& res = ChPtr::Make_S< ChCpp::JsonObject>();
-	res->SetObject(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonBaseType::GetParameter(baseParts->GetThisFilePath()));
+	res->SetObject(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString::CreateObject(baseParts->GetThisFilePath()));
 
 	if (GetRWeapon())
 		res->SetObject(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
