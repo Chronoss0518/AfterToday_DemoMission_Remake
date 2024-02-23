@@ -1,10 +1,11 @@
-Guardian
-8
-Resource/RobotParts/Body/Guardian.mpd
-Resource/RobotParts/Head/Guardian.mpd Head0
-Resource/RobotParts/Foot/Guardian.mpd Foot0
-Resource/RobotParts/RArm/Guardian.mpd RightArm0
-Resource/RobotParts/LArm/Guardian.mpd LeftArm0
-Resource/RobotParts/Boost/Guardian.mpd Boost0
-Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon0 R*
-Resource/RobotParts/Weapon/Gun/MF-TPP1.mpd Weapon1 L*
+{"Core":{"Armature_BodyPos":{"Parts":"Resource/RobotParts/FA_01.mpd"},
+"Armature_BoostPos":{"Parts":"Resource/RobotParts/BA_01.mpd"},
+"Armature_HeadPos":{"Parts":"Resource/RobotParts/HA_01.mpd"},
+"Armature_LeftArmPos":{"LeftArm_WeaponPos":{"LeftWeapon":true,
+"Parts":"Resource/RobotParts/MF-TPP1.mpd"},
+"Parts":"Resource/RobotParts/LAA_01.mpd"},
+"Armature_RightArmPos":{"Parts":"Resource/RobotParts/RAA_01.mpd",
+"RightArm_WeaponPos":{"Parts":"Resource/RobotParts/MF-TPP1.mpd",
+"RightWeapon":true}},
+"Parts":"Resource/RobotParts/CA_01.mpd"},
+"Name":"Air"}
