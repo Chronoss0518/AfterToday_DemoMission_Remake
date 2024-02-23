@@ -9,12 +9,10 @@ struct LoaderPanel
 	ChPtr::Shared<BaseMecha>mecha = nullptr;
 	ChD3D11::RenderTarget11 mechaTexture;
 	ChD3D11::Texture11 panelName;
-	std::string path = "";
 };
 
 class LoadDisplay :public MenuBase
 {
-
 public:
 
 	void Init(ID3D11Device* _device, ChD3D::XInputController* _controller);
@@ -33,19 +31,23 @@ public:
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader);
 
+	void DrawBase(ChD3D11::Shader::BaseDrawSprite11& _spriteShader);
+
 public:
 
 	inline bool IsOpenLoader() { return openFlg; }
 
 public:
 
-	void Open(ID3D11DeviceContext* _dc, bool _releaseFlg);
+	void Open(ID3D11DeviceContext* _dc);
 
 	void Close();
 
 private:
 
 	void Load();
+
+	bool LoadFile(unsigned long _openNumber);
 
 private:
 
@@ -109,4 +111,13 @@ private:
 
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 	ChD3D11::CB::CBLight11 light;
+
+
+	ChPtr::Shared<ChCpp::JsonArray> loadFileList;
+	ChD3D11::Texture11 progressCircleTexture;
+	ChD3D11::Sprite11 progressCircleTexturePosition;
+	ChVec4 progressCircleColor = ChVec4();
+	float progressCircleRoutate = 0.0f;
+	ID3D11DeviceContext* dc = nullptr;
+
 };
