@@ -17,7 +17,7 @@ LoadMecha -l GuardianRobot.amf -u enemyTest -p 0.0,700.0,0.0 -t 1 -cc mob.cpu
 Initialize
 //Battle1.wavを再生//
 Play reconnaissance.wav
-Message 作戦開始だ。遅れるなよ。 --messenger operator --addFrame 0.2 --afterFrame 10.0
+Message 作戦開始だ。遅れるなよ。 --messenger operator --addFrame 0.2 --afterFrame 3.0
 //SetControllerUsing false
 //Loopの開始//
 Loop Loop1
@@ -46,6 +46,6 @@ Failed
 //チームType0のメンバーが3以上の場合は次のコードをスキップする//
 SkipIfMore 1 0 -t 1
 End Loop2
-Message 作戦終了だ。\nよくやったな。 --messenger operator --addFrame 0.2 --afterFrame 5.0 --stop
+Message 作戦終了だ。\nよくやったな。 --messenger operator --addFrame 0.2 --afterFrame 5.0 --stop --endDrawKeyFlg
 //SetControllerUsing false
 Success
