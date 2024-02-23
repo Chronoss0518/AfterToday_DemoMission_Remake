@@ -321,6 +321,11 @@ void GameFrame::InitScriptFunction()
 			{
 				scriptPauseOnMessageFlg = true;
 			}
+
+			if (texts[i] == "--endDrawKeyFlg")
+			{
+				endDrawKeyFlg = true;
+			}
 		}
 
 		messageBox->SetMessage(messenger,message,afterFrame,messageAddFrame);
@@ -530,9 +535,25 @@ void GameFrame::Update()
 		scriptPauseOnMessageFlg = messageBox->IsDrawMessage();
 		scriptPauseFlg = scriptPauseOnMessageFlg;
 	}
+	else
+	{
+		endDrawKeyFlg = false;
+	}
+
 
 	if(!scriptPauseFlg)
 		script->UpdateScript();
+
+	if (endDrawKeyFlg)
+	{
+		auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+		if (windows->IsPushKey(VK_LBUTTON))
+		{
+			messageBox->EndSetDrawMessage();
+		}
+	}
+
+
 
 #if DEBUG_FLG
 
@@ -1346,12 +1367,7 @@ void GameFrame::Success()
 {
 	if (!successFlg)return;
 	scriptPauseFlg = true;
-
-	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-	if (windows->IsPushKey(VK_LBUTTON))
-	{
-		messageBox->EndSetDrawMessage();
-	}
+	endDrawKeyFlg = false;
 
 	if (messageBox->IsDrawMessage())return;
 
@@ -1367,12 +1383,7 @@ void GameFrame::Failed()
 {
 	if (!failedFlg)return;
 	scriptPauseFlg = true;
-
-	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-	if (windows->IsPushKey(VK_LBUTTON))
-	{
-		messageBox->EndSetDrawMessage();
-	}
+	endDrawKeyFlg = false;
 
 	if (messageBox->IsDrawMessage())return;
 

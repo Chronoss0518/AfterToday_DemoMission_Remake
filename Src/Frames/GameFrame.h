@@ -236,6 +236,7 @@ private:
 	ChPtr::Shared<GameScript> script = nullptr;
 	bool scriptPauseFlg = false;
 	bool scriptPauseOnMessageFlg = false;
+	bool endDrawKeyFlg = false;
 
 	ChPtr::Shared<ResultStructure>resultData = nullptr;
 
