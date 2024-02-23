@@ -243,12 +243,8 @@
     <None Include="Resource\RobotParts\RAA_01.mpd" />
     <None Include="Resource\RobotParts\RAG_01.mpd" />
     <None Include="Resource\RobotParts\RAT.mpd" />
-    <None Include="Resource\Save\AssemMechaFrame\0.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\1.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\2.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\3.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\4.amf" />
-    <None Include="Resource\Save\AssemMechaFrame\5.amf" />
+    <None Include="Resource\Save\AssemMechaFrameList.json" />
+    <None Include="Resource\Save\Player.amf" />
     <None Include="Resource\StageData\Test_Stage.json" />
     <None Include="Resource\StageData\Test_Stage2.json" />
     <None Include="Resource\StageData\Test_Stage3.json" />

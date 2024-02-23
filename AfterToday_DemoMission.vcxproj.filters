@@ -462,24 +462,6 @@
     <None Include="Resource\StageData\Test_Stage4.json">
       <Filter>StageData</Filter>
     </None>
-    <None Include="Resource\Save\AssemMechaFrame\0.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\1.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\2.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\3.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\4.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
-    <None Include="Resource\Save\AssemMechaFrame\5.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
-    </None>
     <None Include="Resource\RobotParts\HT.mpd">
       <Filter>PartsDatas</Filter>
     </None>
@@ -539,6 +521,12 @@
     </None>
     <None Include="Resource\RobotParts\Bullet\standard_1968.bod">
       <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrameList.json">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\Player.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
     </None>
   </ItemGroup>
 </Project>
