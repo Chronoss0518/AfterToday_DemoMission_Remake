@@ -33,6 +33,9 @@
 #define PLAYER_USE_MECHA_PATH SAVE_DIRECTORY("Player.amf") 
 #endif
 
+#ifndef PLAYER_MECHA_PATH
+#define PLAYER_MECHA_PATH SAVE_DIRECTORY("AssemMechaFrameList.json")
+#endif
 
 #ifndef SOUND_DIRECTORY
 #define SOUND_DIRECTORY(current_path) TARGET_DIRECTORY("Sound/" current_path) 
@@ -56,10 +59,6 @@
 
 #ifndef CPU_DIRECTORY
 #define CPU_DIRECTORY(current_path) TARGET_DIRECTORY("CPUCharactor/" current_path) 
-#endif
-
-#ifndef PLAYER_MECHA_PATH
-#define PLAYER_MECHA_PATH(_fileName) SAVE_DIRECTORY("AssemMechaFrame/" _fileName)
 #endif
 
 #ifndef CPU_MECHA_PATH
@@ -107,6 +106,9 @@ _SPRITE.SetInitPosition(); \
 _SPRITE.SetPosRect(_RECT)
 #endif
 
+#ifndef TEXT_TO_COLOR_NUMBER
+#define TEXT_TO_COLOR_NUMBER(_text)  static_cast<float>(ChStd::BaseNumberToDecimalNumber(_text, ChStd::HEXA_DECIMAL())) / 255.0f
+#endif
 
 #ifndef USE_TITLE_FRAME_FLG
 #define USE_TITLE_FRAME_FLG 0
@@ -205,6 +207,22 @@ static inline ChVec4 RectToGameWindow(const ChVec4 _rect)
 	res.bottom = (res.bottom * -2.0f) + 1.0f;
 
 	return res;
+}
+
+static inline ChVec3 ColorTextToColorVector3(
+	const std::string& _r,
+	const std::string& _g, 
+	const std::string& _b)
+{
+	std::vector<char> r = { _r[0],_r[1] };
+	std::vector<char> g = { _g[0],_g[1] };
+	std::vector<char> b = { _b[0],_b[1] };
+
+	return ChVec3::FromColor(
+		TEXT_TO_COLOR_NUMBER(r),
+		TEXT_TO_COLOR_NUMBER(g),
+		TEXT_TO_COLOR_NUMBER(b)
+		);
 }
 
 static inline bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
