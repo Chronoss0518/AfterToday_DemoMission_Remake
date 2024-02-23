@@ -68,18 +68,14 @@ void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
 
 	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject>(ChCpp::JsonBaseType::GetParameter(text));
 
-	SetComponent<LookAnchor>();
-
 	LoadPartsList(_device, jsonObject);
-
-	nowEnelgy = maxEnelgy;
-	nowDurable = durable;
-	physics->SetMass(mass);
 }
 
 void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
 {
 	if (_jsonObject == nullptr) return;
+	SetComponent<LookAnchor>();
+
 	mechaName = *_jsonObject->GetJsonString(JSON_MECHA_NAME);
 
 	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
@@ -88,6 +84,9 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	testCollider.SetScalling(baseHitSize);
 
+	nowEnelgy = maxEnelgy;
+	nowDurable = durable;
+	physics->SetMass(mass);
 }
 
 void BaseMecha::Save(const std::string& _fileName)
