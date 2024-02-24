@@ -41,10 +41,10 @@ ChPtr::Shared<ChCpp::JsonObject> CPUTargetSelector::Serialize()
 
 	for (auto&& function : functions)
 	{
-		functionArray->AddObject(function->Serialize());
+		functionArray->Add(function->Serialize());
 	}
 
-	res->SetObject("TargetSelectorFunctions", functionArray);
+	res->Set("TargetSelectorFunctions", functionArray);
 
 	return res;
 }

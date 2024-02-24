@@ -18,17 +18,17 @@ ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelect::Serialize()
 
 	auto&& operationPoint = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	operationPoint->SetObject("X", ChCpp::JsonNumber::CreateObject(point.x));
+	operationPoint->Set("X", ChCpp::JsonNumber::CreateObject(point.x));
 
-	operationPoint->SetObject("Y", ChCpp::JsonNumber::CreateObject(point.y));
+	operationPoint->Set("Y", ChCpp::JsonNumber::CreateObject(point.y));
 
-	operationPoint->SetObject("Z", ChCpp::JsonNumber::CreateObject(point.z));
+	operationPoint->Set("Z", ChCpp::JsonNumber::CreateObject(point.z));
 
-	res->SetObject("OperationPoint", operationPoint);
+	res->Set("OperationPoint", operationPoint);
 
-	res->SetObject("Distance", ChCpp::JsonNumber::CreateObject(distance));
+	res->Set("Distance", ChCpp::JsonNumber::CreateObject(distance));
 
-	res->SetObject("AxisFlg", ChCpp::JsonNumber::CreateObject(axisFlg.GetValue()));
+	res->Set("AxisFlg", ChCpp::JsonNumber::CreateObject(axisFlg.GetValue()));
 
 	return res;
 }
@@ -101,14 +101,14 @@ ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelector::Serialize()
 
 	for (auto&& positions : functions)
 	{
-		operationPointArray->AddObject(positions->Serialize());
+		operationPointArray->Add(positions->Serialize());
 	}
 
-	res->SetObject("OperatorPositions", operationPointArray);
+	res->Set("OperatorPositions", operationPointArray);
 
-	res->SetObject("CombatModeOff", ChCpp::JsonNumber::CreateObject(combatModeOffTime));
+	res->Set("CombatModeOff", ChCpp::JsonNumber::CreateObject(combatModeOffTime));
 
-	res->SetObject("IsTargetPositionInAreaLength", ChCpp::JsonNumber::CreateObject(isTargetPositionInAreaLength));
+	res->Set("IsTargetPositionInAreaLength", ChCpp::JsonNumber::CreateObject(isTargetPositionInAreaLength));
 
 	return res;
 }

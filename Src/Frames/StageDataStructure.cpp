@@ -81,36 +81,36 @@ void StageDataStructure::Save(const std::string& _filePath)
 
 	auto res = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	res->SetObject(J_STAGE_NAME, ChCpp::JsonString::CreateObject(stageName));
+	res->Set(J_STAGE_NAME, ChCpp::JsonString::CreateObject(stageName));
 
-	res->SetObject(J_STAGE_IMAGE_PATH, ChCpp::JsonString::CreateObject(stageImagePath));
+	res->Set(J_STAGE_IMAGE_PATH, ChCpp::JsonString::CreateObject(stageImagePath));
 
-	res->SetObject(J_STAGE_LOCATIN_NAME, ChCpp::JsonString::CreateObject(stageLocationName));
+	res->Set(J_STAGE_LOCATIN_NAME, ChCpp::JsonString::CreateObject(stageLocationName));
 
-	res->SetObject(J_STAGE_SCRIPT_PATH, ChCpp::JsonString::CreateObject(stageScriptPath));
+	res->Set(J_STAGE_SCRIPT_PATH, ChCpp::JsonString::CreateObject(stageScriptPath));
 
-	res->SetObject(J_STAGE_STRATEGY_OVERVIEW, ChCpp::JsonString::CreateObject(stageStrategyOverview));
+	res->Set(J_STAGE_STRATEGY_OVERVIEW, ChCpp::JsonString::CreateObject(stageStrategyOverview));
 
-	res->SetObject(J_STAGE_MISSION_TIME, ChCpp::JsonNumber::CreateObject(missionTimeSeccond));
+	res->Set(J_STAGE_MISSION_TIME, ChCpp::JsonNumber::CreateObject(missionTimeSeccond));
 
-	res->SetObject(J_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(resultData->successFee));
+	res->Set(J_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(resultData->successFee));
 
-	if(resultData->successFee != drawSuccessFee) res->SetObject(J_DRAW_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(drawSuccessFee));
+	if(resultData->successFee != drawSuccessFee) res->Set(J_DRAW_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(drawSuccessFee));
 
-	res->SetObject(J_ADDITIONAL_COMPENSATION, ChCpp::JsonNumber::CreateObject(resultData->additionalCompensation));
+	res->Set(J_ADDITIONAL_COMPENSATION, ChCpp::JsonNumber::CreateObject(resultData->additionalCompensation));
 	
-	res->SetObject(J_ADDITIONAL_COMPENSATION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->additionalCompensationExplanation));
+	res->Set(J_ADDITIONAL_COMPENSATION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->additionalCompensationExplanation));
 	
-	res->SetObject(J_SPECIAL_PAY_REDUCTION, ChCpp::JsonNumber::CreateObject(resultData->specialPayReduction));
+	res->Set(J_SPECIAL_PAY_REDUCTION, ChCpp::JsonNumber::CreateObject(resultData->specialPayReduction));
 	
-	res->SetObject(J_SPECIAL_PAY_REDUCTION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->specialPayReductionExplanation));
+	res->Set(J_SPECIAL_PAY_REDUCTION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->specialPayReductionExplanation));
 
-	res->SetObject(J_SELECT_MODEL_FLG, ChCpp::JsonBoolean::CreateObject(selectModelFlg));
+	res->Set(J_SELECT_MODEL_FLG, ChCpp::JsonBoolean::CreateObject(selectModelFlg));
 
 	{
 		ChCpp::CharFile file;
 		file.FileOpen(_filePath);
-		auto result = file.FileWriteText(res->GetRawData());
+		auto result = file.FileWriteText(ChCpp::JsonBaseType::FormatDocument(res->GetRawData()));
 		file.FileClose();
 	}
 

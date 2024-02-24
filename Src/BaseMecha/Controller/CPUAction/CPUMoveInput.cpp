@@ -16,13 +16,13 @@ ChPtr::Shared<ChCpp::JsonObject> CPUMoveInput::Serialize()
 {
 	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	res->SetObject("LookTweakSize", ChCpp::JsonNumber::CreateObject(lookTweakSize));
+	res->Set("LookTweakSize", ChCpp::JsonNumber::CreateObject(lookTweakSize));
 
-	res->SetObject("TargetPositionLength", ChCpp::JsonNumber::CreateObject(targetPositionLength));
+	res->Set("TargetPositionLength", ChCpp::JsonNumber::CreateObject(targetPositionLength));
 
-	res->SetObject("UseBoostLengthFromBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromBattle));
+	res->Set("UseBoostLengthFromBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromBattle));
 
-	res->SetObject("UseBoostLengthFromUnBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromUnBattle));
+	res->Set("UseBoostLengthFromUnBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromUnBattle));
 
 	return res;
 }

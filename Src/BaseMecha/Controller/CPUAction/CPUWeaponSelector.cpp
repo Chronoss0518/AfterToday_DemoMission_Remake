@@ -19,9 +19,9 @@ ChPtr::Shared<ChCpp::JsonObject> CPUWeaponSelect::Serialize()
 {
 	auto&& res = CPUActionBase::Serialize();
 
-	res->SetObject("AttackType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(attackType)));
+	res->Set("AttackType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(attackType)));
 
-	res->SetObject("UnStopFlg", ChCpp::JsonBoolean::CreateObject(unStopFlg));
+	res->Set("UnStopFlg", ChCpp::JsonBoolean::CreateObject(unStopFlg));
 
 	return res;
 }
@@ -58,10 +58,10 @@ ChPtr::Shared<ChCpp::JsonObject> CPUWeaponSelector::Serialize()
 
 	for (auto&& function : functions)
 	{
-		functionArray->AddObject(function->Serialize());
+		functionArray->Add(function->Serialize());
 	}
 
-	res->SetObject("WeaponSelectorFunctions", functionArray);
+	res->Set("WeaponSelectorFunctions", functionArray);
 
 	return res;
 }

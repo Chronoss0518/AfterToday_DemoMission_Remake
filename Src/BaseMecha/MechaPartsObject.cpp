@@ -45,20 +45,20 @@ void MechaPartsObject::Release()
 ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
 {
 	auto&& res = ChPtr::Make_S< ChCpp::JsonObject>();
-	res->SetObject(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString::CreateObject(baseParts->GetThisFilePath()));
+	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString::CreateObject(baseParts->GetThisFilePath()));
 
 	if (GetRWeapon())
-		res->SetObject(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+		res->Set(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
 
 	if (GetLWeapon())
-		res->SetObject(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
 
 
 	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
 	{
 		for (auto&& partsObject : positions[i])
 		{
-			res->SetObject(partsObject.first, partsObject.second->Serialize());
+			res->Set(partsObject.first, partsObject.second->Serialize());
 		}
 	}
 	return res;

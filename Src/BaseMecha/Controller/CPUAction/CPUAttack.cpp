@@ -20,13 +20,13 @@ ChPtr::Shared<ChCpp::JsonObject> CPUAttack::Serialize()
 {
 	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	res->SetObject("CenterLength", ChCpp::JsonNumber::CreateObject(centerLength));
+	res->Set("CenterLength", ChCpp::JsonNumber::CreateObject(centerLength));
 	
-	res->SetObject("PriorityWeaponType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(priorityWeaponType)));
+	res->Set("PriorityWeaponType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(priorityWeaponType)));
 	
-	res->SetObject("AttackCount", ChCpp::JsonNumber::CreateObject(attackCount));
+	res->Set("AttackCount", ChCpp::JsonNumber::CreateObject(attackCount));
 
-	res->SetObject("AttackType", ChCpp::JsonNumber::CreateObject(attackType.GetValue()));
+	res->Set("AttackType", ChCpp::JsonNumber::CreateObject(attackType.GetValue()));
 
 	return res;
 }

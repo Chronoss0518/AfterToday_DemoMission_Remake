@@ -320,20 +320,20 @@ void CPUController::SaveCPUData(const std::string& _fileName)
 
 	auto&& saveData = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	saveData->SetObject("SaveFlg", ChCpp::JsonBoolean::CreateObject(saveFlg));
-	saveData->SetObject("ActionMoveMaxTime", ChCpp::JsonNumber::CreateObject(actionMoveMaxTime));
-	saveData->SetObject("ActionMoveMinTime", ChCpp::JsonNumber::CreateObject(actionMoveMinTime));
+	saveData->Set("SaveFlg", ChCpp::JsonBoolean::CreateObject(saveFlg));
+	saveData->Set("ActionMoveMaxTime", ChCpp::JsonNumber::CreateObject(actionMoveMaxTime));
+	saveData->Set("ActionMoveMinTime", ChCpp::JsonNumber::CreateObject(actionMoveMinTime));
 
-	saveData->SetObject("TargetSelector", cpuTargetSelect->Serialize());
-	saveData->SetObject("MovePositionSelector", cpuMovePositionSelect->Serialize());
-	saveData->SetObject("WeaponSelector", cpuWeaponSelect->Serialize());
-	saveData->SetObject("MoveInput", cpuMoveInput->Serialize());
-	saveData->SetObject("Attack", cpuAttack->Serialize());
+	saveData->Set("TargetSelector", cpuTargetSelect->Serialize());
+	saveData->Set("MovePositionSelector", cpuMovePositionSelect->Serialize());
+	saveData->Set("WeaponSelector", cpuWeaponSelect->Serialize());
+	saveData->Set("MoveInput", cpuMoveInput->Serialize());
+	saveData->Set("Attack", cpuAttack->Serialize());
 
 
 	ChCpp::CharFile file;
 	file.FileOpen(CPU_DIRECTORY(+_fileName));
-	file.FileWriteText(saveData->GetRawData());
+	file.FileWriteText(ChCpp::JsonBaseType::FormatDocument(saveData->GetRawData()));
 	file.FileClose();
 
 }
@@ -441,18 +441,18 @@ ChPtr::Shared<ChCpp::JsonObject> CPUActionBase::Serialize()
 
 	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
 
-	res->SetObject("MemberType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(memberType)));
+	res->Set("MemberType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(memberType)));
 	
-	res->SetObject("DistanceType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(distanceType)));
-	res->SetObject("TestDistance", ChCpp::JsonNumber::CreateObject(testDistance));
-	res->SetObject("DistanceComparison", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(distanceComparison)));
+	res->Set("DistanceType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(distanceType)));
+	res->Set("TestDistance", ChCpp::JsonNumber::CreateObject(testDistance));
+	res->Set("DistanceComparison", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(distanceComparison)));
 
 	
-	res->SetObject("DamageSizeType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(damageType)));
-	res->SetObject("TestDamage", ChCpp::JsonNumber::CreateObject(testDamage));
-	res->SetObject("DamageComparison", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(damageComparison)));
+	res->Set("DamageSizeType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(damageType)));
+	res->Set("TestDamage", ChCpp::JsonNumber::CreateObject(testDamage));
+	res->Set("DamageComparison", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(damageComparison)));
 
-	res->SetObject("ActiveFlg", ChCpp::JsonBoolean::CreateObject(activeFlg));
+	res->Set("ActiveFlg", ChCpp::JsonBoolean::CreateObject(activeFlg));
 
 	return res;
 }

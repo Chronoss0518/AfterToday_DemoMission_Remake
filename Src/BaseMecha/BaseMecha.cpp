@@ -96,7 +96,7 @@ void BaseMecha::Save(const std::string& _fileName)
 
 	ChCpp::CharFile file;
 	file.FileOpen(_fileName);
-	file.FileWriteText(res->GetRawData());
+	file.FileWriteText(ChCpp::JsonBaseType::FormatDocument(res->GetRawData()));
 	file.FileClose();
 
 }
@@ -104,8 +104,8 @@ void BaseMecha::Save(const std::string& _fileName)
 ChPtr::Shared<ChCpp::JsonObject> BaseMecha::SavePartsList()
 {
 	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
-	res->SetObject(JSON_MECHA_NAME, ChCpp::JsonString::CreateObject(mechaName));
-	res->SetObject(JSON_CORE, core->Serialize());
+	res->Set(JSON_MECHA_NAME, ChCpp::JsonString::CreateObject(mechaName));
+	res->Set(JSON_CORE, core->Serialize());
 
 	return res;
 }
