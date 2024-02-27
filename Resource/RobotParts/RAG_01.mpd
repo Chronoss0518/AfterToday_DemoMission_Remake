@@ -3,4 +3,5 @@ Resource/XFile/RobotsParts/RArm/Guardian.x
 2.000000
 WeaponPos:{
 RightArm_WeaponPos
+Hand
 }

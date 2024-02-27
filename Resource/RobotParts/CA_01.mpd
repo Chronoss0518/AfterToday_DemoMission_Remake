@@ -7,16 +7,21 @@ EnelgyTankData:{
 }
 HeadPos:{
 Armature_HeadPos
+Head
 }
 RightArmPos:{
 Armature_RightArmPos
+Right Arm
 }
 LeftArmPos:{
 Armature_LeftArmPos
+Left Arm
 }
 FootPos:{
 Armature_BodyPos
+Foot
 }
 BoostPos:{
 Armature_BoostPos
+Boost
 }

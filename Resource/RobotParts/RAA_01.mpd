@@ -3,4 +3,5 @@ Resource/XFile/RobotsParts/RArm/Air.x
 0.500000
 WeaponPos:{
 RightArm_WeaponPos
+Hand
 }

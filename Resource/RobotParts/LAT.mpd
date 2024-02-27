@@ -3,4 +3,5 @@ Resource/XFile/RobotsParts/LArm/Normal.x
 1.000000
 WeaponPos:{
 LeftArm_WeaponPos
+Hand
 }
