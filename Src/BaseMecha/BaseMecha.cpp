@@ -87,6 +87,12 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 	nowEnelgy = maxEnelgy;
 	nowDurable = durable;
 	physics->SetMass(mass);
+
+
+	auto boostComponent = GetComponent<BoostComponent>();
+
+	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
+
 }
 
 void BaseMecha::Save(const std::string& _fileName)
