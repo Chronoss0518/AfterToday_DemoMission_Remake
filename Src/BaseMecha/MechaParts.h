@@ -397,7 +397,7 @@ class NextPosBase : public PartsDataBase
 {
 public://Serialize Deserialize//
 
-	inline unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
+	inline virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
 	{
 
 		SetParamName(_text.GetTextLine(_textPos));
@@ -405,7 +405,7 @@ public://Serialize Deserialize//
 		return _textPos + 1;
 	}
 
-	inline std::string Serialize()override
+	inline virtual std::string Serialize()override
 	{
 
 		std::string res = "";
@@ -435,7 +435,48 @@ protected:
 
 };
 
-class RightArmPos:public NextPosBase
+class NextPosExtraBase : public NextPosBase
+{
+public://Serialize Deserialize//
+
+	inline unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
+	{
+		unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
+		SetConnectionName(_text.GetTextLine(textPos));
+
+		return textPos + 1;
+	}
+
+	inline std::string Serialize()override
+	{
+
+		std::string res = NextPosBase::Serialize();
+		res += connectionName + "\n";
+
+		return res;
+	}
+
+public://Set Functions//
+
+	inline void SetConnectionName(const std::string& _connectionName)
+	{
+		connectionName = _connectionName;
+	}
+
+public://Get Functions//
+
+	inline std::string GetConnectionName() { return connectionName; }
+
+protected:
+
+	//接続部の名称//
+	std::string connectionName = "";
+	
+	//最大重量//
+	float maxWeight = 0.0f;
+};
+
+class RightArmPos:public NextPosExtraBase
 {
 public:
 
@@ -447,7 +488,7 @@ public://Get Functions//
 
 };
 
-class LeftArmPos :public NextPosBase 
+class LeftArmPos :public NextPosExtraBase
 {
 public:
 
@@ -459,7 +500,7 @@ public://Get Functions//
 
 };
 
-class FootPos :public NextPosBase 
+class FootPos :public NextPosExtraBase
 {
 public:
 
@@ -471,7 +512,7 @@ public://Get Functions//
 
 };
 
-class HeadPos :public NextPosBase 
+class HeadPos :public NextPosExtraBase
 {
 public:
 
@@ -483,7 +524,7 @@ public://Get Functions//
 
 };
 
-class BoostPos :public NextPosBase 
+class BoostPos :public NextPosExtraBase
 {
 public:
 
@@ -634,7 +675,7 @@ public://Get Functions//
 
 };
 
-class WeaponPos : public NextPosBase
+class WeaponPos : public NextPosExtraBase
 {
 
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
@@ -655,7 +696,9 @@ public://Serialize Deserialize//
 
 public:
 
-	inline void SetSE(const std::string& _seFile) { seFile = _seFile; }
+	inline void SetWeaponName(const std::string& _weaponName) { weaponName = _weaponName; }
+
+	inline void SetSEFileName(const std::string& _seFile) { seFile = _seFile; }
 
 	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
 
@@ -663,12 +706,17 @@ public:
 
 public:
 
+	inline std::string GetWeaponName() { return weaponName; }
+
 	inline std::string GetSEFileName() { return seFile; }
 
 	inline unsigned long GetWeatTime() const { return weatTime; }
 
 protected:
 
+	//武器の名称//
+	std::string weaponName = "";
+	//効果音のファイル//
 	std::string seFile = "";
 	//次の攻撃可能時間//
 	unsigned long weatTime = 0;

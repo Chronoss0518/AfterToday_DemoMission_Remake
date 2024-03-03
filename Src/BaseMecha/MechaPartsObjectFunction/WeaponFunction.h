@@ -48,7 +48,7 @@ public:
 
 	static constexpr const wchar_t* const GetDefaultReloadCount() { return L"-"; }
 
-	virtual std::wstring GetWeaponName() { return L""; }
+	std::wstring GetWeaponName();
 
 	virtual std::wstring GetBulletNum() = 0;
 

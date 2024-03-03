@@ -20,6 +20,8 @@ public:
 
 	std::vector<ChPtr::Weak<MechaPartsObject>> GetWeaponMechaPartsList();
 
+	std::wstring GetPartsName();
+
 	std::wstring GetWeaponName();
 
 	std::wstring GetNowBulletNum();
@@ -57,6 +59,7 @@ protected:
 
 private:
 
+	std::string weaponName = "";
 	unsigned long useWeaponNo = 0;
 	std::vector<ChPtr::Shared<MechaPartsObject>>weapon;
 

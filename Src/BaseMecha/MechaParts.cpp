@@ -586,15 +586,17 @@ void WeaponPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::
 unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
-	seFile = _text.GetTextLine(textPos);
-	weatTime = std::atol(_text.GetTextLine(textPos + 1).c_str());
-	return textPos + 2;
+	weaponName = _text.GetTextLine(textPos);
+	seFile = _text.GetTextLine(textPos + 1);
+	weatTime = std::atol(_text.GetTextLine(textPos + 2).c_str());
+	return textPos + 3;
 }
 
 std::string WeaponData::Serialize()
 {
 	std::string res = NextPosBase::Serialize();
 
+	res += weaponName + "\n";
 	res += seFile + "\n";
 	res += std::to_string(weatTime) + "\n";
 

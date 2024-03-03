@@ -110,6 +110,8 @@ public:
 
 	unsigned long GetUseAttackType() { return useAttackType; }
 
+	std::wstring GetPartsName();
+
 	std::wstring GetWeaponName();
 
 	std::wstring GetNowBulletNum();

@@ -35,6 +35,12 @@ void WeaponFunction::Update()
 	UpdateFunction();
 }
 
+std::wstring WeaponFunction::GetWeaponName()
+{
+	if (ChPtr::NullCheck(data))return L"";
+	return ChStr::UTF8ToWString(data->GetWeaponName());
+}
+
 void SwordFunction::SetData(WeaponData* _data)
 {
 	swordData = ChPtr::SafeCast<SwordData>(_data);

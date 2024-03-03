@@ -77,10 +77,9 @@ void MechaPartsObject::SetHitSize()
 
 }
 
-std::wstring MechaPartsObject::GetWeaponName()
+std::wstring MechaPartsObject::GetPartsName()
 {
 	std::wstring result = ChStr::UTF8ToWString(baseParts->GetThisFileName());
-
 	unsigned long extensionStringPos = result.find_last_of('.');
 	unsigned long fileNameLength = result.length();
 
@@ -88,11 +87,16 @@ std::wstring MechaPartsObject::GetWeaponName()
 	{
 		result.pop_back();
 	}
-	
 
+	return result;
+}
+
+std::wstring MechaPartsObject::GetWeaponName()
+{
+	std::wstring result = L"";
 	if (!weaponFunctions.empty())
 		if (weaponFunctions.size() > useAttackType)
-			result += weaponFunctions[useAttackType]->GetWeaponName();
+			result = weaponFunctions[useAttackType]->GetWeaponName();
 
 	return result;
 }
