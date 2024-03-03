@@ -51,18 +51,24 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	nextFrameFunction[NextButtonType::Battle] = [&]()
 	{
-		ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
+#if USE_GAME_FRAME_FLG
+			ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
+#endif
 	};
 
 	nextFrameFunction[NextButtonType::Edit] = [&]()
 	{
-		//ChangeFrame(ChStd::EnumCast(FrameNo::Edit));
+#if USE_EDIT_FRAME_FLG
+			ChangeFrame(ChStd::EnumCast(FrameNo::Edit));
+#endif
 	};
 
 
 	nextFrameFunction[NextButtonType::Setting] = [&]()
 	{
-		//ChangeFrame(ChStd::EnumCast(FrameNo::Setting));
+#if USE_SETTING_FRAME_FLG
+			ChangeFrame(ChStd::EnumCast(FrameNo::Setting));
+#endif
 	};
 
 }
@@ -114,18 +120,13 @@ void SelectFrame::UpdateAction(ActionType _type)
 	{
 		nowSelect = (nowSelect + 1) % NEXT_BUTTON_TYPE_COUNT;
 	}
-
 }
 
 void SelectFrame::Update()
 {
-
 	UpdateFunction();
 
-	ChVec4 rect = toButton[nowSelect].sprite.GetPosRect();
-
 	DrawFunction();
-
 }
 
 void SelectFrame::UpdateMouse()
