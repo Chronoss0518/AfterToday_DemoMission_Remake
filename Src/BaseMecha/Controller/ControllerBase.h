@@ -72,6 +72,10 @@ private:
 
 	void CursolFunction(float& _value, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus);
 
+	void SetXInputFlg(const XInputTypeNames _xinputType);
+
+	bool controllerPushFlg = false;
+
 	std::map<unsigned long, InputName> keyTypes;
 	std::map<XInputTypeNames, InputName>controllerTypes;
 	ChD3D::XInputController controller;

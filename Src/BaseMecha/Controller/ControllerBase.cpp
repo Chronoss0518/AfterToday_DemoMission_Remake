@@ -90,7 +90,7 @@ void PlayerController::Init()
 
 void PlayerController::UpdateBegin()
 {
-	auto targetMecha = LookObj<BaseMecha>();
+	auto targetMecha = GetBaseMecha();
 	if (ChPtr::NullCheck(targetMecha))
 	{
 		Destroy();
@@ -98,11 +98,15 @@ void PlayerController::UpdateBegin()
 	}
 
 	XInputUpdate();
-	
-	for (auto&& key : keyTypes)
+
+	if (!controllerPushFlg)
 	{
-		if (!ChSystem::SysManager().IsPushKey(key.first))continue;
-		targetMecha->SetPushFlg(key.second);
+		for (auto&& key : keyTypes)
+		{
+			if (!ChSystem::SysManager().IsPushKey(key.first))continue;
+			targetMecha->SetPushFlg(key.second);
+		}
+
 	}
 
 	CursolUpdate();
@@ -110,72 +114,72 @@ void PlayerController::UpdateBegin()
 
 void PlayerController::XInputUpdate()
 {
-	auto targetMecha = LookObj<BaseMecha>();
+	controllerPushFlg = false;
 	controller.Update();
 
-	if (controller.GetAFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::A]);
+	if (controller.GetAFlg())SetXInputFlg(XInputTypeNames::A);
 	
-	if (controller.GetBFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::B]);
+	if (controller.GetBFlg())SetXInputFlg(XInputTypeNames::B);
 	
-	if (controller.GetXFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::X]);
+	if (controller.GetXFlg())SetXInputFlg(XInputTypeNames::X);
 	
-	if (controller.GetYFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Y]);
+	if (controller.GetYFlg())SetXInputFlg(XInputTypeNames::Y);
 
-	if (controller.GetUpFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Up]);
-	if (controller.GetDownFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Down]);
-	if (controller.GetLeftFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Left]);
-	if (controller.GetRightFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Right]);
+	if (controller.GetUpFlg())SetXInputFlg(XInputTypeNames::Up);
+	if (controller.GetDownFlg())SetXInputFlg(XInputTypeNames::Down);
+	if (controller.GetLeftFlg())SetXInputFlg(XInputTypeNames::Left);
+	if (controller.GetRightFlg())SetXInputFlg(XInputTypeNames::Right);
 
-	if (controller.GetBackFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Back]);
-	if (controller.GetStartFlg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::Start]);
+	if (controller.GetBackFlg())SetXInputFlg(XInputTypeNames::Back);
+	if (controller.GetStartFlg())SetXInputFlg(XInputTypeNames::Start);
 
-	if (controller.GetR1Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R1]);
-	if (controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R2]);
-	if (controller.GetR3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::R3]);
+	if (controller.GetR1Flg())SetXInputFlg(XInputTypeNames::R1);
+	if (controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)SetXInputFlg(XInputTypeNames::R2);
+	if (controller.GetR3Flg())SetXInputFlg(XInputTypeNames::R3);
 
-	if (controller.GetL1Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L1]);
-	if (controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L2]);
-	if (controller.GetL3Flg())targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::L3]);
+	if (controller.GetL1Flg())SetXInputFlg(XInputTypeNames::L1);
+	if (controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)SetXInputFlg(XInputTypeNames::L2);
+	if (controller.GetL3Flg())SetXInputFlg(XInputTypeNames::L3);
 
 
 	if (controller.GetLXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LRight]);
+		SetXInputFlg(XInputTypeNames::LRight);
 	}
 
 	if (controller.GetLXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LLeft]);
+		SetXInputFlg(XInputTypeNames::LLeft);
 	}
 
 	if (controller.GetLYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LDown]);
+		SetXInputFlg(XInputTypeNames::LDown);
 	}
 
 	if (controller.GetLYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::LTop]);
+		SetXInputFlg(XInputTypeNames::LTop);
 	}
 
 	if (controller.GetRXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RRight]);
+		SetXInputFlg(XInputTypeNames::RRight);
 	}
 
 	if (controller.GetRXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RLeft]);
+		SetXInputFlg(XInputTypeNames::RLeft);
 	}
 
 	if (controller.GetRYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RDown]);
+		SetXInputFlg(XInputTypeNames::RDown);
 	}
 
 	if (controller.GetRYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
 	{
-		targetMecha->SetPushFlg(controllerTypes[XInputTypeNames::RTop]);
+		SetXInputFlg(XInputTypeNames::RTop);
 	}
 
 }
@@ -183,7 +187,7 @@ void PlayerController::XInputUpdate()
 void PlayerController::CursolUpdate()
 {
 	mouse->Update();
-	
+
 	ChVec2 vector = mouse->GetNowPosToChVec2() -= (windSize / 2.0f);
 	vector /= baseLen;
 
@@ -204,13 +208,15 @@ void PlayerController::CursolUpdate()
 void PlayerController::CursolFunction(float& _value, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus)
 {
 
+	if (controllerPushFlg)return;
+
 	if (std::abs(_value) < MIN_CURSOL_LEN_PARCEC)
 	{
 		_value = 0.0f;
 		return;
 	}
 
-	auto targetMecha = LookObj<BaseMecha>();
+	auto targetMecha = GetBaseMecha();
 	if (_value > MIN_CURSOL_LEN_PARCEC)
 	{
 		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
@@ -222,6 +228,13 @@ void PlayerController::CursolFunction(float& _value, const CursolMoveTypeName _p
 		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
 		_value += MIN_CURSOL_LEN_PARCEC;
 	}
+}
+
+void PlayerController::SetXInputFlg(const XInputTypeNames _xinputType)
+{
+	auto targetMecha = GetBaseMecha();
+	controllerPushFlg = true;
+	targetMecha->SetPushFlg(controllerTypes[_xinputType]);
 }
 
 std::function<bool(const float _targetValue, const float _testValue)> comparisonOperation[5] =

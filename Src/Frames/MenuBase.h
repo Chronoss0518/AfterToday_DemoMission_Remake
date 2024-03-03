@@ -52,6 +52,8 @@ private:
 	ChCpp::BitBool inputMenuType;
 	ChD3D::XInputController* controller = nullptr;
 
+	bool isPushControllerFlg = false;
+
 	bool loopBreakFlg = false;
 
 };

@@ -16,8 +16,11 @@ void MenuBase::InitMenu(ChD3D::XInputController* _controller)
 void MenuBase::UpdateFunction()
 {
 	UpdateController();
-	UpdateKeyboard();
-	UpdateMouse();
+	if (!isPushControllerFlg)
+	{
+		UpdateKeyboard();
+		UpdateMouse();
+	}
 
 	for (unsigned char i = 0; i < ACTION_TYPE_COUNT; i++)
 	{
@@ -52,20 +55,29 @@ void MenuBase::UpdateKeyboard()
 
 void MenuBase::UpdateController()
 {
+	isPushControllerFlg = false;
+
 	if (ChPtr::NullCheck(controller))return;
 	controller->Update();
 
 	InputTest(ActionType::Decision, controller->GetAFlg());
+	isPushControllerFlg = !isPushControllerFlg ? controller->GetAFlg() : isPushControllerFlg;
 
 	InputTest(ActionType::Cancel, controller->GetBFlg());
-	
+	isPushControllerFlg = !isPushControllerFlg ? controller->GetBFlg() : isPushControllerFlg;
+
 	InputTest(ActionType::Up, controller->GetUpFlg() || controller->GetLYStick() > STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller->GetUpFlg() || controller->GetLYStick() > STICK_INPUT_SIZE : isPushControllerFlg;
 	
 	InputTest(ActionType::Down, controller->GetDownFlg() || controller->GetLYStick() < -STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller->GetDownFlg() || controller->GetLYStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
 	
 	InputTest(ActionType::Left, controller->GetLeftFlg() || controller->GetLXStick() < -STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller->GetLeftFlg() || controller->GetLXStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
 	
 	InputTest(ActionType::Right, controller->GetRightFlg() || controller->GetLXStick() > STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller->GetRightFlg() || controller->GetLXStick() > STICK_INPUT_SIZE : isPushControllerFlg;
+
 }
 
 void MenuBase::AddActionType(ActionType _action)
