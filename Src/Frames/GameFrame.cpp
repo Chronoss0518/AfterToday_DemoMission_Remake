@@ -118,7 +118,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	ChVec4 rect = ChVec4::FromRect((GAME_WINDOW_WIDTH - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_HEIGHT - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_WIDTH + SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_HEIGHT + SHOT_TARGET_MARKER_SIZE) * 0.5f);
 	rect = RectToGameWindow(rect);
 
-	for (unsigned long i = 0; i < 4; i++)
+	for (unsigned char i = 0; i < 4; i++)
 	{
 		ChVec3 pos = shotTargetBorad.GetPos(i);
 		pos.z = SHOT_TARGET_DISTANCE;
@@ -772,6 +772,7 @@ void GameFrame::DrawFunctionBegin()
 	auto&& rightWeaponComponent = drawMecha->GetComponent<RightWeaponComponent>();
 	if (rightWeaponComponent != nullptr)
 	{
+		weaponDataDrawer->SetPartsName(rightWeaponComponent->GetPartsName(), WeaponDataDrawUI::DRAW_TYPE::Right);
 		weaponDataDrawer->SetWeaponName(rightWeaponComponent->GetWeaponName(), WeaponDataDrawUI::DRAW_TYPE::Right);
 		weaponDataDrawer->SetNowBulletNum(rightWeaponComponent->GetNowBulletNum(), WeaponDataDrawUI::DRAW_TYPE::Right);
 		weaponDataDrawer->SetReloadCount(rightWeaponComponent->GetReloadCount(), WeaponDataDrawUI::DRAW_TYPE::Right);
@@ -780,6 +781,7 @@ void GameFrame::DrawFunctionBegin()
 	auto&& leftWeaponComponent = drawMecha->GetComponent<LeftWeaponComponent>();
 	if (leftWeaponComponent != nullptr)
 	{
+		weaponDataDrawer->SetPartsName(leftWeaponComponent->GetPartsName(), WeaponDataDrawUI::DRAW_TYPE::Left);
 		weaponDataDrawer->SetWeaponName(leftWeaponComponent->GetWeaponName(), WeaponDataDrawUI::DRAW_TYPE::Left);
 		weaponDataDrawer->SetNowBulletNum(leftWeaponComponent->GetNowBulletNum(), WeaponDataDrawUI::DRAW_TYPE::Left);
 		weaponDataDrawer->SetReloadCount(leftWeaponComponent->GetReloadCount(), WeaponDataDrawUI::DRAW_TYPE::Left);

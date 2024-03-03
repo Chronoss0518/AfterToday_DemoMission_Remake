@@ -22,6 +22,9 @@ private:
 		std::wstring reloadCount = L"0";
 		bool isUpdateReloadCount = true;
 		ImageSprite reloadIS;
+		std::wstring partsName = L"-";
+		bool isUpdatePartsName = true;
+		ImageSprite partsIS;
 		std::wstring weaponName = L"-";
 		bool isUpdateWeaponName = true;
 		ImageSprite weaponIS;
@@ -46,6 +49,8 @@ public:
 
 	void SetWeaponName(const std::wstring& _name, DRAW_TYPE _type);
 
+	void SetPartsName(const std::wstring& _name, DRAW_TYPE _type);
+
 public:
 
 	void Update();
@@ -58,6 +63,7 @@ private:
 
 	TextDrawerWICBitmap bulletDrawer;
 	TextDrawerWICBitmap reloadDrawer;
+	TextDrawerWICBitmap partsNameDrawer;
 	TextDrawerWICBitmap weaponNameDrawer;
 
 	ID3D11Device* device = nullptr;

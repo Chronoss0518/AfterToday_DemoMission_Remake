@@ -21,15 +21,19 @@
 #define RELOAD_COUNT_WIDTH 53.0f
 #define RELOAD_COUNT_HEIGHT 40.0f
 
-#define WEAPON_NAME_TOP 475.0f - PANEL_TOP
 #define WEAPON_NAME_LEFT 314.0f - LEFT_PANEL_LEFT
 #define WEAPON_NAME_WIDTH 124.0f
-#define WEAPON_NAME_HEIGHT 30.0f
 
+#define WEAPON_PARTS_NAME_TOP 475.0f - PANEL_TOP
+#define WEAPON_PARTS_NAME_HEIGHT 12.0f
+
+#define WEAPON_NAME_TOP WEAPON_PARTS_NAME_HEIGHT + WEAPON_PARTS_NAME_TOP
+#define WEAPON_NAME_HEIGHT 16.0f
 
 #define NOW_BULLET_NUM_TEXT_SIZE 16.0f
 #define RELOAD_COUNT_TEXT_SIZE 24.0f
-#define WEAPON_NAME_TEXT_SIZE 14.0f
+#define WEAPON_PARTS_NAME_TEXT_SIZE 10.0f
+#define WEAPON_NAME_TEXT_SIZE 12.0f
 
 
 void WeaponDataDrawUI::Init(ID3D11Device* _device)
@@ -47,6 +51,9 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 	reloadDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	reloadDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
+	CreateTextDrawer(partsNameDrawer, static_cast<unsigned long>(WEAPON_NAME_WIDTH), static_cast<unsigned long>(WEAPON_PARTS_NAME_HEIGHT), WEAPON_PARTS_NAME_TEXT_SIZE);
+	partsNameDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	partsNameDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 	CreateTextDrawer(weaponNameDrawer, static_cast<unsigned long>(WEAPON_NAME_WIDTH), static_cast<unsigned long>(WEAPON_NAME_HEIGHT), WEAPON_NAME_TEXT_SIZE);
 	weaponNameDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
@@ -74,6 +81,11 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + LEFT_PANEL_LEFT, WEAPON_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + LEFT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_NAME_TOP + PANEL_TOP + WEAPON_NAME_HEIGHT))
 	);
 
+	SPRITE_INIT(
+		brawData[ChStd::EnumCast(DRAW_TYPE::Left)].partsIS.sprite,
+		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + LEFT_PANEL_LEFT, WEAPON_PARTS_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + LEFT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_PARTS_NAME_TOP + PANEL_TOP + WEAPON_PARTS_NAME_HEIGHT))
+	);
+
 
 	SPRITE_INIT(
 		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].drawPosition,
@@ -95,6 +107,10 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT, WEAPON_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_NAME_TOP + PANEL_TOP + WEAPON_NAME_HEIGHT))
 	);
 
+	SPRITE_INIT(
+		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].partsIS.sprite,
+		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT, WEAPON_PARTS_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_PARTS_NAME_TOP + PANEL_TOP + WEAPON_PARTS_NAME_HEIGHT))
+	);
 
 }
 
@@ -106,6 +122,8 @@ void WeaponDataDrawUI::Release()
 	reloadDrawer.bitmap.Release();
 	weaponNameDrawer.drawer.Release();
 	weaponNameDrawer.bitmap.Release();
+	partsNameDrawer.drawer.Release();
+	partsNameDrawer.bitmap.Release();
 }
 
 void WeaponDataDrawUI::CreateTextDrawer(TextDrawerWICBitmap& _drawer, unsigned long _w, unsigned long _h, float _fontSize)
@@ -153,6 +171,13 @@ void WeaponDataDrawUI::SetWeaponName(const std::wstring& _name, DRAW_TYPE _type)
 	brawData[ChStd::EnumCast(_type)].isUpdateWeaponName = true;
 }
 
+void WeaponDataDrawUI::SetPartsName(const std::wstring& _name, DRAW_TYPE _type)
+{
+	if (brawData[ChStd::EnumCast(_type)].partsName == _name)return;
+	brawData[ChStd::EnumCast(_type)].partsName = _name;
+	brawData[ChStd::EnumCast(_type)].isUpdatePartsName = true;
+}
+
 void WeaponDataDrawUI::Update()
 {
 	for (unsigned char i = 0; i < DRAW_TYPE_COUNT; i++)
@@ -168,6 +193,12 @@ void WeaponDataDrawUI::Update()
 		{
 			CreateTextImage(draw.reloadIS.image, reloadDrawer, draw.reloadCount, RELOAD_COUNT_WIDTH, RELOAD_COUNT_HEIGHT);
 			draw.isUpdateReloadCount = false;
+		}
+
+		if (draw.isUpdatePartsName)
+		{
+			CreateTextImage(draw.partsIS.image, partsNameDrawer, draw.partsName, WEAPON_NAME_WIDTH, WEAPON_PARTS_NAME_HEIGHT);
+			draw.isUpdatePartsName = false;
 		}
 
 		if (draw.isUpdateWeaponName)
@@ -190,6 +221,7 @@ void WeaponDataDrawUI::Draw(ChD3D11::Shader::BaseDrawSprite11& _uiDrawer)
 		_uiDrawer.Draw(draw.bulletNumIS.image, draw.bulletNumIS.sprite);
 		_uiDrawer.Draw(draw.reloadIS.image, draw.reloadIS.sprite);
 		_uiDrawer.Draw(draw.weaponIS.image, draw.weaponIS.sprite);
+		_uiDrawer.Draw(draw.partsIS.image, draw.partsIS.sprite);
 	}
 
 }
