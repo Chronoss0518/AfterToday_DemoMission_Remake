@@ -5,6 +5,17 @@
 #include"Attack.h"
 #include"AttackObject.h"
 
+
+#define CREATE_TYPE(_enum,_class) {ChStd::EnumCast(_enum),[]()->ChPtr::Shared<Attack::AttackBase>{return ChPtr::Make_S<_class>();}}
+
+std::map<unsigned char, std::function<ChPtr::Shared<Attack::AttackBase>()>> CreateAttackType
+{
+	CREATE_TYPE(AttackType::Bullet,BulletData),
+	CREATE_TYPE(AttackType::BoostBullet,BoostBulletData),
+	CREATE_TYPE(AttackType::HighExplosive,HighExplosiveBulletData),
+	CREATE_TYPE(AttackType::Missile,MissileData),
+};
+
 ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
 {
 	auto&& attackList = LoadAttackList();
@@ -55,116 +66,66 @@ void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
 {
 	ChCpp::TextObject textObject;
 	textObject.SetText(_text);
-	attackType.SetValue(std::atoi(textObject.GetTextLine(0).c_str()));
-	firstSpeed = static_cast<float>(std::atof(textObject.GetTextLine(1).c_str()));
-	penetration = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(2).c_str()));
-	hitSize = static_cast<float>(std::atof(textObject.GetTextLine(3).c_str()));
-
+	
+	penetration = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(1).c_str()));
+	hitSize = static_cast<float>(std::atof(textObject.GetTextLine(2).c_str()));
 
 	{
 		ChCpp::ModelLoader::XFile loader;
 		bullet->Init(_device);
-		loader.CreateModel(bullet, textObject.GetTextLine(4));
+		loader.CreateModel(bullet, textObject.GetTextLine(3));
 	}
 
-	CreateBulletData();
-	CrateBoostBulletData();
-	CreateHighExplosiveBulletData();
-	CrateMissileData();
+	unsigned long pos = 4;
 
-	unsigned long pos = 5;
-
-	for (auto&& bulletFunction : externulFunction)
+	for (unsigned long pos = 4; pos < textObject.LineCount(); pos++)
 	{
+		unsigned char atkType = ChStr::GetIntegialFromText<unsigned char>(textObject.GetTextLine(pos));
 
-		if (bulletFunction == nullptr)continue;
-		pos = bulletFunction->Deserialize(_device, textObject , pos);
+		if (atkType > ChStd::EnumCast(attackType))attackType = static_cast<AttackType>(atkType);
+
+		auto&& bulletFunction = CreateAttackType[atkType]();
+		pos++;
+		pos = bulletFunction->Deserialize(_device, *this,textObject, pos);
+
+		externulFunctions.push_back(bulletFunction);
 	}
+
 
 }
 
 std::string Attack::Serialize()
 {
-	std::string res = std::to_string(attackType.GetValue());
-	
-	res += std::to_string(firstSpeed) + "\n";
+	std::string res = "";
+
 	res += std::to_string(penetration) + "\n";
 	res += std::to_string(hitSize) + "\n";
+
 	res += bullet->GetModelName() + "\n";
 
-	for (auto&& bulletFunction : externulFunction)
+	for (auto&& bulletFunction : externulFunctions)
 	{
-		if (bulletFunction == nullptr)continue;
 		res += bulletFunction->Serialize();
 	}
 
 	return res;
 }
 
-void Attack::CreateBulletData()
-{	
-	if(!attackType.GetBitFlg(ChStd::EnumCast(AttackType::Bullet)))return;
-	externulFunction[ChStd::EnumCast(AttackType::Bullet)] = ChPtr::Make_S<BulletData>();
-}
-
-void Attack::CrateBoostBulletData()
-{
-	if (!attackType.GetBitFlg(ChStd::EnumCast(AttackType::BoostBullet)))return;
-	externulFunction[ChStd::EnumCast(AttackType::BoostBullet)] = ChPtr::Make_S<BoostBulletData>();
-}
-
-void Attack::CreateHighExplosiveBulletData()
-{
-	if (!attackType.GetBitFlg(ChStd::EnumCast(AttackType::HighExplosive)))return;
-	externulFunction[ChStd::EnumCast(AttackType::HighExplosive)] = ChPtr::Make_S<HighExplosiveBulletData>();
-}
-
-void Attack::CrateMissileData()
-{
-	if (!attackType.GetBitFlg(ChStd::EnumCast(AttackType::Missile)))return;
-	externulFunction[ChStd::EnumCast(AttackType::Missile)] = ChPtr::Make_S<MissileData>();
-}
-
 void Attack::InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet)
 {
-	ChLMat mat = (bullet->GetDrawLHandMatrix() * _startMat);
-
-	ChVec3 dir = mat.GetZAxisDirection();
-
-	dir.Normalize();
-
-	_bullet.SetPosition(_startMat.GetPosition());
-	_bullet.SetRotation(mat.GetRotation());
-
-	dir *= firstSpeed;
-	dir.x = -dir.x;
-	_bullet.physics->AddMovePowerVector(dir);
-
 	_bullet.collider.SetScalling(hitSize);
-
-	for (unsigned char i = 0; i < 5; i++)
+	for (auto&& bulletFunction : externulFunctions)
 	{
-		float pow = static_cast<float>((rand() % 100) * 0.01);
-		pow = pow - (pow * 0.5f) + _bullet.dispersalPower;
-		float move = static_cast<float>((rand() % 100) * 0.0001) + 0.01f;
-		for (unsigned char j = 0; j < i; j++)
-		{
-			pow *= 0.5f;
-			move *= 1.5f;
-		}
-		//frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f);
-		_bullet.frame->AddSmokeEffectObject(_bullet.physics->GetPosition(), _bullet.physics->GetAddMovePowerVector() * move, pow);
+		bulletFunction->InitBulletObject((bullet->GetDrawLHandMatrix() * _startMat),_bullet);
 	}
 }
 
 void Attack::UpdateBulletObject(AttackObject& _bullet)
 {
-	for (auto&& bulletFunction : externulFunction)
+	for (auto&& bulletFunction : externulFunctions)
 	{
-		if (bulletFunction == nullptr)continue;
 		bulletFunction->UpdateBulletObject(_bullet);
 	}
-
 }
 
 void Attack::MoveBulletObject(AttackObject& _bullet)
@@ -179,14 +140,51 @@ void Attack::Draw(const ChMat_11& _mat)
 	drawer->Draw(*bullet, _mat);
 }
 
-unsigned long BulletData::Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
 {
-	return _nowPos;
+
+	unsigned long nowPos = _nowPos;
+	firstSpeed = static_cast<float>(std::atof(_text.GetTextLine(nowPos).c_str()));
+	_attack.AddDisplayFirstSpeed(firstSpeed);
+	return nowPos + 1;
 }
 
 std::string BulletData::Serialize()
 {
-	return "";
+	std::string res =  std::to_string(ChStd::EnumCast(AttackType::Bullet)) + "\n";
+	res += std::to_string(firstSpeed) + "\n";
+	return res;
+}
+
+void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet)
+{
+	ChLMat mat = _startMat;
+
+	ChVec3 dir = mat.GetZAxisDirection();
+
+	dir.Normalize();
+
+	_bullet.SetPosition(_startMat.GetPosition());
+	_bullet.SetRotation(mat.GetRotation());
+
+	dir *= firstSpeed;
+	dir.x = -dir.x;
+	_bullet.physics->AddMovePowerVector(dir);
+
+
+	for (unsigned char i = 0; i < 5; i++)
+	{
+		float pow = static_cast<float>((rand() % 100) * 0.01);
+		pow = pow - (pow * 0.5f) + _bullet.dispersalPower;
+		float move = static_cast<float>((rand() % 100) * 0.0001) + 0.01f;
+		for (unsigned char j = 0; j < i; j++)
+		{
+			pow *= 0.5f;
+			move *= 1.5f;
+		}
+		//frame->AddSmokeEffectObject(physics->GetPosition(), physics->GetAddMovePowerVector() * -0.01f);
+		_bullet.frame->AddSmokeEffectObject(_bullet.physics->GetPosition(), _bullet.physics->GetAddMovePowerVector() * move, pow);
+	}
 }
 
 void BulletData::UpdateBulletObject(AttackObject& _bullet)
@@ -214,20 +212,26 @@ void BulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
 {
 
 	startBoostTime = std::atol(_text.GetTextLine(_nowPos).c_str());
-	boostPow = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 1).c_str()));
-	return _nowPos + 2;
+	useBoostTime = std::atol(_text.GetTextLine(_nowPos + 1).c_str());
+	boostPow = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 2).c_str()));
+
+	_attack.AddDisplayStartBoostTime(startBoostTime);
+	_attack.AddDisplayUseBoostTime(useBoostTime);
+	_attack.AddDisplayBoostPow(boostPow);
+	return _nowPos + 3;
 
 }
 
 std::string BoostBulletData::Serialize()
 {
-	std::string res = "";
+	std::string res = std::to_string(ChStd::EnumCast(AttackType::BoostBullet)) + "\n";
 
 	res += std::to_string(startBoostTime) + "\n";
+	res += std::to_string(useBoostTime) + "\n";
 	res += std::to_string(boostPow) + "\n";
 
 	return res;
@@ -238,17 +242,18 @@ void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
 {
 
 	blastRange = static_cast<float>(std::atof(_text.GetTextLine(_nowPos).c_str()));
 
+	_attack.AddDisplayBlastRange(blastRange);
 	return _nowPos + 1;
 }
 
 std::string HighExplosiveBulletData::Serialize()
 {
-	std::string res = "";
+	std::string res = std::to_string(ChStd::EnumCast(AttackType::HighExplosive)) + "\n";
 
 	res += std::to_string(blastRange) + "\n";
 
@@ -260,17 +265,20 @@ void HighExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long MissileData::Deserialize(ID3D11Device* _device, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long MissileData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
 {
 	rotateSpeed = static_cast<float>(std::atof(_text.GetTextLine(_nowPos).c_str()));
 	lostRange = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 1).c_str()));
+
+	_attack.AddDisplayRotateSpeed(rotateSpeed);
+	_attack.AddDisplayLostRange(lostRange);
 
 	return _nowPos + 2;
 }
 
 std::string MissileData::Serialize()
 {
-	std::string res = "";
+	std::string res = std::to_string(ChStd::EnumCast(AttackType::Missile)) + "\n";
 
 	res += std::to_string(rotateSpeed) + "\n";
 	res += std::to_string(lostRange) + "\n";
