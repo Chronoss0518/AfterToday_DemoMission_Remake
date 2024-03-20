@@ -13,7 +13,7 @@
 
 #include"Src/BaseMecha/Controller/ControllerBase.h"
 #include "Src/StageSelectFrame/StageData/StageData.h"
-//#include"TestGameLoop.h"
+
 
 int WINAPI WinMain(
 	HINSTANCE hInst
@@ -119,7 +119,6 @@ int WINAPI WinMain(
 		}
 
 		frameList.Update();
-		//Test::Update();
 		ChD3D::XAudioManager().Update();
 	}
 
