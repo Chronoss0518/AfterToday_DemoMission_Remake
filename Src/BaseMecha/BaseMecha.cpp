@@ -80,7 +80,7 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
 
-	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject,MechaParts::PartsPosNames::None);
+	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
 
 	testCollider.SetScalling(baseHitSize);
 
@@ -269,6 +269,11 @@ void BaseMecha::Draw2D()
 	
 
 
+}
+
+void BaseMecha::DrawEnd()
+{
+	core->DrawEnd();
 }
 
 void BaseMecha::Deserialize(const std::string& _fileName)

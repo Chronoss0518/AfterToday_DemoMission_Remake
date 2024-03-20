@@ -9,6 +9,12 @@ class WeaponFunction;
 class Attack;
 class AttackObject;
 
+struct FramePosture
+{
+	ChLMat mat;
+	ChPtr::Shared<ChCpp::FrameObject>frame;
+};
+
 class MechaPartsObject
 {
 public:
@@ -18,6 +24,8 @@ public:
 public:
 
 	void CreateAnchor();
+
+	void CreateFramePosture(ChCpp::FrameObject* _frameObejct);
 
 public:
 
@@ -34,11 +42,41 @@ public:
 		weaponFunctions.push_back(_weapon);
 	}
 
-
-	inline void AddChildObject(MechaParts::PartsPosNames _typeName, const std::string& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
+	inline void AddChildObject(const std::string& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
 	{
 		if (_partsObject == nullptr)return;
-		positions[ChStd::EnumCast(_typeName)][_objectType] = _partsObject;
+
+		auto&& tmpObject = positions.find(_objectType);
+		if (tmpObject == positions.end())
+		{
+			positions[_objectType] = _partsObject;
+			return;
+		}
+
+		if (tmpObject->second != nullptr)
+		{
+			tmpObject->second->Release();
+			tmpObject->second = nullptr;
+		}
+
+		tmpObject->second = _partsObject;
+	}
+
+public:
+
+	inline void RemoveChildObject(const std::string& _objectType)
+	{
+		auto findObject = positions.find(_objectType);
+		if (findObject == positions.end())return;
+		
+		findObject->second->baseParts->RemoveParameter(*mecha);
+
+		for (auto&& child : findObject->second->positions)
+		{
+			child.second->RemoveChildObject(child.first);
+		}
+
+		positions.erase(findObject);
 	}
 
 public:
@@ -60,6 +98,18 @@ public:
 	void SetLookAnchorNo(const unsigned long _no) { lookAnchorNo = _no; }
 
 	void SetHitSize();
+
+	void SetPositionObjectRotationYAxis(float _rot);
+	
+	void SetPositionObjectRotationXAxis(float _rot);
+
+	void SetPositionObjectRotationZAxis(float _rot);
+
+	void SetParentRotationYAxis(unsigned long _no,float _rot);
+
+	void SetParentRotationXAxis(unsigned long _no, float _rot);
+
+	void SetParentRotationZAxis(unsigned long _no, float _rot);
 
 public:
 
@@ -118,13 +168,25 @@ public:
 
 	std::wstring GetReloadCount();
 
+	ChPtr::Shared<MechaPartsObject> GetChildParts(const std::string& _childPosition)
+	{
+		auto findObject = positions.find(_childPosition);
+		if (findObject == positions.end())return nullptr;
+
+		return (*findObject).second;
+	}
+
 public:
 
 	void Update();
 
+	void UpdateFramePosture(ChCpp::FrameObject* _frameObject);
+
 public:
 
 	virtual void Draw(const ChLMat& _drawMat);
+
+	void  DrawEnd();
 
 public:
 
@@ -152,10 +214,14 @@ private:
 
 	GameFrame* frame = nullptr;
 
+	//ê⁄ë±ïîÇëIëÇ∑ÇÈèÍçáÇÕ0//
+	std::map<ChCpp::FrameObject*, ChPtr::Shared<ChLMat>> framePostures;
+	ChLMat positionObjectPosture;
+
 	std::vector<ChPtr::Shared<ExternalFunction>>externulFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
 
-	std::map<std::string,ChPtr::Shared<MechaPartsObject>> positions[ChStd::EnumCast(MechaParts::PartsPosNames::None)];
+	std::map<std::string,ChPtr::Shared<MechaPartsObject>> positions;
 
 	unsigned long useAttackType = 0;
 

@@ -18,6 +18,23 @@ void MechaPartsObject::CreateAnchor()
 	mecha->AddAnchorData(GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
 }
 
+void MechaPartsObject::CreateFramePosture(ChCpp::FrameObject* _frameObject)
+{
+	if (_frameObject == nullptr)return;
+
+	auto&& framePosture = ChPtr::Make_S<ChLMat>();
+
+	*framePosture = ChLMat();
+
+	framePostures[_frameObject] = framePosture;
+
+	for (auto&& frame : _frameObject->GetAllChildlen<ChCpp::FrameObject>())
+	{
+		if (frame.expired())continue;
+		CreateFramePosture(frame.lock().get());
+	}
+}
+
 void MechaPartsObject::Release()
 {
 	for (auto&& function : externulFunctions)
@@ -32,14 +49,11 @@ void MechaPartsObject::Release()
 		function->Release();
 	}
 
-	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	for (auto&& partsObject : positions)
 	{
-		for (auto&& partsObject : positions[i])
-		{
-			partsObject.second->Release();
-		}
-		positions[i].clear();
+		partsObject.second->Release();
 	}
+	positions.clear();
 }
 
 ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
@@ -54,12 +68,9 @@ ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
 		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
 
 
-	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	for (auto&& partsObject : positions)
 	{
-		for (auto&& partsObject : positions[i])
-		{
-			res->Set(partsObject.first, partsObject.second->Serialize());
-		}
+		res->Set(partsObject.first, partsObject.second->Serialize());
 	}
 	return res;
 }
@@ -74,6 +85,36 @@ void MechaPartsObject::SetHitSize()
 
 	mecha->SetTestHitSize(tmpHitSize);
 
+
+}
+
+void MechaPartsObject::SetPositionObjectRotationYAxis(float _rot)
+{
+
+}
+
+void MechaPartsObject::SetPositionObjectRotationXAxis(float _rot)
+{
+
+}
+
+void MechaPartsObject::SetPositionObjectRotationZAxis(float _rot)
+{
+
+}
+
+void MechaPartsObject::SetParentRotationYAxis(unsigned long _no, float _rot)
+{
+
+}
+
+void MechaPartsObject::SetParentRotationXAxis(unsigned long _no, float _rot)
+{
+
+}
+
+void MechaPartsObject::SetParentRotationZAxis(unsigned long _no, float _rot)
+{
 
 }
 
@@ -129,18 +170,34 @@ void MechaPartsObject::Update()
 		func->Update();
 	}
 
-	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	for (auto&& partsObject : positions)
 	{
-		for (auto&& partsObject : positions[i])
-		{
-			partsObject.second->Update();
-		}
+		partsObject.second->Update();
+	}
+}
+
+void MechaPartsObject::UpdateFramePosture(ChCpp::FrameObject* _frameObject)
+{
+	if (_frameObject == nullptr)return;
+
+	auto&& posture = framePostures.find(_frameObject);
+	if (posture == framePostures.end())return;
+
+	posture->first->SetOutSizdTransform(*posture->second);
+
+	for (auto&& frame : _frameObject->GetAllChildlen<ChCpp::FrameObject>())
+	{
+		if (frame.expired())continue;
+		UpdateFramePosture(frame.lock().get());
 	}
 }
 
 void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
+
+	UpdateFramePosture(&mesh);
+
 	ChLMat tmp;
 
 	if (positionObject != nullptr)
@@ -176,13 +233,24 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	mecha->UpdateAnchor(GetLookAnchorNo(), lastDrawMat);
 
-	for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+	for (auto&& partsObject : positions)
 	{
-		for (auto&& partsObject : positions[i])
-		{
-			if (partsObject.second == nullptr)continue;
-			partsObject.second->Draw(_drawMat);
-		}
+		if (partsObject.second == nullptr)continue;
+		partsObject.second->Draw(_drawMat);
+	}
+}
+
+void  MechaPartsObject::DrawEnd()
+{
+	positionObjectPosture.Identity();
+	for (auto&& posture : framePostures)
+	{
+		posture.second->Identity();
+	}
+
+	for (auto&& child : positions)
+	{
+		child.second->DrawEnd();
 	}
 }
 
@@ -207,16 +275,12 @@ float MechaPartsObject::GetDamage(ChCpp::SphereCollider& _sphereCollider, Attack
 
 	if (!collider.IsHit(&_sphereCollider))
 	{
-		for (unsigned char i = 0; i < ChStd::EnumCast(MechaParts::PartsPosNames::None); i++)
+		for (auto&& partsObject : positions)
 		{
-			for (auto&& partsObject : positions[i])
-			{
-				res = partsObject.second->GetDamage(_sphereCollider, _bullet);
-				if (res <= 0.0f)continue;
-				return res;
-			}
+			res = partsObject.second->GetDamage(_sphereCollider, _bullet);
+			if (res <= 0.0f)continue;
+			return res;
 		}
-
 		return res;
 	}
 

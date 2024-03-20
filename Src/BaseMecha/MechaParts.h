@@ -9,7 +9,7 @@
 #endif
 
 #include"BaseMecha.h"
-
+ 
 #ifndef JSON_PROPEATY_PARTS_NAME
 #define JSON_PROPEATY_PARTS_NAME "Parts"
 #endif
@@ -30,14 +30,6 @@ class MechaParts :public ChCpp::BaseObject
 {
 public:
 
-
-	enum class PartsPosNames : unsigned char
-	{
-		Head, Foot, RArm, LArm, Boost, Weapons, Extra, None
-	};
-
-public:
-
 	static std::map<std::string,ChPtr::Shared<MechaParts>>& LoadPartsList()
 	{
 		static std::map<std::string,ChPtr::Shared<MechaParts>>ins;
@@ -51,6 +43,10 @@ public:
 		partsList.clear();
 	}
 
+public:
+
+	void RemoveParameter(BaseMecha& _base);
+
 private:
 
 	unsigned long CreateDatas(BaseMecha& _base, ChCpp::TextObject& _textObject, unsigned long _linePos);
@@ -59,11 +55,13 @@ private:
 
 public://Serialize Deserialize//
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject, PartsPosNames _partsPosName);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _partsFilePath);
 
-	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName, PartsPosNames _partsPosName);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
 
-	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text, PartsPosNames _partsPosName);
+	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
+
+	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::string& _text);
 
 	std::string Save(const std::string& _fileName);
 
@@ -101,9 +99,9 @@ public://Get Function//
 
 public:
 
-	inline void AddPosition(PartsPosNames _name,const std::string& _parameter, ChPtr::Shared<ChCpp::FrameObject> _frame)
+	inline void AddPosition(const std::string& _parameter, ChPtr::Shared<ChCpp::FrameObject> _frame)
 	{
-		positions[ChStd::EnumCast(_name)][_parameter] = _frame;
+		positions[_parameter] = _frame;
 	}
 
 	void AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
@@ -132,7 +130,7 @@ private:
 
 	static std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 
-	std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>> positions[ChStd::EnumCast(MechaParts::PartsPosNames::None)];
+	std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>> positions;
 
 	constexpr static const char* GetModelNameTag() { return "ModelName:\n"; }
 
@@ -144,6 +142,10 @@ private:
 
 class PartsDataBase :public ChCpp::BaseComponent
 {
+public:
+
+	virtual void RemoveParameter(BaseMecha& _base){}
+
 public://Serialize Deserialize//
 
 	virtual unsigned long Deserialize(const ChCpp::TextObject& _text,const unsigned long _textPos = 0) = 0;
@@ -179,6 +181,10 @@ public:
 class EnelgyTankData : public PartsDataBase
 {
 
+public:
+
+	void RemoveParameter(BaseMecha& _base)override;
+
 public://Serialize Deserialize//
 
 	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
@@ -191,7 +197,7 @@ public://Set Functions//
 
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
-	void SetCreateEnelgy(const unsigned long _createEnelgy) { createEnelgy = _createEnelgy; }
+	void SetChargeEnelgy(const unsigned long _createEnelgy) { chargeEnelgy = _createEnelgy; }
 
 public://Get Functions//
 
@@ -199,7 +205,7 @@ public://Get Functions//
 
 	unsigned long GetMaxEnelgy()const { return maxEnelgy; }
 
-	unsigned long GetCreateEnelgy()const { return createEnelgy; }
+	unsigned long GetChargeEnelgy()const { return chargeEnelgy; }
 
 protected:
 
@@ -207,7 +213,7 @@ protected:
 	unsigned long maxEnelgy = 0;
 
 	//ÉGÉlÉãÉMÅ[ÇÃê∂ê¨ó //
-	unsigned long createEnelgy = 0;
+	unsigned long chargeEnelgy = 0;
 
 };
 
@@ -351,6 +357,10 @@ protected:
 class WalkData :public PartsDataBase
 {
 
+public:
+
+	void RemoveParameter(BaseMecha& _base)override;
+
 public://Serialize Deserialize//
 
 	virtual unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
@@ -435,7 +445,7 @@ protected:
 
 };
 
-class NextPosExtraBase : public NextPosBase
+class NextPos : public NextPosBase
 {
 public://Serialize Deserialize//
 
@@ -463,7 +473,11 @@ public://Set Functions//
 		connectionName = _connectionName;
 	}
 
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
 public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(NextPos); }
 
 	inline std::string GetConnectionName() { return connectionName; }
 
@@ -476,68 +490,12 @@ protected:
 	float maxWeight = 0.0f;
 };
 
-class RightArmPos:public NextPosExtraBase
-{
-public:
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(RightArmPos); }
-
-};
-
-class LeftArmPos :public NextPosExtraBase
-{
-public:
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(LeftArmPos); }
-
-};
-
-class FootPos :public NextPosExtraBase
-{
-public:
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(FootPos); }
-
-};
-
-class HeadPos :public NextPosExtraBase
-{
-public:
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(HeadPos); }
-
-};
-
-class BoostPos :public NextPosExtraBase
-{
-public:
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(BoostPos); }
-
-};
-
 class BoostBrust :public PartsDataBase
 {
+
+public:
+
+	void RemoveParameter(BaseMecha& _base)override;
 
 public://Serialize Deserialize//
 
@@ -562,8 +520,6 @@ public://Set Functions//
 
 	void SetAvoidPower(const float _avoidPow) { avoidPow = _avoidPow; }
 
-	virtual void SetPartsObject(BaseMecha& _base , ChPtr::Shared<ChCpp::FrameObject> _boostObject) = 0;
-
 public://Get Functions//
 
 	inline std::string GetObjectNameList() { return objectName; }
@@ -578,7 +534,11 @@ public://Get Functions//
 
 	unsigned long GetAvoidWait()const { return avoidWait; }
 
-public:
+	ChPtr::Shared<ChCpp::FrameObject> GetFrame(BaseMecha& _base);
+
+	virtual BaseMecha::InputName GetBoostInputName() = 0;
+
+	virtual BaseMecha::InputName GetAvoidInputName() = 0;
 
 protected:
 
@@ -599,26 +559,24 @@ protected:
 
 class RightBoostBrust :public BoostBrust
 {
-
-public:
-
-	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
-
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(RightBoostBrust); }
+	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::RightBoost; }
 
+	inline BaseMecha::InputName GetAvoidInputName() override { return BaseMecha::InputName::RightAvo; }
+
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(RightBoostBrust); }
 
 };
 
 class LeftBoostBrust :public BoostBrust
 {
 
-public:
-
-	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
-
 public://Get Functions//
+
+	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::LeftBoost; }
+
+	inline BaseMecha::InputName GetAvoidInputName() override { return BaseMecha::InputName::LeftAvo; }
 
 	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(LeftBoostBrust); }
 
@@ -627,12 +585,11 @@ public://Get Functions//
 
 class FrontBoostBrust :public BoostBrust
 {
-
-public:
-
-	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
-
 public://Get Functions//
+
+	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::FrontBoost; }
+
+	inline BaseMecha::InputName GetAvoidInputName() override { return BaseMecha::InputName::FrontAvo; }
 
 	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(FrontBoostBrust); }
 
@@ -640,12 +597,11 @@ public://Get Functions//
 
 class BackBoostBrust :public BoostBrust
 {
-
-public:
-
-	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
-
 public://Get Functions//
+
+	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::BackBoost; }
+
+	inline BaseMecha::InputName GetAvoidInputName() override { return BaseMecha::InputName::BackAvo; }
 
 	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(BackBoostBrust); }
 
@@ -653,11 +609,11 @@ public://Get Functions//
 
 class UpBoostBrust :public BoostBrust
 {
-public:
-
-	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
-
 public://Get Functions//
+
+	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::UpBoost; }
+
+	inline BaseMecha::InputName GetAvoidInputName() override { return BaseMecha::InputName::UpAvo; }
 
 	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(UpBoostBrust); }
 
@@ -665,24 +621,13 @@ public://Get Functions//
 
 class DownBoostBrust :public BoostBrust
 {
-public:
-
-	void SetPartsObject(BaseMecha& _base, ChPtr::Shared<ChCpp::FrameObject> _boostObject)override;
-
 public://Get Functions//
+
+	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::DownBoost; }
+
+	inline BaseMecha::InputName GetAvoidInputName() override { return BaseMecha::InputName::DownAvo; }
 
 	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(DownBoostBrust); }
-
-};
-
-class WeaponPos : public NextPosExtraBase
-{
-
-	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
-
-public://Get Functions//
-
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(WeaponPos); }
 
 };
 
@@ -743,6 +688,8 @@ public://Get Functions//
 	inline unsigned long GetWeatTime() { return attackTime; }
 
 protected:
+	
+	unsigned long damageParSpeed = 0;
 
 	unsigned long attackTime = 0;
 
@@ -813,6 +760,28 @@ public:
 public://Get Functions//
 
 	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(ExtraPos); }
+
+};
+
+class PostureBase : public PartsDataBase
+{
+public:
+
+	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
+
+	std::string Serialize()override;
+
+public://Set Functions//
+
+	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override;
+
+private:
+
+	std::string targetPartsName = "";
 
 };
 

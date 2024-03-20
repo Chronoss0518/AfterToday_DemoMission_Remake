@@ -55,6 +55,8 @@ public://Override Functions//
 
 	void Draw2D()override;
 
+	void DrawEnd()override;
+
 private:
 
 	void BaseMove();
@@ -172,6 +174,8 @@ public://Get Function//
 	inline std::string GetMechaName() { return mechaName; }
 
 	unsigned long GetAnchorRegistNum();
+
+	ChPtr::Shared<MechaPartsObject> GetCoreParts() { return core; }
 
 public:
 
