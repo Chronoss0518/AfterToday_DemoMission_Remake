@@ -93,9 +93,6 @@
     <ClInclude Include="Src\Application\Application.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="TestGameLoop.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponent.h">
       <Filter>GameFrame\FunctionComponent</Filter>
     </ClInclude>
@@ -246,6 +243,15 @@
     <ClInclude Include="Src\Frames\MenuBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\ProgressObject\ProgressObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SelectList\SelectList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -287,7 +293,7 @@
     <ClCompile Include="Src\BaseMecha\FunctionComponent\CameraComponent.cpp">
       <Filter>GameFrame\FunctionComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeapopnFunction.cpp">
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.cpp">
       <Filter>GameFrame\MechaPartsFunction</Filter>
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUTargetSelector.cpp">
@@ -397,6 +403,15 @@
     </ClCompile>
     <ClCompile Include="Src\Frames\MenuBase.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ProgressObject\ProgressObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SelectList\SelectList.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.cpp">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

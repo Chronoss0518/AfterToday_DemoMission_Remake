@@ -48,6 +48,7 @@
     <ClInclude Include="Src\BaseMecha\MechaEditor.h" />
     <ClInclude Include="Src\BaseMecha\MechaParts.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObject.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelObject\PanelObject.h" />
@@ -66,6 +67,8 @@
     <ClInclude Include="Src\GameInMessageBox\GameInMessageBox.h" />
     <ClInclude Include="Src\GameScript\GameScript.h" />
     <ClInclude Include="Src\LoadDisplay\LoadDisplay.h" />
+    <ClInclude Include="Src\ProgressObject\ProgressObject.h" />
+    <ClInclude Include="Src\SelectList\SelectList.h" />
     <ClInclude Include="Src\Shader\EffectObject\EffectObjectShader.h" />
     <ClInclude Include="Src\Shader\EffectSprite\EffectSpriteShader.h" />
     <ClInclude Include="Src\Shader\TextureEffectShader\TextureEffectShader.h" />
@@ -73,7 +76,6 @@
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h" />
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h" />
     <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h" />
-    <ClInclude Include="TestGameLoop.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\PhysicsMachineTest\PhysicsMachine.cpp" />
@@ -102,7 +104,8 @@
     <ClCompile Include="Src\BaseMecha\MechaEditor.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp" />
-    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeapopnFunction.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.cpp" />
     <ClCompile Include="Src\EditFrameDrawObject\PanelList\PanelList.cpp" />
     <ClCompile Include="Src\EditFrameDrawObject\PanelObject\PanelObject.cpp" />
     <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp" />
@@ -119,6 +122,8 @@
     <ClCompile Include="Src\GameInMessageBox\GameInMessageBox.cpp" />
     <ClCompile Include="Src\GameScript\GameScript.cpp" />
     <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp" />
+    <ClCompile Include="Src\ProgressObject\ProgressObject.cpp" />
+    <ClCompile Include="Src\SelectList\SelectList.cpp" />
     <ClCompile Include="Src\Shader\EffectObject\EffectObjectShader.cpp" />
     <ClCompile Include="Src\Shader\EffectSprite\EffectSpriteShader.cpp" />
     <ClCompile Include="Src\Shader\TextureEffectShader\TextureEffectShader.cpp" />
