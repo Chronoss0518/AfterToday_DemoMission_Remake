@@ -26,21 +26,15 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	PARTS_DATA_CREATER(WalkData),
 	PARTS_DATA_CREATER(Aerodynamics),
 	PARTS_DATA_CREATER(MoveAcceleration),
-	PARTS_DATA_CREATER(RightArmPos),
-	PARTS_DATA_CREATER(LeftArmPos),
-	PARTS_DATA_CREATER(FootPos),
-	PARTS_DATA_CREATER(HeadPos),
-	PARTS_DATA_CREATER(BoostPos),
+	PARTS_DATA_CREATER(NextPos),
 	PARTS_DATA_CREATER(RightBoostBrust),
 	PARTS_DATA_CREATER(LeftBoostBrust),
 	PARTS_DATA_CREATER(FrontBoostBrust),
 	PARTS_DATA_CREATER(BackBoostBrust),
 	PARTS_DATA_CREATER(UpBoostBrust),
 	PARTS_DATA_CREATER(DownBoostBrust),
-	PARTS_DATA_CREATER(WeaponPos),
 	PARTS_DATA_CREATER(SwordData),
 	PARTS_DATA_CREATER(GunData),
-	PARTS_DATA_CREATER(ExtraPos),
 };
 
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _partsFilePath)
@@ -639,13 +633,6 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 	_parts.AddWeaponFunction(function);
 
 	NextPosBase::SetPartsParameter(_base, _parts, _frame);
-}
-
-void ExtraPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
-{
-	auto&& mechaParts = LookObj<MechaParts>();
-
-	mechaParts->AddPosition(nextPosName, _targetObject);
 }
 
 unsigned long PostureBase::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
