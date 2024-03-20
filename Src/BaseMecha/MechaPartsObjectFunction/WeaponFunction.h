@@ -66,6 +66,7 @@ protected:
 	ChPtr::Shared<Attack>attackData = nullptr;
 
 	bool attackFlg = false;
+
 };
 
 class SwordFunction : public WeaponFunction

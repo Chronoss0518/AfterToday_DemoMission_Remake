@@ -145,6 +145,10 @@ void GunFunction::SetData(WeaponData* _data)
 
 void GunFunction::UpdateFunction()
 {
+	ChLMat tmpMat;
+	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
+	obj->GetParent()->GetPositionObject()->SetOutSizdTransform(tmpMat);
+
 	if (!reloadFlg)return;
 
 	nowReloadTime++;
