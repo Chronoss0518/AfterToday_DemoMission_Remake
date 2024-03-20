@@ -101,7 +101,7 @@ void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
 
 		auto&& attackData = function->GetAttackData();
 
-		unsigned char attackTypeValue = attackData->GetAttackType().GetValue();
+		unsigned char attackTypeValue = attackData->GetAttackType();
 
 		attackTypeValue |= attackType.GetValue();
 
