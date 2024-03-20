@@ -5,23 +5,23 @@ EnelgyTankData:{
 10000
 10
 }
-HeadPos:{
+NextPos:{
 Armature_HeadPos
 Head
 }
-RightArmPos:{
+NextPos:{
 Armature_RightArmPos
 Right Arm
 }
-LeftArmPos:{
+NextPos:{
 Armature_LeftArmPos
 Left Arm
 }
-FootPos:{
+NextPos:{
 Armature_BodyPos
 Foot
 }
-BoostPos:{
+NextPos:{
 Armature_BoostPos
 Boost
 }
