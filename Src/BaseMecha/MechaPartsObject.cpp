@@ -22,17 +22,6 @@ void MechaPartsObject::CreateFramePosture(ChCpp::FrameObject* _frameObject)
 {
 	if (_frameObject == nullptr)return;
 
-	auto&& framePosture = ChPtr::Make_S<ChLMat>();
-
-	*framePosture = ChLMat();
-
-	framePostures[_frameObject] = framePosture;
-
-	for (auto&& frame : _frameObject->GetAllChildlen<ChCpp::FrameObject>())
-	{
-		if (frame.expired())continue;
-		CreateFramePosture(frame.lock().get());
-	}
 }
 
 void MechaPartsObject::Release()
@@ -180,16 +169,6 @@ void MechaPartsObject::UpdateFramePosture(ChCpp::FrameObject* _frameObject)
 {
 	if (_frameObject == nullptr)return;
 
-	auto&& posture = framePostures.find(_frameObject);
-	if (posture == framePostures.end())return;
-
-	posture->first->SetOutSizdTransform(*posture->second);
-
-	for (auto&& frame : _frameObject->GetAllChildlen<ChCpp::FrameObject>())
-	{
-		if (frame.expired())continue;
-		UpdateFramePosture(frame.lock().get());
-	}
 }
 
 void MechaPartsObject::Draw(const ChLMat& _drawMat)
@@ -242,12 +221,6 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 void  MechaPartsObject::DrawEnd()
 {
-	positionObjectPosture.Identity();
-	for (auto&& posture : framePostures)
-	{
-		posture.second->Identity();
-	}
-
 	for (auto&& child : positions)
 	{
 		child.second->DrawEnd();

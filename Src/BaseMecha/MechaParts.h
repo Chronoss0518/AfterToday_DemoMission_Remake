@@ -765,11 +765,29 @@ public://Set Functions//
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override;
+
 
 private:
 
 	std::string targetPartsName = "";
+
+};
+
+class VerticalPosture : public PostureBase
+{
+
+public:
+
+	std::string GetPartsTypeTag() { return GET_CLASS_NAME(VerticalPosture); }
+
+};
+
+class HorizontalPosture : public PostureBase
+{
+
+public:
+
+	std::string GetPartsTypeTag() { return GET_CLASS_NAME(HorizontalPosture); }
 
 };
 

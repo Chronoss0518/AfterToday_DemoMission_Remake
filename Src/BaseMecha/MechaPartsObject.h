@@ -9,10 +9,25 @@ class WeaponFunction;
 class Attack;
 class AttackObject;
 
+enum class PostureDirection : unsigned char
+{
+	X,
+	Y,
+	Z
+};
+
+enum class PostrueType : unsigned char
+{
+	//‚’¼//
+	Vertical,
+	//…•½//
+	Horizontal
+};
+
 struct FramePosture
 {
-	ChLMat mat;
-	ChPtr::Shared<ChCpp::FrameObject>frame;
+	PostureDirection direction;
+	PostrueType type;
 };
 
 class MechaPartsObject
@@ -176,6 +191,10 @@ public:
 		return (*findObject).second;
 	}
 
+	MechaPartsObject* GetParent() { return parentObject; }
+
+	ChPtr::Shared<ChCpp::FrameObject> GetPositionObejct() { return positionObject; }
+
 public:
 
 	void Update();
@@ -214,9 +233,8 @@ private:
 
 	GameFrame* frame = nullptr;
 
-	//Ú‘±•”‚ğ‘I‘ğ‚·‚éê‡‚Í0//
-	std::map<ChCpp::FrameObject*, ChPtr::Shared<ChLMat>> framePostures;
-	ChLMat positionObjectPosture;
+	//Auto‚Å“G‚ğ’Ç”ö‚·‚é‚Æ—p‚ÉC³//
+	std::map<ChCpp::FrameObject*, ChPtr::Shared<FramePosture>> framePostures;
 
 	std::vector<ChPtr::Shared<ExternalFunction>>externulFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;

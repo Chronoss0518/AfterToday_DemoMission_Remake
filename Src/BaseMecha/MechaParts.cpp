@@ -633,6 +633,7 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 	_parts.AddWeaponFunction(function);
 
 	NextPosBase::SetPartsParameter(_base, _parts, _frame);
+
 }
 
 unsigned long PostureBase::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -648,9 +649,4 @@ std::string PostureBase::Serialize()
 void PostureBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 
-}
-
-std::string PostureBase::GetPartsTypeTag()
-{
-	return "";
 }
