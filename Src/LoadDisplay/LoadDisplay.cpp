@@ -63,13 +63,18 @@
 #define BOTTOM_BUTTON_RIGHT_LEFT 740.0f
 #define BOTTOM_BUTTON_RIGHT_RIGHT  BOTTOM_BUTTON_RIGHT_LEFT + BOTTOM_BUTTON_WIDTH
 
-#define ROGRESS_CIRCLE_SIZE 450.0f
-#define PROGRESS_CIRCLE_LEFT 215.0f
-#define PROGRESS_CIRCLE_TOP 17.0f
-#define PROGRESS_CIRCLE_RIGHT ROGRESS_CIRCLE_SIZE + PROGRESS_CIRCLE_LEFT
-#define PROGRESS_CIRCLE_BOTTOM ROGRESS_CIRCLE_SIZE + PROGRESS_CIRCLE_TOP
+#define RROGRESS_CIRCLE_SIZE 450.0f
+//#define PROGRESS_CIRCLE_LEFT 215.0f
+//#define PROGRESS_CIRCLE_TOP 17.0f
+#define PROGRESS_CIRCLE_LEFT (GAME_WINDOW_WIDTH * 0.5f) - (RROGRESS_CIRCLE_SIZE * 0.5f)
+#define PROGRESS_CIRCLE_TOP (GAME_WINDOW_HEIGHT * 0.5f) - (RROGRESS_CIRCLE_SIZE * 0.5f)
+#define PROGRESS_CIRCLE_RIGHT PROGRESS_CIRCLE_LEFT + RROGRESS_CIRCLE_SIZE
+#define PROGRESS_CIRCLE_BOTTOM PROGRESS_CIRCLE_TOP + RROGRESS_CIRCLE_SIZE
+
+#define PROGRESS_CIRCLE_CENTER_X (415.0f + (RROGRESS_CIRCLE_SIZE * 0.5f) - (GAME_WINDOW_WIDTH * 0.5f)) / (GAME_WINDOW_WIDTH * 0.5f)
+#define PROGRESS_CIRCLE_CENTER_Y (67.0f + (RROGRESS_CIRCLE_SIZE * 0.5f) - (GAME_WINDOW_HEIGHT * 0.5f)) / (GAME_WINDOW_HEIGHT * -0.5f)
 //Degree Per Frame//
-#define PROGRESS_CIRCLE_ROTATION_SPEED 20.0f
+#define PROGRESS_CIRCLE_ROTATION_SPEED 5.0f
 
 void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controller)
 {
@@ -140,7 +145,8 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 	loadPanelImage.CreateTexture(LOAD_IMAGE_DIRECTORY("LoadMechaPanel.png"), device);
 	selectLoadPanelImage.CreateTexture(LOAD_IMAGE_DIRECTORY("PanelSelect.png"), device);
 
-	SPRITE_INIT(progressCircleTexturePosition, RectToGameWindow(ChVec4::FromRect(PROGRESS_CIRCLE_LEFT, PROGRESS_CIRCLE_TOP, PROGRESS_CIRCLE_RIGHT, PROGRESS_CIRCLE_BOTTOM)));
+	//SPRITE_INIT(progressCircleTexturePosition, RectToGameWindow(ChVec4::FromRect(PROGRESS_CIRCLE_LEFT, PROGRESS_CIRCLE_TOP, PROGRESS_CIRCLE_RIGHT, PROGRESS_CIRCLE_BOTTOM)));
+	SPRITE_INIT(progressCircleTexturePosition, ChVec4::FromRect(-0.5f, 0.5f, 0.5f, -0.5f));
 	progressCircleTexture.CreateTexture(TEXTURE_DIRECTORY("ProgressCircleMask.png"));
 
 	{
@@ -337,8 +343,9 @@ void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 
 			ChLMat rotateMat;
 			rotateMat.SetRotationZAxis(ChMath::ToRadian(progressCircleRoutate));
+			rotateMat.SetPosition(PROGRESS_CIRCLE_CENTER_X, PROGRESS_CIRCLE_CENTER_Y, 0.0f);
 
-			_spriteShader.Draw(progressCircleTexture, progressCircleTexturePosition, progressCircleColor, (ChMat_11)rotateMat);
+			_spriteShader.Draw(progressCircleTexture, progressCircleTexturePosition, progressCircleColor, (ChMat_11)(rotateMat));
 			progressCircleRoutate += PROGRESS_CIRCLE_ROTATION_SPEED;
 		}
 	}
@@ -402,8 +409,6 @@ void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 	loadFileList = ChPtr::Make_S<ChCpp::JsonArray>();
 
 	loadFileList->SetRawData(fileText);
-	
-
 }
 
 void LoadDisplay::Close()
@@ -413,16 +418,12 @@ void LoadDisplay::Close()
 
 	loadFileList = nullptr;
 
-
 	openFlg = false;
 }
 
 void LoadDisplay::Load()
 {
-	std::string fileText = "";
-
 	loadMechaList[selectPanelNo]->mecha->Save(PLAYER_USE_MECHA_PATH);
-
 }
 
 bool LoadDisplay::LoadFile(unsigned long _openNumber)
@@ -436,8 +437,9 @@ bool LoadDisplay::LoadFile(unsigned long _openNumber)
 		return false;
 	}
 
-	auto&& assembleMechaFrame = loadFileList->GetJsonObject(_openNumber);
+	//return true;
 
+	auto&& assembleMechaFrame = loadFileList->GetJsonObject(_openNumber);
 	auto&& loadMecha = ChPtr::Make_S<LoaderPanel>();
 
 	loadMecha->mecha = ChPtr::Make_S<BaseMecha>();
