@@ -196,7 +196,7 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	auto&& mesh = baseParts->GetMesh();
 
-	UpdateFramePosture(&mesh);
+	//UpdateFramePosture(&mesh);
 
 	ChLMat tmp;
 
