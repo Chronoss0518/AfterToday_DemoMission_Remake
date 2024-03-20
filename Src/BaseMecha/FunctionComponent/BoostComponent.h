@@ -16,6 +16,10 @@ public:
 
 public:
 
+	void ClearBoostAvoidWait(InputName _avoidType);
+
+public:
+
 	void Update()override;
 
 	void BoostDrawBegin();
@@ -67,6 +71,20 @@ public:
 	void AddBoostAvoidPow(const float _avoidPow, InputName _avoidType);
 
 	void AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType);
+
+public:
+
+	void SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType);
+		 
+	void SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType);
+		 
+	void SubBoostPow(const float _boostPow, InputName _boostType);
+		 
+	void SubBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType);
+		 
+	void SubBoostAvoidPow(const float _avoidPow, InputName _avoidType);
+		 
+	void SubBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType);
 
 private:
 

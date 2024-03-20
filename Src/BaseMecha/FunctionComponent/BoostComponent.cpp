@@ -33,6 +33,15 @@ BoostComponent::BoostComponent()
 	data[ChStd::EnumCast(BoostDirection::Down)].avoid.name = InputName::DownAvo;
 }
 
+void BoostComponent::ClearBoostAvoidWait(InputName _avoidType)
+{
+	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
+
+	if (num < 0 || num >= 6)return;
+
+	data[num].avoid.wait = 0;
+}
+
 void BoostComponent::Update()
 {
 	unsigned long useEnelgy = 0;
@@ -243,4 +252,60 @@ void BoostComponent::AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy,
 	if (num < 0 || num >= 6)return;
 
 	data[num].avoid.useEnelgy += _avoidUseEnelgy;
+}
+
+void BoostComponent::SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType)
+{
+	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
+
+	if (num < 0 || num >= 6)return;
+
+	auto&& it = std::find(data[num].boostObject.begin(), data[num].boostObject.end(),_boost);
+	data[num].boostObject.erase(it);
+}
+
+void BoostComponent::SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType)
+{
+	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
+
+	if (num < 0 || num >= 6)return;
+
+	auto&& it = std::find(data[num].boostObject.begin(), data[num].boostObject.end(), _boost);
+	data[num].boostObject.erase(it);
+}
+
+void BoostComponent::SubBoostPow(const float _boostPow, InputName _boostType)
+{
+	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
+
+	if (num < 0 || num >= 6)return;
+
+	data[num].boost.pow -= _boostPow;
+}
+
+void BoostComponent::SubBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType)
+{
+	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
+
+	if (num < 0 || num >= 6)return;
+
+	data[num].boost.useEnelgy -= _boostUseEnelgy;
+}
+
+void BoostComponent::SubBoostAvoidPow(const float _avoidPow, InputName _avoidType)
+{
+	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
+
+	if (num < 0 || num >= 6)return;
+
+	data[num].avoid.pow -= _avoidPow;
+}
+
+void BoostComponent::SubBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType)
+{
+	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
+
+	if (num < 0 || num >= 6)return;
+
+	data[num].avoid.useEnelgy -= _avoidUseEnelgy;
 }
