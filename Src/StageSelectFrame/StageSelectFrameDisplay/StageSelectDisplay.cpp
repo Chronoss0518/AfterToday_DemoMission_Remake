@@ -3,7 +3,7 @@
 
 #include"StageSelectDisplay.h"
 #include"../StageData/StageData.h"
-
+#include"../../SelectList/SelectList.h"
 
 #define SELECT_PANEL_LEFT 45.0f
 
@@ -25,6 +25,60 @@
 #define DESCRIPTION_TOP 447.0f
 #define DESCRIPTION_RIGHT STAGE_SELECT_DESCRIPTION_WIDTH + DESCRIPTION_LEFT
 #define DESCRIPTION_BOTTOM STAGE_SELECT_DESCRIPTION_HEIGHT + DESCRIPTION_TOP
+
+class StageSelectListItem : public SelectListItemBase
+{
+public:
+
+	ChPtr::Shared<StageData> stageData = nullptr;
+};
+
+class StageSelectList :public SelectListBase
+{
+public:
+
+	StageSelectList()
+	{
+		sprite.Init();
+	}
+
+public:
+
+	void SetSelectImage(ChD3D11::Texture11* _selectImage)
+	{
+		if (ChPtr::NullCheck(_selectImage))return;
+		selectImage = _selectImage;
+	}
+
+public:
+
+	void DrawSelect(ChD3D11::Shader::BaseDrawSprite11& _drawer, bool _isSelectPanel)
+	{
+		if (!_isSelectPanel)return;
+		if (ChPtr::NullCheck(selectImage))return;
+
+		_drawer.Draw(*selectImage, sprite);
+
+	}	
+
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, bool _isSelectPanel)override
+	{
+		auto&& item = ChPtr::SharedSafeCast<StageSelectListItem>(_drawItem);
+		if (item == nullptr)return;
+
+		sprite.SetPosRect(_rect);
+
+		DrawSelect(_drawer, _isSelectPanel);
+
+		_drawer.Draw(item->stageData->selectPanel, sprite);
+
+	}
+
+private:
+
+	ChD3D11::Texture11* selectImage = nullptr;
+	ChD3D11::Sprite11 sprite;
+};
 
 void StageSelectDisplay::Init()
 {
@@ -54,23 +108,28 @@ void StageSelectDisplay::Init()
 	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
 	panelSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("PanelSelect.png"), device);
 
-	float top = SELECT_PANEL_LIST_TOP;
-	float bottom = SELECT_PANEL_LIST_TOP + STAGE_SELECT_PANEL_HEIGHT;
+	selectList = ChPtr::Make_S<StageSelectList>();
+	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(SELECT_PANEL_LIST_TOP));
+	selectList->SetPanelSize(STAGE_SELECT_PANEL_WIDTH / GAME_WINDOW_WIDTH * 2.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f);
+	selectList->SetAlighSize(0.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f);
+	selectList->SetDrawCount(PANEL_DRAW_COUNT);
 
-	for (unsigned char i = 0; i < PANEL_DRAW_COUNT; i++)
+	selectList->SetSelectImage(&panelSelectImage);
+
+	auto&& stageList = GetStageDataList();
+
+	for (unsigned long i = 0; i < stageList.size(); i++)
 	{
-
-		SPRITE_INIT(selectStageSprite[i], RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, top, SELECT_PANEL_RIGHT, bottom)));
-
-		top += STAGE_SELECT_PANEL_HEIGHT;
-		bottom = top + STAGE_SELECT_PANEL_HEIGHT;
+		auto&& item = ChPtr::Make_S<StageSelectListItem>();
+		item->stageData = stageList[i];
+		selectList->AddItem(item);
 	}
-
 }
 
 void StageSelectDisplay::Release()
 {
-
+	selectList->ClearItem();
+	selectList = nullptr;
 }
 
 void StageSelectDisplay::Update()
@@ -99,30 +158,10 @@ void StageSelectDisplay::UpdateAction(MenuBase::ActionType _type)
 		return;
 	}
 
-	auto&& stageDataList = GetStageDataList();
-	if (_type == MenuBase::ActionType::Up)
-	{
-		if (PANEL_DRAW_COUNT < stageDataList.size())
-		{
-			if (GetNowSelectCount() == drawNowSelect)
-			{
-				drawNowSelect = (drawNowSelect + stageDataList.size() - 1) % stageDataList.size();
-			}
-		}
-		UpNowSelectStage();
-	}
+	selectList->UpdateAction(_type);
 
-	if (_type == MenuBase::ActionType::Down)
-	{
-		if (PANEL_DRAW_COUNT < stageDataList.size())
-		{
-			if (GetNowSelectCount() == ((drawNowSelect + PANEL_DRAW_COUNT - 1) % stageDataList.size()))
-			{
-				drawNowSelect = (drawNowSelect + 1) % stageDataList.size();
-			}
-		}
-		DownNowSelectStage();
-	}
+	SetNowStageSelect(selectList->GetNowSelect());
+
 }
 
 void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
@@ -144,13 +183,8 @@ void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	_drawer.Draw(displayMap.image, displayMap.sprite);
 
-	_drawer.Draw(panelSelectImage, selectStageSprite[((selectStageData + stageDataList.size() - drawNowSelect) % stageDataList.size()) % PANEL_DRAW_COUNT]);
 
-
-	for (unsigned long i = 0; i < drawCount; i++)
-	{
-		_drawer.Draw(stageDataList[(drawNowSelect + i) % stageDataList.size()]->selectPanel, selectStageSprite[i]);
-	}
+	selectList->Draw(_drawer);
 
 	_drawer.Draw(stageSelectPanelList.image, stageSelectPanelList.sprite);
 
@@ -196,11 +230,8 @@ void StageSelectDisplay::UpdateMouse()
 	selectType = StageSelectButtonType::None;
 	selectSpriteType = SelectSpriteType::StagePanel;
 
-	for (unsigned long i = 0;i< PANEL_DRAW_COUNT ; i++)
+	if (selectList->UpdateMouse())
 	{
-		if (!IsMoucePosOnSprite(selectStageSprite[i]))continue;
-
-		SetNowStageSelect(i + drawNowSelect);
-		break;
+		SetNowStageSelect(selectList->GetNowSelect());
 	}
 }

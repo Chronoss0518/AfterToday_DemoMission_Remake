@@ -2,6 +2,8 @@
 
 #include"../../Frames/StageSelectFrame.h"
 
+class StageSelectList;
+
 class StageSelectDisplay : public StageSelectFrame::StageSelectFrameDisplay 
 {
 public:
@@ -55,8 +57,8 @@ private:
 	ImageSprite displayMap;
 	ChD3D11::Sprite11 description;
 
-	ChD3D11::Sprite11 selectStageSprite[PANEL_DRAW_COUNT];
-	ChD3D11::Texture11 panelSelectImage;
-
 	ChD3D11::Texture11 stagePanelBackground;
+
+	ChD3D11::Texture11 panelSelectImage;
+	ChPtr::Shared<StageSelectList> selectList = nullptr;
 };
