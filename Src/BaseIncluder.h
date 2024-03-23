@@ -190,21 +190,31 @@ static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)
 	_meshObject = nullptr;
 }
 
+static inline float HorizontalToProjection(float _x)
+{
+	float res = _x;
+	res = res / GAME_WINDOW_WIDTH;
+	res = (res * 2.0f) - 1.0f;
+	return res;
+}
+
+static inline float VerticalToProjection(float _y)
+{
+	float res = _y;
+	res = res / GAME_WINDOW_HEIGHT;
+	res = (res * -2.0f) + 1.0f;
+	return res;
+}
+
 static inline ChVec4 RectToGameWindow(const ChVec4 _rect)
 {
 	ChVec4 res = _rect;
 
-	res.left = res.left / GAME_WINDOW_WIDTH;
-	res.left = (res.left * 2.0f) - 1.0f;
+	res.left = HorizontalToProjection(res.left);
+	res.right = HorizontalToProjection(res.right);
 
-	res.right = res.right / GAME_WINDOW_WIDTH;
-	res.right = (res.right * 2.0f) - 1.0f;
-
-	res.top = res.top / GAME_WINDOW_HEIGHT;
-	res.top = (res.top * -2.0f) + 1.0f;
-
-	res.bottom = res.bottom / GAME_WINDOW_HEIGHT;
-	res.bottom = (res.bottom * -2.0f) + 1.0f;
+	res.top = VerticalToProjection(res.top);
+	res.bottom = VerticalToProjection(res.bottom);
 
 	return res;
 }
@@ -225,6 +235,17 @@ static inline ChVec3 ColorTextToColorVector3(
 		);
 }
 
+static inline bool IsMoucePosOnRect(const ChVec4& _rect)
+{
+	ChVec2 mousePos = ChWin::Mouse().GetNowProPosToChVec2();
+
+	bool res = false;
+
+	if (_rect.IsOnPoint(mousePos))res = true;
+
+	return res;
+}
+
 static inline bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
 {
 	ChVec2 lt = _sprite.GetPos(ChD3D11::SpritePositionName::LeftTop);
@@ -236,13 +257,7 @@ static inline bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
 	tmpRect.right = rb.x;
 	tmpRect.bottom = rb.y;
 
-	ChVec2 mousePos = ChWin::Mouse().GetNowProPosToChVec2();
-
-	bool res = false;
-
-	if (tmpRect.IsOnPoint(mousePos))res = true;
-
-	return res;
+	return IsMoucePosOnRect(tmpRect);
 }
 
 static inline std::wstring CreateMoneyText(const std::wstring& _money)
