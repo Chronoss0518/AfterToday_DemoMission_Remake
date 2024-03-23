@@ -3,13 +3,9 @@
 #include"../Frames/MenuBase.h"
 
 class BaseMecha;
+class LoadPanelList;
 
-struct LoaderPanel
-{
-	ChPtr::Shared<BaseMecha>mecha = nullptr;
-	ChD3D11::RenderTarget11 mechaTexture;
-	ChD3D11::Texture11 panelName;
-};
+class LoadItem;
 
 class LoadDisplay :public MenuBase
 {
@@ -70,28 +66,17 @@ private:
 		Left, Right, None
 	};
 
-	struct LoadPanelSprite
-	{
-		ChD3D11::Sprite11 backGround;
-		ChD3D11::Sprite11 mechaPreview;
-		ChD3D11::Sprite11 mechaName;
-	};
-
 private:
 
 	static constexpr unsigned long PANEL_DRAW_COUNT = 3;
 
 	bool openFlg = false;
 
-	std::vector<ChPtr::Shared<LoaderPanel>>loadMechaList;
 	SelectSpriteType selectSpriteType = SelectSpriteType::LoadPanel;
-	unsigned long drawNowSelect = 0;
-	unsigned long selectPanelNo = 0;
 
 	ImageSprite window;
 	ImageSprite mainWindow;
 
-	LoadPanelSprite loadPanelSpriteList[PANEL_DRAW_COUNT];
 	ChD3D11::Texture11 loadPanelImage;
 	ChD3D11::Texture11 selectLoadPanelImage;
 
@@ -112,6 +97,7 @@ private:
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 	ChD3D11::CB::CBLight11 light;
 
+	ChPtr::Shared<LoadPanelList> selectList = nullptr;
 
 	ChPtr::Shared<ChCpp::JsonArray> loadFileList;
 	ChD3D11::Texture11 progressCircleTexture;

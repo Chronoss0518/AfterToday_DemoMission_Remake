@@ -8,6 +8,7 @@
 #include"../Attack/Attack.h"
 
 #include"LoadDisplay.h"
+#include"../SelectList/SelectList.h"
 
 #ifndef LOAD_IMAGE_DIRECTORY
 #define LOAD_IMAGE_DIRECTORY(current_path) TEXTURE_DIRECTORY("LoadDisplay/" current_path)
@@ -76,6 +77,117 @@
 //Degree Per Frame//
 #define PROGRESS_CIRCLE_ROTATION_SPEED 5.0f
 
+class LoadItem : public SelectListItemBase
+{
+public:
+
+	ChPtr::Shared<BaseMecha>mecha = nullptr;
+	ChD3D11::RenderTarget11 mechaTexture;
+	ChD3D11::Texture11 panelName;
+
+};
+
+class LoadPanelList : public SelectListBase
+{
+public:
+
+	LoadPanelList()
+	{
+		sprite.Init();
+		mechaPreviewSprite.Init();
+		mechaNameSprite.Init();
+
+		mechaPreviewPos.x = MECHA_PREVIEW_LEFT / GAME_WINDOW_WIDTH * 2.0f;
+		mechaPreviewPos.y = MECHA_PREVIEW_TOP / GAME_WINDOW_HEIGHT * 2.0f;
+
+		mechaPreviewSize.w = MECHA_PREVIEW_WIDTH / GAME_WINDOW_WIDTH * 2.0f;
+		mechaPreviewSize.h = MECHA_PREVIEW_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f;
+
+
+		mechaNamePos.x = MECHA_NAME_TEXT_LEFT / GAME_WINDOW_WIDTH * 2.0f;
+		mechaNamePos.y = MECHA_NAME_TEXT_TOP / GAME_WINDOW_HEIGHT * 2.0f;
+
+		mechaNameSize.w = MECHA_NAME_TEXT_WIDTH / GAME_WINDOW_WIDTH * 2.0f;
+		mechaNameSize.h = MECHA_NAME_TEXT_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f;
+	}
+
+public:
+
+	void SetSelectImage(ChD3D11::Texture11* _selectImage)
+	{
+		if (ChPtr::NullCheck(_selectImage))return;
+		selectImage = _selectImage;
+	}
+
+	void SetBackGroundImage(ChD3D11::Texture11* _backGroundImage)
+	{
+		if (ChPtr::NullCheck(_backGroundImage))return;
+		backGroundImage = _backGroundImage;
+	}
+
+public:
+
+	void DrawSelect(ChD3D11::Shader::BaseDrawSprite11& _drawer, bool _isSelectPanel)
+	{
+		if (!_isSelectPanel)return;
+		if (ChPtr::NullCheck(selectImage))return;
+
+		_drawer.Draw(*selectImage, sprite);
+
+	}
+
+public:
+
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, bool _isSelectPanel)override
+	{
+		auto&& item = ChPtr::SharedSafeCast<LoadItem>(_drawItem);
+		if (item == nullptr)return;
+		if (ChPtr::NullCheck(backGroundImage))return;
+
+		sprite.SetPosRect(_rect);
+		ChVec4 tmpRect = _rect;
+		tmpRect.left += mechaPreviewPos.x;
+		tmpRect.top -= mechaPreviewPos.y;
+
+		tmpRect.right = tmpRect.left + mechaPreviewSize.w;
+		tmpRect.bottom = tmpRect.top - mechaPreviewSize.h;
+
+		mechaPreviewSprite.SetPosRect(tmpRect);
+		tmpRect = _rect;
+		tmpRect.left += mechaNamePos.x;
+		tmpRect.top -= mechaNamePos.y;
+
+		tmpRect.right = tmpRect.left + mechaNameSize.w;
+		tmpRect.bottom = tmpRect.top - mechaNameSize.h;
+		mechaNameSprite.SetPosRect(tmpRect);
+
+		_drawer.Draw(*backGroundImage, sprite);
+		_drawer.Draw(item->mechaTexture, mechaPreviewSprite);
+		_drawer.Draw(item->panelName, mechaNameSprite);
+
+		DrawSelect(_drawer, _isSelectPanel);
+
+	}
+
+private:
+
+	ChD3D11::Sprite11 sprite;
+	ChD3D11::Sprite11 mechaPreviewSprite;
+	ChD3D11::Sprite11 mechaNameSprite;
+
+	ChVec2 mechaPreviewPos;
+	ChVec2 mechaPreviewSize;
+
+	ChVec2 mechaNamePos;
+	ChVec2 mechaNameSize;
+
+	ChD3D11::Texture11* selectImage = nullptr;
+	ChD3D11::Texture11* backGroundImage = nullptr;
+
+	
+
+};
+
 void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controller)
 {
 	MenuBase::InitMenu(_controller);
@@ -122,28 +234,18 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 	bottomButton[ChStd::EnumCast(BottomButtonType::Cancel)].image.CreateTexture(LOAD_IMAGE_DIRECTORY("CancelButton.png"), device);
 	selectBottomButtonImage.CreateTexture(LOAD_IMAGE_DIRECTORY("BottomButtonSelect.png"), device);
 
-
-	float panelLeft = SELECT_PANEL_LEFT;
-	float panelRight = panelLeft + SELECT_PANEL_WIDTH;
-
-	for (unsigned char i = 0; i < PANEL_DRAW_COUNT; i++)
-	{
-
-		rect = ChVec4::FromRect(panelLeft, UP_BUTTON_TOP, panelRight, UP_BUTTON_BOTTOM);
-		SPRITE_INIT(loadPanelSpriteList[i].backGround, RectToGameWindow(rect));
-
-		rect = ChVec4::FromRect(panelLeft + MECHA_PREVIEW_LEFT, UP_BUTTON_TOP + MECHA_PREVIEW_TOP, panelLeft + MECHA_PREVIEW_LEFT + MECHA_PREVIEW_WIDTH, UP_BUTTON_TOP + MECHA_PREVIEW_TOP + MECHA_PREVIEW_HEIGHT);
-		SPRITE_INIT(loadPanelSpriteList[i].mechaPreview, RectToGameWindow(rect));
-
-		rect = ChVec4::FromRect(panelLeft + MECHA_NAME_TEXT_LEFT, UP_BUTTON_TOP + MECHA_NAME_TEXT_TOP, panelLeft + MECHA_NAME_TEXT_LEFT + MECHA_NAME_TEXT_WIDTH, UP_BUTTON_TOP + MECHA_NAME_TEXT_TOP + MECHA_NAME_TEXT_HEIGHT);
-		SPRITE_INIT(loadPanelSpriteList[i].mechaName, RectToGameWindow(rect));
-
-		panelLeft = panelRight + SELECT_PANEL_ALIGN;
-		panelRight = panelLeft + SELECT_PANEL_WIDTH;
-	}
-
 	loadPanelImage.CreateTexture(LOAD_IMAGE_DIRECTORY("LoadMechaPanel.png"), device);
 	selectLoadPanelImage.CreateTexture(LOAD_IMAGE_DIRECTORY("PanelSelect.png"), device);
+
+	selectList = ChPtr::Make_S<LoadPanelList>();
+	selectList->Init();
+	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(UP_BUTTON_TOP));
+	selectList->SetPanelSize(SELECT_PANEL_WIDTH / GAME_WINDOW_WIDTH * 2.0f, (UP_BUTTON_BOTTOM - UP_BUTTON_TOP) / GAME_WINDOW_HEIGHT * 2.0f);
+	selectList->SetAlighSize((SELECT_PANEL_WIDTH + SELECT_PANEL_ALIGN) / GAME_WINDOW_WIDTH * 2.0f, 0.0f);
+	selectList->SetDrawCount(PANEL_DRAW_COUNT);
+	selectList->SetMoveDiraction(MoveDiraction::Horizontal);
+	selectList->SetBackGroundImage(&loadPanelImage);
+	selectList->SetSelectImage(&selectLoadPanelImage);
 
 	//SPRITE_INIT(progressCircleTexturePosition, RectToGameWindow(ChVec4::FromRect(PROGRESS_CIRCLE_LEFT, PROGRESS_CIRCLE_TOP, PROGRESS_CIRCLE_RIGHT, PROGRESS_CIRCLE_BOTTOM)));
 	SPRITE_INIT(progressCircleTexturePosition, ChVec4::FromRect(-0.5f, 0.5f, 0.5f, -0.5f));
@@ -203,11 +305,13 @@ void LoadDisplay::Release()
 
 	MechaParts::ClearPartsList();
 	Attack::AllRelease();
+	selectList->Release();
+	selectList = nullptr;
 }
 
 bool LoadDisplay::Update()
 {
-	if (LoadFile(loadMechaList.size()))return true;
+	if (LoadFile(selectList->ItemCount()))return true;
 
 	if (!openFlg)return false;
 
@@ -269,27 +373,7 @@ void LoadDisplay::UpdateAction(ActionType _type)
 		return;
 	}
 
-	if (_type == ActionType::Right)
-	{
-		if (PANEL_DRAW_COUNT < loadMechaList.size())
-		{
-			if (selectPanelNo == ((drawNowSelect + PANEL_DRAW_COUNT - 1) % loadMechaList.size()))
-				drawNowSelect = (drawNowSelect + 1) % loadMechaList.size();
-		}
-
-		selectPanelNo = (selectPanelNo + 1) % loadMechaList.size();
-	}
-
-	if (_type == ActionType::Left)
-	{
-		if (PANEL_DRAW_COUNT < loadMechaList.size())
-		{
-			if (selectPanelNo == drawNowSelect)
-				drawNowSelect = (drawNowSelect + loadMechaList.size() - 1) % loadMechaList.size();
-		}
-
-		selectPanelNo = (selectPanelNo + loadMechaList.size() - 1) % loadMechaList.size();
-	}
+	selectList->UpdateAction(_type);
 }
 
 void LoadDisplay::UpdateMouse()
@@ -323,13 +407,11 @@ void LoadDisplay::UpdateMouse()
 		return;
 	}
 
-	for (int i = 0; i < PANEL_DRAW_COUNT; i++)
+	if (selectList->UpdateMouse())
 	{
-		if (!IsMoucePosOnSprite(loadPanelSpriteList[i].backGround))continue;
-		selectPanelNo = (i + drawNowSelect) % loadMechaList.size();
 		selectBottomButton = ChStd::EnumCast(BottomButtonType::Decision);
-		return;
 	}
+
 }
 
 void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
@@ -337,7 +419,7 @@ void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 
 	if (loadFileList != nullptr)
 	{
-		if (loadFileList->GetCount() > loadMechaList.size())
+		if (loadFileList->GetCount() > selectList->ItemCount())
 		{
 			DrawBase(_spriteShader);
 
@@ -354,15 +436,7 @@ void LoadDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 
 	DrawBase(_spriteShader);
 
-	for (unsigned long i = 0; i < PANEL_DRAW_COUNT && i < loadMechaList.size(); i++)
-	{
-		_spriteShader.Draw(loadPanelImage, loadPanelSpriteList[i].backGround);
-		_spriteShader.Draw(loadMechaList[(i + drawNowSelect) % loadMechaList.size()]->mechaTexture, loadPanelSpriteList[i].mechaPreview);
-		_spriteShader.Draw(loadMechaList[(i + drawNowSelect) % loadMechaList.size()]->panelName, loadPanelSpriteList[i].mechaName);
-
-		if (((i + drawNowSelect) % loadMechaList.size()) != selectPanelNo)continue;
-		_spriteShader.Draw(selectLoadPanelImage, loadPanelSpriteList[i].backGround);
-	}
+	selectList->Draw(_spriteShader);
 }
 
 void LoadDisplay::DrawBase(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
@@ -394,8 +468,6 @@ void LoadDisplay::DrawBase(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 {
 	if (_dc == nullptr)return;
-	drawNowSelect = 0;
-	selectPanelNo = 0;
 
 	progressCircleRoutate = 0.0f;
 
@@ -413,8 +485,7 @@ void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 
 void LoadDisplay::Close()
 {
-	if (!loadMechaList.empty())
-		loadMechaList.clear();
+	selectList->Release();
 
 	loadFileList = nullptr;
 
@@ -423,7 +494,11 @@ void LoadDisplay::Close()
 
 void LoadDisplay::Load()
 {
-	loadMechaList[selectPanelNo]->mecha->Save(PLAYER_USE_MECHA_PATH);
+	auto&& item = selectList->GetSelectItem(selectList->GetNowSelect());
+	if (item == nullptr)return;
+	auto&& mecha = ChPtr::SharedSafeCast<LoadItem>(item);
+	if (mecha == nullptr)return;
+	mecha->mecha->Save(PLAYER_USE_MECHA_PATH);
 }
 
 bool LoadDisplay::LoadFile(unsigned long _openNumber)
@@ -440,7 +515,7 @@ bool LoadDisplay::LoadFile(unsigned long _openNumber)
 	//return true;
 
 	auto&& assembleMechaFrame = loadFileList->GetJsonObject(_openNumber);
-	auto&& loadMecha = ChPtr::Make_S<LoaderPanel>();
+	auto&& loadMecha = ChPtr::Make_S<LoadItem>();
 
 	loadMecha->mecha = ChPtr::Make_S<BaseMecha>();
 
@@ -479,7 +554,7 @@ bool LoadDisplay::LoadFile(unsigned long _openNumber)
 
 	loadMecha->panelName.CreateColorTexture(device, textDrawer.bitmap.GetBitmap());
 
-	loadMechaList.push_back(loadMecha);
+	selectList->AddItem(loadMecha);
 
 	return true;
 }
