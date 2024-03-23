@@ -152,7 +152,7 @@ public:
 
 		inline bool UpNowSelectStage()
 		{
-			bool res = static_cast<int>(frame->nowSelectStage) - 1< 0;
+			bool res = static_cast<int>(frame->nowSelectStage) - 1 < 0;
 
 			frame->nowSelectStage = (frame->nowSelectStage + frame->stageDataList.size() - 1) % frame->stageDataList.size();
 

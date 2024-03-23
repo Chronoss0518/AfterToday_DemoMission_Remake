@@ -36,15 +36,15 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	controller.Init();
 	controller.Update();
 
+	notImageTexture.CreateColorTexture(device, ChVec4::FromColor(0.7f, 0.7f, 0.7f, 1.0f), 1, 1);
+
+	InitStageDataList();
+
 	for (auto&& display : stageSelectFrameDisplay)
 	{
 		display->SetStageSelectFrame(this);
 		display->Init();
 	}
-
-	notImageTexture.CreateColorTexture(device, ChVec4::FromColor(0.7f, 0.7f, 0.7f, 1.0f), 1, 1);
-
-	InitStageDataList();
 
 	if (_sendData == nullptr)return;
 	auto&& beforeData = ChPtr::SharedSafeCast<FromStageSelectFrameData>(_sendData);
