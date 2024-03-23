@@ -109,6 +109,7 @@ void StageSelectDisplay::Init()
 	panelSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("PanelSelect.png"), device);
 
 	selectList = ChPtr::Make_S<StageSelectList>();
+	selectList->Init();
 	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(SELECT_PANEL_LIST_TOP));
 	selectList->SetPanelSize(STAGE_SELECT_PANEL_WIDTH / GAME_WINDOW_WIDTH * 2.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f);
 	selectList->SetAlighSize(0.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f);
