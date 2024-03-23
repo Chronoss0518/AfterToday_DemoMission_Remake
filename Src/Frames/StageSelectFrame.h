@@ -89,7 +89,7 @@ public:
 			frame->type = _type;
 		}
 
-		inline void SetNowStageSelect(int _nowSelectStage)
+		inline void SetNowStageSelect(unsigned long _nowSelectStage)
 		{
 			frame->nowSelectStage = _nowSelectStage;
 		}
