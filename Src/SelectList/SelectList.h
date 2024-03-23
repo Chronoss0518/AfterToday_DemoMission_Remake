@@ -21,6 +21,12 @@ class SelectListBase
 {
 public:
 
+	void Init();
+
+	void Release();
+
+public:
+
 	void SetStartPosition(float _x, float _y);
 
 	void SetStartPosition(const ChVec2& _position);
@@ -35,11 +41,19 @@ public:
 	//StartPosition‚©‚ç‚Ì‘Š‘ÎˆÊ’u//
 	void SetAlighSize(const ChVec2& _size);
 
-	inline void SetDrawCount(int _drawCount) { drawCount = _drawCount; }
+	inline void SetMoveDiraction(MoveDiraction _dir) { moveDirection = _dir; }
+
+	inline void SetDrawCount(unsigned long _drawCount) { drawCount = _drawCount; }
 
 public:
 
-	int GetNowSelect() { return nowSelectPanel; }
+	unsigned long GetNowSelect() { return nowSelectPanel; }
+
+	inline ChPtr::Shared<SelectListItemBase> GetSelectItem(unsigned long _num)
+	{
+		if (itemList.size() <= _num)return nullptr;
+		return itemList[_num];
+	}
 
 public:
 
@@ -69,6 +83,8 @@ public:
 
 	void ClearItem();
 
+	inline unsigned long ItemCount() { return itemList.size(); }
+
 private:
 
 	ChVec4 GetStartRect();
@@ -85,9 +101,9 @@ private:
 
 private:
 
-	int drawCount = 0;
-	int drawPos = 0;
-	int nowSelectPanel = 0;
+	unsigned long drawCount = 0;
+	unsigned long drawPos = 0;
+	unsigned long nowSelectPanel = 0;
 
 	ChVec2 startPosition;
 	ChVec2 basePanelSize;

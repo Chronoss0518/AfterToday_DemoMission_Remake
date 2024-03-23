@@ -3,6 +3,20 @@
 #include"SelectList.h"
 
 
+void SelectListBase::Init()
+{
+	drawPos = 0;
+	nowSelectPanel = 0;
+}
+
+void SelectListBase::Release()
+{
+	ClearItem();
+
+	drawPos = 0;
+	nowSelectPanel = 0;
+}
+
 void SelectListBase::SetStartPosition(float _x, float _y)
 {
 	SetStartPosition(ChVec2(_x, _y));
@@ -92,11 +106,18 @@ void SelectListBase::UpdateActionHorizontal(MenuBase::ActionType _type)
 
 void SelectListBase::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
+	if (itemList.empty())return;
+
 	ChVec4 rect = GetStartRect();
 
-	for (unsigned long i = drawPos;i<drawCount + drawPos;i++)
+	unsigned long drawUseCount = drawCount;
+
+	if (itemList.size() <= drawUseCount)drawUseCount = itemList.size();
+
+	for (unsigned long i = drawPos;i< drawUseCount + drawPos;i++)
 	{
-		DrawPanel(_drawer, rect, itemList[i % itemList.size()],nowSelectPanel == (i % itemList.size()));
+		unsigned long num = i % itemList.size();
+		DrawPanel(_drawer, rect, itemList[num],nowSelectPanel == num);
 
 		rect = GetNextRect(rect);
 	}
