@@ -207,6 +207,12 @@ public:
 
 	void  DrawEnd();
 
+private:
+
+	void FunctionDrawBegin();
+
+	void FunctionDrawEnd();
+
 public:
 
 	void AttackUpdate();
@@ -280,14 +286,16 @@ public:
 
 	virtual void Update() = 0;
 
+	virtual void DrawBegin() {};
+
+	virtual void DrawEnd() {};
+
 	inline void SetPartsObject(MechaPartsObject* _obj)
 	{
 		if (_obj == nullptr)return;
 
 		obj = _obj;
 	}
-
-	virtual void PosUpdate() {};
 
 protected:
 

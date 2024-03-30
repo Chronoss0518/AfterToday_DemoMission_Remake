@@ -200,23 +200,16 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	collider.SetMatrix(lastDrawMat);
 
-	for (auto func : externulFunctions)
-	{
-		func->PosUpdate();
-	}
-
-	for (auto func : weaponFunctions)
-	{
-		func->PosUpdate();
-	}
-
 	mecha->UpdateAnchor(GetLookAnchorNo(), lastDrawMat);
+
+	FunctionDrawEnd();
 
 	for (auto&& partsObject : positions)
 	{
 		if (partsObject.second == nullptr)continue;
 		partsObject.second->Draw(_drawMat);
 	}
+
 }
 
 void  MechaPartsObject::DrawEnd()
@@ -225,6 +218,34 @@ void  MechaPartsObject::DrawEnd()
 	{
 		child.second->DrawEnd();
 	}
+}
+
+void MechaPartsObject::FunctionDrawBegin()
+{
+	for (auto func : externulFunctions)
+	{
+		func->DrawBegin();
+	}
+
+	for (auto func : weaponFunctions)
+	{
+		func->DrawBegin();
+	}
+
+}
+
+void MechaPartsObject::FunctionDrawEnd()
+{
+	for (auto func : externulFunctions)
+	{
+		func->DrawEnd();
+	}
+
+	for (auto func : weaponFunctions)
+	{
+		func->DrawEnd();
+	}
+
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)

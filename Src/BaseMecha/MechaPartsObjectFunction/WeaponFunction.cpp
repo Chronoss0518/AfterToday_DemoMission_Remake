@@ -21,16 +21,16 @@ void WeaponFunction::Release()
 
 void WeaponFunction::AttackUpdate()
 {
-	if (nowWeatTime < data->GetWeatTime())return;;
+	if (nowWaitTime < data->GetWaitTime())return;;
 
 	AttackFunction();
 
-	nowWeatTime = 0;
+	nowWaitTime = 0;
 }
 
 void WeaponFunction::Update()
 {
-	nowWeatTime++;
+	nowWaitTime++;
 
 	UpdateFunction();
 }
@@ -164,11 +164,21 @@ void GunFunction::UpdateFunction()
 
 }
 
-void GunFunction::PosUpdate()
+void GunFunction::DrawBegin()
 {
-	if (shotPos == nullptr)return;
+	ChLMat tmpMat;
+	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
+	obj->GetParent()->GetPositionObject()->SetOutSizdTransform(tmpMat);
+}
 
-	lastShotPos = shotPos->GetDrawLHandMatrix();
+void GunFunction::DrawEnd()
+{
+	if (shotPos != nullptr)
+	{
+		lastShotPos = shotPos->GetDrawLHandMatrix();
+	}
+
+	//obj->GetParent()->GetPositionObject()->SetOutSizdTransform(ChLMat());
 }
 
 std::wstring GunFunction::GetBulletNum()

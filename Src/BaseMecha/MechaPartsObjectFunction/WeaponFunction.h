@@ -61,7 +61,7 @@ protected:
 	ChD3D::X3DAudioObject se;
 
 	//Ÿ‚ÌUŒ‚‰Â”\‚Ü‚Å‚ÌŠÔ//
-	unsigned long nowWeatTime = 0;
+	unsigned long nowWaitTime = 0;
 
 	ChPtr::Shared<Attack>attackData = nullptr;
 
@@ -114,7 +114,9 @@ public:
 
 	void UpdateFunction()override;
 
-	void PosUpdate()override;
+	void DrawBegin()override;
+
+	void DrawEnd()override;
 
 	//’e‚ªo‚Ä‚­‚éêŠ//
 	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }

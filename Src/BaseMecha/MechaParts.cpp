@@ -3,6 +3,7 @@
 #include"../AllStruct.h"
 #include"MechaPartsObject.h"
 #include"MechaParts.h"
+#include"../EditFrame/PartsParameters.h"
 #include"FunctionComponent/BoostComponent.h"
 #include"FunctionComponent/MoveComponent.h"
 #include"FunctionComponent/CameraComponent.h"
@@ -206,6 +207,29 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
 	return partsObject;
 }
 
+ChPtr::Shared<PartsParameters> MechaParts::SetParameters()
+{
+	auto&& parts = SetPartsParameter();
+	for (auto&& com : GetComponents<PartsDataBase>())
+	{
+		com->SetPartsParameter(*parts);
+	}
+
+	return parts;
+}
+
+ChPtr::Shared<PartsParameters>  MechaParts::SetPartsParameter()
+{
+	auto partsObject = ChPtr::Make_S<PartsParameters>();
+
+	partsObject->mainData.mass = mass;
+
+	partsObject->mainData.hardness = hardness;
+
+	return partsObject;
+}
+
+
 std::string MechaParts::Save(const std::string& _fileName)
 {
 	std::string res = Serialize();
@@ -288,6 +312,12 @@ void EnelgyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _part
 {
 	_base.AddMaxEnelgy(maxEnelgy);
 	_base.AddChargeEnelgy(chargeEnelgy);
+}
+
+void EnelgyTankData::SetPartsParameter(PartsParameters& _base)
+{
+	_base.enelgyTankData.maxEnelgy += maxEnelgy;
+	_base.enelgyTankData.chargeEnelgy += chargeEnelgy;
 }
 
 unsigned long CameraData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -423,6 +453,13 @@ void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Gam
 	walk->SetJumpPow(jumpPow);
 }
 
+void WalkData::SetPartsParameter(PartsParameters& _base)
+{
+	_base.walkData.movePower = movePow;
+	_base.walkData.rotatePower = rotatePow;
+	_base.walkData.jumpPower = jumpPow;
+}
+
 void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	auto target = LookObj<MechaParts>();
@@ -506,6 +543,45 @@ void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 	com->AddBoostWhereBoostName(obj, GetBoostInputName());
 }
 
+void BoostBrust::SetBoostData(PartsParameterStruct::BoostData& _boost)
+{
+	_boost.boostPower = boostPower;
+	_boost.boostUseEnelgy = useEnelgy;
+	_boost.avoidPower = avoidPow;
+	_boost.avoidUseEnelgy = avoidUseEnelgy;
+	_boost.avoidWait = avoidWait;
+}
+
+void RightBoostBrust::SetPartsParameter(PartsParameters& _base)
+{
+	SetBoostData(_base.rightBoostData);
+}
+
+void LeftBoostBrust::SetPartsParameter(PartsParameters& _base)
+{
+	SetBoostData(_base.leftBoostData);
+}
+
+void FrontBoostBrust::SetPartsParameter(PartsParameters& _base)
+{
+	SetBoostData(_base.frontBoostData);
+}
+
+void BackBoostBrust::SetPartsParameter(PartsParameters& _base)
+{
+	SetBoostData(_base.backBoostData);
+}
+
+void UpBoostBrust::SetPartsParameter(PartsParameters& _base)
+{
+	SetBoostData(_base.upBoostData);
+}
+
+void DownBoostBrust::SetPartsParameter(PartsParameters& _base)
+{
+	SetBoostData(_base.downBoostData);
+}
+
 ChPtr::Shared<ChCpp::FrameObject> BoostBrust::GetFrame(BaseMecha& _base)
 {
 	auto&& base = *LookObj<MechaParts>();
@@ -527,7 +603,7 @@ unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsi
 	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
 	weaponName = _text.GetTextLine(textPos);
 	seFile = _text.GetTextLine(textPos + 1);
-	weatTime = std::atol(_text.GetTextLine(textPos + 2).c_str());
+	waitTime = std::atol(_text.GetTextLine(textPos + 2).c_str());
 	return textPos + 3;
 }
 
@@ -537,7 +613,7 @@ std::string WeaponData::Serialize()
 
 	res += weaponName + "\n";
 	res += seFile + "\n";
-	res += std::to_string(weatTime) + "\n";
+	res += std::to_string(waitTime) + "\n";
 
 	return res;
 }
@@ -545,6 +621,11 @@ std::string WeaponData::Serialize()
 void WeaponData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
 	_parts.GetWeaponFunctions()[_parts.GetWeaponFunctions().size() - 1]->SetObjectPos(_targetObject);
+}
+
+void WeaponData::SetWeaponData(PartsParameterStruct::WeaponData& _base)
+{
+	_base.waitTime = waitTime;
 }
 
 unsigned long SwordData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -583,6 +664,15 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 	_parts.AddWeaponFunction(function);
 
 	NextPosBase::SetPartsParameter(_base, _parts, _frame);
+}
+
+void SwordData::SetPartsParameter(PartsParameters& _base)
+{
+	auto&& weap = ChPtr::Make_S<PartsParameterStruct::SwordData>();
+	SetWeaponData(*weap);
+	weap->attackTime = attackTime;
+	weap->damageParSpeed = damageParSpeed;
+	_base.weaponData.push_back(weap);
 }
 
 unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
@@ -634,6 +724,19 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 
 	NextPosBase::SetPartsParameter(_base, _parts, _frame);
 
+}
+
+void GunData::SetPartsParameter(PartsParameters& _base)
+{
+	auto&& weap = ChPtr::Make_S<PartsParameterStruct::GunData>();
+	SetWeaponData(*weap);
+	weap->fireNum = fireNum;
+	weap->bulletNum = bulletNum;
+	weap->magazineNum = magazineNum;
+	weap->reloadTime = reloadTime;
+	weap->range = range;
+
+	_base.weaponData.push_back(weap);
 }
 
 unsigned long PostureBase::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)

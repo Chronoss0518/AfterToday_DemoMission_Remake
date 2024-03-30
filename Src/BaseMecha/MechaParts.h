@@ -26,6 +26,14 @@ class MechaPartsObject;
 class CameraComponent;
 class PartsDataBase;
 
+class PartsParameters;
+
+namespace PartsParameterStruct
+{
+	struct BoostData;
+	struct WeaponData;
+}
+
 class MechaParts :public ChCpp::BaseObject
 {
 public:
@@ -72,6 +80,10 @@ public://Set Functions//
 	ChPtr::Shared<MechaPartsObject> SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
 
 	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
+
+	ChPtr::Shared<PartsParameters> SetParameters();
+
+	virtual ChPtr::Shared<PartsParameters>  SetPartsParameter();
 
 	void SetHardness(const unsigned long _hardness) { hardness = _hardness; }
 
@@ -156,6 +168,8 @@ public://Set Functions//
 
 	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame) = 0;
 
+	virtual void SetPartsParameter(PartsParameters& _base) = 0;
+
 public://Get Functions//
 
 	virtual std::string GetPartsTypeTag() = 0;
@@ -195,6 +209,8 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
+	void SetPartsParameter(PartsParameters& _base)override;
+
 	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
 
 	void SetChargeEnelgy(const unsigned long _createEnelgy) { chargeEnelgy = _createEnelgy; }
@@ -229,6 +245,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base)override {};
 
 	void SetFovy(const float _fovy) { fovy = _fovy; }
 
@@ -267,6 +285,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base)override {};
 
 	void SetMinFovy(const float _minFovy) { minFovy = _minFovy; }
 	
@@ -309,6 +329,8 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
+	void SetPartsParameter(PartsParameters& _base)override {};
+
 	void SetUpPowerParSpeed(const float _upPowerParSpeed) { upPowerParSpeed = _upPowerParSpeed; }
 
 public://Get Functions//
@@ -334,6 +356,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base)override {};
 
 	void SetAcceleration(const float _acceleration) { acceleration = _acceleration; }
 
@@ -370,6 +394,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base)override;
 
 	void SetMovePow(const float _movePow) { movePow = _movePow; }
 	
@@ -427,6 +453,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base) override{};
 
 	virtual void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
 
@@ -507,6 +535,8 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
+	void SetBoostData(PartsParameterStruct::BoostData& _boost);
+
 	inline void SetParamName(const std::string& _objectName)
 	{
 		objectName = _objectName;
@@ -559,6 +589,10 @@ protected:
 
 class RightBoostBrust :public BoostBrust
 {
+public:
+
+	void SetPartsParameter(PartsParameters& _base)override;
+
 public://Get Functions//
 
 	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::RightBoost; }
@@ -571,6 +605,9 @@ public://Get Functions//
 
 class LeftBoostBrust :public BoostBrust
 {
+public:
+
+	void SetPartsParameter(PartsParameters& _base)override;
 
 public://Get Functions//
 
@@ -585,6 +622,10 @@ public://Get Functions//
 
 class FrontBoostBrust :public BoostBrust
 {
+public:
+
+	void SetPartsParameter(PartsParameters& _base)override;
+
 public://Get Functions//
 
 	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::FrontBoost; }
@@ -597,6 +638,10 @@ public://Get Functions//
 
 class BackBoostBrust :public BoostBrust
 {
+public:
+
+	void SetPartsParameter(PartsParameters& _base)override;
+
 public://Get Functions//
 
 	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::BackBoost; }
@@ -609,6 +654,10 @@ public://Get Functions//
 
 class UpBoostBrust :public BoostBrust
 {
+public:
+
+	void SetPartsParameter(PartsParameters& _base)override;
+
 public://Get Functions//
 
 	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::UpBoost; }
@@ -621,6 +670,10 @@ public://Get Functions//
 
 class DownBoostBrust :public BoostBrust
 {
+public:
+
+	void SetPartsParameter(PartsParameters& _base)override;
+
 public://Get Functions//
 
 	inline BaseMecha::InputName GetBoostInputName() override { return BaseMecha::InputName::DownBoost; }
@@ -645,9 +698,11 @@ public:
 
 	inline void SetSEFileName(const std::string& _seFile) { seFile = _seFile; }
 
-	inline void SetWaitTime(const unsigned long _weatTime) { weatTime = _weatTime; }
+	inline void SetWaitTime(const unsigned long _waitTime) { waitTime = _waitTime; }
 
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+	void SetWeaponData(PartsParameterStruct::WeaponData& _base);
 
 public:
 
@@ -655,7 +710,7 @@ public:
 
 	inline std::string GetSEFileName() { return seFile; }
 
-	inline unsigned long GetWeatTime() const { return weatTime; }
+	inline unsigned long GetWaitTime() const { return waitTime; }
 
 protected:
 
@@ -664,7 +719,7 @@ protected:
 	//効果音のファイル//
 	std::string seFile = "";
 	//次の攻撃可能時間//
-	unsigned long weatTime = 0;
+	unsigned long waitTime = 0;
 };
 
 class SwordData :public WeaponData
@@ -678,6 +733,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base)override;
 
 	inline void SetAttackTime(const unsigned long _attackTime) { attackTime = _attackTime; }
 
@@ -707,6 +764,8 @@ public://Serialize Deserialize//
 public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
+
+	void SetPartsParameter(PartsParameters& _base)override;
 
 	inline void SetFireNum(const unsigned long _fireNum) { fireNum = _fireNum; }
 
@@ -763,9 +822,9 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
+	void SetPartsParameter(PartsParameters& _base)override {};
+
 public://Get Functions//
-
-
 
 private:
 
@@ -773,6 +832,7 @@ private:
 
 };
 
+//垂直//
 class VerticalPosture : public PostureBase
 {
 
@@ -782,6 +842,7 @@ public:
 
 };
 
+//水平//
 class HorizontalPosture : public PostureBase
 {
 
