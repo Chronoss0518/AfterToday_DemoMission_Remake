@@ -26,7 +26,7 @@ void MechaPartsObject::CreateFramePosture(ChCpp::FrameObject* _frameObject)
 
 void MechaPartsObject::Release()
 {
-	for (auto&& function : externulFunctions)
+	for (auto&& function : externalFunctions)
 	{
 		if (function == nullptr)continue;
 		function->Release();
@@ -149,7 +149,7 @@ std::wstring MechaPartsObject::GetReloadCount()
 
 void MechaPartsObject::Update()
 {
-	for (auto&& func : externulFunctions)
+	for (auto&& func : externalFunctions)
 	{
 		func->Update();
 	}
@@ -222,7 +222,7 @@ void  MechaPartsObject::DrawEnd()
 
 void MechaPartsObject::FunctionDrawBegin()
 {
-	for (auto func : externulFunctions)
+	for (auto func : externalFunctions)
 	{
 		func->DrawBegin();
 	}
@@ -236,7 +236,7 @@ void MechaPartsObject::FunctionDrawBegin()
 
 void MechaPartsObject::FunctionDrawEnd()
 {
-	for (auto func : externulFunctions)
+	for (auto func : externalFunctions)
 	{
 		func->DrawEnd();
 	}

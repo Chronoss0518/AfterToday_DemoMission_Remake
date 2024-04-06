@@ -57,6 +57,11 @@ public:
 		weaponFunctions.push_back(_weapon);
 	}
 
+	void AddExternalFunction(ChPtr::Shared<ExternalFunction> _function)
+	{
+		externalFunctions.push_back(_function);
+	}
+
 	inline void AddChildObject(const std::string& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
 	{
 		if (_partsObject == nullptr)return;
@@ -136,7 +141,7 @@ public:
 
 	std::vector<ChPtr::Shared<ExternalFunction>>& GetExternalFunctions()
 	{
-		return externulFunctions;
+		return externalFunctions;
 	}
 
 	std::vector<ChPtr::Shared<WeaponFunction>> GetWeaponFunctions()
@@ -242,7 +247,7 @@ private:
 	//Auto‚Å“G‚ğ’Ç”ö‚·‚é‚Æ—p‚ÉC³//
 	std::map<ChCpp::FrameObject*, ChPtr::Shared<FramePosture>> framePostures;
 
-	std::vector<ChPtr::Shared<ExternalFunction>>externulFunctions;
+	std::vector<ChPtr::Shared<ExternalFunction>>externalFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
 
 	std::map<std::string,ChPtr::Shared<MechaPartsObject>> positions;
