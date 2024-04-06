@@ -4,9 +4,14 @@
 #include"../Frames/GameFrame.h"
 #include"Attack.h"
 #include"AttackObject.h"
+#include"../EditFrame/PartsParameters.h"
 
 
 #define CREATE_TYPE(_enum,_class) {ChStd::EnumCast(_enum),[]()->ChPtr::Shared<Attack::AttackBase>{return ChPtr::Make_S<_class>();}}
+
+#define ATTACK_FILE_SWORD ""
+#define ATTACK_FILE_EXPLOSIVE ""
+
 
 std::map<unsigned char, std::function<ChPtr::Shared<Attack::AttackBase>()>> CreateAttackType
 {
@@ -16,7 +21,7 @@ std::map<unsigned char, std::function<ChPtr::Shared<Attack::AttackBase>()>> Crea
 	CREATE_TYPE(AttackType::Missile,MissileData),
 };
 
-ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateAttackDataFromSword(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
 {
 	auto&& attackList = LoadAttackList();
 
@@ -28,6 +33,70 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* 
 		}
 	}
 
+	auto&& attack = CreateAttackData(_drawer, _device, ATTACK_FILE_SWORD);
+
+	if (attack == nullptr)return nullptr;
+
+	attack->useFileName = ATTACK_FILE_SWORD;
+
+	attackList[_fileName] = attack;
+
+	return attack;
+
+}
+
+ChPtr::Shared<Attack> Attack::CreateAttackDataFromExplosive(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+{
+	auto&& attackList = LoadAttackList();
+
+	{
+		auto bulletIns = attackList.find(_fileName);
+		if (bulletIns != attackList.end())
+		{
+			return (*bulletIns).second;
+		}
+	}
+
+	auto&& attack = CreateAttackData(_drawer, _device, ATTACK_FILE_EXPLOSIVE);
+
+	if (attack == nullptr)return nullptr;
+
+	attack->useFileName = ATTACK_FILE_EXPLOSIVE;
+
+	attackList[_fileName] = attack;
+
+	return attack;
+
+}
+
+ChPtr::Shared<Attack> Attack::CreateAttackDataFromBullet(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+{
+	auto&& attackList = LoadAttackList();
+
+	{
+		auto bulletIns = attackList.find(_fileName);
+		if (bulletIns != attackList.end())
+		{
+			return (*bulletIns).second;
+		}
+	}
+
+	auto&& attack = CreateAttackData(_drawer,_device, _fileName);
+
+	if (attack == nullptr)return nullptr;
+
+	attack->useFileName = _fileName;
+
+	attackList[_fileName] = attack;
+
+	return attack;
+
+}
+
+ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+{
+	auto&& attackList = LoadAttackList();
+
 	std::string text = "";
 	ChCpp::TextObject textObject;
 
@@ -38,17 +107,15 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* 
 		textObject.SetText(text);
 		file.FileClose();
 	}
-	
+
 	if (textObject.LineCount() <= 2)return nullptr;
 
 	auto attack = ChPtr::Make_S<Attack>();
 
 	attack->SetMeshDrawer(_drawer);
 
-	attack->Deserialize(_device,text);
+	attack->Deserialize(_device, text);
 
-	attackList[_fileName] = attack;
-	
 	attack->SetMeshDrawer(_drawer);
 
 	return attack;
@@ -111,6 +178,23 @@ std::string Attack::Serialize()
 	return res;
 }
 
+void Attack::SetPartameter(PartsParameterStruct::WeaponData& _partsParameter)
+{
+	auto&& attack = ChPtr::Make_S<PartsParameterStruct::AttackData>();
+
+	attack->objectName = useFileName;
+	attack->penetration = penetration;
+
+	attack->hitSize = hitSize;
+
+	for (auto&& functions : externulFunctions)
+	{
+		functions->SetPartameter(*attack);
+	}
+
+	_partsParameter.attackData.push_back(attack);
+}
+
 void Attack::InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet)
 {
 	_bullet.collider.SetScalling(hitSize);
@@ -145,7 +229,6 @@ unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, co
 
 	unsigned long nowPos = _nowPos;
 	firstSpeed = static_cast<float>(std::atof(_text.GetTextLine(nowPos).c_str()));
-	_attack.AddDisplayFirstSpeed(firstSpeed);
 	return nowPos + 1;
 }
 
@@ -154,6 +237,14 @@ std::string BulletData::Serialize()
 	std::string res =  std::to_string(ChStd::EnumCast(AttackType::Bullet)) + "\n";
 	res += std::to_string(firstSpeed) + "\n";
 	return res;
+}
+
+void BulletData::SetPartameter(PartsParameterStruct::AttackData& _parameter)
+{
+	auto&& data = ChPtr::Make_S<PartsParameterStruct::BulletData>();
+
+	data->firstSpeed = firstSpeed;
+	_parameter.attackDataBase.push_back(data);
 }
 
 void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet)
@@ -219,9 +310,6 @@ unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, Attack& _attac
 	useBoostTime = std::atol(_text.GetTextLine(_nowPos + 1).c_str());
 	boostPow = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 2).c_str()));
 
-	_attack.AddDisplayStartBoostTime(startBoostTime);
-	_attack.AddDisplayUseBoostTime(useBoostTime);
-	_attack.AddDisplayBoostPow(boostPow);
 	return _nowPos + 3;
 
 }
@@ -237,6 +325,16 @@ std::string BoostBulletData::Serialize()
 	return res;
 }
 
+void BoostBulletData::SetPartameter(PartsParameterStruct::AttackData& _parameter)
+{
+	auto&& data = ChPtr::Make_S<PartsParameterStruct::BoostBulletData>();
+
+	data->boostPow = boostPow;
+	data->startBoostTime = startBoostTime;
+	data->useBoostTime = useBoostTime;
+	_parameter.attackDataBase.push_back(data);
+}
+
 void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 
@@ -247,7 +345,6 @@ unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack
 
 	blastRange = static_cast<float>(std::atof(_text.GetTextLine(_nowPos).c_str()));
 
-	_attack.AddDisplayBlastRange(blastRange);
 	return _nowPos + 1;
 }
 
@@ -260,6 +357,14 @@ std::string HighExplosiveBulletData::Serialize()
 	return res;
 }
 
+void HighExplosiveBulletData::SetPartameter(PartsParameterStruct::AttackData& _parameter)
+{
+	auto&& data = ChPtr::Make_S<PartsParameterStruct::HighExplosiveBulletData>();
+
+	data->blastRange = blastRange;
+	_parameter.attackDataBase.push_back(data);
+}
+
 void HighExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 
@@ -269,9 +374,6 @@ unsigned long MissileData::Deserialize(ID3D11Device* _device, Attack& _attack, c
 {
 	rotateSpeed = static_cast<float>(std::atof(_text.GetTextLine(_nowPos).c_str()));
 	lostRange = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 1).c_str()));
-
-	_attack.AddDisplayRotateSpeed(rotateSpeed);
-	_attack.AddDisplayLostRange(lostRange);
 
 	return _nowPos + 2;
 }
@@ -284,6 +386,15 @@ std::string MissileData::Serialize()
 	res += std::to_string(lostRange) + "\n";
 
 	return res;
+}
+
+void MissileData::SetPartameter(PartsParameterStruct::AttackData& _parameter)
+{
+	auto&& data = ChPtr::Make_S<PartsParameterStruct::MissileData>();
+
+	data->lostRange = lostRange;
+	data->rotateSpeed = rotateSpeed;
+	_parameter.attackDataBase.push_back(data);
 }
 
 void MissileData::UpdateBulletObject(AttackObject& _bullet)
