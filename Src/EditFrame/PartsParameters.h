@@ -4,7 +4,7 @@ namespace PartsParameterStruct
 {
 	struct MainData
 	{
-		float hardness = 0.0f;
+		unsigned long hardness = 0;
 		float mass = 0.0f;
 	};
 
@@ -30,9 +30,64 @@ namespace PartsParameterStruct
 		unsigned long avoidWait = 0;
 	};
 
+	struct AttackBase
+	{
+		virtual ~AttackBase(){}
+	};
+
+	struct BulletData:AttackBase
+	{
+		//初速//
+		float firstSpeed = 0.0f;
+	};
+
+	struct BoostBulletData :AttackBase
+	{
+		//ブースト点火までの時間//
+		unsigned long startBoostTime = 0;
+
+		//ブースト時間//
+		unsigned long useBoostTime = 0;
+
+		//ブーストのパワー//
+		float boostPow = 0.0f;
+	};
+
+	struct HighExplosiveBulletData :AttackBase
+	{
+		//爆発範囲//
+		float blastRange = 0.0f;
+	};
+
+	struct MissileData :AttackBase
+	{
+		//回転速度//
+		float rotateSpeed = 0.0f;
+
+		//見失う範囲//
+		float lostRange = 0.0f;
+	};
+
+	struct AttackData
+	{
+		std::string objectName = "";
+
+		//威力//
+		unsigned long penetration = 0;
+
+		//衝突判定用//
+		float hitSize = 0.0f;
+
+		std::vector<ChPtr::Shared<AttackBase>>attackDataBase;
+	};
+
 	struct WeaponData
 	{
+		std::string partsName = "";
+		std::string weaponName = "";
+
 		unsigned long waitTime = 0;
+		std::vector<ChPtr::Shared<AttackData>>attackData;
 	};
 
 	struct SwordData : public WeaponData
@@ -53,8 +108,15 @@ namespace PartsParameterStruct
 
 }
 
-struct PartsParameters
+struct PartsParameters:public ChCpp::BaseComponent
 {
+	PartsParameters& operator = (const PartsParameters& _parts);
+
+	PartsParameters& operator += (const PartsParameters& _parts);
+	PartsParameters& operator + (const PartsParameters& _parts)const;
+	PartsParameters& operator -= (const PartsParameters& _parts);
+	PartsParameters& operator - (const PartsParameters& _parts)const;
+
 	PartsParameterStruct::MainData mainData;
 
 	PartsParameterStruct::EnelgyTankData enelgyTankData;
@@ -75,3 +137,4 @@ struct PartsParameters
 
 	std::vector<ChPtr::Shared<PartsParameterStruct::WeaponData>>weaponData;
 };
+
