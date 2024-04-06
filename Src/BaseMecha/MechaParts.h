@@ -26,7 +26,7 @@ class MechaPartsObject;
 class CameraComponent;
 class PartsDataBase;
 
-class PartsParameters;
+struct PartsParameters;
 
 namespace PartsParameterStruct
 {
@@ -81,7 +81,7 @@ public://Set Functions//
 
 	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
 
-	ChPtr::Shared<PartsParameters> SetParameters();
+	void SetParameters();
 
 	virtual ChPtr::Shared<PartsParameters>  SetPartsParameter();
 

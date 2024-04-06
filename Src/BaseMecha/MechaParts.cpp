@@ -207,20 +207,23 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
 	return partsObject;
 }
 
-ChPtr::Shared<PartsParameters> MechaParts::SetParameters()
+void MechaParts::SetParameters()
 {
 	auto&& parts = SetPartsParameter();
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
 		com->SetPartsParameter(*parts);
 	}
-
-	return parts;
 }
 
 ChPtr::Shared<PartsParameters>  MechaParts::SetPartsParameter()
 {
-	auto partsObject = ChPtr::Make_S<PartsParameters>();
+	auto partsObject = GetComponent<PartsParameters>();
+
+	if (partsObject == nullptr)
+	{
+		partsObject = SetComponent<PartsParameters>();
+	}
 
 	partsObject->mainData.mass = mass;
 
@@ -625,6 +628,13 @@ void WeaponData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr:
 
 void WeaponData::SetWeaponData(PartsParameterStruct::WeaponData& _base)
 {
+	auto&& look = LookObj<MechaParts>();
+	if (look != nullptr)
+	{
+		_base.partsName = look->GetThisFileName();
+	}
+
+	_base.weaponName = weaponName;
 	_base.waitTime = waitTime;
 }
 
@@ -735,6 +745,9 @@ void GunData::SetPartsParameter(PartsParameters& _base)
 	weap->magazineNum = magazineNum;
 	weap->reloadTime = reloadTime;
 	weap->range = range;
+
+	auto&& attackData = Attack::CreateAttackData(nullptr, ChD3D11::D3D11Device(), bulletFile);
+	attackData->SetPartameter(*weap);
 
 	_base.weaponData.push_back(weap);
 }
