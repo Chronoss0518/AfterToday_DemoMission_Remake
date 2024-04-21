@@ -65,12 +65,44 @@
 #define CPU_MECHA_PATH(_fileName) TARGET_DIRECTORY("StageScript/CPU/" _fileName)
 #endif
 
+#ifndef GAME_SPRITE_WIDTH
+#define GAME_SPRITE_WIDTH 1280.0f 
+#endif
+
+#ifndef GAME_SPRITE_HEIGHT
+#define GAME_SPRITE_HEIGHT 720.0f 
+#endif
+
+#ifndef	FULL_HD_FLG
+#define	FULL_HD_FLG 0
+#endif
+
+#ifndef	HD_FLG
+#define	HD_FLG 1
+#endif
+
+#ifndef	SD_FLG
+#define	SD_FLG 1
+#endif
+
 #ifndef GAME_WINDOW_WIDTH
+#if FULL_HD_FLG
+#define GAME_WINDOW_WIDTH 1920.0f
+#elif HD_FLG
 #define GAME_WINDOW_WIDTH 1280.0f
+#elif SD_FLG
+#define GAME_WINDOW_WIDTH 720.0f
+#endif
 #endif
 
 #ifndef GAME_WINDOW_HEIGHT
+#if FULL_HD_FLG
+#define GAME_WINDOW_HEIGHT 1080.0f
+#elif HD_FLG
 #define GAME_WINDOW_HEIGHT 720.0f
+#elif SD_FLG
+#define GAME_WINDOW_HEIGHT 480.0f
+#endif
 #endif
 
 #ifndef GAME_WINDOW_WIDTH_LONG
@@ -88,7 +120,7 @@
 
 //py = 1.0f - ((sy / sh) * 2.0f)
 #ifndef SCREEN_TO_PROJECTION_Y
-#define SCREEN_TO_PROJECTION_Y(value) 1.0f - ((static_cast<float>(value)/(GAME_WINDOW_HEIGHT)) * 2.0f)
+#define SCREEN_TO_PROJECTION_Y(value) ((static_cast<float>(value)/(GAME_WINDOW_HEIGHT)) * -2.0f) + 1.0f
 #endif
 
 #ifndef GAME_PROJECTION_NEAR
@@ -127,7 +159,7 @@ _SPRITE.SetPosRect(_RECT)
 #endif
 
 #ifndef USE_EDIT_FRAME_FLG
-#define USE_EDIT_FRAME_FLG 0
+#define USE_EDIT_FRAME_FLG 1
 #endif
 
 #ifndef USE_SETTING_FRAME_FLG
@@ -192,18 +224,12 @@ static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)
 
 static inline float HorizontalToProjection(float _x)
 {
-	float res = _x;
-	res = res / GAME_WINDOW_WIDTH;
-	res = (res * 2.0f) - 1.0f;
-	return res;
+	return SCREEN_TO_PROJECTION_X(_x);
 }
 
 static inline float VerticalToProjection(float _y)
 {
-	float res = _y;
-	res = res / GAME_WINDOW_HEIGHT;
-	res = (res * -2.0f) + 1.0f;
-	return res;
+	return SCREEN_TO_PROJECTION_Y(_y);
 }
 
 static inline ChVec4 RectToGameWindow(const ChVec4 _rect)
