@@ -121,7 +121,7 @@ void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _
 
 	reloadFlg = false;
 
-	attackData = Attack::CreateAttackData(_drawer, _device, gunData->GetUseBulletFile());
+	attackData = Attack::CreateAttackDataFromBullet(_drawer, _device, gunData->GetUseBulletFile());
 
 	ChD3D::XAudioManager().LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
 
