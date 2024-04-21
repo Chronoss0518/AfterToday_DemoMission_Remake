@@ -62,7 +62,7 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 		ChD3D::XAudioManager().Init();
 
-		ChWin::Mouse().Init(window.GethWnd(), s_screen.w, s_screen.h);
+		ChWin::Mouse().Init(window, s_screen.w, s_screen.h);
 	}
 
 	/*
