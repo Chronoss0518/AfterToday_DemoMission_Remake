@@ -11,10 +11,6 @@
 
 #include"MechaPartsObjectFunction/WeaponFunction.h"
 
-#ifndef PARTS_DIRECTORY
-#define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
-#endif
-
 #ifndef PARTS_DATA_CREATER
 #define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
 #endif

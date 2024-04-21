@@ -22,6 +22,10 @@
 #define JSON_PROPEATY_LEFT_WEAPON "LeftWeapon"
 #endif
 
+#ifndef PARTS_DIRECTORY
+#define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
+#endif
+
 class MechaPartsObject;
 class CameraComponent;
 class PartsDataBase;
