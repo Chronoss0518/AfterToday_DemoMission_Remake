@@ -25,7 +25,7 @@ protected:
 
 protected:
 
-	void UpdateFunction();
+	virtual void UpdateFunction();
 
 	virtual void UpdateAction(ActionType _action) = 0;
 

@@ -16,6 +16,7 @@ void MenuBase::InitMenu(ChD3D::XInputController* _controller)
 void MenuBase::UpdateFunction()
 {
 	UpdateController();
+
 	if (!isPushControllerFlg)
 	{
 		UpdateKeyboard();
@@ -42,7 +43,9 @@ void MenuBase::UpdateKeyboard()
 
 	auto&& manager = ChSystem::SysManager();
 
-	InputTest(ActionType::Decision, manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE));
+	InputTest(ActionType::Decision,!manager.IsPushKey(VK_SHIFT) && (manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE)));
+
+	InputTest(ActionType::Cancel,manager.IsPushKey(VK_SHIFT) && (manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE)));
 
 	InputTest(ActionType::Up, manager.IsPushKey(VK_UP) || manager.IsPushKey('W'));
 
