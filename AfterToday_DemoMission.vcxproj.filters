@@ -79,6 +79,9 @@
     <Filter Include="GameFrame\Shader\EffectSpriteShader\hlsl">
       <UniqueIdentifier>{791ff853-cfff-4245-b2c4-fe612512ac56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EditFrame\ParameterList">
+      <UniqueIdentifier>{54b9a59e-aebc-4d8d-9950-8e6d680565e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\BaseIncluder.h">
@@ -252,6 +255,18 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h">
       <Filter>GameFrame\MechaPartsFunction</Filter>
     </ClInclude>
+    <ClInclude Include="Src\EditFrame\ParameterList.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\PartsParameters.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\ParameterDisplay.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\ParameterPanel.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -413,6 +428,15 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.cpp">
       <Filter>GameFrame\MechaPartsFunction</Filter>
     </ClCompile>
+    <ClCompile Include="Src\EditFrame\ParameterList.cpp">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\ParameterDisplay.cpp">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\PartsParameters.cpp">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
@@ -542,6 +566,9 @@
     </None>
     <None Include="Resource\Save\Player.amf">
       <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\RobotParts\core_parts_list.lst">
+      <Filter>PartsDatas</Filter>
     </None>
   </ItemGroup>
 </Project>
