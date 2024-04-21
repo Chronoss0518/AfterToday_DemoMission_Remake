@@ -61,7 +61,7 @@ public:
 
 	}	
 
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, bool _isSelectPanel)override
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<StageSelectListItem>(_drawItem);
 		if (item == nullptr)return;
@@ -111,8 +111,8 @@ void StageSelectDisplay::Init()
 	selectList = ChPtr::Make_S<StageSelectList>();
 	selectList->Init();
 	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(SELECT_PANEL_LIST_TOP));
-	selectList->SetPanelSize(STAGE_SELECT_PANEL_WIDTH / GAME_WINDOW_WIDTH * 2.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f);
-	selectList->SetAlighSize(0.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f);
+	selectList->SetPanelSize(STAGE_SELECT_PANEL_WIDTH / GAME_SPRITE_WIDTH * 2.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f);
+	selectList->SetAlighSize(0.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f);
 	selectList->SetDrawCount(PANEL_DRAW_COUNT);
 
 	selectList->SetSelectImage(&panelSelectImage);
@@ -215,6 +215,13 @@ void StageSelectDisplay::UpdateMouse()
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
+
+	auto&& point = mouce.GetWheelMove();
+
+	if (point.y > 0)
+	{
+		point.y = 5;
+	}
 
 	auto&& mouseMove = mouce.GetMoveValue();
 

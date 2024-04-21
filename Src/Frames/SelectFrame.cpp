@@ -28,7 +28,7 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	spriteShader.Init(device);
 
-	SPRITE_INIT(descriptionWindowSprite, RectToGameWindow(ChVec4(0.0f, 544.0f, GAME_WINDOW_WIDTH, 544.0f + 176.0f)));
+	SPRITE_INIT(descriptionWindowSprite, RectToGameWindow(ChVec4(0.0f, 544.0f, GAME_SPRITE_WIDTH, 544.0f + 176.0f)));
 
 
 	selectEdge.CreateTexture(SELECT_TEXTURE_DIRECTORY("SelectButtonEdge.png"), device);

@@ -67,13 +67,13 @@
 #define RROGRESS_CIRCLE_SIZE 450.0f
 //#define PROGRESS_CIRCLE_LEFT 215.0f
 //#define PROGRESS_CIRCLE_TOP 17.0f
-#define PROGRESS_CIRCLE_LEFT (GAME_WINDOW_WIDTH * 0.5f) - (RROGRESS_CIRCLE_SIZE * 0.5f)
-#define PROGRESS_CIRCLE_TOP (GAME_WINDOW_HEIGHT * 0.5f) - (RROGRESS_CIRCLE_SIZE * 0.5f)
+#define PROGRESS_CIRCLE_LEFT (GAME_SPRITE_WIDTH * 0.5f) - (RROGRESS_CIRCLE_SIZE * 0.5f)
+#define PROGRESS_CIRCLE_TOP (GAME_SPRITE_HEIGHT * 0.5f) - (RROGRESS_CIRCLE_SIZE * 0.5f)
 #define PROGRESS_CIRCLE_RIGHT PROGRESS_CIRCLE_LEFT + RROGRESS_CIRCLE_SIZE
 #define PROGRESS_CIRCLE_BOTTOM PROGRESS_CIRCLE_TOP + RROGRESS_CIRCLE_SIZE
 
-#define PROGRESS_CIRCLE_CENTER_X (415.0f + (RROGRESS_CIRCLE_SIZE * 0.5f) - (GAME_WINDOW_WIDTH * 0.5f)) / (GAME_WINDOW_WIDTH * 0.5f)
-#define PROGRESS_CIRCLE_CENTER_Y (67.0f + (RROGRESS_CIRCLE_SIZE * 0.5f) - (GAME_WINDOW_HEIGHT * 0.5f)) / (GAME_WINDOW_HEIGHT * -0.5f)
+#define PROGRESS_CIRCLE_CENTER_X (415.0f + (RROGRESS_CIRCLE_SIZE * 0.5f) - (GAME_SPRITE_WIDTH * 0.5f)) / (GAME_SPRITE_WIDTH * 0.5f)
+#define PROGRESS_CIRCLE_CENTER_Y (67.0f + (RROGRESS_CIRCLE_SIZE * 0.5f) - (GAME_SPRITE_HEIGHT * 0.5f)) / (GAME_SPRITE_HEIGHT * -0.5f)
 //Degree Per Frame//
 #define PROGRESS_CIRCLE_ROTATION_SPEED 5.0f
 
@@ -97,18 +97,18 @@ public:
 		mechaPreviewSprite.Init();
 		mechaNameSprite.Init();
 
-		mechaPreviewPos.x = MECHA_PREVIEW_LEFT / GAME_WINDOW_WIDTH * 2.0f;
-		mechaPreviewPos.y = MECHA_PREVIEW_TOP / GAME_WINDOW_HEIGHT * 2.0f;
+		mechaPreviewPos.x = MECHA_PREVIEW_LEFT / GAME_SPRITE_WIDTH * 2.0f;
+		mechaPreviewPos.y = MECHA_PREVIEW_TOP / GAME_SPRITE_HEIGHT * 2.0f;
 
-		mechaPreviewSize.w = MECHA_PREVIEW_WIDTH / GAME_WINDOW_WIDTH * 2.0f;
-		mechaPreviewSize.h = MECHA_PREVIEW_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f;
+		mechaPreviewSize.w = MECHA_PREVIEW_WIDTH / GAME_SPRITE_WIDTH * 2.0f;
+		mechaPreviewSize.h = MECHA_PREVIEW_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f;
 
 
-		mechaNamePos.x = MECHA_NAME_TEXT_LEFT / GAME_WINDOW_WIDTH * 2.0f;
-		mechaNamePos.y = MECHA_NAME_TEXT_TOP / GAME_WINDOW_HEIGHT * 2.0f;
+		mechaNamePos.x = MECHA_NAME_TEXT_LEFT / GAME_SPRITE_WIDTH * 2.0f;
+		mechaNamePos.y = MECHA_NAME_TEXT_TOP / GAME_SPRITE_HEIGHT * 2.0f;
 
-		mechaNameSize.w = MECHA_NAME_TEXT_WIDTH / GAME_WINDOW_WIDTH * 2.0f;
-		mechaNameSize.h = MECHA_NAME_TEXT_HEIGHT / GAME_WINDOW_HEIGHT * 2.0f;
+		mechaNameSize.w = MECHA_NAME_TEXT_WIDTH / GAME_SPRITE_WIDTH * 2.0f;
+		mechaNameSize.h = MECHA_NAME_TEXT_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f;
 	}
 
 public:
@@ -133,12 +133,11 @@ public:
 		if (ChPtr::NullCheck(selectImage))return;
 
 		_drawer.Draw(*selectImage, sprite);
-
 	}
 
 public:
 
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, bool _isSelectPanel)override
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<LoadItem>(_drawItem);
 		if (item == nullptr)return;
@@ -193,7 +192,7 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 	MenuBase::InitMenu(_controller);
 
 	device = _device;
-	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_WINDOW_WIDTH), static_cast<unsigned long>(GAME_WINDOW_HEIGHT));
+	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_SPRITE_WIDTH), static_cast<unsigned long>(GAME_SPRITE_HEIGHT));
 
 	meshDrawer.Init(_device);
 	meshDrawer.SetCullMode(D3D11_CULL_MODE::D3D11_CULL_BACK);
@@ -240,8 +239,8 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 	selectList = ChPtr::Make_S<LoadPanelList>();
 	selectList->Init();
 	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(UP_BUTTON_TOP));
-	selectList->SetPanelSize(SELECT_PANEL_WIDTH / GAME_WINDOW_WIDTH * 2.0f, (UP_BUTTON_BOTTOM - UP_BUTTON_TOP) / GAME_WINDOW_HEIGHT * 2.0f);
-	selectList->SetAlighSize((SELECT_PANEL_WIDTH + SELECT_PANEL_ALIGN) / GAME_WINDOW_WIDTH * 2.0f, 0.0f);
+	selectList->SetPanelSize(SELECT_PANEL_WIDTH / GAME_SPRITE_WIDTH * 2.0f, (UP_BUTTON_BOTTOM - UP_BUTTON_TOP) / GAME_SPRITE_HEIGHT * 2.0f);
+	selectList->SetAlighSize((SELECT_PANEL_WIDTH + SELECT_PANEL_ALIGN) / GAME_SPRITE_WIDTH * 2.0f, 0.0f);
 	selectList->SetDrawCount(PANEL_DRAW_COUNT);
 	selectList->SetMoveDiraction(MoveDiraction::Horizontal);
 	selectList->SetBackGroundImage(&loadPanelImage);

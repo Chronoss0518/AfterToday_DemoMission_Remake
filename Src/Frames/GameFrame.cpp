@@ -104,7 +104,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	meshDrawer.SetAlphaBlendFlg(true);
 
 	lightBloomeDrawer.Init(ChD3D11::D3D11Device());
-	lightBloomeDrawer.SetBlurPower(10);
+	lightBloomeDrawer.SetBlurPower(5);
 	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT));
 
 	shotTargetDrawer.Init(ChD3D11::D3D11Device());
@@ -114,7 +114,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	shotTargetBorad.Init(ChD3D11::D3D11Device());
 	shotTargetBorad.SetInitSquare();
 
-	ChVec4 rect = ChVec4::FromRect((GAME_WINDOW_WIDTH - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_HEIGHT - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_WIDTH + SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_WINDOW_HEIGHT + SHOT_TARGET_MARKER_SIZE) * 0.5f);
+	ChVec4 rect = ChVec4::FromRect((GAME_SPRITE_WIDTH - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_HEIGHT - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_WIDTH + SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_HEIGHT + SHOT_TARGET_MARKER_SIZE) * 0.5f);
 	rect = RectToGameWindow(rect);
 
 	for (unsigned char i = 0; i < 4; i++)
@@ -821,7 +821,6 @@ void GameFrame::Render3D(void)
 	lightBloomeDrawer.DrawEnd();
 
 	light.SetUseLightFlg(false);
-	light.SetPSDrawData(ChD3D11::D3D11DC());
 
 	shotTargetDrawer.DrawStart(ChD3D11::D3D11DC());
 	
