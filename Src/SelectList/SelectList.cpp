@@ -117,7 +117,7 @@ void SelectListBase::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 	for (unsigned long i = drawPos;i< drawUseCount + drawPos;i++)
 	{
 		unsigned long num = i % itemList.size();
-		DrawPanel(_drawer, rect, itemList[num],nowSelectPanel == num);
+		DrawPanel(_drawer, rect, itemList[num],i,nowSelectPanel == num);
 
 		rect = GetNextRect(rect);
 	}

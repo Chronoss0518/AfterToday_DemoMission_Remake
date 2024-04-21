@@ -21,9 +21,9 @@ class SelectListBase
 {
 public:
 
-	void Init();
+	virtual void Init();
 
-	void Release();
+	virtual void Release();
 
 public:
 
@@ -55,6 +55,11 @@ public:
 		return itemList[_num];
 	}
 
+	inline unsigned long GetCount()
+	{
+		return itemList.size();
+	}
+
 public:
 
 	bool UpdateMouse();
@@ -71,7 +76,7 @@ public:
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer);
 
-	virtual void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect,ChPtr::Shared<SelectListItemBase> _drawItem, bool _isSelectPanel) = 0;
+	virtual void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo , bool _isSelectPanel) = 0;
 
 public:
 
