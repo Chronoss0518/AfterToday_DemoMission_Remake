@@ -61,6 +61,8 @@ PartsParameters& PartsParameters::operator = (const PartsParameters& _parts)
 	{
 		weaponData.push_back(weapon);
 	}
+
+	return *this;
 }
 
 PartsParameters& PartsParameters::operator += (const PartsParameters& _parts)
@@ -115,9 +117,11 @@ PartsParameters& PartsParameters::operator += (const PartsParameters& _parts)
 	{
 		weaponData.push_back(weapon);
 	}
+
+	return *this;
 }
 
-PartsParameters& PartsParameters::operator + (const PartsParameters& _parts)const
+PartsParameters PartsParameters::operator + (const PartsParameters& _parts)const
 {
 	PartsParameters res = *this;
 	res += _parts;
@@ -178,9 +182,11 @@ PartsParameters& PartsParameters::operator -= (const PartsParameters& _parts)
 		if (it == weaponData.end())continue;
 		weaponData.erase(it);
 	}
+
+	return *this;
 }
 
-PartsParameters& PartsParameters::operator - (const PartsParameters& _parts)const
+PartsParameters PartsParameters::operator - (const PartsParameters& _parts)const
 {
 	PartsParameters res = *this;
 	res -= _parts;

@@ -23,10 +23,10 @@ namespace PartsParameterStruct
 
 	struct BoostData
 	{
-		unsigned long boostUseEnelgy = 0;
 		float boostPower = 0.0f;
-		unsigned long avoidUseEnelgy = 0;
+		unsigned long boostUseEnelgy = 0;
 		float avoidPower = 0.0f;
+		unsigned long avoidUseEnelgy = 0;
 		unsigned long avoidWait = 0;
 	};
 
@@ -83,6 +83,8 @@ namespace PartsParameterStruct
 
 	struct WeaponData
 	{
+		virtual ~WeaponData(){}
+
 		std::string partsName = "";
 		std::string weaponName = "";
 
@@ -103,7 +105,7 @@ namespace PartsParameterStruct
 		unsigned long bulletNum = 0;
 		unsigned long magazineNum = 0;
 		unsigned long reloadTime = 0;
-		unsigned char range = 0;
+		unsigned long range = 0;
 	};
 
 }
@@ -113,9 +115,9 @@ struct PartsParameters:public ChCpp::BaseComponent
 	PartsParameters& operator = (const PartsParameters& _parts);
 
 	PartsParameters& operator += (const PartsParameters& _parts);
-	PartsParameters& operator + (const PartsParameters& _parts)const;
+	PartsParameters operator + (const PartsParameters& _parts)const;
 	PartsParameters& operator -= (const PartsParameters& _parts);
-	PartsParameters& operator - (const PartsParameters& _parts)const;
+	PartsParameters operator - (const PartsParameters& _parts)const;
 
 	PartsParameterStruct::MainData mainData;
 
