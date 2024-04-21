@@ -198,8 +198,6 @@ public:
 
 	MechaPartsObject* GetParent() { return parentObject; }
 
-	ChPtr::Shared<ChCpp::FrameObject> GetPositionObejct() { return positionObject; }
-
 public:
 
 	void Update();
