@@ -189,6 +189,8 @@ ChVec4 SelectListBase::UpdateRightBottomInRect(const ChVec4& _rect)
 
 void SelectListBase::MoveAdd()
 {
+	if (!loopFlg && drawPos + drawCount == itemList.size())return;
+
 	if (drawCount < itemList.size())
 	{
 		if (nowSelectPanel == ((drawPos + drawCount - 1) % itemList.size()))
@@ -200,6 +202,8 @@ void SelectListBase::MoveAdd()
 
 void SelectListBase::MoveSub()
 {
+	if (!loopFlg && 0 == drawPos)return;
+
 	if (drawCount < itemList.size())
 	{
 		if (nowSelectPanel == drawPos)

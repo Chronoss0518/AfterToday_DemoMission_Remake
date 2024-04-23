@@ -27,6 +27,8 @@ public:
 
 public:
 
+	inline void SetLoopFlg(bool _flg) { loopFlg = _flg; }
+
 	void SetStartPosition(float _x, float _y);
 
 	void SetStartPosition(const ChVec2& _position);
@@ -109,6 +111,8 @@ private:
 	unsigned long drawCount = 0;
 	unsigned long drawPos = 0;
 	unsigned long nowSelectPanel = 0;
+
+	bool loopFlg = true;
 
 	ChVec2 startPosition;
 	ChVec2 basePanelSize;
