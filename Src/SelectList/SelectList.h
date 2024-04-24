@@ -17,6 +17,7 @@ enum class MoveDiraction
 	Horizontal
 };
 
+//rectは射影座標系ではなくスクリーン座標系//
 class SelectListBase
 {
 public:

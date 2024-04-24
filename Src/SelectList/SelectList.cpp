@@ -169,7 +169,7 @@ ChVec4 SelectListBase::GetNextRect(const ChVec4& _rect)
 	ChVec4 res = _rect;
 
 	res.left += alighSize.x;
-	res.top -= alighSize.y;
+	res.top += alighSize.y;
 
 	res = UpdateRightBottomInRect(res);
 
@@ -182,7 +182,7 @@ ChVec4 SelectListBase::UpdateRightBottomInRect(const ChVec4& _rect)
 	ChVec4 res = _rect;
 
 	res.right = res.left + basePanelSize.x;
-	res.bottom = res.top - basePanelSize.y;
+	res.bottom = res.top + basePanelSize.y;
 
 	return res;
 }
