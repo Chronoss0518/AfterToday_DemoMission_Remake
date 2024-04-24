@@ -96,19 +96,6 @@ public:
 		sprite.Init();
 		mechaPreviewSprite.Init();
 		mechaNameSprite.Init();
-
-		mechaPreviewPos.x = MECHA_PREVIEW_LEFT / GAME_SPRITE_WIDTH * 2.0f;
-		mechaPreviewPos.y = MECHA_PREVIEW_TOP / GAME_SPRITE_HEIGHT * 2.0f;
-
-		mechaPreviewSize.w = MECHA_PREVIEW_WIDTH / GAME_SPRITE_WIDTH * 2.0f;
-		mechaPreviewSize.h = MECHA_PREVIEW_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f;
-
-
-		mechaNamePos.x = MECHA_NAME_TEXT_LEFT / GAME_SPRITE_WIDTH * 2.0f;
-		mechaNamePos.y = MECHA_NAME_TEXT_TOP / GAME_SPRITE_HEIGHT * 2.0f;
-
-		mechaNameSize.w = MECHA_NAME_TEXT_WIDTH / GAME_SPRITE_WIDTH * 2.0f;
-		mechaNameSize.h = MECHA_NAME_TEXT_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f;
 	}
 
 public:
@@ -143,22 +130,22 @@ public:
 		if (item == nullptr)return;
 		if (ChPtr::NullCheck(backGroundImage))return;
 
-		sprite.SetPosRect(_rect);
+		sprite.SetPosRect(RectToGameWindow(_rect));
 		ChVec4 tmpRect = _rect;
-		tmpRect.left += mechaPreviewPos.x;
-		tmpRect.top -= mechaPreviewPos.y;
+		tmpRect.left += MECHA_PREVIEW_LEFT;
+		tmpRect.top += MECHA_PREVIEW_TOP;
 
-		tmpRect.right = tmpRect.left + mechaPreviewSize.w;
-		tmpRect.bottom = tmpRect.top - mechaPreviewSize.h;
+		tmpRect.right = tmpRect.left + MECHA_PREVIEW_WIDTH;
+		tmpRect.bottom = tmpRect.top + MECHA_PREVIEW_HEIGHT;
 
-		mechaPreviewSprite.SetPosRect(tmpRect);
+		mechaPreviewSprite.SetPosRect(RectToGameWindow(tmpRect));
 		tmpRect = _rect;
-		tmpRect.left += mechaNamePos.x;
-		tmpRect.top -= mechaNamePos.y;
+		tmpRect.left += MECHA_NAME_TEXT_LEFT;
+		tmpRect.top += MECHA_NAME_TEXT_TOP;
 
-		tmpRect.right = tmpRect.left + mechaNameSize.w;
-		tmpRect.bottom = tmpRect.top - mechaNameSize.h;
-		mechaNameSprite.SetPosRect(tmpRect);
+		tmpRect.right = tmpRect.left + MECHA_NAME_TEXT_WIDTH;
+		tmpRect.bottom = tmpRect.top + MECHA_NAME_TEXT_HEIGHT;
+		mechaNameSprite.SetPosRect(RectToGameWindow(tmpRect));
 
 		_drawer.Draw(*backGroundImage, sprite);
 		_drawer.Draw(item->mechaTexture, mechaPreviewSprite);
@@ -173,12 +160,6 @@ private:
 	ChD3D11::Sprite11 sprite;
 	ChD3D11::Sprite11 mechaPreviewSprite;
 	ChD3D11::Sprite11 mechaNameSprite;
-
-	ChVec2 mechaPreviewPos;
-	ChVec2 mechaPreviewSize;
-
-	ChVec2 mechaNamePos;
-	ChVec2 mechaNameSize;
 
 	ChD3D11::Texture11* selectImage = nullptr;
 	ChD3D11::Texture11* backGroundImage = nullptr;
@@ -238,9 +219,9 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 
 	selectList = ChPtr::Make_S<LoadPanelList>();
 	selectList->Init();
-	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(UP_BUTTON_TOP));
-	selectList->SetPanelSize(SELECT_PANEL_WIDTH / GAME_SPRITE_WIDTH * 2.0f, (UP_BUTTON_BOTTOM - UP_BUTTON_TOP) / GAME_SPRITE_HEIGHT * 2.0f);
-	selectList->SetAlighSize((SELECT_PANEL_WIDTH + SELECT_PANEL_ALIGN) / GAME_SPRITE_WIDTH * 2.0f, 0.0f);
+	selectList->SetStartPosition(SELECT_PANEL_LEFT, UP_BUTTON_TOP);
+	selectList->SetPanelSize(SELECT_PANEL_WIDTH, (UP_BUTTON_BOTTOM - UP_BUTTON_TOP));
+	selectList->SetAlighSize((SELECT_PANEL_WIDTH + SELECT_PANEL_ALIGN), 0.0f);
 	selectList->SetDrawCount(PANEL_DRAW_COUNT);
 	selectList->SetMoveDiraction(MoveDiraction::Horizontal);
 	selectList->SetBackGroundImage(&loadPanelImage);

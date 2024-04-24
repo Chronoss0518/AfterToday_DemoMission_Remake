@@ -66,7 +66,7 @@ public:
 		auto&& item = ChPtr::SharedSafeCast<StageSelectListItem>(_drawItem);
 		if (item == nullptr)return;
 
-		sprite.SetPosRect(_rect);
+		sprite.SetPosRect(RectToGameWindow(_rect));
 
 		DrawSelect(_drawer, _isSelectPanel);
 
@@ -110,9 +110,9 @@ void StageSelectDisplay::Init()
 
 	selectList = ChPtr::Make_S<StageSelectList>();
 	selectList->Init();
-	selectList->SetStartPosition(HorizontalToProjection(SELECT_PANEL_LEFT), VerticalToProjection(SELECT_PANEL_LIST_TOP));
-	selectList->SetPanelSize(STAGE_SELECT_PANEL_WIDTH / GAME_SPRITE_WIDTH * 2.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f);
-	selectList->SetAlighSize(0.0f, STAGE_SELECT_PANEL_HEIGHT / GAME_SPRITE_HEIGHT * 2.0f);
+	selectList->SetStartPosition(SELECT_PANEL_LEFT, SELECT_PANEL_LIST_TOP);
+	selectList->SetPanelSize(STAGE_SELECT_PANEL_WIDTH, STAGE_SELECT_PANEL_HEIGHT);
+	selectList->SetAlighSize(0.0f, STAGE_SELECT_PANEL_HEIGHT);
 	selectList->SetDrawCount(PANEL_DRAW_COUNT);
 
 	selectList->SetSelectImage(&panelSelectImage);
