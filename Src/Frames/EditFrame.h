@@ -65,9 +65,9 @@ private:
 	unsigned long loadCount = 0;
 	bool loadEndFlg = false;
 
-	TextDrawerWICBitmap panelAllDrawer;//パネル全体でPositionNameを描画する
-	TextDrawerWICBitmap positionNameDrawer;//パーツネームが確認できた際にPosition名を描画する
-	TextDrawerWICBitmap partsNameDrawer;//パーツ名を描画する
+	TextDrawerWICBitmap panelTitleDrawer;//パネル全体でPositionNameを描画する
+	TextDrawerWICBitmap panelPosTitleDrawer;//パーツネームが確認できた際にPosition名を描画する
+	TextDrawerWICBitmap panelPosPartsDrawer;//パーツ名を描画する
 
 	std::vector<std::string>coreList;
 

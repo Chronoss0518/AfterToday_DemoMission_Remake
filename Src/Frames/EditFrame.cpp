@@ -1,10 +1,10 @@
-
 #include"../BaseIncluder.h"
 
 #include"EditFrame.h"
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaParts.h"
 #include"../BaseMecha/MechaPartsObject.h"
+#include"../Attack/Attack.h"
 
 #include"../EditFrame/ParameterList.h"
 
@@ -16,15 +16,28 @@
 
 #define MECHA_ROTATION_SPEED 1.0f
 
-#define PANEL_SIZE_W 0.0f
-#define PANEL_SIZE_H 0.0f
+#define PARTS_PANEL_LIST_X 30.0f
+#define PARTS_PANEL_LIST_Y 141.0f
 
-#define PARTS_TITLE_POSITION_X 0.0f
-#define PARTS_TITLE_POSITION_Y 0.0f
-#define PARTS_TITLE_POSITION_WIDTH 0.0f
-#define PARTS_TITLE_POSITION_HEIGHT 0.0f
+#define PANEL_COUNT 4
 
-#define LEFT_PANEL_WIDTH 0.0f
+#define PANEL_SIZE_W 280.0f
+#define PANEL_SIZE_H 102.0f
+
+#define PANEL_TEXT_X 8.0f
+#define PANEL_TEXT_WIDTH 264.0f
+
+#define PANEL_TITLE_Y 26.0f
+#define PANEL_TITLE_HEIGHT 45.0f
+#define PANEL_TITLE_TEXT_SIZE 32.0f
+
+#define PANEL_POS_TITLE_Y 17.0f
+#define PANEL_POS_TITLE_HEIGHT 25.0f
+#define PANEL_POS_TITLE_TEXT_SIZE 24.0f
+
+#define PANEL_POS_PARTS_Y 42.0f
+#define PANEL_POS_PARTS_HEIGHT 45.0f
+#define PANEL_POS_PARTS_TEXT_SIZE 32.0f
 
 #define TMP_CAMERA_POS ChVec3(0.0f, 2.5f, 10.0f)
 
@@ -32,8 +45,45 @@ class EditListItem : public SelectListItemBase
 {
 public:
 
-	ChD3D11::Texture11 positionNameTexture;
-	ChD3D11::Texture11 partsNameTexture;
+	inline virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)
+	{
+		ChVec4 rect = _rect;
+		rect.left += PANEL_TEXT_X;
+		rect.right -= PANEL_TEXT_X;
+		rect.top += PANEL_TITLE_Y;
+		rect.bottom += rect.top + PANEL_TITLE_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+	}
+
+	ChPtr::Shared<ChD3D11::Texture11> positionNameTexture = nullptr;
+};
+
+class EditListPartsItem : public EditListItem
+{
+public:
+
+	inline void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)override
+	{
+		ChVec4 rect = _rect;
+		rect.left += PANEL_TEXT_X;
+		rect.right -= PANEL_TEXT_X;
+		rect.top += PANEL_POS_TITLE_Y;
+		rect.bottom += rect.top + PANEL_POS_TITLE_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+
+		rect.top += _rect.top + PANEL_POS_PARTS_Y;
+		rect.bottom += rect.top + PANEL_POS_PARTS_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+	}
+
+	ChPtr::Shared<ChD3D11::Texture11>  partsNameTexture = nullptr;
+
 };
 
 class EditList :public SelectListBase
@@ -43,13 +93,6 @@ public:
 	EditList()
 	{
 		sprite.Init();
-	}
-
-public:
-
-	void Init()override
-	{
-
 	}
 
 public:
@@ -75,10 +118,7 @@ public:
 		auto&& item = ChPtr::SharedSafeCast<EditListItem>(_drawItem);
 		if (item == nullptr)return;
 
-		sprite.SetPosRect(_rect);
-
-		_drawer.Draw(item->positionNameTexture, sprite);
-		_drawer.Draw(item->partsNameTexture, sprite);
+		item->Draw(_drawer, _rect, sprite);
 
 		DrawSelect(_drawer, _isSelectPanel);
 	}
@@ -133,6 +173,10 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	parameterList = ChPtr::Make_S<ParameterList>();
 
 	partsList = ChPtr::Make_S<EditList>();
+	partsList->SetDrawCount(PANEL_COUNT);
+	partsList->SetMoveDiraction(MoveDiraction::Vertical);
+	partsList->SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
+	partsList->SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
 
 	selectFlg = false;
 
@@ -145,6 +189,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 void EditFrame::Release()
 {
 	loadDisplay = nullptr;
+
+	MechaParts::ClearPartsList();
+	Attack::AllRelease();
 }
 
 void EditFrame::Update()
@@ -156,10 +203,10 @@ void EditFrame::Update()
 		MenuBase::UpdateFunction();
 
 		auto&& rotate = editMecha->GetRotation();
+		rotate.AddRotationYAxis(ChMath::ToRadian(MECHA_ROTATION_SPEED));
 
-		editMecha->SetRotation(rotate + ChVec3(0.0f, MECHA_ROTATION_SPEED, 0.0f));
+		editMecha->SetRotation(rotate);
 	}
-
 
 	DrawFunction();
 }
