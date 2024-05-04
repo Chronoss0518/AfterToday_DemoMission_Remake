@@ -95,6 +95,7 @@ public:
 protected:
 
 	std::string useFileName = "";
+	std::string objectName = "";
 
 	//ˆÐ—Í//
 	unsigned long penetration = 0;

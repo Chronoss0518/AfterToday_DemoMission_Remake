@@ -112,11 +112,22 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* 
 
 	auto attack = ChPtr::Make_S<Attack>();
 
+	attack->useFileName = _fileName;
+	attack->objectName = _fileName;
+
+	if (_fileName.find("/"))
+	{
+		attack->objectName = _fileName.substr(_fileName.find_last_of("/") + 1);
+	}
+
+	if (attack->objectName.find("."))
+	{
+		attack->objectName = attack->objectName.substr(0, attack->objectName.find("."));
+	}
+
 	attack->SetMeshDrawer(_drawer);
 
 	attack->Deserialize(_device, text);
-
-	attack->SetMeshDrawer(_drawer);
 
 	return attack;
 
@@ -182,7 +193,7 @@ void Attack::SetPartameter(PartsParameterStruct::WeaponData& _partsParameter)
 {
 	auto&& attack = ChPtr::Make_S<PartsParameterStruct::AttackData>();
 
-	attack->objectName = useFileName;
+	attack->objectName = objectName;
 	attack->penetration = penetration;
 
 	attack->hitSize = hitSize;
