@@ -31,7 +31,7 @@ ChPtr::Shared<ParameterTitlePanel> ParameterTitlePanel::CreatePanel(ID3D11Device
 void ParameterTitlePanel::CreateTitle(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title)
 {
 	if (_title.length() <= 0)return;
-
+	title = nullptr;
 	title = ChPtr::Make_S<ChD3D11::Texture11>();
 
 	CreateTitleImage(_textDrawer, _device, _title);
@@ -250,67 +250,90 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 
 	*nextPartsParameter = *basePartsParameter = *coreBaseObj->GetComponent<PartsParameters>();
 
-	AddAllParameterData(baseParameter);
+	AddAllParameterData(*basePartsParameter,baseParameter);
 
 	*nextAllParameter = *baseAllParameter;
 
-	displays[ChStd::EnumCast(DisplayType::Partial)]->Init(titleBGTexture, valueBGTexture, *basePartsParameter, *nextPartsParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
-	displays[ChStd::EnumCast(DisplayType::Entire)]->Init(titleBGTexture, valueBGTexture, *baseAllParameter, *nextAllParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
+	displays[ChStd::EnumCast(DisplayType::Partial)]->Init(titleBGTexture, valueBGTexture, basePartsParameter, nextPartsParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
+	displays[ChStd::EnumCast(DisplayType::Entire)]->Init(titleBGTexture, valueBGTexture, baseAllParameter, nextAllParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
 
 }
 
-void ParameterList::AddParameterData(ChPtr::Shared<MechaPartsObject> _partsObject)
+void ParameterList::SetBaseParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject)
+{
+	SubParameterData(*basePartsParameter,baseParameter);
+	SubAllParameterData(*baseAllParameter,baseParameter);
+	AddParameterData(*basePartsParameter,_partsObject);
+	AddAllParameterData(*baseAllParameter,_partsObject);
+	*nextPartsParameter = *basePartsParameter;
+	*nextAllParameter = *baseAllParameter;
+	baseParameter = nullptr;
+	baseParameter = _partsObject;
+	UpdateDisplayParameter(_device);
+}
+
+void ParameterList::SetNextParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject)
+{
+	SubParameterData(*nextPartsParameter, baseParameter);
+	AddParameterData(*nextPartsParameter, _partsObject);
+	baseParameter = nullptr;
+	baseParameter = _partsObject;
+	UpdateDisplayParameter(_device);
+}
+
+void ParameterList::AddParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
 	if (_partsObject == nullptr)return;
 
-	auto&& coreBaseObj = _partsObject->GetBaseMecha();
+	auto&& coreBaseObj = _partsObject->GetBaseObject();
 
-	*baseAllParameter += *coreBaseObj->GetComponent<PartsParameters>();
+	_parameter += *coreBaseObj->GetComponent<PartsParameters>();
 }
 
-void ParameterList::AddAllParameterData(ChPtr::Shared<MechaPartsObject> _partsObject)
+void ParameterList::AddAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
 	return;
 	if (_partsObject == nullptr)return;
 
 	auto&& coreBaseObj = _partsObject->GetBaseObject();
 
-	*baseAllParameter += *coreBaseObj->GetComponent<PartsParameters>();
+	_parameter += *coreBaseObj->GetComponent<PartsParameters>();
 
 	auto&& nextPosList = coreBaseObj->GetComponents<NextPos>();
 
 	for (auto&& nextPos : nextPosList)
 	{
 		std::string nexPosName = nextPos->GetObjectName();
-		AddAllParameterData(_partsObject->GetChildParts(nexPosName));
+		AddAllParameterData(_parameter,_partsObject->GetChildParts(nexPosName));
 	}
 
 }
 
-void ParameterList::SubParameterData(ChPtr::Shared<MechaPartsObject> _partsObject)
+void ParameterList::SubParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
 	if (_partsObject == nullptr)return;
 
-	auto&& coreBaseObj = _partsObject->GetBaseMecha();
+	auto&& coreBaseObj = _partsObject->GetBaseObject();
 
-	*baseAllParameter -= *coreBaseObj->GetComponent<PartsParameters>();
+	_parameter -= *coreBaseObj->GetComponent<PartsParameters>();
 
 }
 
-void ParameterList::SubAllParameterData(ChPtr::Shared<MechaPartsObject> _partsObject)
+void ParameterList::SubAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
+	return;
 	if (_partsObject == nullptr)return;
 
-	auto&& coreBaseObj = _partsObject->GetBaseMecha();
+	auto&& coreBaseObj = _partsObject->GetBaseObject();
 
-	*baseAllParameter -= *coreBaseObj->GetComponent<PartsParameters>();
+	_parameter -= *coreBaseObj->GetComponent<PartsParameters>();
 
 	auto&& nextPosList = coreBaseObj->GetComponents<NextPos>();
 
 	for (auto&& nextPos : nextPosList)
 	{
 		std::string nexPosName = nextPos->GetObjectName();
-		SubAllParameterData(_partsObject->GetChildParts(nexPosName));
+		SubAllParameterData(_parameter,_partsObject->GetChildParts(nexPosName));
 	}
 
 }
@@ -332,16 +355,14 @@ bool ParameterList::Update(MenuBase::ActionType _type)
 	return false;
 }
 
-void ParameterList::UpdateDisplayParameter()
+void ParameterList::UpdateDisplayParameter(ID3D11Device* _device)
 {
 	if (baseParameter == nullptr)return;
 	if (nextParameter == nullptr)return;
 
-
-
 	for (unsigned char i = 0; i < DISPLAY_TYPE_COUNT; i++)
 	{
-		//displays[i]->Update();
+		displays[i]->Update(_device, textDrawer, titleTextDrawer, valueTextDrawer);;
 	}
 
 }

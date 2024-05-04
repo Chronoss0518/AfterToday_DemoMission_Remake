@@ -73,72 +73,73 @@
 #define UP_TEXT_COLOR ChVec4::FromColor(1.0f,0.0f,0.0f,1.0f)
 #define DOWN_TEXT_COLOR ChVec4::FromColor(0.0f,0.0f,1.0f,1.0f)
 
-void ParameterPartialDisplay::Init(PartsParameters& _baseParameterList, PartsParameters& _nextParameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+void ParameterPartialDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 	emptyPanel = ParameterTitlePanel::CreatePanel(_device, _textDrawer, "");
 	emptyPanel->SetBackGround(titleBGTexture);
 
 	AddParameters(_device, _textDrawer, "Main Data");
-	AddParameters(_device, _textDrawer, "Main Data",_titleDrawer, MAIN_DATA_HARDNESS, _valueDrawer, &_baseParameterList.mainData.hardness, &_nextParameterList.mainData.hardness,false);
-	AddParameters(_device, _textDrawer, "Main Data",_titleDrawer, MAIN_DATA_MASS, _valueDrawer, &_baseParameterList.mainData.mass, &_nextParameterList.mainData.mass, true);
+	AddParameters(_device, _textDrawer, "Main Data",_titleDrawer, MAIN_DATA_HARDNESS, _valueDrawer, &baseParameter->mainData.hardness, &nextParameter->mainData.hardness,false);
+	AddParameters(_device, _textDrawer, "Main Data",_titleDrawer, MAIN_DATA_MASS, _valueDrawer, &baseParameter->mainData.mass, &nextParameter->mainData.mass, true);
 
 	AddParameters(_device, _textDrawer, "Enelgy Tank Data");
-	AddParameters(_device, _textDrawer, "Enelgy Tank Data", _titleDrawer, ENELGY_TANK_DATA_MAX_ENELGY, _valueDrawer, &_baseParameterList.enelgyTankData.chargeEnelgy, &_nextParameterList.enelgyTankData.chargeEnelgy, false);
-	AddParameters(_device, _textDrawer, "Enelgy Tank Data", _titleDrawer, ENELGY_TANK_DATA_CHARGE_ENELGY, _valueDrawer, &_baseParameterList.enelgyTankData.maxEnelgy, &_nextParameterList.enelgyTankData.maxEnelgy, false);
+	AddParameters(_device, _textDrawer, "Enelgy Tank Data", _titleDrawer, ENELGY_TANK_DATA_MAX_ENELGY, _valueDrawer, &baseParameter->enelgyTankData.chargeEnelgy, &nextParameter->enelgyTankData.chargeEnelgy, false);
+	AddParameters(_device, _textDrawer, "Enelgy Tank Data", _titleDrawer, ENELGY_TANK_DATA_CHARGE_ENELGY, _valueDrawer, &baseParameter->enelgyTankData.maxEnelgy, &nextParameter->enelgyTankData.maxEnelgy, false);
 
 	AddParameters(_device, _textDrawer, "Walk Data");
-	AddParameters(_device, _textDrawer, "Walk Data", _titleDrawer, WALK_DATA_MOVE_POWER, _valueDrawer, &_baseParameterList.walkData.movePower, &_nextParameterList.walkData.movePower,false);
-	AddParameters(_device, _textDrawer, "Walk Data", _titleDrawer, WALK_DATA_ROTATE_POWER, _valueDrawer, &_baseParameterList.walkData.rotatePower, &_nextParameterList.walkData.rotatePower, false);
-	AddParameters(_device, _textDrawer, "Walk Data", _titleDrawer, WALK_DATA_JUMP_POWER, _valueDrawer, &_baseParameterList.walkData.jumpPower, &_nextParameterList.walkData.jumpPower, false);
+	AddParameters(_device, _textDrawer, "Walk Data", _titleDrawer, WALK_DATA_MOVE_POWER, _valueDrawer, &baseParameter->walkData.movePower, &nextParameter->walkData.movePower,false);
+	AddParameters(_device, _textDrawer, "Walk Data", _titleDrawer, WALK_DATA_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.rotatePower, &nextParameter->walkData.rotatePower, false);
+	AddParameters(_device, _textDrawer, "Walk Data", _titleDrawer, WALK_DATA_JUMP_POWER, _valueDrawer, &baseParameter->walkData.jumpPower, &nextParameter->walkData.jumpPower, false);
 
 	AddParameters(_device, _textDrawer, "Front Boost Data");
-	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.boostPower, &_nextParameterList.frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &_baseParameterList.frontBoostData.boostUseEnelgy, &_nextParameterList.frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.avoidPower, &_nextParameterList.frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &_baseParameterList.frontBoostData.avoidUseEnelgy, &_nextParameterList.frontBoostData.avoidUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &_baseParameterList.frontBoostData.avoidWait, &_nextParameterList.frontBoostData.avoidWait, true);
+	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->frontBoostData.boostPower, &nextParameter->frontBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->frontBoostData.boostUseEnelgy, &nextParameter->frontBoostData.boostUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->frontBoostData.avoidPower, &nextParameter->frontBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->frontBoostData.avoidUseEnelgy, &nextParameter->frontBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->frontBoostData.avoidWait, &nextParameter->frontBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, "Back Boost Data");
-	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.boostPower, &_nextParameterList.frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &_baseParameterList.frontBoostData.boostUseEnelgy, &_nextParameterList.frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.avoidPower, &_nextParameterList.frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &_baseParameterList.frontBoostData.avoidUseEnelgy, &_nextParameterList.frontBoostData.avoidUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &_baseParameterList.frontBoostData.avoidWait, &_nextParameterList.frontBoostData.avoidWait, true);
+	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->backBoostData.boostPower, &nextParameter->backBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->backBoostData.boostUseEnelgy, &nextParameter->backBoostData.boostUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->backBoostData.avoidPower, &nextParameter->backBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->backBoostData.avoidUseEnelgy, &nextParameter->backBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->backBoostData.avoidWait, &nextParameter->backBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, "Right Boost Data");
-	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.boostPower, &_nextParameterList.frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &_baseParameterList.frontBoostData.boostUseEnelgy, &_nextParameterList.frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.avoidPower, &_nextParameterList.frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &_baseParameterList.frontBoostData.avoidUseEnelgy, &_nextParameterList.frontBoostData.avoidUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &_baseParameterList.frontBoostData.avoidWait, &_nextParameterList.frontBoostData.avoidWait, true);
+	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->rightBoostData.boostPower, &nextParameter->rightBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->rightBoostData.boostUseEnelgy, &nextParameter->rightBoostData.boostUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->rightBoostData.avoidPower, &nextParameter->rightBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->rightBoostData.avoidUseEnelgy, &nextParameter->rightBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->rightBoostData.avoidWait, &nextParameter->rightBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, "Left Boost Data");
-	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.boostPower, &_nextParameterList.frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &_baseParameterList.frontBoostData.boostUseEnelgy, &_nextParameterList.frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.avoidPower, &_nextParameterList.frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &_baseParameterList.frontBoostData.avoidUseEnelgy, &_nextParameterList.frontBoostData.avoidUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &_baseParameterList.frontBoostData.avoidWait, &_nextParameterList.frontBoostData.avoidWait, true);
+	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->leftBoostData.boostPower, &nextParameter->leftBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->leftBoostData.boostUseEnelgy, &nextParameter->leftBoostData.boostUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->leftBoostData.avoidPower, &nextParameter->leftBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->leftBoostData.avoidUseEnelgy, &nextParameter->leftBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->leftBoostData.avoidWait, &nextParameter->leftBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, "Up Boost Data");
-	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.boostPower, &_nextParameterList.frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &_baseParameterList.frontBoostData.boostUseEnelgy, &_nextParameterList.frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.avoidPower, &_nextParameterList.frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &_baseParameterList.frontBoostData.avoidUseEnelgy, &_nextParameterList.frontBoostData.avoidUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &_baseParameterList.frontBoostData.avoidWait, &_nextParameterList.frontBoostData.avoidWait, true);
+	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->upBoostData.boostPower, &nextParameter->upBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->upBoostData.boostUseEnelgy, &nextParameter->upBoostData.boostUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->upBoostData.avoidPower, &nextParameter->upBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->upBoostData.avoidUseEnelgy, &nextParameter->upBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->upBoostData.avoidWait, &nextParameter->upBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, "Down Boost Data");
-	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.boostPower, &_nextParameterList.frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &_baseParameterList.frontBoostData.boostUseEnelgy, &_nextParameterList.frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &_baseParameterList.frontBoostData.avoidPower, &_nextParameterList.frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &_baseParameterList.frontBoostData.avoidUseEnelgy, &_nextParameterList.frontBoostData.avoidUseEnelgy, true);
-	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &_baseParameterList.frontBoostData.avoidWait, &_nextParameterList.frontBoostData.avoidWait, true);
+	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->downBoostData.boostPower, &nextParameter->downBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->downBoostData.boostUseEnelgy, &nextParameter->downBoostData.boostUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->downBoostData.avoidPower, &nextParameter->downBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->downBoostData.avoidUseEnelgy, &nextParameter->downBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, "Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->downBoostData.avoidWait, &nextParameter->downBoostData.avoidWait, true);
+
+	UpdateCountPanels(_device, _textDrawer);
 
 	baseParameterCount = panels.size();
 
-	AddWeaponParameters(_nextParameterList, _device, _textDrawer, _titleDrawer, _valueDrawer);
+	AddWeaponParameters(_device, _textDrawer, _titleDrawer, _valueDrawer);
 
-	UpdateCountPanels(_device,_textDrawer);
-
+	UpdateCountPanels(_device, _textDrawer);
 }
 
 void ParameterPartialDisplay::AddPanelList()
@@ -149,9 +150,9 @@ void ParameterPartialDisplay::AddPanelList()
 	countPanel->SetBackGround(titleBGTexture);
 }
 
-void ParameterPartialDisplay::AddWeaponParameters(PartsParameters& _parameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+void ParameterPartialDisplay::AddWeaponParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
-	for (auto&& weapon : _parameterList.weaponData)
+	for (auto&& weapon : nextParameter->weaponData)
 	{
 		AddParameters(_device, _textDrawer, weapon->weaponName);
 		AddParameters(_device, _textDrawer, weapon->weaponName, _titleDrawer, WEAPON_DATA_WAIT_TIME, _valueDrawer, &weapon->waitTime, &weapon->waitTime, true);
@@ -167,19 +168,19 @@ void ParameterPartialDisplay::AddSwordParameters(ChPtr::Shared<PartsParameterStr
 {
 	auto param = ChPtr::SharedSafeCast<PartsParameterStruct::SwordData>(_parameterList);
 	if (param == nullptr)return;
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, SWORD_DATA_DAMAGE_PAR_SPEED, _valueDrawer, &param->damageParSpeed, GetULWeaponParameter(), false);
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, SWORD_DATA_ATTACK_TIME, _valueDrawer, &param->attackTime, GetULWeaponParameter(), false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, SWORD_DATA_DAMAGE_PAR_SPEED, _valueDrawer, GetULWeaponParameter(), &param->damageParSpeed, false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, SWORD_DATA_ATTACK_TIME, _valueDrawer, GetULWeaponParameter(), &param->attackTime, false);
 }
 
 void ParameterPartialDisplay::AddGunParameters(ChPtr::Shared<PartsParameterStruct::WeaponData>& _parameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 	auto param = ChPtr::SharedSafeCast<PartsParameterStruct::GunData>(_parameterList);
 	if (param == nullptr)return;
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_FIRE_NUM, _valueDrawer, &param->fireNum, GetULWeaponParameter(),false);
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_BULLET_NUM, _valueDrawer, &param->bulletNum, GetULWeaponParameter(), false);
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_MAGAZINE_NUM, _valueDrawer, &param->magazineNum, GetULWeaponParameter(), false);
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_RELOAD_TIME, _valueDrawer, &param->reloadTime, GetULWeaponParameter(), false);
-	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_RANGE, _valueDrawer, &param->range, GetULWeaponParameter(), false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_FIRE_NUM, _valueDrawer, GetULWeaponParameter() ,&param->fireNum,false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_BULLET_NUM, _valueDrawer, GetULWeaponParameter() ,&param->bulletNum, false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_MAGAZINE_NUM, _valueDrawer, GetULWeaponParameter(), &param->magazineNum, false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_RELOAD_TIME, _valueDrawer, GetULWeaponParameter(), &param->reloadTime, false);
+	AddParameters(_device, _textDrawer, param->weaponName, _titleDrawer, GUN_DATA_RANGE, _valueDrawer, GetULWeaponParameter(), &param->range, false);
 }
 
 void ParameterPartialDisplay::AddAttackParameters(ChPtr::Shared<PartsParameterStruct::WeaponData>& _parameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
@@ -187,8 +188,8 @@ void ParameterPartialDisplay::AddAttackParameters(ChPtr::Shared<PartsParameterSt
 	for (auto&& attack : _parameterList->attackData)
 	{
 		AddParameters(_device, _textDrawer, attack->objectName);
-		AddParameters(_device, _textDrawer, attack->objectName, _titleDrawer, ATTACK_DATA_PENETRATION, _valueDrawer, &attack->penetration, GetULWeaponParameter(),false);
-		AddParameters(_device, _textDrawer, attack->objectName, _titleDrawer, ATTACK_DATA_HIT_SIZE, _valueDrawer, &attack->hitSize, GetFWeaponParameter(),false);
+		AddParameters(_device, _textDrawer, attack->objectName, _titleDrawer, ATTACK_DATA_PENETRATION, _valueDrawer, GetULWeaponParameter(), &attack->penetration, false);
+		AddParameters(_device, _textDrawer, attack->objectName, _titleDrawer, ATTACK_DATA_HIT_SIZE, _valueDrawer, GetFWeaponParameter(), &attack->hitSize,false);
 
 		for (auto&& attackObj : attack->attackDataBase)
 		{
@@ -204,31 +205,31 @@ void ParameterPartialDisplay::AddBulletParameters(ChPtr::Shared<PartsParameterSt
 {
 	auto&& obj = ChPtr::SharedSafeCast<PartsParameterStruct::BulletData>(_parameterList);
 	if (obj == nullptr)return;
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, BULLET_DATA_FIRST_SPEED, _valueDrawer, &obj->firstSpeed, GetFWeaponParameter(),false);
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, BULLET_DATA_FIRST_SPEED, _valueDrawer, GetFWeaponParameter(), &obj->firstSpeed, false);
 }
 
 void ParameterPartialDisplay::AddBoostBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 	auto&& obj = ChPtr::SharedSafeCast<PartsParameterStruct::BoostBulletData>(_parameterList);
 	if (obj == nullptr)return;
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, BOOST_BULLET_DATA_START_BOOST_TIME, _valueDrawer, &obj->startBoostTime, GetULWeaponParameter(), false);
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, BOOST_BULLET_DATA_USE_BOOST_TIME, _valueDrawer, &obj->useBoostTime, GetULWeaponParameter(),false);
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, BOOST_BULLET_DATA_BOOST_POWER, _valueDrawer, &obj->boostPow, GetFWeaponParameter(),false);
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, BOOST_BULLET_DATA_START_BOOST_TIME, _valueDrawer, GetULWeaponParameter(), &obj->startBoostTime,  false);
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, BOOST_BULLET_DATA_USE_BOOST_TIME, _valueDrawer, GetULWeaponParameter(), &obj->useBoostTime, false);
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, BOOST_BULLET_DATA_BOOST_POWER, _valueDrawer, GetFWeaponParameter(), &obj->boostPow, false);
 }
 
 void ParameterPartialDisplay::AddHighExplosiveBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 	auto&& obj = ChPtr::SharedSafeCast<PartsParameterStruct::HighExplosiveBulletData>(_parameterList);
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, HIGH_EXPLOSIVE_BULLET_DATA_BLAST_RANGE, _valueDrawer, &obj->blastRange, GetFWeaponParameter(),false);
 	if (obj == nullptr)return;
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, HIGH_EXPLOSIVE_BULLET_DATA_BLAST_RANGE, _valueDrawer, GetFWeaponParameter(), &obj->blastRange, false);
 }
 
 void ParameterPartialDisplay::AddMissileParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 	auto&& obj = ChPtr::SharedSafeCast<PartsParameterStruct::MissileData>(_parameterList);
 	if (obj == nullptr)return;
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, MISSILE_DATA_ROTATE_SPEED, _valueDrawer, &obj->rotateSpeed, GetFWeaponParameter(),false);
-	AddParameters(_device, _textDrawer, _title, _titleDrawer, MISSILE_DATA_LOST_RANGE, _valueDrawer, &obj->lostRange, GetFWeaponParameter(),false);
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, MISSILE_DATA_ROTATE_SPEED, _valueDrawer, GetFWeaponParameter(), &obj->rotateSpeed, false);
+	AddParameters(_device, _textDrawer, _title, _titleDrawer, MISSILE_DATA_LOST_RANGE, _valueDrawer, GetFWeaponParameter(), &obj->lostRange, false);
 }
 
 void ParameterPartialDisplay::AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::string& _title)
@@ -285,9 +286,9 @@ void ParameterPartialDisplay::AddParameters(ID3D11Device* _device, TextDrawerWIC
 	}
 }
 
-void ParameterPartialDisplay::Update(PartsParameters& _parameters, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+void ParameterPartialDisplay::Update(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
-	for (unsigned long i = 0; i < baseParameterCount; i++)
+	for (unsigned long i = baseParameterCount - 1; i < panels.size(); i++)
 	{
 		panels.pop_back();
 	}
@@ -296,10 +297,10 @@ void ParameterPartialDisplay::Update(PartsParameters& _parameters, ID3D11Device*
 	{
 		auto&& valuePanels = ChPtr::SharedSafeCast<ParameterValuePanel>(panel);
 		if (valuePanels == nullptr)continue;
-		valuePanels->UpdateValue(_textDrawer, _device);
+		valuePanels->UpdateValue(_valueDrawer, _device);
 	}
 
-	AddWeaponParameters(_parameters,_device,_textDrawer,_titleDrawer,_valueDrawer);
+	AddWeaponParameters(_device,_textDrawer,_titleDrawer,_valueDrawer);
 
 	UpdateCountPanels(_device, _textDrawer);
 
@@ -330,7 +331,9 @@ void ParameterPartialDisplay::UpdateCountPanels(ID3D11Device* _device, TextDrawe
 		it++;
 	}
 
-	for (unsigned long i = countPanelsBeforNum; i < countPanels.size(); i++)
+	if (countPanelsBeforNum == countPanels.size())return;
+
+	for (unsigned long i = 0; i < countPanels.size(); i++)
 	{
 		auto&& countPanel = countPanels[i];
 		std::string drawBase = "";
@@ -339,7 +342,6 @@ void ParameterPartialDisplay::UpdateCountPanels(ID3D11Device* _device, TextDrawe
 		drawBase += std::to_string(countPanels.size());
 		countPanel.lock()->CreateTitle(_textDrawer, _device, drawBase);
 	}
-	countPanelsBeforNum = countPanels.size();
 }
 
 ChVec2 ParameterPartialDisplay::GetDrawStartPosition()
@@ -377,12 +379,12 @@ void ParameterPartialDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 	}
 }
 
-void ParameterEntireDisplay::Init(PartsParameters& _baseParameterList, PartsParameters& _nextParameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+void ParameterEntireDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 
 }
 
-void ParameterEntireDisplay::Update(PartsParameters& _parameters, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+void ParameterEntireDisplay::Update(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
 
 }

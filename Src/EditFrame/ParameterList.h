@@ -21,20 +21,23 @@ class ParameterDisplay
 {
 public:
 
-	inline void Init(ChPtr::Shared<ChD3D11::Texture11>& _tBG, ChPtr::Shared<ChD3D11::Texture11>& _vBG ,PartsParameters& _baseParameterList, PartsParameters& _nextParameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+	inline void Init(ChPtr::Shared<ChD3D11::Texture11>& _tBG, ChPtr::Shared<ChD3D11::Texture11>& _vBG , ChPtr::Shared<PartsParameters> _baseParameterList, ChPtr::Shared<PartsParameters> _nextParameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 	{
 		titleBGTexture = _tBG;
 		valueBGTexture = _vBG;
-		Init(_baseParameterList, _nextParameterList, _device, _textDrawer, _titleDrawer, _valueDrawer);
+
+		baseParameter = _baseParameterList;
+		nextParameter = _nextParameterList;
+		Init(_device, _textDrawer, _titleDrawer, _valueDrawer);
 	}
 
 protected:
 
-	virtual void Init(PartsParameters& _baseParameterList, PartsParameters& _nextParameterList,ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer) = 0;
+	virtual void Init(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer) = 0;
 
 public:
 
-	virtual void Update(PartsParameters& _parameters, ID3D11Device* _device,TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer) = 0;
+	virtual void Update(ID3D11Device* _device,TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer) = 0;
 
 public:
 
@@ -73,7 +76,8 @@ protected:
 	ChPtr::Shared<ChD3D11::Texture11>titleBGTexture = nullptr;
 	ChPtr::Shared<ChD3D11::Texture11>valueBGTexture = nullptr;
 
-
+	ChPtr::Shared<PartsParameters>baseParameter = nullptr;
+	ChPtr::Shared<PartsParameters>nextParameter = nullptr;
 };
 
 class ParameterList
@@ -94,13 +98,19 @@ public:
 
 public:
 
-	void AddParameterData(ChPtr::Shared<MechaPartsObject> _partsObject);
+	void SetBaseParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject);
 
-	void AddAllParameterData(ChPtr::Shared<MechaPartsObject> _partsObject);
+	void SetNextParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject);
 
-	void SubParameterData(ChPtr::Shared<MechaPartsObject> _partsObject);
+public:
 
-	void SubAllParameterData(ChPtr::Shared<MechaPartsObject> _partsObject);
+	void AddParameterData(PartsParameters& _parameter,ChPtr::Shared<MechaPartsObject> _partsObject);
+
+	void AddAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject);
+
+	void SubParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject);
+
+	void SubAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject);
 
 public:
 
@@ -123,7 +133,7 @@ public:
 
 private:
 
-	void UpdateDisplayParameter();
+	void UpdateDisplayParameter(ID3D11Device* _device);
 
 private:
 
