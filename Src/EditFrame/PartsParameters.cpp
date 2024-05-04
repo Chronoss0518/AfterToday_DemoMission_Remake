@@ -176,12 +176,8 @@ PartsParameters& PartsParameters::operator -= (const PartsParameters& _parts)
 	downBoostData.avoidUseEnelgy -= _parts.downBoostData.avoidUseEnelgy;
 	downBoostData.avoidWait -= _parts.downBoostData.avoidWait;
 
-	for (auto&& weapon : _parts.weaponData)
-	{
-		auto&& it = std::find(weaponData.begin(), weaponData.end(), weapon);
-		if (it == weaponData.end())continue;
-		weaponData.erase(it);
-	}
+	if (!weaponData.empty())
+		weaponData.clear();
 
 	return *this;
 }

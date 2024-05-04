@@ -288,7 +288,8 @@ void ParameterPartialDisplay::AddParameters(ID3D11Device* _device, TextDrawerWIC
 
 void ParameterPartialDisplay::Update(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
-	for (unsigned long i = baseParameterCount - 1; i < panels.size(); i++)
+	unsigned long tmp = panels.size();
+	for (unsigned long i = baseParameterCount; i < tmp; i++)
 	{
 		panels.pop_back();
 	}
@@ -300,7 +301,7 @@ void ParameterPartialDisplay::Update(ID3D11Device* _device, TextDrawerWICBitmap&
 		valuePanels->UpdateValue(_valueDrawer, _device);
 	}
 
-	AddWeaponParameters(_device,_textDrawer,_titleDrawer,_valueDrawer);
+	AddWeaponParameters(_device, _textDrawer, _titleDrawer, _valueDrawer);
 
 	UpdateCountPanels(_device, _textDrawer);
 

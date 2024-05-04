@@ -15,6 +15,13 @@ class ParameterList;
 
 class EditFrame :public ChCpp::BaseFrame, public MenuBase
 {
+private:
+
+	enum class SelectButtonType
+	{
+		Up, Down, None
+	};
+
 public:
 
 	void Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)override;
@@ -27,6 +34,8 @@ private:
 
 	void InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _textureSize, float _fontSize,bool _boldFlg);
 
+	void InitNowLoadingRect();
+
 	void SetPartsList(MechaPartsObject& _parts);
 
 	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
@@ -37,9 +46,11 @@ private:
 
 	void UpdateMouse()override;
 
+	void UpdateNowLoadingRect();
+
 	void DrawFunction();
 
-	void DrawNowLoading();
+	void DrawNowLoading(ID3D11DeviceContext* _dc);
 
 	void DrawEndLoading();
 
@@ -74,9 +85,21 @@ private:
 	ChD3D11::Texture11 rightPanelBackGround, leftPanelBackGround;
 	ChD3D11::Sprite11 backgroundSprite;
 
+	ChD3D11::Sprite11 nowLoadingSprite;
+	ChD3D11::Texture11 nowLoading;
+	ChVec4 nowLoadingPosRect;
+	ChVec4 nowLoadingUVRect;
+	float animationMoveSpeed = 0.0f;
+	float animationWaitTime = 0.0f;
+	float nowAnimationWaitTime = 1.0f;
+	bool upFlg = true;
+
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
 	ChD3D11::CB::CBLight11 light;
 	ChPtr::Shared<ParameterList> parameterList = nullptr;
+
+	ImageSprite selectButton[ChStd::EnumCast(SelectButtonType::None)];
+	SelectButtonType selectType = SelectButtonType::None;
 
 	ChPtr::Shared<EditList>partsList = nullptr;
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;

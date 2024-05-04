@@ -24,6 +24,9 @@
 #define PANEL_SIZE_W 280.0f
 #define PANEL_SIZE_H 102.0f
 
+#define UP_BUTTON_PANEL_Y 30.0f
+#define DOWN_BUTTON_PANEL_Y 558.0f
+
 #define TEXT_ALIGN 8.0f
 
 #define PANEL_TEXT_X TEXT_ALIGN
@@ -43,7 +46,10 @@
 
 #define TMP_CAMERA_POS ChVec3(0.0f, 2.5f, 10.0f)
 
-#define LOAD_PARTS_COUNT 2
+#define LOAD_PARTS_COUNT 1
+
+#define NOW_LOADING_ANIMATION_MOVE_SPEED 0.5f
+#define NOW_LOADING_ANIMATION_WAIT_TIME 0.2f
 
 class EditListItem : public SelectListItemBase
 {
@@ -117,6 +123,10 @@ public:
 
 public:
 
+	ChD3D11::Texture11* GetSelectImage() { return &selectImage; }
+
+public:
+
 	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<EditListItem>(_drawItem);
@@ -171,6 +181,12 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		meshDrawer.SetViewMatrix(mat);
 	}
 
+	nowLoadingSprite.Init();
+	nowLoadingSprite.SetInitPosition();
+	nowLoading.CreateTexture(TEXTURE_DIRECTORY("NowLoading.png"), device);
+	InitNowLoadingRect();
+
+
 	light.Init(device);
 	light.SetUseLightFlg(true);
 	light.SetCamPos(TMP_CAMERA_POS);
@@ -198,6 +214,14 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	partsList->SetAlighSize(0.0f, PANEL_SIZE_H);
 	partsList->CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY("PartsPanel.png"), device);
 	partsList->CreateSelectImage(EDIT_TEXTURE_DIRECTORY("PartsPanelSelect.png"), device);
+
+	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY("UPButton.png"), device);
+	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
+		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, UP_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, UP_BUTTON_PANEL_Y + PANEL_SIZE_H)));
+
+	selectButton[ChStd::EnumCast(SelectButtonType::Down)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY("DownButton.png"), device);
+	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Down)].sprite,
+		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, DOWN_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, DOWN_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 
 	selectFlg = false;
 
@@ -230,6 +254,8 @@ void EditFrame::Update()
 		editMecha->SetRotation(rotate);
 	}
 
+	UpdateNowLoadingRect();
+
 	DrawFunction();
 }
 
@@ -247,6 +273,16 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 	_initDrawer.brush = _initDrawer.drawer.CreateBrush(ChVec4::FromColor(0.0f,0.0f,0.0f,1.0f));
 
 	_initDrawer.format = _initDrawer.drawer.CreateTextFormat(L"ÉSÉVÉbÉN",nullptr, _boldFlg ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,DWRITE_FONT_STYLE_NORMAL,DWRITE_FONT_STRETCH_NORMAL,_fontSize);
+}
+
+void EditFrame::InitNowLoadingRect()
+{
+	animationMoveSpeed = 1.0f / (NOW_LOADING_ANIMATION_MOVE_SPEED * static_cast<float>(ChSystem::SysManager().GetFPS()));
+	animationWaitTime = 1.0f / (NOW_LOADING_ANIMATION_WAIT_TIME * static_cast<float>(ChSystem::SysManager().GetFPS()));
+	nowLoadingPosRect = ChVec4::FromRect(-1.0f, 1.0f, -1.0f, -1.0f);
+	nowLoadingUVRect = ChVec4::FromRect(0.0f, 0.0f, 0.0f, 1.0f);
+	nowAnimationWaitTime = 1.0f;
+	upFlg = true;
 }
 
 void EditFrame::SetPartsList(MechaPartsObject& _parts)
@@ -317,6 +353,7 @@ void EditFrame::UpdateAction(ActionType _type)
 			return;
 		}
 
+		partsList->SetDrawPosition(0);
 		selectParts = selectStack[selectStack.size() - 1];
 		selectStack.pop_back();
 
@@ -328,6 +365,18 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	if (_type == ActionType::Decision)
 	{
+		if (selectType == SelectButtonType::Up)
+		{
+			AddActionType(ActionType::Up);
+			return;
+		}
+
+		if (selectType == SelectButtonType::Down)
+		{
+			AddActionType(ActionType::Down);
+			return;
+		}
+
 		auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
 
 		if (partsPanel == nullptr)return;
@@ -339,6 +388,7 @@ void EditFrame::UpdateAction(ActionType _type)
 			return;
 		}
 
+		partsList->SetDrawPosition(0);
 		selectStack.push_back(selectParts);
 		selectParts = nullptr;
 		selectParts = partsPanel->targetParts;
@@ -355,6 +405,55 @@ void EditFrame::UpdateAction(ActionType _type)
 void EditFrame::UpdateMouse()
 {
 
+	auto&& manager = ChSystem::SysManager();
+
+
+	InputTest(MenuBase::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+
+	InputTest(MenuBase::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
+
+	auto&& mouse = ChWin::Mouse();
+	mouse.Update();
+
+	auto&& mouseMove = mouse.GetMoveValue();
+
+	if (std::abs(mouseMove.x) <= 1 && std::abs(mouseMove.y) <= 1)return;
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	{
+		if (!IsMoucePosOnSprite(selectButton[i].sprite))continue;
+		selectType = static_cast<SelectButtonType>(i);
+		return;
+	}
+
+	selectType = SelectButtonType::None;
+	
+	partsList->UpdateMouse();
+}
+
+void EditFrame::UpdateNowLoadingRect()
+{
+	if (upFlg)
+	{
+		nowLoadingPosRect.right += animationMoveSpeed;
+		nowLoadingUVRect.right += (animationMoveSpeed * 0.5f);
+
+		if (nowLoadingPosRect.right < 1.0f)return;
+
+		upFlg = false;
+		nowLoadingPosRect.right = 1.0f;
+		nowLoadingUVRect.right = 1.0f;
+	}
+	else
+	{
+		if ((nowAnimationWaitTime -= animationWaitTime) > 0.0f)return;
+
+		nowLoadingPosRect.left += animationMoveSpeed;
+		nowLoadingUVRect.left += (animationMoveSpeed * 0.5f);
+
+		if (nowLoadingPosRect.left <= 1.0f)return;
+		InitNowLoadingRect();
+	}
 }
 
 void EditFrame::DrawFunction()
@@ -387,7 +486,7 @@ void EditFrame::DrawFunction()
 
 	DrawEndLoading();
 
-	DrawNowLoading();
+	DrawNowLoading(dc);
 
 	loadDisplay->Draw(spriteShader);
 
@@ -396,9 +495,14 @@ void EditFrame::DrawFunction()
 	ChD3D11::Shader11().DrawEnd(rtView);
 }
 
-void EditFrame::DrawNowLoading()
+void EditFrame::DrawNowLoading(ID3D11DeviceContext* _dc)
 {
 	if (loadEndFlg)return;
+
+	nowLoadingSprite.SetPosRect(nowLoadingPosRect);
+	nowLoadingSprite.SetUVPosRect(nowLoadingUVRect);
+
+	spriteShader.Draw(nowLoading, nowLoadingSprite);
 
 }
 
@@ -423,6 +527,17 @@ void EditFrame::DrawEndLoading()
 	spriteShader.Draw(leftPanelBackGround, backgroundSprite);
 
 	partsList->Draw(spriteShader);
+
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	{
+
+		spriteShader.Draw(selectButton[i].image, selectButton[i].sprite);
+
+		if (ChStd::EnumCast(selectType) == i)
+			spriteShader.Draw(*partsList->GetSelectImage(), selectButton[i].sprite);
+	}
+
 }
 
 ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTitleTexture(const std::wstring& _str)
