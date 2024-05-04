@@ -190,8 +190,13 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 
 	mesh.SetFrameTransform(tmp);
 
+	ChQua qua;
+	qua.SetRotationYAxis(ChMath::ToRadian(baseRot.y));
+	qua.AddRotationXAxis(ChMath::ToRadian(baseRot.x));
+	qua.AddRotationZAxis(ChMath::ToRadian(baseRot.z));
+
 	tmp.Identity();
-	tmp.SetRotation(baseRot);
+	tmp.SetRotation(qua);
 
 	ChMat_11 drawMat;
 	drawMat = lastDrawMat  = tmp * _drawMat;

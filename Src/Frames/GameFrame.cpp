@@ -721,8 +721,8 @@ void GameFrame::DrawFunctionBegin()
 	
 	shotTargetDrawer.SetViewMatrix(viewMat);
 
-	shotTargetdrawBaseMatrix.SetPosition(drawMecha->GetPosition());
 	shotTargetdrawBaseMatrix.SetRotationYAxis(ChMath::ToRadian(drawMecha->GetRotation().y));
+	shotTargetdrawBaseMatrix.SetPosition(drawMecha->GetPosition());
 	shotTargetdrawBaseMatrix.SetScalling(SHOT_TARGET_MARKER_SIZE);
 
 	shotEffectList->SetViewMatrix(viewMat);

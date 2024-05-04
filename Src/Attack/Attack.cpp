@@ -256,7 +256,7 @@ void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet
 	dir.Normalize();
 
 	_bullet.SetPosition(_startMat.GetPosition());
-	_bullet.SetRotation(mat.GetRotation());
+	_bullet.SetRotation(mat.GetRotationYPR());
 
 	dir *= firstSpeed;
 	dir.x = -dir.x;

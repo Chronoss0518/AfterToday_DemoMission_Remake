@@ -203,7 +203,8 @@ void EditFrame::Update()
 		MenuBase::UpdateFunction();
 
 		auto&& rotate = editMecha->GetRotation();
-		rotate.AddRotationYAxis(ChMath::ToRadian(MECHA_ROTATION_SPEED));
+
+		rotate += ChVec3(0.0f, MECHA_ROTATION_SPEED, 0.0f);
 
 		editMecha->SetRotation(rotate);
 	}

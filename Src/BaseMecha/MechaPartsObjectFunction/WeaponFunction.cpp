@@ -79,10 +79,10 @@ void GunFunction::AttackFunction()
 	{
 
 		{
-			ChVec3 tmp;
+			ChQua tmp;
 
-			tmp.x = ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f);
-			tmp.y = ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f);
+			tmp.SetRotationYAxis(ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f));
+			tmp.AddRotationXAxis(ChMath::ToRadian(static_cast<float>((rand() % (gunData->GetRange() * 2 + 1)) - gunData->GetRange() - 1) * 0.01f));
 
 			ChLMat rangeMat;
 			rangeMat.SetRotation(tmp);
