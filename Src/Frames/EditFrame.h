@@ -6,6 +6,7 @@ class MechaPartsObject;
 class LoadDisplay;
 
 class EditList;
+class EditListItem;
 
 class ParameterList;
 
@@ -24,15 +25,33 @@ public:
 
 private:
 
+	void InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _textureSize, float _fontSize,bool _boldFlg);
+
+	void SetPartsList(MechaPartsObject& _parts);
+
+	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
+
+	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
+
+	void UpdateAction(ActionType _type)override;
+
+	void UpdateMouse()override;
+
 	void DrawFunction();
 
 	void DrawNowLoading();
 
 	void DrawEndLoading();
 
-	void UpdateAction(ActionType _type)override;
+private:
 
-	void UpdateMouse()override;
+	ChPtr::Shared<ChD3D11::Texture11>CreatePanelTitleTexture(const std::wstring& _str);
+
+	ChPtr::Shared<ChD3D11::Texture11>CreatePanelPosTitleTexture(const std::wstring& _str);
+
+	ChPtr::Shared<ChD3D11::Texture11>CreatePanelPosPartsTexture(const std::wstring& _str);
+
+	ChPtr::Shared<ChD3D11::Texture11>CreatePanelTexture(const std::wstring& _str, TextDrawerWICBitmap& _drawer,const ChVec2& _size);
 
 private:
 
@@ -52,7 +71,7 @@ private:
 	ChD3D11::DepthStencilTexture11 dsView;
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
-	ChD3D11::Texture11 rightPanelBackGroud, leftPanelBackGround;
+	ChD3D11::Texture11 rightPanelBackGround, leftPanelBackGround;
 	ChD3D11::Sprite11 backgroundSprite;
 
 	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
@@ -60,6 +79,8 @@ private:
 	ChPtr::Shared<ParameterList> parameterList = nullptr;
 
 	ChPtr::Shared<EditList>partsList = nullptr;
+	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
+	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
 
 	std::vector<std::string> pathList;
 	unsigned long loadCount = 0;
