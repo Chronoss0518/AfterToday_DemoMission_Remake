@@ -48,6 +48,8 @@ public:
 
 	inline void SetDrawCount(unsigned long _drawCount) { drawCount = _drawCount; }
 
+	inline void SetDrawPosition(unsigned long _drawPosition) { drawPos = _drawPosition; }
+
 public:
 
 	unsigned long GetNowSelect() { return nowSelectPanel; }

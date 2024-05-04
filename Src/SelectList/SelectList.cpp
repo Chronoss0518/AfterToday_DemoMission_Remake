@@ -49,11 +49,13 @@ void SelectListBase::SetAlighSize(const ChVec2& _size)
 
 bool SelectListBase::UpdateMouse()
 {
+	drawPos %= itemList.size();
+
 	ChVec4 rect = GetStartRect();
 
 	for (unsigned long i = drawPos; i < drawCount + drawPos; i++)
 	{
-		if (IsMoucePosOnRect(rect))
+		if (IsMoucePosOnRect(RectToGameWindow(rect)))
 		{
 			nowSelectPanel = i % itemList.size();
 			return true;
@@ -107,6 +109,8 @@ void SelectListBase::UpdateActionHorizontal(MenuBase::ActionType _type)
 void SelectListBase::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
 	if (itemList.empty())return;
+
+	drawPos %= itemList.size();
 
 	ChVec4 rect = GetStartRect();
 
