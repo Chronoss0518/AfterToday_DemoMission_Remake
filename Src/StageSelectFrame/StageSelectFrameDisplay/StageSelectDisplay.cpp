@@ -143,13 +143,13 @@ void StageSelectDisplay::UpdateAction(MenuBase::ActionType _type)
 
 	if (_type == MenuBase::ActionType::Decision)
 	{
-		if (selectSpriteType == SelectSpriteType::UpButton)
+		if (selectType == StageSelectButtonType::Up)
 		{
 			AddAction(MenuBase::ActionType::Up);
 			return;
 		}
 
-		if (selectSpriteType == SelectSpriteType::DownButton)
+		if (selectType == StageSelectButtonType::Down)
 		{
 			AddAction(MenuBase::ActionType::Down);
 			return;
@@ -230,13 +230,11 @@ void StageSelectDisplay::UpdateMouse()
 	for (unsigned char i = 0; i < ChStd::EnumCast(StageSelectButtonType::None); i++)
 	{
 		if (!IsMoucePosOnSprite(stageSelectButton[i].sprite))continue;
-		selectSpriteType = static_cast<SelectSpriteType>(i);
 		selectType = static_cast<StageSelectButtonType>(i);
 		return;
 	}
 
 	selectType = StageSelectButtonType::None;
-	selectSpriteType = SelectSpriteType::StagePanel;
 
 	if (selectList->UpdateMouse())
 	{

@@ -24,13 +24,6 @@ public:
 
 private:
 
-	enum class SelectSpriteType
-	{
-		UpButton,
-		DownButton,
-		StagePanel
-	};
-
 	enum class StageSelectButtonType
 	{
 		Up, Down, None
@@ -43,8 +36,6 @@ private:
 private:
 
 	static constexpr int PANEL_DRAW_COUNT = 4;
-
-	SelectSpriteType selectSpriteType = SelectSpriteType::StagePanel;
 
 	unsigned long drawNowSelect = 0;
 
