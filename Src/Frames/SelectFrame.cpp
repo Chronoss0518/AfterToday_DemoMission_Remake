@@ -88,7 +88,7 @@ void SelectFrame::DrawFunction()
 
 	spriteShader.Draw(selectEdge, toButton[nowSelect].sprite);
 
-	spriteShader.Draw(comingSoonTexture, toButton[ChStd::EnumCast(NextButtonType::Edit)].sprite);
+	//spriteShader.Draw(comingSoonTexture, toButton[ChStd::EnumCast(NextButtonType::Edit)].sprite);
 	spriteShader.Draw(comingSoonTexture, toButton[ChStd::EnumCast(NextButtonType::Setting)].sprite);
 
 	for (auto&& imageSprite : toButton)
