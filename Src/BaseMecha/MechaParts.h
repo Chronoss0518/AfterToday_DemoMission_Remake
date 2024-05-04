@@ -38,7 +38,7 @@ namespace PartsParameterStruct
 	struct WeaponData;
 }
 
-class MechaParts :public ChCpp::BaseObject
+class MechaParts : public ChCpp::BaseObject
 {
 public:
 
@@ -112,6 +112,8 @@ public://Get Function//
 	inline std::string GetThisFilePath() { return thisFilePath; }
 
 	inline ChD3D11::Shader::BaseDrawMesh11* GetMeshDrawer() { return drawer; }
+
+	inline const std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>>& GetPositionList() { return positions; }
 
 public:
 

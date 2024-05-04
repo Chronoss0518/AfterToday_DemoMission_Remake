@@ -50,6 +50,8 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	auto it = loadPartss.find(*partsName);
 	if (it != loadPartss.end())
 	{
+		it->second->SetMeshDrawer(_drawer);
+
 		auto&& partsObject = (*it).second->SetParameters(_base, _frame, _jsonObject);
 
 		partsObject->CreateFramePosture(it->second->model.get());
@@ -95,6 +97,10 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string
 		thisFileName = thisFilePath.substr(thisFilePath.find_last_of("/") + 1);
 	}
 
+	if (thisFileName.find("."))
+	{
+		SetMyName(thisFileName.substr(0, thisFileName.find(".")));
+	}
 	Deserialize(_base, _device, text);
 }
 
@@ -205,6 +211,8 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
 
 void MechaParts::SetParameters()
 {
+	if (GetComponent<PartsParameters>() != nullptr)return;
+
 	auto&& parts = SetPartsParameter();
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
