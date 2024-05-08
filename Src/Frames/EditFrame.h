@@ -1,5 +1,7 @@
 #pragma once
 
+#include"FromStageSelectFrameData.h"
+
 class BaseMecha;
 class MechaParts;
 class MechaPartsObject;
@@ -117,5 +119,7 @@ private:
 
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
 	bool selectFlg = false;
+
+	ChPtr::Shared<FromStageSelectFrameData> sendData = nullptr;
 
 };

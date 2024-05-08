@@ -136,11 +136,10 @@ void StageDetailedDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	for (unsigned char i = 0; i < MENU_BUTTON_TYPE; i++)
 	{
-		if (i == ChStd::EnumCast(MenuButtonType::Edit))
-			_drawer.Draw(comingSoonImage, button[i].sprite);
+		//if (i == ChStd::EnumCast(MenuButtonType::Edit))_drawer.Draw(comingSoonImage, button[i].sprite);
 
-		if (i == ChStd::EnumCast(MenuButtonType::Edit) ||
-			i == ChStd::EnumCast(MenuButtonType::Load) && 
+		if ((i == ChStd::EnumCast(MenuButtonType::Edit) ||
+			i == ChStd::EnumCast(MenuButtonType::Load)) && 
 			!selectStageData.stageDatas->selectModelFlg)
 			_drawer.Draw(unUsedMethodImage, button[i].sprite);
 

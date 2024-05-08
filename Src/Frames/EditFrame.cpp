@@ -229,6 +229,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY("PanelList.png"), device);
 	
 	Load();
+
+
+	sendData = ChPtr::SharedSafeCast<FromStageSelectFrameData>(_sendData);
 }
 
 void EditFrame::Release()
@@ -349,7 +352,15 @@ void EditFrame::UpdateAction(ActionType _type)
 	{
 		if (selectStack.empty())
 		{
-			ChangeFrame(ChStd::EnumCast(FrameNo::Select));
+			if (sendData == nullptr)
+			{
+				ChangeFrame(ChStd::EnumCast(FrameNo::Select));
+			}
+			else
+			{
+				SendData(sendData);
+				ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
+			}
 			return;
 		}
 

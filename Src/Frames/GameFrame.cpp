@@ -576,23 +576,28 @@ void GameFrame::Update()
 	//auto&& lookTarget =
 		//looker->GetLookTypeMechas(CPUObjectLooker::MemberType::Enemy, CPUObjectLooker::DistanceType::Near, CPUObjectLooker::DamageSizeType::None);
 
+	DrawFunctionBegin();
+
 #if DISPLAY_FPS_FLG
 
-	box.SetText("FPS:" +
-		std::to_string(ChSystem::SysManager().GetNowFPSPoint()) +
-		"\r\n" +
-		"Bullet Num:" +
-		std::to_string(bulletList.GetObjectCount()) +
-		"\r\n" +
-		"CPULookRobot:" +
-		//(lookTarget >= mechas.size() ? "None" : mechas[lookTarget].expired() ? "None" : mechas[lookTarget].lock()->GetMyName()) +
+	auto pos = drawMecha != nullptr ? drawMecha->GetPosition() : ChVec3();
+
+	box.SetText(
+		//"FPS:" +
+		//std::to_string(ChSystem::SysManager().GetNowFPSPoint()) +
 		//"\r\n" +
-		"RobotCount:" + 
-		std::to_string(mechaList.GetObjectCount())
+		//"Bullet Num:" +
+		//std::to_string(bulletList.GetObjectCount()) +
+		//"\r\n" +
+		"Position:x [" + std::to_string(pos.x) + "] y [" + std::to_string(pos.y) + "] z [" + std::to_string(pos.z) + "] \r\n"
+		//"RobotCount:" + 
+		//std::to_string(mechaList.GetObjectCount())
 	);
 
 #endif
+
 	DrawFunction();
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -649,7 +654,6 @@ void GameFrame::UpdateFunction()
 
 void GameFrame::DrawFunction()
 {
-	DrawFunctionBegin();
 
 #if USE_THREAD
 	if (!shotEffectList->IsUpdateFlg()) {}
@@ -713,7 +717,7 @@ void GameFrame::DrawFunctionBegin()
 	if (mechas.size() <= mechaView)return;
 	auto&& tmpMecha = mechas[mechaView];
 	if (tmpMecha.expired())return;
-	drawMecha = tmpMecha.lock().get();
+	drawMecha = tmpMecha.lock();
 
 	auto viewMat = drawMecha->GetViewMat();
 
@@ -833,7 +837,7 @@ void GameFrame::Render3D(void)
 void GameFrame::Render2D(void)
 {
 
-	if (ChPtr::NotNullCheck(drawMecha))
+	if (drawMecha != nullptr)
 	{
 		float damageParcec = static_cast<float>(drawMecha->GetDamage()) / drawMecha->GetMaxDamageGage();
 
@@ -872,7 +876,7 @@ void GameFrame::Render2D(void)
 
 	}
 
-	if (ChPtr::NotNullCheck(drawMecha))
+	if (drawMecha != nullptr)
 	{
 		long hitEffectDrawFrame = drawMecha->GetHitEffectDrawFrame();
 		if (hitEffectDrawFrame >= 0)

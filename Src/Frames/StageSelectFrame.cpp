@@ -56,6 +56,9 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		display->SetSelectData(*beforeData);
 	}
 
+	type = static_cast<DisplayType>(beforeData->selectMenu);
+
+	stageSelectFrameDisplay[ChStd::EnumCast(type)]->OnDisplay();
 }
 
 void StageSelectFrame::InitStageDataList()
@@ -252,9 +255,10 @@ void StageSelectFrame::SetEditFrame()
 	{
 		display->GetSelectData(*stageSelectData);
 	}
+	stageSelectData->selectMenu = ChStd::EnumCast(type);
 
 	SendData(stageSelectData);
-	//ChangeFrame(ChStd::EnumCast(FrameNo::Edit));
+	ChangeFrame(ChStd::EnumCast(FrameNo::Edit));
 }
 
 void StageSelectFrame::Update()
