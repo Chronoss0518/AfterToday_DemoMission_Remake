@@ -1,0 +1,15 @@
+{
+  "StageImage": "",
+  "StageName": "団体戦テスト",
+  "StageScriptPath": "test_stage.chs",
+  "StageLocationName": "Test Locale",
+  "StageStrategyOverview": "ここでは3対3のテストを行う。\n相手にはGuardian型を、見方にはAir型を提供しよう。",
+  "MissionTimeSeccond": 0,
+  "SuccessFee": 200000,
+  "DrawSuccessFee": 200000,
+  "AdditionalCompensation": 0,
+  "AdditionalCompensationExplanation": "特になし",
+  "SpecialPayReduction": 0,
+  "SpecialPayReductionExplanation": "特になし",
+  "SelectModelFlg": true
+}
