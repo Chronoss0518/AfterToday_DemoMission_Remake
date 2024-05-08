@@ -1,0 +1,62 @@
+{
+  "ActionMoveMaxTime": 10,
+  "ActionMoveMinTime": 5,
+  "Attack": {
+    "AttackCount": 1,
+    "AttackType": 2,
+    "CenterLength": 1,
+    "PriorityWeaponType": 0
+  },
+  "MoveInput": {
+    "LookTweakSize": 0.8,
+    "TargetPositionLength": 100,
+    "UseBoostLengthFromBattle": 200,
+    "UseBoostLengthFromUnBattle": 400
+  },
+  "MovePositionSelector": {
+    "CombatModeOff": 2000,
+    "IsTargetPositionInAreaLength": 20,
+    "OperatorPositions": [
+      {
+        "AxisFlg": 0,
+        "Distance": 20,
+        "OperationPoint": {
+          "X": 0,
+          "Y": 700,
+          "Z": 0
+        }
+      }
+    ]
+  },
+  "SaveFlg": false,
+  "TargetSelector": {
+    "TargetSelectorFunctions": [
+      {
+        "ActiveFlg": true,
+        "DamageComparison": 1,
+        "DamageSizeType": 0,
+        "DistanceComparison": 3,
+        "DistanceType": 0,
+        "MemberType": 1,
+        "TestDamage": 0,
+        "TestDistance": 1000
+      }
+    ]
+  },
+  "WeaponSelector": {
+    "WeaponSelectorFunctions": [
+      {
+        "ActiveFlg": true,
+        "AttackType": 1,
+        "DamageComparison": 1,
+        "DamageSizeType": 0,
+        "DistanceComparison": 3,
+        "DistanceType": 0,
+        "MemberType": 1,
+        "TestDamage": 0,
+        "TestDistance": 1000,
+        "UnStopFlg": false
+      }
+    ]
+  }
+}

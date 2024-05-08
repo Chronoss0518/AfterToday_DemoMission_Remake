@@ -13,14 +13,77 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="PhysicsLibrary">
+      <UniqueIdentifier>{5c3f3a0d-cec2-41ed-80ab-5adbab042eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StageScript">
+      <UniqueIdentifier>{d530f8bd-92f9-4a1c-af40-4f14165ad012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame">
+      <UniqueIdentifier>{b22263e7-e32d-46e0-a4eb-81ffe2e6f49c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Attack">
+      <UniqueIdentifier>{0173f0bf-b253-4b11-bc71-33891fb16cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\CPU">
+      <UniqueIdentifier>{75ebaffa-75e5-444d-a16d-f73078ee0d5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\FunctionComponent">
+      <UniqueIdentifier>{640e7351-2299-44ff-9206-eb641e8c09c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\MechaPartsFunction">
+      <UniqueIdentifier>{a3e357c4-ec1e-4c8c-9e0c-b946fb4b25c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader">
+      <UniqueIdentifier>{d951a15e-4557-46ae-9b8e-fdc18282a693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PartsDatas">
+      <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditFrame">
+      <UniqueIdentifier>{22c703ec-8ae8-477f-a776-d405670315c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditFrame\DrawObject">
+      <UniqueIdentifier>{d6f2a859-30cd-4e74-825e-717bbcbcca5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StageSelectFrame">
+      <UniqueIdentifier>{9013f333-56b7-4649-b693-782783018d35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StageData">
+      <UniqueIdentifier>{278612e1-4167-4bcf-9eab-7d4d3444614b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\CPUData">
+      <UniqueIdentifier>{4af2371d-3c4c-48b4-9bcd-66f649fa9ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Effect">
+      <UniqueIdentifier>{d49fe6ff-935d-41d7-9fd1-bfe97ef5f8e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Mecha">
+      <UniqueIdentifier>{c7cb4ded-cc4a-4b18-96a4-7f48ddc7f20f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Mecha\PlayerMecha">
+      <UniqueIdentifier>{d00ec477-75e3-4935-b3aa-6dafd00ce3d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Mecha\CPUMecha">
+      <UniqueIdentifier>{180f6186-52a4-429b-84de-b8ff4f812904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectSpriteShader">
+      <UniqueIdentifier>{244e7f23-aafe-4087-9561-3494e1e806d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectObjectShader">
+      <UniqueIdentifier>{81796727-ddd4-48a0-a47c-0f74c8840675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectObjectShader\hlsl">
+      <UniqueIdentifier>{0dd7760d-6d33-4461-902c-f5abbfa4c943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\Shader\EffectSpriteShader\hlsl">
+      <UniqueIdentifier>{791ff853-cfff-4245-b2c4-fe612512ac56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditFrame\ParameterList">
+      <UniqueIdentifier>{54b9a59e-aebc-4d8d-9950-8e6d680565e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\AllStruct.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\CloudObj\CloudObj.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseIncluder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -30,24 +93,183 @@
     <ClInclude Include="Src\Frames\GameFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GameFrameScript\GameFrameScript.h">
+    <ClInclude Include="Src\Application\Application.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponent.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\FunctionComponent.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\MoveComponent.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponent.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\CPU\CPULooker.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Attack\AttackObject.h">
+      <Filter>GameFrame\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Attack\Attack.h">
+      <Filter>GameFrame\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\CameraComponent.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.h">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUWeaponSelector.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUTargetSelector.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUActionBase.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUMovePositionSelector.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUAttack.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUMoveInput.h">
+      <Filter>GameFrame\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameScript\GameScript.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaParts.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsObject.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Shader\TextureEffectShader\TextureEffectShader.h">
+      <Filter>GameFrame</Filter>
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\BaseMecha.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseMecha\MechaParts.h">
+    <ClInclude Include="..\PhysicsMachineTest\Physics_AirPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PhysicsMachineTest\Physics_Gravity.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PhysicsMachineTest\Physics_GroundPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PhysicsMachineTest\Physics_MaterialPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PhysicsMachineTest\Physics_WaterPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PhysicsMachineTest\PhysicsMachine.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\SelectFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Bullet\Bullet.h">
+    <ClInclude Include="Src\Shader\EffectObject\EffectObjectShader.h">
+      <Filter>GameFrame\Shader\EffectObjectShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\EditFrame.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaEditor.h">
+      <Filter>EditFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h">
+      <Filter>EditFrame\DrawObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrameDrawObject\PanelObject\PanelObject.h">
+      <Filter>EditFrame\DrawObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\StageSelectFrame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StageSelectFrame\StageData\StageData.h">
+      <Filter>StageSelectFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\AllStruct.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\ResultFrame.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\StageDataStructure.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h">
+      <Filter>StageSelectFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h">
+      <Filter>StageSelectFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\FromStageSelectFrameData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GameInMessageBox\GameInMessageBox.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EffectObjects\ShotEffectList\ShotEffectList.h">
+      <Filter>GameFrame\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.h">
+      <Filter>GameFrame\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EffectObjects\BurnEffectList\BurnEffectList.h">
+      <Filter>GameFrame\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Shader\EffectSprite\EffectSpriteShader.h">
+      <Filter>GameFrame\Shader\EffectSpriteShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LoadDisplay\LoadDisplay.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Frames\MenuBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\ProgressObject\ProgressObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SelectList\SelectList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\ParameterList.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\PartsParameters.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\ParameterDisplay.h">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\ParameterPanel.h">
+      <Filter>EditFrame\ParameterList</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\CloudObj\CloudObj.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Frames\TitleFrame.cpp">
@@ -56,17 +278,297 @@
     <ClCompile Include="Src\Frames\GameFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\GameFrameScript\GameFrameScript.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\BaseMecha\BaseMecha.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\Application.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\BoostComponent.cpp">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\FunctionComponent.cpp">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\MoveComponent.cpp">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\WeaponComponent.cpp">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\CPU\CPULooker.cpp">
+      <Filter>GameFrame\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Attack\AttackObject.cpp">
+      <Filter>GameFrame\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Attack\Attack.cpp">
+      <Filter>GameFrame\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\CameraComponent.cpp">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.cpp">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUTargetSelector.cpp">
+      <Filter>GameFrame\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUWeaponSelector.cpp">
+      <Filter>GameFrame\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUMovePositionSelector.cpp">
+      <Filter>GameFrame\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUAttack.cpp">
+      <Filter>GameFrame\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUMoveInput.cpp">
+      <Filter>GameFrame\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameScript\GameScript.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Shader\TextureEffectShader\TextureEffectShader.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\ControllerBase.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysicsMachineTest\Physics_AirPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysicsMachineTest\Physics_Gravity.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysicsMachineTest\Physics_GroundPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysicsMachineTest\Physics_MaterialPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysicsMachineTest\Physics_WaterPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PhysicsMachineTest\PhysicsMachine.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\SelectFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Bullet\Bullet.cpp">
+    <ClCompile Include="Src\Shader\EffectObject\EffectObjectShader.cpp">
+      <Filter>GameFrame\Shader\EffectObjectShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\EditFrame.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaEditor.cpp">
+      <Filter>EditFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrameDrawObject\PanelList\PanelList.cpp">
+      <Filter>EditFrame\DrawObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrameDrawObject\PanelObject\PanelObject.cpp">
+      <Filter>EditFrame\DrawObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\StageSelectFrame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StageSelectFrame\StageData\StageData.cpp">
+      <Filter>StageSelectFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\ResultFrame.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\StageDataStructure.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.cpp">
+      <Filter>StageSelectFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.cpp">
+      <Filter>StageSelectFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GameInMessageBox\GameInMessageBox.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectObjects\ShotEffectList\ShotEffectList.cpp">
+      <Filter>GameFrame\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.cpp">
+      <Filter>GameFrame\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp">
+      <Filter>GameFrame\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Shader\EffectSprite\EffectSpriteShader.cpp">
+      <Filter>GameFrame\Shader\EffectSpriteShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Frames\MenuBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ProgressObject\ProgressObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SelectList\SelectList.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.cpp">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\ParameterList.cpp">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\ParameterDisplay.cpp">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\PartsParameters.cpp">
+      <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectObject\HLSL\PSEffectObject.hlsl">
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectObject\HLSL\GSEffectObject.hlsl">
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\PSEffectSprite.hlsl">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\VSEffectSprite.hlsl">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shader\EffectSprite\HLSL\GSEffectSprite.hlsl">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shader\EffectObject\HLSL\EffectObjectShader.hlsli">
+      <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
+    </None>
+    <None Include="Resource\StageScript\stage1.chs">
+      <Filter>StageScript</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage2.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\CPUCharactor\mob.cpu">
+      <Filter>GameFrame\CPUData</Filter>
+    </None>
+    <None Include="Resource\StageScript\stage2.chs">
+      <Filter>StageScript</Filter>
+    </None>
+    <None Include="Resource\StageScript\test_stage.chs">
+      <Filter>StageScript</Filter>
+    </None>
+    <None Include="Resource\StageScript\CPU\GuardianRobot.amf">
+      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+    </None>
+    <None Include="Resource\StageScript\CPU\NormalRobot.amf">
+      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+    </None>
+    <None Include="Resource\StageScript\CPU\AirRobot.amf">
+      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+    </None>
+    <None Include="Src\Shader\EffectSprite\HLSL\EffectSpriteShader.hlsli">
+      <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage_Wave.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage3.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage4.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\RobotParts\HT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\LAA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\LAG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\LAT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\MF-TPP1.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\RAA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\RAG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\RAT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\BA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\BG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\BT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FT.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\HA_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\HG_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\Bullet\standard_1968.bod">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\Save\AssemMechaFrameList.json">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\Save\Player.amf">
+      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+    </None>
+    <None Include="Resource\RobotParts\core_parts_list.lst">
+      <Filter>PartsDatas</Filter>
+    </None>
   </ItemGroup>
 </Project>

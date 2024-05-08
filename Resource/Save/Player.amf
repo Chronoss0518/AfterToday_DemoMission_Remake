@@ -1,0 +1,29 @@
+{
+	"Core":{
+		"Armature_BodyPos":{
+			"Parts":"Resource/RobotParts/FT.mpd"
+		},
+		"Armature_BoostPos":{
+			"Parts":"Resource/RobotParts/BT.mpd"
+		},
+		"Armature_HeadPos":{
+			"Parts":"Resource/RobotParts/HT.mpd"
+		},
+		"Armature_LeftArmPos":{
+			"LeftArm_WeaponPos":{
+				"LeftWeapon":true,
+				"Parts":"Resource/RobotParts/MF-TPP1.mpd"
+			},
+			"Parts":"Resource/RobotParts/LAT.mpd"
+		},
+		"Armature_RightArmPos":{
+			"Parts":"Resource/RobotParts/RAT.mpd",
+			"RightArm_WeaponPos":{
+				"Parts":"Resource/RobotParts/MF-TPP1.mpd",
+				"RightWeapon":true
+			}
+		},
+		"Parts":"Resource/RobotParts/CT.mpd"
+	},
+	"Name":"Normal"
+}

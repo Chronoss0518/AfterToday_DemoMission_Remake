@@ -1,0 +1,27 @@
+Resource/XFile/RobotsParts/Body/Air.x
+1.000000
+1.000000
+EnelgyTankData:{
+10000
+10
+}
+NextPos:{
+Armature_HeadPos
+Head
+}
+NextPos:{
+Armature_RightArmPos
+Right Arm
+}
+NextPos:{
+Armature_LeftArmPos
+Left Arm
+}
+NextPos:{
+Armature_BodyPos
+Foot
+}
+NextPos:{
+Armature_BoostPos
+Boost
+}

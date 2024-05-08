@@ -1,0 +1,7 @@
+Resource/XFile/RobotsParts/RArm/Guardian.x
+2.000000
+2.000000
+NextPos:{
+RightArm_WeaponPos
+Hand
+}

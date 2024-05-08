@@ -1,0 +1,15 @@
+Resource/XFile/RobotsParts/Weapon/GunSample.x
+1.000000
+1.000000
+GunData:{
+Armature_ShotPos
+MainShot
+SE_Shot.v2.wav
+5
+1
+30
+5
+30
+20
+Resource/RobotParts/Bullet/standard_1968.bod
+}
