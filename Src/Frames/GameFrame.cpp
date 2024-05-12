@@ -103,6 +103,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	meshDrawer.SetCullMode(D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(true);
 
+	lightBloomeDrawer.SetAlphaBlendFlg(true);
 	lightBloomeDrawer.Init(ChD3D11::D3D11Device());
 	lightBloomeDrawer.SetBlurPower(5);
 	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT));
