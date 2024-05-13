@@ -183,7 +183,7 @@ private:
 	ChPtr::Shared<BaseMecha> drawMecha = nullptr;
 	ChD3D11::Shader::CircleCullingSprite11 gageDrawer;
 	ChD3D11::Shader::BaseDrawSprite11 uiDrawer;
-	ChD3D11::Shader::BasicBlurShader11 lightBloomeDrawer;
+	ChD3D11::Shader::BasicHighlightShader11 lightBloomeDrawer;
 	ChD3D11::Sprite11 uiSprite;
 	ImageSprite hitIcon;
 

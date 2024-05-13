@@ -82,7 +82,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	resultData = sendData->resultData;
 
-	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
+	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	script = ChPtr::Make_S<GameScript>();
 	InitScriptFunction();
@@ -103,10 +103,11 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	meshDrawer.SetCullMode(D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(true);
 
-	lightBloomeDrawer.SetAlphaBlendFlg(true);
 	lightBloomeDrawer.Init(ChD3D11::D3D11Device());
 	lightBloomeDrawer.SetBlurPower(5);
-	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT));
+	lightBloomeDrawer.SetBoostPower(5.0f);
+	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH * 0.5f, GAME_WINDOW_HEIGHT * 0.5f));
+	lightBloomeDrawer.SetLiteBlurFlg(false);
 
 	shotTargetDrawer.Init(ChD3D11::D3D11Device());
 	shotTargetDrawer.SetCullMode(D3D11_CULL_BACK);
@@ -667,7 +668,7 @@ void GameFrame::DrawFunction()
 	mechaList.ObjectDrawBegin();
 
 	rt3D.SetBackColor(ChD3D11::D3D11DC(), ChVec4::FromColor(0.0f, 0.0f, 1.0f, 1.0f));
-	rtHighLightMap.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	rtHighLightMap.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 	rt2D.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f));
 	dsTex.ClearDepthBuffer(ChD3D11::D3D11DC());
 
