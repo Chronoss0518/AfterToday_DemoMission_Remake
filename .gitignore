@@ -401,5 +401,3 @@ FodyWeavers.xsd
 /Debug/
 /Release/
 *.exe
-
-*./Resource/Save/Player.amf
