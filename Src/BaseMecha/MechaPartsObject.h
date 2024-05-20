@@ -5,29 +5,17 @@
 class GameFrame;
 class ExternalFunction;
 class WeaponFunction;
+class MechaPartsObject;
 
 class Attack;
 class AttackObject;
 
-enum class PostureDirection : unsigned char
-{
-	X,
-	Y,
-	Z
-};
 
-enum class PostrueType : unsigned char
+enum class StartRotatePosture
 {
-	//垂直//
-	Vertical,
-	//水平//
-	Horizontal
-};
-
-struct FramePosture
-{
-	PostureDirection direction;
-	PostrueType type;
+	XY,
+	YX,
+	None
 };
 
 class MechaPartsObject
@@ -40,7 +28,7 @@ public:
 
 	void CreateAnchor();
 
-	void CreateFramePosture(ChCpp::FrameObject* _frameObejct);
+	void CreatePostureList(ChCpp::BaseObject* _parentPosition);
 
 public:
 
@@ -105,7 +93,7 @@ public:
 
 	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
 
-	void SetRotation(const ChVec3& _rot) { baseRot = _rot; }
+	void SetRotation(const float& _rot) { baseRotation = _rot; }
 
 	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
 
@@ -118,18 +106,6 @@ public:
 	void SetLookAnchorNo(const unsigned long _no) { lookAnchorNo = _no; }
 
 	void SetHitSize();
-
-	void SetPositionObjectRotationYAxis(float _rot);
-	
-	void SetPositionObjectRotationXAxis(float _rot);
-
-	void SetPositionObjectRotationZAxis(float _rot);
-
-	void SetParentRotationYAxis(unsigned long _no,float _rot);
-
-	void SetParentRotationXAxis(unsigned long _no, float _rot);
-
-	void SetParentRotationZAxis(unsigned long _no, float _rot);
 
 public:
 
@@ -172,7 +148,7 @@ public:
 
 	float GetDamage(AttackObject& _bullet);
 
-	ChVec3 GetBaseRotation() { return baseRot; }
+	float GetBaseRotation() { return baseRotation; }
 
 	ChVec3 GetColliderSize() { return collider.GetScl(); }
 
@@ -202,13 +178,17 @@ public:
 
 	void Update();
 
-	void UpdateFramePosture(ChCpp::FrameObject* _frameObject);
+private:
+
+	void DrawStart();
 
 public:
 
+	void DrawStartFunction();
+
 	virtual void Draw(const ChLMat& _drawMat);
 
-	void  DrawEnd();
+	void DrawEnd();
 
 private:
 
@@ -243,7 +223,9 @@ private:
 	GameFrame* frame = nullptr;
 
 	//Autoで敵を追尾すると時用に修正//
-	std::map<ChCpp::FrameObject*, ChPtr::Shared<FramePosture>> framePostures;
+	std::vector<ChPtr::Weak<PostureController>> postureList;
+	StartRotatePosture startRotatePosture = StartRotatePosture::None;
+	float baseRotation = 0.0f;
 
 	std::vector<ChPtr::Shared<ExternalFunction>>externalFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
@@ -254,8 +236,6 @@ private:
 
 	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
 	MechaPartsObject* parentObject = nullptr;
-
-	ChVec3 baseRot = ChVec3();
 
 	//パーツの解除フラグ//
 	bool releaseFlg = false;
@@ -300,6 +280,8 @@ public:
 		obj = _obj;
 	}
 
+	virtual inline ChVec3 GetTargetDirection() { return ChVec3(0.0f,0.0f,0.0f); }
+
 protected:
 
 	GameFrame* frame = nullptr;
@@ -307,5 +289,7 @@ protected:
 	BaseMecha* mecha = nullptr;
 
 	MechaPartsObject* obj = nullptr;
+
+
 
 };
