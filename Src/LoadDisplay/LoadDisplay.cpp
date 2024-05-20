@@ -424,19 +424,19 @@ void LoadDisplay::DrawBase(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 	_spriteShader.Draw(window.image, window.sprite);
 	_spriteShader.Draw(mainWindow.image, mainWindow.sprite);
 
-	for (unsigned long i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
 		_spriteShader.Draw(panelSelectButton[i].image, panelSelectButton[i].sprite);
 	}
 
-	for (unsigned long i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
 		_spriteShader.Draw(panelSelectButton[i].image, panelSelectButton[i].sprite);
 		if (ChStd::EnumCast(selectButton) != i)continue;
 		_spriteShader.Draw(selectPanelSelectButtonImage, panelSelectButton[i].sprite);
 	}
 
-	for (unsigned long i = 0; i < ChStd::EnumCast(BottomButtonType::None); i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(BottomButtonType::None); i++)
 	{
 		_spriteShader.Draw(bottomButton[i].image, bottomButton[i].sprite);
 		if (selectBottomButton != i)continue;

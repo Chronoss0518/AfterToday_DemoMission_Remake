@@ -47,21 +47,21 @@ private:
 
 private:
 
-	enum class SelectSpriteType
+	enum class SelectSpriteType:unsigned char
 	{
 		LeftButton,
 		RightButton,
 		LoadPanel
 	};
 
-	enum class BottomButtonType
+	enum class BottomButtonType :unsigned char
 	{
 		Decision,
 		Cancel,
 		None,
 	};
 
-	enum class SelectButtonType
+	enum class SelectButtonType :unsigned char
 	{
 		Left, Right, None
 	};
