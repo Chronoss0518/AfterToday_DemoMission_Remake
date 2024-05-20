@@ -15,6 +15,10 @@
 #define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
 #endif
 
+ChCpp::ModelLoader::XFile xfileLoader;
+ChCpp::ModelLoader::ObjFile objLoader;
+
+
 std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
 {
 	PARTS_DATA_CREATER(EnelgyTankData),
@@ -24,6 +28,7 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	PARTS_DATA_CREATER(Aerodynamics),
 	PARTS_DATA_CREATER(MoveAcceleration),
 	PARTS_DATA_CREATER(NextPos),
+	PARTS_DATA_CREATER(PostureData),
 	PARTS_DATA_CREATER(RightBoostBrust),
 	PARTS_DATA_CREATER(LeftBoostBrust),
 	PARTS_DATA_CREATER(FrontBoostBrust),
@@ -54,8 +59,6 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 
 		auto&& partsObject = (*it).second->SetParameters(_base, _frame, _jsonObject);
 
-		partsObject->CreateFramePosture(it->second->model.get());
-
 		(*it).second->CreateChild(partsObject, _base, _device, _drawer, _frame, _jsonObject);
 
 		return partsObject;
@@ -70,8 +73,6 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	mechaParts->SetMeshDrawer(_drawer);
 
 	auto&& partsObject = mechaParts->SetParameters(_base, _frame, _jsonObject);
-
-	partsObject->CreateFramePosture(mechaParts->model.get());
 
 	mechaParts->CreateChild(partsObject,_base, _device, _drawer, _frame, _jsonObject);
 
@@ -112,19 +113,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 	unsigned long lineCount = textObject.LineCount();
 
-	{
-		ChCpp::ModelLoader::XFile loader;
-		model->Init(_device);
-		std::string tmp = textObject.GetTextLine(0);
-		loader.CreateModel(model, tmp);
-		defaultFrameMat = model->GetFrameTransformLMat();
-
-		auto test = model->GetInitAllFrameMinPos().y;
-		if (groundHeight > test)
-		{
-			groundHeight = test;
-		}
-	}
+	LoadModel(_device, textObject.GetTextLine(0));
 
 	hardness = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(1).c_str()));
 	mass = static_cast<float>(std::atof(textObject.GetTextLine(2).c_str()));
@@ -134,6 +123,26 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 		i = CreateDatas(_base, textObject, i);
 	}
 
+}
+
+void MechaParts::LoadModel(ID3D11Device* _device, const std::string& _fileName)
+{
+	ChCpp::ModelLoader::XFile loader;
+
+	model->Init(_device);
+	loader.CreateModel(model, _fileName);
+	if (model->GetMyName() == "Root")
+	{
+		defaultFrameMat = model->GetFrameTransformLMat();
+	}
+
+	float test = model->GetInitAllFrameMinPos().y;
+	if (groundHeight > test)
+	{
+		groundHeight = test;
+	}
+
+	
 }
 
 void MechaParts::RemoveParameter(BaseMecha& _base)
@@ -169,8 +178,11 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 
 		auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject);
 
+
 		childParts->SetPositoinObject(_partsObject.get(), posData.second);
 		_partsObject->AddChildObject(posData.first, childParts);
+
+		childParts->CreatePostureList(posData.second.get());
 
 	}
 	_partsObject->SetHitSize();
@@ -490,6 +502,14 @@ void NextPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Sh
 
 }
 
+void PostureData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+{
+	auto&& pos = _targetObject->GetComponent<PostureController>();
+	if (pos != nullptr)return;
+	pos = _targetObject->SetComponent<PostureController>();
+	pos->Set(posture);
+}
+
 void BoostBrust::RemoveParameter(BaseMecha& _base)
 {
 	auto&& obj = GetFrame(_base);
@@ -697,9 +717,10 @@ unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigne
 	magazineNum = std::atol(_text.GetTextLine(textPos + 2).c_str());
 	reloadTime = std::atol(_text.GetTextLine(textPos + 3).c_str());
 	range = static_cast<unsigned char>(std::atol(_text.GetTextLine(textPos + 4).c_str()));
-	bulletFile = _text.GetTextLine(textPos + 5).c_str();
+	frontDir.Deserialize(_text.GetTextLine(textPos + 5).c_str());
+	bulletFile = _text.GetTextLine(textPos + 6).c_str();
 
-	return textPos + 6;
+	return textPos + 7;
 
 }
 
@@ -713,6 +734,7 @@ std::string GunData::Serialize()
 	res += std::to_string(magazineNum) + "\n";
 	res += std::to_string(reloadTime) + "\n";
 	res += std::to_string(range) + "\n";
+	res += frontDir.Serialize(",",";");
 	res += bulletFile + "\n";
 
 	return res;
@@ -754,19 +776,4 @@ void GunData::SetPartsParameter(PartsParameters& _base)
 	attackData->SetPartameter(*weap);
 
 	_base.weaponData.push_back(weap);
-}
-
-unsigned long PostureBase::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
-{
-	return _textPos;
-}
-
-std::string PostureBase::Serialize()
-{
-	return "";
-}
-
-void PostureBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
-{
-
 }

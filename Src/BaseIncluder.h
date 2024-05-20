@@ -300,3 +300,68 @@ static inline std::wstring CreateMoneyText(const std::wstring& _money)
 
 	return result;
 }
+
+
+//X,Y,Z‚Ì”//
+static constexpr unsigned long AXIS_BASE_TYPE_NUM = 3;
+
+//RotateAxis‚É“o˜^‚³‚ê‚Ä‚¢‚é”//
+static constexpr unsigned long AXIS_TYPE_NUM = 6;
+
+enum class RotateAxis : unsigned char
+{
+	PX,
+	PY,
+	PZ,
+	MX,
+	MY,
+	MZ
+};
+
+class PostureController: public ChCpp::BaseComponent
+{
+public://Set Functions//
+
+
+	void Set(const PostureController& _val)
+	{
+		axis = _val.axis;
+		minRotate = _val.minRotate;
+		maxRotate = _val.maxRotate;
+	}
+
+	inline void SetRotateAxis(const RotateAxis _axis)
+	{
+		axis = _axis;
+	}
+
+	inline void SetMinRotate(const float& _rotate)
+	{
+		minRotate = _rotate;
+	}
+
+	inline void SetMaxRotate(const float& _rotate)
+	{
+		maxRotate = _rotate;
+	}
+
+
+public://Get Functions//
+
+	inline RotateAxis GetRotateAxis() { return axis; }
+
+	inline float GetMinRotate() { return minRotate; }
+
+	inline float GetMaxRotate() { return maxRotate; }
+
+private:
+
+	//‰ñ“]²//
+	RotateAxis axis = RotateAxis::PX;
+
+	//Å’á‰ñ“]—Ê//
+	float minRotate = 0.0f;
+
+	//Å’á‰ñ“]—Ê//
+	float maxRotate = 0.0f;
+};

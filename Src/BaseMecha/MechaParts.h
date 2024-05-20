@@ -79,6 +79,10 @@ public://Serialize Deserialize//
 
 	std::string Serialize();
 
+private:
+
+	void LoadModel(ID3D11Device* _device, const std::string& _fileName);
+
 public://Set Functions//
 
 	ChPtr::Shared<MechaPartsObject> SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
@@ -507,6 +511,11 @@ public://Set Functions//
 		connectionName = _connectionName;
 	}
 
+	inline void SetMaxWeight(const float _weight)
+	{
+		maxWeight = _weight;
+	}
+
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 public://Get Functions//
@@ -515,13 +524,87 @@ public://Get Functions//
 
 	inline std::string GetConnectionName() { return connectionName; }
 
+	inline float GetMaxWeight() { return maxWeight; }
+
+
 protected:
 
 	//ê⁄ë±ïîÇÃñºèÃ//
 	std::string connectionName = "";
-	
+
 	//ç≈ëÂèdó //
 	float maxWeight = 0.0f;
+
+};
+
+class PostureData : public NextPosBase
+{
+public://Serialize Deserialize//
+
+	inline unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override
+	{
+		unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
+		SetRotateAxis(static_cast<RotateAxis>(std::atoi(_text[textPos].c_str())));
+		SetMinRotate(static_cast<float>(std::atof(_text[textPos + 1].c_str())));
+		SetMaxRotate(static_cast<float>(std::atof(_text[textPos + 2].c_str())));
+
+		return textPos + 3;
+	}
+
+	inline std::string Serialize()override
+	{
+		std::string res = NextPosBase::Serialize();
+		res += std::to_string(static_cast<unsigned char>(GetRotateAxis())) + "\n";
+		res += std::to_string(GetMinRotate()) + "\n";
+		res += std::to_string(GetMaxRotate()) + "\n";
+
+		return res;
+	}
+
+public://Set Functions//
+
+	inline void SetRotateAxis(const RotateAxis _axis)
+	{
+		posture.SetRotateAxis(_axis);
+	}
+
+	inline void SetMinRotate(const float& _rotate)
+	{
+		posture.SetMinRotate(_rotate);
+	}
+
+	inline void SetMaxRotate(const float& _rotate)
+	{
+		posture.SetMaxRotate(_rotate);
+	}
+
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
+
+public://Get Functions//
+
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(PostureData); }
+
+
+	inline RotateAxis GetRotateAxis()
+	{
+		return posture.GetRotateAxis();
+	}
+
+	inline float GetMinRotate()
+	{
+		return posture.GetMinRotate();
+	}
+
+	inline float GetMaxRotate()
+	{
+		return posture.GetMinRotate();
+	}
+
+
+protected:
+
+	PostureController posture;
+
 };
 
 class BoostBrust :public PartsDataBase
@@ -783,6 +866,8 @@ public://Set Functions//
 
 	inline void SetBulletFile(const std::string& _bulletFile) { bulletFile = _bulletFile; }
 
+	inline void SetFrontDirection(const ChVec3& _dir){ frontDir = _dir; }
+
 public://Get Functions//
 
 	inline std::string GetPartsTypeTag() override { return GET_CLASS_NAME(GunData); }
@@ -799,6 +884,8 @@ public://Get Functions//
 
 	inline std::string GetUseBulletFile() const { return bulletFile; }
 
+	inline ChVec3 GetFrontDirection()const { return frontDir; }
+
 protected:
 
 	//éÀåÇéûÇÃíeÇÃêî//
@@ -814,48 +901,10 @@ protected:
 	unsigned char range = 0;
 
 	std::string bulletFile = "";
+
+	//çUåÇéûÇ…å¸ÇØÇÈï˚å¸//
+	ChVec3 frontDir;
 };
 
-class PostureBase : public PartsDataBase
-{
-public:
-
-	unsigned long Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos = 0)override;
-
-	std::string Serialize()override;
-
-public://Set Functions//
-
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
-
-	void SetPartsParameter(PartsParameters& _base)override {};
-
-public://Get Functions//
-
-private:
-
-	std::string targetPartsName = "";
-
-};
-
-//êÇíº//
-class VerticalPosture : public PostureBase
-{
-
-public:
-
-	std::string GetPartsTypeTag() { return GET_CLASS_NAME(VerticalPosture); }
-
-};
-
-//êÖïΩ//
-class HorizontalPosture : public PostureBase
-{
-
-public:
-
-	std::string GetPartsTypeTag() { return GET_CLASS_NAME(HorizontalPosture); }
-
-};
 
 #endif
