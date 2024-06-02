@@ -107,6 +107,7 @@ protected:
 
 	//’e‚Ìƒ‚ƒfƒ‹//
 	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChLMat defaultMat;
 
 	std::vector<ChPtr::Shared<AttackBase>> externulFunctions;
 

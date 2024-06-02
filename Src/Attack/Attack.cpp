@@ -152,6 +152,12 @@ void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
 		ChCpp::ModelLoader::XFile loader;
 		bullet->Init(_device);
 		loader.CreateModel(bullet, textObject.GetTextLine(3));
+
+		if (bullet->GetMyName() == "Root")
+		{
+			defaultMat = bullet->GetDrawLHandMatrix();
+		}
+
 	}
 
 	unsigned long pos = 4;
@@ -209,9 +215,10 @@ void Attack::SetPartameter(PartsParameterStruct::WeaponData& _partsParameter)
 void Attack::InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet)
 {
 	_bullet.collider.SetScalling(hitSize);
+	
 	for (auto&& bulletFunction : externulFunctions)
 	{
-		bulletFunction->InitBulletObject((bullet->GetDrawLHandMatrix() * _startMat),_bullet);
+		bulletFunction->InitBulletObject((_startMat),_bullet);
 	}
 }
 
@@ -266,11 +273,15 @@ void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet
 
 	dir.Normalize();
 
+	ChVec3 tmpRotate = _startMat.GetEularRotationYXZ();
+	tmpRotate.x = ChMath::ToDegree(tmpRotate.x);
+	tmpRotate.y = ChMath::ToDegree(tmpRotate.y);
+	tmpRotate.z = ChMath::ToDegree(tmpRotate.z);
+
 	_bullet.SetPosition(_startMat.GetPosition());
-	_bullet.SetRotation(mat.GetEularRotationYXZ());
+	_bullet.SetRotation(tmpRotate);
 
 	dir *= firstSpeed;
-	dir.x = -dir.x;
 	_bullet.physics->AddMovePowerVector(dir);
 
 

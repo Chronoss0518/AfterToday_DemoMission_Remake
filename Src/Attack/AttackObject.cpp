@@ -48,8 +48,6 @@ void AttackObject::Move()
 void AttackObject::Draw3D()
 {
 	ChLMat tmp = ChLMat();
-	//tmp.SetScalling(ChVec3(10.0f));
-	tmp.SetPosition(physics->GetPosition());
 	ChQua qua;
 
 	ChVec3 ypr = physics->GetRotation();
@@ -58,6 +56,8 @@ void AttackObject::Draw3D()
 	qua.AddRotationZAxis(ChMath::ToRadian(ypr.z));
 
 	tmp.SetRotation(qua);
+	tmp.SetScalling(ChVec3(10.0f));
+	tmp.SetPosition(physics->GetPosition());
 	ChMat_11 draw;
 	draw = tmp;
 
