@@ -55,8 +55,6 @@ public://Override Functions//
 
 	void Draw2D()override;
 
-	void DrawEnd()override;
-
 private:
 
 	void BaseMove();
@@ -259,6 +257,7 @@ protected:
 	long hitEffectDrawFrame = -1;
 
 	bool breakFlg = false;
+
 };
 
 #endif

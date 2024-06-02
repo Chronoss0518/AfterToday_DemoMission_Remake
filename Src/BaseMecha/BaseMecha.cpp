@@ -145,6 +145,7 @@ void BaseMecha::UpdateEnd()
 
 void BaseMecha::Move()
 {
+
 	BaseMove();
 
 	inputFlgs.SetAllDownFlg();
@@ -269,11 +270,6 @@ void BaseMecha::Draw2D()
 	
 
 
-}
-
-void BaseMecha::DrawEnd()
-{
-	core->DrawEnd();
 }
 
 void BaseMecha::Deserialize(const std::string& _fileName)

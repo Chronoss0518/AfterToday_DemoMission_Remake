@@ -10,6 +10,11 @@ class MechaPartsObject;
 class Attack;
 class AttackObject;
 
+struct ControllerListItem
+{
+	ChPtr::Shared<PostureController> controller = nullptr;
+	MechaPartsObject* partsObejct = nullptr;
+};
 
 enum class StartRotatePosture
 {
@@ -28,7 +33,7 @@ public:
 
 	void CreateAnchor();
 
-	void CreatePostureList(ChCpp::BaseObject* _parentPosition);
+	void CreatePostureList();
 
 public:
 
@@ -54,21 +59,34 @@ public:
 	{
 		if (_partsObject == nullptr)return;
 
+		_partsObject->SetPositoinObject(this, baseParts->GetPositionList()[_objectType]);
+
 		auto&& tmpObject = positions.find(_objectType);
 		if (tmpObject == positions.end())
 		{
 			positions[_objectType] = _partsObject;
+
+			_partsObject->CreatePostureList();
 			return;
 		}
 
 		if (tmpObject->second != nullptr)
 		{
-			tmpObject->second->Release();
-			tmpObject->second = nullptr;
+			positions.erase(tmpObject);
+			positions[_objectType] = _partsObject;
+
+			_partsObject->CreatePostureList();
+
+			return;
 		}
 
 		tmpObject->second = _partsObject;
+		_partsObject->CreatePostureList();
+
 	}
+
+
+
 
 public:
 
@@ -91,9 +109,19 @@ public:
 
 	void SetPositoinObject(MechaPartsObject* _parent, ChPtr::Shared<ChCpp::FrameObject>_positionObject) { positionObject = _positionObject; parentObject = _parent; }
 
-	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
+	void SetPostureRotation(ChCpp::BaseObject* const _target, float _rotation)
+	{
+		ChPtr::Shared<PostureRotateData>rotateData = postureRotateList[_target];
+		if (rotateData == nullptr)
+		{
+			rotateData = ChPtr::Make_S<PostureRotateData>();
+			postureRotateList[_target] = rotateData;
+		}
+		rotateData->rotate = ChMath::ToDegree(_rotation);
+		rotateData->updateFlg = true;
+	}
 
-	void SetRotation(const float& _rot) { baseRotation = _rot; }
+	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
 
 	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
 
@@ -108,6 +136,8 @@ public:
 	void SetHitSize();
 
 public:
+
+	std::vector<ChPtr::Weak<PostureController>>& GetPostureControllerList() { return baseParts->GetPostureControllerList(); };
 
 	MechaParts* GetBaseObject() { return baseParts; }
 
@@ -148,8 +178,6 @@ public:
 
 	float GetDamage(AttackObject& _bullet);
 
-	float GetBaseRotation() { return baseRotation; }
-
 	ChVec3 GetColliderSize() { return collider.GetScl(); }
 
 	unsigned long GetLookAnchorNo() { return lookAnchorNo; }
@@ -173,6 +201,24 @@ public:
 	}
 
 	MechaPartsObject* GetParent() { return parentObject; }
+
+	inline std::vector<ChPtr::Shared<ControllerListItem>>GetControllerList() { return controllerList; }
+
+	inline StartRotatePosture GetStartRotatePosture() { return startRotatePosture; }
+
+public:
+
+	void AddPostureRotation(ChCpp::BaseObject* const _target, float _rotation)
+	{
+		ChPtr::Shared<PostureRotateData>rotateData = postureRotateList[_target];
+		if (rotateData == nullptr)
+		{
+			rotateData = ChPtr::Make_S<PostureRotateData>();
+			postureRotateList[_target] = rotateData;
+		}
+		rotateData->rotate += ChMath::ToDegree(_rotation);
+		rotateData->updateFlg = true;
+	}
 
 public:
 
@@ -220,12 +266,18 @@ protected:
 
 private:
 
+	struct PostureRotateData
+	{
+		float rotate = 0;
+		bool updateFlg = false;
+	};
+
 	GameFrame* frame = nullptr;
 
-	//AutoÇ≈ìGÇí«îˆÇ∑ÇÈÇ∆éûópÇ…èCê≥//
-	std::vector<ChPtr::Weak<PostureController>> postureList;
+	//AutoÇ≈ìGÇí«îˆÇ∑ÇÈéûópÇ…èCê≥//
+	std::map<ChCpp::BaseObject*, ChPtr::Shared<PostureRotateData>>postureRotateList;
+	std::vector<ChPtr::Shared<ControllerListItem>>controllerList;
 	StartRotatePosture startRotatePosture = StartRotatePosture::None;
-	float baseRotation = 0.0f;
 
 	std::vector<ChPtr::Shared<ExternalFunction>>externalFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;

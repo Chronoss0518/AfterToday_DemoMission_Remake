@@ -28,7 +28,7 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	PARTS_DATA_CREATER(Aerodynamics),
 	PARTS_DATA_CREATER(MoveAcceleration),
 	PARTS_DATA_CREATER(NextPos),
-	PARTS_DATA_CREATER(PostureData),
+	PARTS_DATA_CREATER(Posture),
 	PARTS_DATA_CREATER(RightBoostBrust),
 	PARTS_DATA_CREATER(LeftBoostBrust),
 	PARTS_DATA_CREATER(FrontBoostBrust),
@@ -47,7 +47,7 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	return LoadParts(_base, _device, _drawer, _frame, jsonObject);
 }
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject, const std::string _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
 {
 	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
 
@@ -58,6 +58,11 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 		it->second->SetMeshDrawer(_drawer);
 
 		auto&& partsObject = (*it).second->SetParameters(_base, _frame, _jsonObject);
+
+		if (_parent != nullptr)
+		{
+			_parent->AddChildObject(_positionObjectType, partsObject);
+		}
 
 		(*it).second->CreateChild(partsObject, _base, _device, _drawer, _frame, _jsonObject);
 
@@ -73,6 +78,11 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	mechaParts->SetMeshDrawer(_drawer);
 
 	auto&& partsObject = mechaParts->SetParameters(_base, _frame, _jsonObject);
+
+	if (_parent != nullptr)
+	{
+		_parent->AddChildObject(_positionObjectType, partsObject);
+	}
 
 	mechaParts->CreateChild(partsObject,_base, _device, _drawer, _frame, _jsonObject);
 
@@ -134,6 +144,7 @@ void MechaParts::LoadModel(ID3D11Device* _device, const std::string& _fileName)
 	if (model->GetMyName() == "Root")
 	{
 		defaultFrameMat = model->GetFrameTransformLMat();
+		defaultFrameMat.Inverse();
 	}
 
 	float test = model->GetInitAllFrameMinPos().y;
@@ -176,13 +187,8 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 		auto&& jsonObject = _jsonObject->GetJsonObject(posData.first);
 		if (jsonObject == nullptr)continue;
 
-		auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject);
+		auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject, posData.first,_partsObject);
 
-
-		childParts->SetPositoinObject(_partsObject.get(), posData.second);
-		_partsObject->AddChildObject(posData.first, childParts);
-
-		childParts->CreatePostureList(posData.second.get());
 
 	}
 	_partsObject->SetHitSize();
@@ -502,12 +508,16 @@ void NextPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Sh
 
 }
 
-void PostureData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+void Posture::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
 {
 	auto&& pos = _targetObject->GetComponent<PostureController>();
 	if (pos != nullptr)return;
 	pos = _targetObject->SetComponent<PostureController>();
 	pos->Set(posture);
+
+	auto&& baseParts = LookObj<MechaParts>();
+	if (baseParts == nullptr)return;
+	baseParts->AddPosture(pos);
 }
 
 void BoostBrust::RemoveParameter(BaseMecha& _base)
@@ -631,7 +641,8 @@ unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsi
 	weaponName = _text.GetTextLine(textPos);
 	seFile = _text.GetTextLine(textPos + 1);
 	waitTime = std::atol(_text.GetTextLine(textPos + 2).c_str());
-	return textPos + 3;
+	lookTarget = _text.GetTextLine(textPos + 3) == "1";
+	return textPos + 4;
 }
 
 std::string WeaponData::Serialize()
@@ -641,6 +652,7 @@ std::string WeaponData::Serialize()
 	res += weaponName + "\n";
 	res += seFile + "\n";
 	res += std::to_string(waitTime) + "\n";
+	res += lookTarget ? "1" : "0";
 
 	return res;
 }

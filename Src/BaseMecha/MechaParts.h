@@ -69,7 +69,7 @@ public://Serialize Deserialize//
 
 	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _partsFilePath);
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject,const std::string _positionObjectType = "", ChPtr::Shared<MechaPartsObject> _parent = nullptr);
 
 	void Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName);
 
@@ -101,6 +101,8 @@ public://Set Functions//
 
 public://Get Function//
 
+	std::vector<ChPtr::Weak<PostureController>>& GetPostureControllerList() { return postureList; };
+
 	inline unsigned long GetHardness()const { return hardness; }
 
 	inline float GetMass()const { return mass; }
@@ -117,13 +119,18 @@ public://Get Function//
 
 	inline ChD3D11::Shader::BaseDrawMesh11* GetMeshDrawer() { return drawer; }
 
-	inline const std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>>& GetPositionList() { return positions; }
+	inline std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>>& GetPositionList() { return positions; }
 
 public:
 
 	inline void AddPosition(const std::string& _parameter, ChPtr::Shared<ChCpp::FrameObject> _frame)
 	{
 		positions[_parameter] = _frame;
+	}
+
+	inline void AddPosture(ChPtr::Weak<PostureController> _posture)
+	{
+		postureList.push_back(_posture);
 	}
 
 	void AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
@@ -153,6 +160,9 @@ private:
 	static std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 
 	std::map<std::string, ChPtr::Shared<ChCpp::FrameObject>> positions;
+
+
+	std::vector<ChPtr::Weak<PostureController>> postureList;
 
 	constexpr static const char* GetModelNameTag() { return "ModelName:\n"; }
 
@@ -537,7 +547,7 @@ protected:
 
 };
 
-class PostureData : public NextPosBase
+class Posture : public NextPosBase
 {
 public://Serialize Deserialize//
 
@@ -582,7 +592,7 @@ public://Set Functions//
 
 public://Get Functions//
 
-	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(PostureData); }
+	std::string GetPartsTypeTag()override { return GET_CLASS_NAME(Posture); }
 
 
 	inline RotateAxis GetRotateAxis()
@@ -789,6 +799,8 @@ public:
 
 	inline void SetWaitTime(const unsigned long _waitTime) { waitTime = _waitTime; }
 
+	inline void SetLookTargetFlg(const bool _flg) { lookTarget = _flg; }
+
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)override;
 
 	void SetWeaponData(PartsParameterStruct::WeaponData& _base);
@@ -801,6 +813,8 @@ public:
 
 	inline unsigned long GetWaitTime() const { return waitTime; }
 
+	inline bool GetLookTargetFlg() { return lookTarget; }
+
 protected:
 
 	//ïêäÌÇÃñºèÃ//
@@ -809,6 +823,10 @@ protected:
 	std::string seFile = "";
 	//éüÇÃçUåÇâ¬î\éûä‘//
 	unsigned long waitTime = 0;
+
+	//ëŒè€Çí«îˆÇ∑ÇÈÇ©ÇÃÉtÉâÉO//
+	bool lookTarget = false;
+
 };
 
 class SwordData :public WeaponData
