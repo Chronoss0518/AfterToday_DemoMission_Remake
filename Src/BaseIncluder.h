@@ -301,12 +301,11 @@ static inline std::wstring CreateMoneyText(const std::wstring& _money)
 	return result;
 }
 
-
 //X,Y,ZÇÃêî//
-static constexpr unsigned long AXIS_BASE_TYPE_NUM = 3;
+static constexpr unsigned char AXIS_BASE_TYPE_NUM = 3;
 
 //RotateAxisÇ…ìoò^Ç≥ÇÍÇƒÇ¢ÇÈêî//
-static constexpr unsigned long AXIS_TYPE_NUM = 6;
+static constexpr unsigned char AXIS_TYPE_NUM = 6;
 
 enum class RotateAxis : unsigned char
 {
@@ -345,6 +344,29 @@ public://Set Functions//
 		maxRotate = _rotate;
 	}
 
+	inline void SetRotate(float _rotate)
+	{
+		auto&& frame = LookObj<ChCpp::FrameObject>();
+
+		if (ChPtr::NullCheck(frame))return;
+		if(_rotate == 0.0f)
+		{
+			frame->SetOutSizdTransform(ChLMat());
+			return;
+		}
+		ChLMat tmpMat;
+
+		auto&& direction = ChStd::EnumCast(axis) % AXIS_BASE_TYPE_NUM;
+
+		float rotate = ChStd::EnumCast(axis) > AXIS_BASE_TYPE_NUM ? -_rotate : _rotate;
+
+		if(direction == (ChStd::EnumCast(RotateAxis::PX) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationXAxis(rotate);
+		if(direction == (ChStd::EnumCast(RotateAxis::PY) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationYAxis(rotate);
+		if(direction == (ChStd::EnumCast(RotateAxis::PZ) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationZAxis(rotate);
+
+		frame->SetOutSizdTransform(tmpMat);
+	}
+
 
 public://Get Functions//
 
@@ -353,6 +375,8 @@ public://Get Functions//
 	inline float GetMinRotate() { return minRotate; }
 
 	inline float GetMaxRotate() { return maxRotate; }
+
+	inline ChCpp::BaseObject* GetLookObject() { return LookObj(); }
 
 private:
 
