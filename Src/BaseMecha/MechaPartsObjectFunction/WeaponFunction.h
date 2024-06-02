@@ -118,6 +118,8 @@ public:
 
 	void DrawEnd()override;
 
+public:
+
 	//’e‚ªo‚Ä‚­‚éêŠ//
 	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }
 
@@ -128,6 +130,10 @@ public:
 	std::wstring GetBulletNum()override;
 
 	std::wstring GetReloadCount()override;
+
+private:
+
+	void UpdatePosture();
 
 private:
 
