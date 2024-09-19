@@ -12,7 +12,7 @@
 
 #include"../SelectList/SelectList.h"
 
-#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Edit/") current_path
+#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
 
 #define MECHA_ROTATION_SPEED 1.0f
 
@@ -109,13 +109,13 @@ public:
 
 public:
 
-	void CreateSelectImage(const std::string& _fileName, ID3D11Device* _device)
+	void CreateSelectImage(const std::wstring& _fileName, ID3D11Device* _device)
 	{
 		if (_fileName.empty())return;
 		selectImage.CreateTexture(_fileName, _device);
 	}
 
-	void CreatePanelBackGround(const std::string& _fileName,ID3D11Device* _device)
+	void CreatePanelBackGround(const std::wstring& _fileName,ID3D11Device* _device)
 	{
 		if (_fileName.empty())return;
 		background.CreateTexture(_fileName, _device);
@@ -296,7 +296,7 @@ void EditFrame::SetPartsList(MechaPartsObject& _parts)
 
 	selectPartsPanel->positionNameTexture = CreatePanelPosTitleTexture(L"Select Parts");
 
-	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(ChStr::UTF8ToWString(base->GetMyName()));
+	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 
 	partsList->AddItem(selectPartsPanel);
 
@@ -315,26 +315,26 @@ void EditFrame::SetPartsList(MechaPartsObject& _parts)
 
 }
 
-void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName)
+void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName)
 {
 	if (_parts != nullptr)return;
 	auto&& res = ChPtr::Make_S<EditListItem>();
 
-	res->positionNameTexture = CreatePanelTitleTexture(ChStr::UTF8ToWString(_positionName));
+	res->positionNameTexture = CreatePanelTitleTexture(_positionName);
 
 	_res = res;
 }
 
-void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName)
+void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName)
 {
 	if (_parts == nullptr)return;
 	auto&& res = ChPtr::Make_S<EditListPartsItem>();
 
-	res->positionNameTexture = CreatePanelPosTitleTexture(ChStr::UTF8ToWString(_positionName));
+	res->positionNameTexture = CreatePanelPosTitleTexture(_positionName);
 
 	auto&& base = _parts->GetBaseObject();
 
-	res->partsNameTexture = CreatePanelPosPartsTexture(ChStr::UTF8ToWString(base->GetMyName()));
+	res->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 
 	res->targetParts = _parts;
 
@@ -596,7 +596,7 @@ void EditFrame::Load()
 
 		if (extensionName == L".lst")continue;
 
- 		pathList.push_back(ChStr::UTF8ToString(path));
+ 		pathList.push_back(path);
 	}
 
 }

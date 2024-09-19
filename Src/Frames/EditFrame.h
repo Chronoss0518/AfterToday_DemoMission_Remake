@@ -40,9 +40,9 @@ private:
 
 	void SetPartsList(MechaPartsObject& _parts);
 
-	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
+	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
-	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
+	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
 	void UpdateAction(ActionType _type)override;
 
@@ -96,7 +96,7 @@ private:
 	float nowAnimationWaitTime = 1.0f;
 	bool upFlg = true;
 
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
 	ChPtr::Shared<ParameterList> parameterList = nullptr;
 
@@ -107,7 +107,7 @@ private:
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
 	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
 
-	std::vector<std::string> pathList;
+	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;
 	bool loadEndFlg = false;
 
@@ -115,7 +115,7 @@ private:
 	TextDrawerWICBitmap panelPosTitleDrawer;//パーツネームが確認できた際にPosition名を描画する
 	TextDrawerWICBitmap panelPosPartsDrawer;//パーツ名を描画する
 
-	std::vector<std::string>coreList;
+	std::vector<std::wstring>coreList;
 
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
 	bool selectFlg = false;
