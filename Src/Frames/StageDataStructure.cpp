@@ -3,34 +3,35 @@
 
 #include"StageDataStructure.h"
 
-#define J_STAGE_NAME "StageName"
-#define J_STAGE_SCRIPT_PATH "StageScriptPath"
-#define J_STAGE_LOCATIN_NAME "StageLocationName"
-#define J_STAGE_IMAGE_PATH "StageImager"
-#define J_STAGE_STRATEGY_OVERVIEW "StageStrategyOverview"
-#define J_STAGE_MISSION_TIME "MissionTimeSeccond"
-#define J_SUCCESS_FEE "SuccessFee"
-#define J_DRAW_SUCCESS_FEE "DrawSuccessFee"
-#define J_ADDITIONAL_COMPENSATION "AdditionalCompensation"
-#define J_ADDITIONAL_COMPENSATION_EXPLANATION "AdditionalCompensationExplanation"
-#define J_SPECIAL_PAY_REDUCTION "SpecialPayReduction"
-#define J_SPECIAL_PAY_REDUCTION_EXPLANATION "SpecialPayReductionExplanation"
-#define J_SPECIAL_PAY_REDUCTION_EXPLANATION "SpecialPayReductionExplanation"
-#define J_SELECT_MODEL_FLG "SelectModelFlg"
+#define J_STAGE_NAME L"StageName"
+#define J_STAGE_SCRIPT_PATH L"StageScriptPath"
+#define J_STAGE_LOCATIN_NAME L"StageLocationName"
+#define J_STAGE_IMAGE_PATH L"StageImager"
+#define J_STAGE_STRATEGY_OVERVIEW L"StageStrategyOverview"
+#define J_STAGE_MISSION_TIME L"MissionTimeSeccond"
+#define J_SUCCESS_FEE L"SuccessFee"
+#define J_DRAW_SUCCESS_FEE L"DrawSuccessFee"
+#define J_ADDITIONAL_COMPENSATION L"AdditionalCompensation"
+#define J_ADDITIONAL_COMPENSATION_EXPLANATION L"AdditionalCompensationExplanation"
+#define J_SPECIAL_PAY_REDUCTION L"SpecialPayReduction"
+#define J_SPECIAL_PAY_REDUCTION_EXPLANATION L"SpecialPayReductionExplanation"
+#define J_SPECIAL_PAY_REDUCTION_EXPLANATION L"SpecialPayReductionExplanation"
+#define J_SELECT_MODEL_FLG L"SelectModelFlg"
 
-void StageDataStructure::Load(const std::string& _filePath)
+void StageDataStructure::Load(const std::wstring& _filePath)
 {
 
-	std::string text = "";
+	std::wstring text = L"";
 
 	{
-		ChCpp::CharFile file;
+		ChCpp::WCharFile file;
+		file.SetLocaleName("Japanese");
 		file.FileOpen(_filePath);
 		text = file.FileReadText();
 		file.FileClose();
 	}
 
-	auto jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject>(ChCpp::JsonBaseType::GetParameter(text));
+	auto jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(ChCpp::JsonBaseType<wchar_t>::GetParameter(text));
 
 	if (jsonObject == nullptr)return;
 
@@ -76,41 +77,42 @@ void StageDataStructure::Load(const std::string& _filePath)
 
 }
 
-void StageDataStructure::Save(const std::string& _filePath)
+void StageDataStructure::Save(const std::wstring& _filePath)
 {
 
-	auto res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	res->Set(J_STAGE_NAME, ChCpp::JsonString::CreateObject(stageName));
+	res->Set(J_STAGE_NAME, ChCpp::JsonString<wchar_t>::CreateObject(stageName));
 
-	res->Set(J_STAGE_IMAGE_PATH, ChCpp::JsonString::CreateObject(stageImagePath));
+	res->Set(J_STAGE_IMAGE_PATH, ChCpp::JsonString<wchar_t>::CreateObject(stageImagePath));
 
-	res->Set(J_STAGE_LOCATIN_NAME, ChCpp::JsonString::CreateObject(stageLocationName));
+	res->Set(J_STAGE_LOCATIN_NAME, ChCpp::JsonString<wchar_t>::CreateObject(stageLocationName));
 
-	res->Set(J_STAGE_SCRIPT_PATH, ChCpp::JsonString::CreateObject(stageScriptPath));
+	res->Set(J_STAGE_SCRIPT_PATH, ChCpp::JsonString<wchar_t>::CreateObject(stageScriptPath));
 
-	res->Set(J_STAGE_STRATEGY_OVERVIEW, ChCpp::JsonString::CreateObject(stageStrategyOverview));
+	res->Set(J_STAGE_STRATEGY_OVERVIEW, ChCpp::JsonString<wchar_t>::CreateObject(stageStrategyOverview));
 
-	res->Set(J_STAGE_MISSION_TIME, ChCpp::JsonNumber::CreateObject(missionTimeSeccond));
+	res->Set(J_STAGE_MISSION_TIME, ChCpp::JsonNumber<wchar_t>::CreateObject(missionTimeSeccond));
 
-	res->Set(J_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(resultData->successFee));
+	res->Set(J_SUCCESS_FEE, ChCpp::JsonNumber<wchar_t>::CreateObject(resultData->successFee));
 
-	if(resultData->successFee != drawSuccessFee) res->Set(J_DRAW_SUCCESS_FEE, ChCpp::JsonNumber::CreateObject(drawSuccessFee));
+	if(resultData->successFee != drawSuccessFee) res->Set(J_DRAW_SUCCESS_FEE, ChCpp::JsonNumber<wchar_t>::CreateObject(drawSuccessFee));
 
-	res->Set(J_ADDITIONAL_COMPENSATION, ChCpp::JsonNumber::CreateObject(resultData->additionalCompensation));
+	res->Set(J_ADDITIONAL_COMPENSATION, ChCpp::JsonNumber<wchar_t>::CreateObject(resultData->additionalCompensation));
 	
-	res->Set(J_ADDITIONAL_COMPENSATION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->additionalCompensationExplanation));
+	res->Set(J_ADDITIONAL_COMPENSATION_EXPLANATION, ChCpp::JsonString<wchar_t>::CreateObject(resultData->additionalCompensationExplanation));
 	
-	res->Set(J_SPECIAL_PAY_REDUCTION, ChCpp::JsonNumber::CreateObject(resultData->specialPayReduction));
+	res->Set(J_SPECIAL_PAY_REDUCTION, ChCpp::JsonNumber<wchar_t>::CreateObject(resultData->specialPayReduction));
 	
-	res->Set(J_SPECIAL_PAY_REDUCTION_EXPLANATION, ChCpp::JsonString::CreateObject(resultData->specialPayReductionExplanation));
+	res->Set(J_SPECIAL_PAY_REDUCTION_EXPLANATION, ChCpp::JsonString<wchar_t>::CreateObject(resultData->specialPayReductionExplanation));
 
-	res->Set(J_SELECT_MODEL_FLG, ChCpp::JsonBoolean::CreateObject(selectModelFlg));
+	res->Set(J_SELECT_MODEL_FLG, ChCpp::JsonBoolean<wchar_t>::CreateObject(selectModelFlg));
 
 	{
-		ChCpp::CharFile file;
+		ChCpp::WCharFile file;
+		file.SetLocaleName("Japanese");
 		file.FileOpen(_filePath);
-		auto result = file.FileWriteText(ChCpp::JsonBaseType::FormatDocument(res->GetRawData()));
+		auto result = file.FileWriteText(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData()));
 		file.FileClose();
 	}
 
