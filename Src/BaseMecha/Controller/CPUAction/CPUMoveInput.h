@@ -10,9 +10,9 @@ class CPUMoveInput
 {
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject);
 
 	void Update(
 		CPUController& _controller, 

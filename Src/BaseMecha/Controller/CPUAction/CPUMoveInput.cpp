@@ -12,35 +12,35 @@
 #include"CPUTargetSelector.h"
 #include"CPUMovePositionSelector.h"
 
-ChPtr::Shared<ChCpp::JsonObject> CPUMoveInput::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUMoveInput::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	res->Set("LookTweakSize", ChCpp::JsonNumber::CreateObject(lookTweakSize));
+	res->Set(L"LookTweakSize", ChCpp::JsonNumber<wchar_t>::CreateObject(lookTweakSize));
 
-	res->Set("TargetPositionLength", ChCpp::JsonNumber::CreateObject(targetPositionLength));
+	res->Set(L"TargetPositionLength", ChCpp::JsonNumber<wchar_t>::CreateObject(targetPositionLength));
 
-	res->Set("UseBoostLengthFromBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromBattle));
+	res->Set(L"UseBoostLengthFromBattle", ChCpp::JsonNumber<wchar_t>::CreateObject(useBoostLengthFromBattle));
 
-	res->Set("UseBoostLengthFromUnBattle", ChCpp::JsonNumber::CreateObject(useBoostLengthFromUnBattle));
+	res->Set(L"UseBoostLengthFromUnBattle", ChCpp::JsonNumber<wchar_t>::CreateObject(useBoostLengthFromUnBattle));
 
 	return res;
 }
 
-void CPUMoveInput::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUMoveInput::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& lookTweakSizeObject = _jsonObject->GetJsonNumber("LookTweakSize");
+	auto&& lookTweakSizeObject = _jsonObject->GetJsonNumber(L"LookTweakSize");
 	if (lookTweakSizeObject != nullptr)lookTweakSize = *lookTweakSizeObject;
 
-	auto&& targetPositionLengthObject = _jsonObject->GetJsonNumber("TargetPositionLength");
+	auto&& targetPositionLengthObject = _jsonObject->GetJsonNumber(L"TargetPositionLength");
 	if (targetPositionLengthObject != nullptr)targetPositionLength = *targetPositionLengthObject;
 
-	auto&& useBoostLengthFromBattleObject = _jsonObject->GetJsonNumber("UseBoostLengthFromBattle");
+	auto&& useBoostLengthFromBattleObject = _jsonObject->GetJsonNumber(L"UseBoostLengthFromBattle");
 	if (useBoostLengthFromBattleObject != nullptr)useBoostLengthFromBattle = *useBoostLengthFromBattleObject;
 
-	auto&& useBoostLengthFromUnBattleObject = _jsonObject->GetJsonNumber("UseBoostLengthFromUnBattle");
+	auto&& useBoostLengthFromUnBattleObject = _jsonObject->GetJsonNumber(L"UseBoostLengthFromUnBattle");
 	if (useBoostLengthFromUnBattleObject != nullptr)useBoostLengthFromUnBattle = *useBoostLengthFromUnBattleObject;
 }
 
@@ -57,7 +57,7 @@ void CPUMoveInput::Update(
 
 	bool isBattleFlg = _movePositionSelector.IsBattleFlg();
 
-	//OutputDebugString("CPUMoveInput Update Start\n");
+	//OutputDebugString(L"CPUMoveInput Update Start\n");
 
 	auto moveDir = _movePositionSelector.GetMovePoint() - baseMecha->GetPosition();
 
@@ -105,9 +105,9 @@ void CPUMoveInput::Update(
 	//if (moveDir.y < lookDir.y)_controller.Input(ControllerBase::InputName::CameraUpRotation, true);
 	//if (moveDir.y > lookDir.y)_controller.Input(ControllerBase::InputName::CameraDownRotation, true);
 
-	//OutputDebugString(("CrossSize x:[" + std::to_string(cross.x)+"] y:[" + std::to_string(cross.y) + "] z:[" + std::to_string(cross.z) + "]\n").c_str());
+	//OutputDebugString((L"CrossSize x:[" + std::to_string(cross.x)+"] y:[" + std::to_string(cross.y) + "] z:[" + std::to_string(cross.z) + "]\n").c_str());
 
-	//OutputDebugString("CPUMoveInput Update End\n");
+	//OutputDebugString(L"CPUMoveInput Update End\n");
 
 	if (!_targetSelector.IsLookTarget())
 	{
@@ -136,7 +136,7 @@ void CPUMoveInput::Update(
 
 	auto&& targetPosition = targetMechaObject->GetPosition();
 
-	float moveToTargetPositionLenght = (targetPosition - _movePositionSelector.GetMovePoint()).Len();
+	float moveToTargetPositionLenght = (targetPosition - _movePositionSelector.GetMovePoint()).GetLen();
 
 	MoveBattleTarget(_controller, _movePositionSelector.IsBattleFlg(), targetDir, _targetSelector.IsLookTarget());
 
@@ -147,7 +147,7 @@ void CPUMoveInput::MoveBattleTarget(CPUController& _controller, bool _isBattleFl
 {
 	if (!_isBattleFlg)return;
 
-	float length = _dir.Len();
+	float length = _dir.GetLen();
 
 	ChVec3 tmpDir = _dir;
 
@@ -169,7 +169,7 @@ void CPUMoveInput::MoveUnButtleTarget(CPUController& _controller, bool _isBattle
 {
 	if (_isBattleFlg)return;
 
-	float length = _dir.Len();
+	float length = _dir.GetLen();
 
 	ChVec3 tmpDir = _dir;
 
