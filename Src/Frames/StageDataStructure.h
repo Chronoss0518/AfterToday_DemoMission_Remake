@@ -16,17 +16,17 @@ struct ResultStructure :public ChCpp::SendDataClass
 	unsigned long energyCosts = 0;
 
 	//追加報酬説明//
-	std::string additionalCompensationExplanation = "";
+	std::wstring additionalCompensationExplanation = L"";
 	//特別減給説明//
-	std::string specialPayReductionExplanation = "";
+	std::wstring specialPayReductionExplanation = L"";
 };
 
 struct StageDataStructure : public ChCpp::SendDataClass
 {
 
-	void Load(const std::string& _filePath);
+	void Load(const std::wstring& _filePath);
 
-	void Save(const std::string& _filePath);
+	void Save(const std::wstring& _filePath);
 
 	ChPtr::Shared<ResultStructure> resultData = ChPtr::Make_S<ResultStructure>();
 
@@ -34,22 +34,22 @@ struct StageDataStructure : public ChCpp::SendDataClass
 	unsigned long drawSuccessFee = 0;
 
 	//StageのScriptPath//
-	std::string stageScriptPath = "";
+	std::wstring stageScriptPath = L"";
 
 	//Stageの作戦時間(s)//
 	unsigned long missionTimeSeccond = 0;
 	
 	//Stageの名称//
-	std::string stageName = "";
+	std::wstring stageName = L"";
 
 	//StageのImagePath//
-	std::string stageImagePath = "";
+	std::wstring stageImagePath = L"";
 
 	//Stageの地名//
-	std::string stageLocationName = "";
+	std::wstring stageLocationName = L"";
 
 	//Stageの内容//
-	std::string stageStrategyOverview = "";
+	std::wstring stageStrategyOverview = L"";
 
 	//Mechaをロードおよび編集ができるためのフラグ//
 	bool selectModelFlg = true;
