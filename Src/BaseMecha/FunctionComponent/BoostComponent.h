@@ -60,9 +60,9 @@ private:
 
 public:
 
-	void AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType);
+	void AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _avoidType);
 
-	void AddBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType);
+	void AddBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _boostType);
 
 	void AddBoostPow(const float _boostPow, InputName _boostType);
 
@@ -74,9 +74,9 @@ public:
 
 public:
 
-	void SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType);
+	void SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _avoidType);
 		 
-	void SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType);
+	void SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _boostType);
 		 
 	void SubBoostPow(const float _boostPow, InputName _boostType);
 		 
@@ -135,7 +135,7 @@ private:
 
 		float nowBoostPow = 0.0f;
 
-		std::vector<ChPtr::Shared<ChCpp::FrameObject>>boostObject;
+		std::vector<ChPtr::Shared<ChCpp::FrameObject<wchar_t>>>boostObject;
 
 	};
 

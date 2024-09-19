@@ -84,7 +84,7 @@ void BoostComponent::BoostDrawBegin()
 			tmp.SetScalling(ChVec3(testScl));
 			boostObject->SetOutSizdTransform(tmp);
 
-			auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11>()->GetPrimitives()[0]->textures[Ch3D::TextureType::Diffuse];
+			auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11<wchar_t>>()->GetPrimitives()[0]->ValueIns().textures[Ch3D::TextureType::Diffuse];
 		}
 	}
 
@@ -200,7 +200,7 @@ unsigned long BoostComponent::GetUseEnelgy(BoostData& _data, bool _avoidFlg)
 	return _data.useEnelgy;
 }
 
-void BoostComponent::AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType)
+void BoostComponent::AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _avoidType)
 {
 	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
 
@@ -209,7 +209,7 @@ void BoostComponent::AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _b
 	data[num].boostObject.push_back(_boost);
 }
 
-void BoostComponent::AddBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType)
+void BoostComponent::AddBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _boostType)
 {
 	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
 
@@ -254,7 +254,7 @@ void BoostComponent::AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy,
 	data[num].avoid.useEnelgy += _avoidUseEnelgy;
 }
 
-void BoostComponent::SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType)
+void BoostComponent::SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _avoidType)
 {
 	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
 
@@ -264,7 +264,7 @@ void BoostComponent::SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _b
 	data[num].boostObject.erase(it);
 }
 
-void BoostComponent::SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType)
+void BoostComponent::SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _boostType)
 {
 	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
 
