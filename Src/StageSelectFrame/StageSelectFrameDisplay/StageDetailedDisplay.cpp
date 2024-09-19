@@ -213,7 +213,7 @@ void StageDetailedDisplay::CreateStageNameTextImage(StageData& _stageData)
 
 	textDrawer.DrawStart();
 
-	textDrawer.DrawToScreen(ChStr::UTF8ToWString(_stageData.stageDatas->stageName), format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
+	textDrawer.DrawToScreen(_stageData.stageDatas->stageName, format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
 
 	textDrawer.DrawEnd();
 
@@ -289,7 +289,7 @@ void StageDetailedDisplay::CreateStageStrategyOverviewTextImage(StageData& _stag
 
 	textDrawer.DrawStart();
 
-	textDrawer.DrawToScreen(ChStr::UTF8ToWString(_stageData.stageDatas->stageStrategyOverview), format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
+	textDrawer.DrawToScreen(_stageData.stageDatas->stageStrategyOverview, format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
 
 	textDrawer.DrawEnd();
 

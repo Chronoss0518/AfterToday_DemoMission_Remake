@@ -2,7 +2,7 @@
 #include"StageData.h"
 
 
-void StageData::LoadData(const std::string& _stageFilePath)
+void StageData::LoadData(const std::wstring& _stageFilePath)
 {
 	stageDatas->Load(_stageFilePath);
 
@@ -10,7 +10,7 @@ void StageData::LoadData(const std::string& _stageFilePath)
 		stageImage.CreateTexture(stageDatas->stageImagePath);
 }
 
-void StageData::SaveData(const std::string& _stageFilePath)
+void StageData::SaveData(const std::wstring& _stageFilePath)
 {
 	stageDatas->Save(_stageFilePath);
 }
