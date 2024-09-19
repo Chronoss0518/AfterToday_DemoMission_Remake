@@ -269,11 +269,11 @@ void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet
 {
 	ChLMat mat = _startMat;
 
-	ChVec3 dir = mat.GetZAxisDirection();
+	ChVec3 dir = mat.GetYAxisDirection();
 
 	dir.Normalize();
 
-	ChVec3 tmpRotate = _startMat.GetEularRotationYXZ();
+	ChVec3 tmpRotate = _startMat.GetEulerRotationYXZ();
 	tmpRotate.x = ChMath::ToDegree(tmpRotate.x);
 	tmpRotate.y = ChMath::ToDegree(tmpRotate.y);
 	tmpRotate.z = ChMath::ToDegree(tmpRotate.z);
@@ -283,7 +283,6 @@ void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet
 
 	dir *= firstSpeed;
 	_bullet.physics->AddMovePowerVector(dir);
-
 
 	for (unsigned char i = 0; i < 5; i++)
 	{

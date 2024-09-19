@@ -68,10 +68,12 @@ void GunFunction::AttackFunction()
 	ChLMat tmpMat = lastShotPos;
 
 #if true
-	auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
-	tmpMat = obj->GetLastDrawMat();
+	//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
+	tmpMat = lastShotPos * obj->GetPositionLastDrawMat() * obj->GetLastDrawMat();
 
-	tmpMat = lastShotPos * defaultMat * tmpMat;
+	//tmpMat = lastShotPos * defaultMat * tmpMat;
+	
+	tmpMat = tmpMat;
 #endif
 	frame->AddShotEffectObject(tmpMat.GetPosition());
 
@@ -180,7 +182,7 @@ void GunFunction::DrawEnd()
 	if (shotPos != nullptr)
 	{
 		//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
-		//lastShotPos = obj->GetLastDrawMat() * shotPos->GetDrawLHandMatrix();
+		//lastShotPos = shotPos->GetDrawLHandMatrix();
 		
 		//lastShotPos = defaultMat * shotPos->GetDrawLHandMatrix();
 		lastShotPos = shotPos->GetDrawLHandMatrix();
@@ -238,17 +240,17 @@ void GunFunction::UpdatePosture()
 
 	if (controllerList.empty())return;
 
-	auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
+	//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
 
 	//ChLMat tmpMat = defaultMat * shotPos->GetDrawLHandMatrix();
-	ChLMat tmpMat = defaultMat * lastShotPos;
-	//ChLMat tmpMat = lastShotPos;
+	//ChLMat tmpMat = defaultMat * lastShotPos;
+	ChLMat tmpMat = lastShotPos * obj->GetPositionLastDrawMat();
 
 	//ChLMat lastDrawMat = obj->GetLastDrawMat();
 	//lastDrawMat.Inverse();
 	//tmpMat = tmpMat * lastDrawMat;
 
-	auto&& nowDirection = tmpMat.GetZAxisDirection();
+	auto&& nowDirection = tmpMat.GetYAxisDirection();
 
 	if (gunData->GetLookTargetFlg())
 	{
@@ -270,13 +272,14 @@ void GunFunction::UpdatePosture()
 
 	auto&& targetFrontDirection = gunData->GetFrontDirection();
 	targetFrontDirection.Normalize();
+	//targetFrontDirection = obj->GetLastDrawMat().TransformCoord(targetFrontDirection);
 
 	OutputDebugString(("Target Direction[" + targetFrontDirection.Serialize("],[", "]\r\n")).c_str());
 
 	ChQua rotation;
 	rotation.SetRotation(nowDirection, targetFrontDirection);
 	
-	ChVec3 setRotate = rotation.MulLHand(nowDirection);
+	ChVec3 setRotate = rotation.Mul(nowDirection);
 
 	OutputDebugString(("To Direction[" + setRotate.Serialize("],[", "]\r\n")).c_str());
 
@@ -291,8 +294,7 @@ void GunFunction::UpdatePosture()
 	//tmpMat.SetRotation(rotation);
 	if (startRotatePosture == StartRotatePosture::YX)
 	{
-		setRotate = rotation.GetEularRotationYXZ();
-		setRotate.x = -setRotate.x;
+		setRotate = rotation.GetEulerRotationYXZ();
 		rotateVector = setRotate;
 		
 		controllerList[0]->partsObejct->AddPostureRotation(controllerList[0]->controller->GetLookObject(), setRotate.y);
@@ -307,8 +309,7 @@ void GunFunction::UpdatePosture()
 	}
 	else
 	{
-		setRotate = rotation.GetEularRotationXYZ();
-		setRotate.x = -setRotate.x;
+		setRotate = rotation.GetEulerRotationXYZ();
 		rotateVector = setRotate;
 
 		controllerList[0]->partsObejct->AddPostureRotation(controllerList[0]->controller->GetLookObject(), setRotate.x);

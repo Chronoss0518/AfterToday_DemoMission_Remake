@@ -144,7 +144,6 @@ void MechaParts::LoadModel(ID3D11Device* _device, const std::string& _fileName)
 	if (model->GetMyName() == "Root")
 	{
 		defaultFrameMat = model->GetFrameTransformLMat();
-		defaultFrameMat.Inverse();
 	}
 
 	float test = model->GetInitAllFrameMinPos().y;

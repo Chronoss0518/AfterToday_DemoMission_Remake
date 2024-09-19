@@ -156,7 +156,6 @@ std::wstring MechaPartsObject::GetReloadCount()
 
 void MechaPartsObject::Update()
 {
-
 	for (auto&& func : externalFunctions)
 	{
 		func->Update();
@@ -201,34 +200,40 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 {
 	DrawStartFunction();
 
-	auto&& mesh = baseParts->GetMesh();
-
+	positionLastDrawMat = ChLMat();
 	if (positionObject != nullptr)
 	{
-		ChLMat tmp = GetParent()->GetBaseObject()->GetDefaultFrameMat();
 
-		tmp = positionObject->GetDrawLHandMatrix() * tmp;
+		auto&& mesh = baseParts->GetMesh();
 
-		mesh.SetOutSizdTransform(tmp);
-
+		//tmp = positionObject->GetDrawLHandMatrix() * tmp;
+		positionLastDrawMat = parentObject->GetBaseObject()->GetDefaultFrameMat() * positionObject->GetDrawLHandMatrix();
+		//positionLastDrawMat = positionObject->GetDrawLHandMatrix();
+		//mesh.SetOutSizdTransform(positionLastDrawMat);
+		mesh = baseParts->GetMesh();
 	}
 
 	lastDrawMat = _drawMat;
 
-	baseParts->Draw((ChMat_11)_drawMat);
+	//ChLMat drawMat = positionLastDrawMat * lastDrawMat;
+	ChLMat drawMat = positionLastDrawMat * lastDrawMat;
+	//ChLMat drawMat = lastDrawMat;
 
-	collider.SetMatrix(_drawMat);
+	baseParts->Draw((ChMat_11)(drawMat));
 
-	mecha->UpdateAnchor(GetLookAnchorNo(), _drawMat);
+	collider.SetMatrix(drawMat);
+
+	mecha->UpdateAnchor(GetLookAnchorNo(), drawMat);
 
 	for (auto&& partsObject : positions)
 	{
 		if (partsObject.second == nullptr)continue;
-		partsObject.second->Draw(_drawMat);
+		partsObject.second->Draw(drawMat);
 	}
 
 	DrawEnd();
 
+	isInitRunFlg = true;
 }
 
 void  MechaPartsObject::DrawEnd()
@@ -248,7 +253,6 @@ void  MechaPartsObject::DrawEnd()
 		postureRotate->second->updateFlg = false;
 		postureRotate->second->rotate *= 0.1f;
 	}
-
 }
 
 void MechaPartsObject::FunctionDrawBegin()
@@ -262,7 +266,6 @@ void MechaPartsObject::FunctionDrawBegin()
 	{
 		func->DrawBegin();
 	}
-
 }
 
 void MechaPartsObject::FunctionDrawEnd()
@@ -276,7 +279,6 @@ void MechaPartsObject::FunctionDrawEnd()
 	{
 		func->DrawEnd();
 	}
-
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)

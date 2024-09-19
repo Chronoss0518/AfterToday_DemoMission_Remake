@@ -162,6 +162,8 @@ public:
 
 	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
 
+	inline ChLMat GetPositionLastDrawMat() { return positionLastDrawMat; }
+
 	float GetDurableValue() { return durableValue; }
 
 	unsigned char GetPartsPosName() { return partsPosName; }
@@ -263,6 +265,7 @@ protected:
 	ChCpp::SphereCollider collider;
 	MechaParts* baseParts;
 	ChLMat lastDrawMat;
+	ChLMat positionLastDrawMat;
 
 private:
 
@@ -278,6 +281,7 @@ private:
 	std::map<ChCpp::BaseObject*, ChPtr::Shared<PostureRotateData>>postureRotateList;
 	std::vector<ChPtr::Shared<ControllerListItem>>controllerList;
 	StartRotatePosture startRotatePosture = StartRotatePosture::None;
+	bool isInitRunFlg = false;
 
 	std::vector<ChPtr::Shared<ExternalFunction>>externalFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;

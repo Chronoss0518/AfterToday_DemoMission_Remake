@@ -240,10 +240,23 @@ void BaseMecha::BaseMove()
 
 	testCollider.SetPosition(pos);
 
-	float tmp = normal.Len() - CENTER_LEN;
-	if (tmp < 0)return;
+	float tmp = normal.Len();
+
+	normal.val.SetLen(tmp * 0.15f);
+	centerPos += normal;
+	return;
+
+	float tmpLen = normal.Len() - CENTER_LEN;
+
 	normal.Normalize();
-	normal.val.SetLen(tmp);
+
+	if (tmp <= 0.0f)
+	{
+		normal.val.SetLen(tmpLen * 0.8f);
+		centerPos += normal;
+		return;
+	}
+	normal.val.SetLen(tmpLen);
 	centerPos += normal;
 }
 
