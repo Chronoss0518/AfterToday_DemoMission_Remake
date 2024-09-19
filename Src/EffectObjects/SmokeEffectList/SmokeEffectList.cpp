@@ -22,7 +22,7 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	effectShader->Init(ChD3D11::D3D11Device(), _maxCount);
 	effectMoveDataList.resize(_maxCount);
 
-	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("SircleTexture.png"), 1, 1);
+	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"SircleTexture.png"), 1, 1);
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 	effectShader->SetBlendFlg(false);

@@ -18,7 +18,7 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 
 	effectShader->Init(ChD3D11::D3D11Device(), _maxCount);
 
-	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("ShotEffectTexture.png"), ANIMATION_COUNT, 1);
+	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"ShotEffectTexture.png"), ANIMATION_COUNT, 1);
 
 	effectShader->SetAlphaBlendTestFlg(true);
 
