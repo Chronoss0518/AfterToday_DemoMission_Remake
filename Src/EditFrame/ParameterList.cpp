@@ -8,7 +8,7 @@
 #include"ParameterPanel.h"
 #include"ParameterDisplay.h"
 
-#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Edit/") current_path
+#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
 
 #define FLOATING_TEST_VALUE 0.0001f
 #define TITLE_FONT_SIZE 24.0f

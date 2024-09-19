@@ -15,11 +15,10 @@
 #define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
 #endif
 
-ChCpp::ModelLoader::XFile xfileLoader;
-ChCpp::ModelLoader::ObjFile objLoader;
+ChCpp::ModelLoader::XFile<wchar_t> xfileLoader;
+ChCpp::ModelLoader::ObjFile<wchar_t> objLoader;
 
-
-std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
+std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
 {
 	PARTS_DATA_CREATER(EnelgyTankData),
 	PARTS_DATA_CREATER(CameraData),
@@ -39,15 +38,15 @@ std::map<std::string, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>M
 	PARTS_DATA_CREATER(GunData),
 };
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, const std::string& _partsFilePath)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath)
 {
-	auto&& jsonObject = ChPtr::Make_S<ChCpp::JsonObject>();
-	jsonObject->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString::CreateObject(_partsFilePath));
+	auto&& jsonObject = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	jsonObject->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(_partsFilePath));
 
 	return LoadParts(_base, _device, _drawer, _frame, jsonObject);
 }
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject, const std::string _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
 {
 	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
 
@@ -89,12 +88,12 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	return partsObject;
 }
 
-void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string& _fileName)
+void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstring& _fileName)
 {
-	std::string text = "";
+	std::wstring text = L"";
 
 	{
-		ChCpp::CharFile file;
+		ChCpp::WCharFile file;
 		file.FileOpen(_fileName);
 		text = file.FileReadText();
 	}
@@ -103,30 +102,30 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::string
 
 	thisFilePath = _fileName;
 	
-	if (thisFilePath.find("/"))
+	if (thisFilePath.find(L"/"))
 	{
-		thisFileName = thisFilePath.substr(thisFilePath.find_last_of("/") + 1);
+		thisFileName = thisFilePath.substr(thisFilePath.find_last_of(L"/") + 1);
 	}
 
-	if (thisFileName.find("."))
+	if (thisFileName.find(L"."))
 	{
-		SetMyName(thisFileName.substr(0, thisFileName.find(".")));
+		SetMyName(thisFileName.substr(0, thisFileName.find(L".")));
 	}
 	Deserialize(_base, _device, text);
 }
 
-void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::string& _text)
+void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::wstring& _text)
 {
 
-	ChCpp::TextObject textObject;
-	textObject.SetText(_text);
+	ChCpp::TextObject<wchar_t> textObject;
+	textObject.SetText(_text.c_str());
 
 	unsigned long lineCount = textObject.LineCount();
 
 	LoadModel(_device, textObject.GetTextLine(0));
 
-	hardness = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(1).c_str()));
-	mass = static_cast<float>(std::atof(textObject.GetTextLine(2).c_str()));
+	hardness = ChStr::GetNumFromText<unsigned long,wchar_t>(textObject.GetTextLine(1).c_str());
+	mass = ChStr::GetNumFromText<float,wchar_t>(textObject.GetTextLine(2).c_str());
 
 	for (unsigned long i = 3; i < lineCount; i++)
 	{
@@ -135,13 +134,13 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 }
 
-void MechaParts::LoadModel(ID3D11Device* _device, const std::string& _fileName)
+void MechaParts::LoadModel(ID3D11Device* _device, const std::wstring& _fileName)
 {
-	ChCpp::ModelLoader::XFile loader;
+	ChCpp::ModelLoader::XFile<wchar_t> loader;
 
 	model->Init(_device);
 	loader.CreateModel(model, _fileName);
-	if (model->GetMyName() == "Root")
+	if (model->GetMyName() == L"Root")
 	{
 		defaultFrameMat = model->GetFrameTransformLMat();
 	}
@@ -165,10 +164,10 @@ void MechaParts::RemoveParameter(BaseMecha& _base)
 	}
 }
 
-unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _textObject, unsigned long _linePos)
+unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject<wchar_t>& _textObject, unsigned long _linePos)
 {
 
-	std::string typeName = _textObject.GetTextLine(_linePos);
+	std::wstring typeName = _textObject.GetTextLine(_linePos);
 	if (typeName.length() <= 0)return _linePos + 1;
 	typeName.pop_back();
 	typeName.pop_back();
@@ -179,7 +178,7 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject& _text
 	return linePos;
 }
 
-void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	for (auto&& posData : positions)
 	{
@@ -193,7 +192,7 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 	_partsObject->SetHitSize();
 }
 
-ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 
 	auto&& parts = SetPartsParameter(_base);
@@ -254,12 +253,12 @@ ChPtr::Shared<PartsParameters>  MechaParts::SetPartsParameter()
 }
 
 
-std::string MechaParts::Save(const std::string& _fileName)
+std::wstring MechaParts::Save(const std::wstring& _fileName)
 {
-	std::string res = Serialize();
+	std::wstring res = Serialize();
 
 	{
-		ChCpp::CharFile file;
+		ChCpp::WCharFile file;
 		file.FileOpen(_fileName);
 		file.FileWriteText(res);
 		file.FileClose();
@@ -268,30 +267,30 @@ std::string MechaParts::Save(const std::string& _fileName)
 	return res;
 }
 
-std::string MechaParts::Serialize()
+std::wstring MechaParts::Serialize()
 {
-	std::string res;
+	std::wstring res;
 
 	//モデル名//
-	res += model->GetModelName() + "\n";
+	res += model->GetModelName() + L"\n";
 
 	//パーツの硬さ//
-	res += std::to_string(hardness) + "\n";
+	res += std::to_wstring(hardness) + L"\n";
 
 	//パーツの重さ//
-	res += std::to_string(mass) + "\n";
+	res += std::to_wstring(mass) + L"\n";
 
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		res += com->GetPartsTypeTag() + ":{\n";
+		res += com->GetPartsTypeTag() + L":{\n";
 		res += com->Serialize();
-		res += "}\n";
+		res += L"}\n";
 	}
 
 	return res;
 }
 
-void MechaParts::AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+void MechaParts::AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	auto&& jsonBool = _jsonObject->GetJsonBoolean(JSON_PROPEATY_RIGHT_WEAPON);
 	if (jsonBool != nullptr)
@@ -314,20 +313,20 @@ void EnelgyTankData::RemoveParameter(BaseMecha& _base)
 	_base.SubChargeEnelgy(chargeEnelgy);
 }
 
-unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	maxEnelgy = std::atol(_text.GetTextLine(_textPos).c_str());
-	chargeEnelgy = std::atol(_text.GetTextLine(_textPos + 1).c_str());
+	maxEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos).c_str());
+	chargeEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
 
 	return _textPos + 2;
 }
 
-std::string EnelgyTankData::Serialize()
+std::wstring EnelgyTankData::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
-	res += std::to_string(maxEnelgy) + "\n";
-	res += std::to_string(chargeEnelgy) + "\n";
+	res += std::to_wstring(maxEnelgy) + L"\n";
+	res += std::to_wstring(chargeEnelgy) + L"\n";
 
 	return res;
 }
@@ -344,21 +343,21 @@ void EnelgyTankData::SetPartsParameter(PartsParameters& _base)
 	_base.enelgyTankData.chargeEnelgy += chargeEnelgy;
 }
 
-unsigned long CameraData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long CameraData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	fovy = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
-	cameraCount = std::atol(_text.GetTextLine(_textPos + 1).c_str());
+	fovy = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
+	cameraCount = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
 	cameraObject = _text.GetTextLine(_textPos + 2);
 	return _textPos + 3;
 }
 
-std::string CameraData::Serialize()
+std::wstring CameraData::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
-	res += std::to_string(fovy) + "\n";
-	res += std::to_string(cameraCount) + "\n";
-	res += cameraObject + "\n";
+	res += std::to_wstring(fovy) + L"\n";
+	res += std::to_wstring(cameraCount) + L"\n";
+	res += cameraObject + L"\n";
 	return res;
 }
 
@@ -369,22 +368,22 @@ void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 	//_base.AddCamera(camera);
 }
 
-unsigned long ScopeData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long ScopeData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = CameraData::Deserialize(_text, _textPos);
-	minFovy = static_cast<float>(std::atof(_text.GetTextLine(textPos).c_str()));
-	maxFovy = static_cast<float>(std::atof(_text.GetTextLine(textPos + 1).c_str()));
-	fovySlideSpeed = static_cast<float>(std::atof(_text.GetTextLine(textPos + 2).c_str()));
+	minFovy = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(textPos).c_str());
+	maxFovy = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(textPos + 1).c_str());
+	fovySlideSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(textPos + 2).c_str());
 	return textPos + 3;
 }
 
-std::string ScopeData::Serialize()
+std::wstring ScopeData::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 	res = CameraData::Serialize();
-	res += std::to_string(minFovy) + "\n";
-	res += std::to_string(maxFovy) + "\n";
-	res += std::to_string(fovySlideSpeed) + "\n";
+	res += std::to_wstring(minFovy) + L"\n";
+	res += std::to_wstring(maxFovy) + L"\n";
+	res += std::to_wstring(fovySlideSpeed) + L"\n";
 
 	return res;
 }
@@ -396,17 +395,17 @@ void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 	//_base.AddCamera(camera);
 }
 
-unsigned long Aerodynamics::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long Aerodynamics::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	upPowerParSpeed = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
+	upPowerParSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
 	return _textPos + 1;
 }
 
-std::string Aerodynamics::Serialize()
+std::wstring Aerodynamics::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
-	res += std::to_string(upPowerParSpeed) + "\n";
+	res += std::to_wstring(upPowerParSpeed) + L"\n";
 
 	return res;
 }
@@ -417,19 +416,19 @@ void Aerodynamics::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts,
 
 }
 
-unsigned long MoveAcceleration::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long MoveAcceleration::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	acceleration = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
-	deceleration = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 1).c_str()));
+	acceleration = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
+	deceleration = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
 	return _textPos + 2;
 }
 
-std::string MoveAcceleration::Serialize()
+std::wstring MoveAcceleration::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
-	res += std::to_string(acceleration) + "\n";
-	res += std::to_string(deceleration) + "\n";
+	res += std::to_wstring(acceleration) + L"\n";
+	res += std::to_wstring(deceleration) + L"\n";
 
 	return res;
 }
@@ -449,21 +448,21 @@ void WalkData::RemoveParameter(BaseMecha& _base)
 	walk->SetJumpPow(0.0f);
 }
 
-unsigned long WalkData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long WalkData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	movePow = static_cast<float>(std::atof(_text.GetTextLine(_textPos).c_str()));
-	rotatePow = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 1).c_str()));
-	jumpPow = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 2).c_str()));
+	movePow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
+	rotatePow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
+	jumpPow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 2).c_str());
 	return _textPos + 3;
 }
 
-std::string WalkData::Serialize()
+std::wstring WalkData::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
-	res += std::to_string(movePow) + "\n";
-	res += std::to_string(rotatePow) + "\n";
-	res += std::to_string(jumpPow) + "\n";
+	res += std::to_wstring(movePow) + L"\n";
+	res += std::to_wstring(rotatePow) + L"\n";
+	res += std::to_wstring(jumpPow) + L"\n";
 
 	return res;
 }
@@ -490,16 +489,16 @@ void NextPosBase::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, 
 
 	if (ChPtr::NullCheck(target))return;
 
-	auto&& posObjects = target->GetMesh().GetAllChildlenForName<ChCpp::FrameObject>(nextPosName);
+	auto&& posObjects = target->GetMesh().GetAllChildlenForName<ChCpp::FrameObject<wchar_t>>(nextPosName);
 
 	if (posObjects.empty())return;
 
-	ChPtr::Shared<ChCpp::FrameObject> posObject = posObjects[0].lock();
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>> posObject = posObjects[0].lock();
 
 	SetObjectPos(_base, _parts, posObject);
 }
 
-void NextPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+void NextPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)
 {
 	auto&& mechaParts = LookObj<MechaParts>();
 
@@ -507,7 +506,7 @@ void NextPos::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Sh
 
 }
 
-void Posture::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+void Posture::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)
 {
 	auto&& pos = _targetObject->GetComponent<PostureController>();
 	if (pos != nullptr)return;
@@ -537,27 +536,27 @@ void BoostBrust::RemoveParameter(BaseMecha& _base)
 
 }
 
-unsigned long BoostBrust::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long BoostBrust::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	objectName = _text.GetTextLine(_textPos);
-	useEnelgy = std::atol(_text.GetTextLine(_textPos + 1).c_str());
-	boostPower = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 2).c_str()));
-	avoidUseEnelgy = std::atol(_text.GetTextLine(_textPos + 3).c_str());
-	avoidPow = static_cast<float>(std::atof(_text.GetTextLine(_textPos + 4).c_str()));
-	avoidWait = std::atol(_text.GetTextLine(_textPos + 5).c_str());
+	useEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
+	boostPower = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 2).c_str());
+	avoidUseEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 3).c_str());
+	avoidPow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 4).c_str());
+	avoidWait = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 5).c_str());
 	return _textPos + 6;
 }
 
-std::string BoostBrust::Serialize()
+std::wstring BoostBrust::Serialize()
 {
 
-	std::string res = "";
+	std::wstring res = L"";
 
 	res = objectName;
-	res += std::to_string(useEnelgy) + "\n";
-	res += std::to_string(boostPower) + "\n";
-	res += std::to_string(avoidUseEnelgy) + "\n";
-	res += std::to_string(avoidPow) + "\n";
+	res += std::to_wstring(useEnelgy) + L"\n";
+	res += std::to_wstring(boostPower) + L"\n";
+	res += std::to_wstring(avoidUseEnelgy) + L"\n";
+	res += std::to_wstring(avoidPow) + L"\n";
 
 	return res;
 }
@@ -618,14 +617,14 @@ void DownBoostBrust::SetPartsParameter(PartsParameters& _base)
 	SetBoostData(_base.downBoostData);
 }
 
-ChPtr::Shared<ChCpp::FrameObject> BoostBrust::GetFrame(BaseMecha& _base)
+ChPtr::Shared<ChCpp::FrameObject<wchar_t>> BoostBrust::GetFrame(BaseMecha& _base)
 {
 	auto&& base = *LookObj<MechaParts>();
 	if (ChPtr::NullCheck(&base))return nullptr;
 
 	auto&& mesh = base.GetMesh();
 
-	auto&& boostList = mesh.GetAllChildlenForName<ChCpp::FrameObject>(objectName);
+	auto&& boostList = mesh.GetAllChildlenForName<ChCpp::FrameObject<wchar_t>>(objectName);
 
 	if (boostList.empty())return nullptr;
 
@@ -634,29 +633,29 @@ ChPtr::Shared<ChCpp::FrameObject> BoostBrust::GetFrame(BaseMecha& _base)
 
 }
 
-unsigned long WeaponData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long WeaponData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
 	weaponName = _text.GetTextLine(textPos);
 	seFile = _text.GetTextLine(textPos + 1);
-	waitTime = std::atol(_text.GetTextLine(textPos + 2).c_str());
-	lookTarget = _text.GetTextLine(textPos + 3) == "1";
+	waitTime = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 2).c_str());
+	lookTarget = _text.GetTextLine(textPos + 3) == L"1";
 	return textPos + 4;
 }
 
-std::string WeaponData::Serialize()
+std::wstring WeaponData::Serialize()
 {
-	std::string res = NextPosBase::Serialize();
+	std::wstring res = NextPosBase::Serialize();
 
-	res += weaponName + "\n";
-	res += seFile + "\n";
-	res += std::to_string(waitTime) + "\n";
-	res += lookTarget ? "1" : "0";
+	res += weaponName + L"\n";
+	res += seFile + L"\n";
+	res += std::to_wstring(waitTime) + L"\n";
+	res += lookTarget ? L"1" : L"0";
 
 	return res;
 }
 
-void WeaponData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject> _targetObject)
+void WeaponData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)
 {
 	_parts.GetWeaponFunctions()[_parts.GetWeaponFunctions().size() - 1]->SetObjectPos(_targetObject);
 }
@@ -673,19 +672,19 @@ void WeaponData::SetWeaponData(PartsParameterStruct::WeaponData& _base)
 	_base.waitTime = waitTime;
 }
 
-unsigned long SwordData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long SwordData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = WeaponData::Deserialize(_text, _textPos);
-	attackTime = std::atol(_text.GetTextLine(textPos).c_str());
+	attackTime = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos).c_str());
 	return textPos + 1;
 }
 
-std::string SwordData::Serialize()
+std::wstring SwordData::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
 	res = WeaponData::Serialize();
-	res += std::to_string(attackTime) + "\n";
+	res += std::to_wstring(attackTime) + L"\n";
 
 	return res;
 }
@@ -720,33 +719,33 @@ void SwordData::SetPartsParameter(PartsParameters& _base)
 	_base.weaponData.push_back(weap);
 }
 
-unsigned long GunData::Deserialize(const ChCpp::TextObject& _text, const unsigned long _textPos)
+unsigned long GunData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = WeaponData::Deserialize(_text, _textPos);
-	fireNum = std::atol(_text.GetTextLine(textPos).c_str());
-	bulletNum = std::atol(_text.GetTextLine(textPos + 1).c_str());
-	magazineNum = std::atol(_text.GetTextLine(textPos + 2).c_str());
-	reloadTime = std::atol(_text.GetTextLine(textPos + 3).c_str());
-	range = static_cast<unsigned char>(std::atol(_text.GetTextLine(textPos + 4).c_str()));
-	frontDir.Deserialize(_text.GetTextLine(textPos + 5).c_str());
+	fireNum = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos).c_str());
+	bulletNum = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 1).c_str());
+	magazineNum = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 2).c_str());
+	reloadTime = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 3).c_str());
+	range = static_cast<unsigned char>(ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 4).c_str()));
+	frontDir.Deserialize<wchar_t>(_text.GetTextLine(textPos + 5).c_str());
 	bulletFile = _text.GetTextLine(textPos + 6).c_str();
 
 	return textPos + 7;
 
 }
 
-std::string GunData::Serialize()
+std::wstring GunData::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
 	res = WeaponData::Serialize();
-	res += std::to_string(fireNum) + "\n";
-	res += std::to_string(bulletNum) + "\n";
-	res += std::to_string(magazineNum) + "\n";
-	res += std::to_string(reloadTime) + "\n";
-	res += std::to_string(range) + "\n";
-	res += frontDir.Serialize(",",";");
-	res += bulletFile + "\n";
+	res += std::to_wstring(fireNum) + L"\n";
+	res += std::to_wstring(bulletNum) + L"\n";
+	res += std::to_wstring(magazineNum) + L"\n";
+	res += std::to_wstring(reloadTime) + L"\n";
+	res += std::to_wstring(range) + L"\n";
+	res += frontDir.Serialize<wchar_t>(L",",L";");
+	res += bulletFile + L"\n";
 
 	return res;
 }

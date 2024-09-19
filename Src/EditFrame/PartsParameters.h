@@ -70,7 +70,7 @@ namespace PartsParameterStruct
 
 	struct AttackData
 	{
-		std::string objectName = "";
+		std::wstring objectName = L"";
 
 		//ˆÐ—Í//
 		unsigned long penetration = 0;
@@ -85,8 +85,8 @@ namespace PartsParameterStruct
 	{
 		virtual ~WeaponData(){}
 
-		std::string partsName = "";
-		std::string weaponName = "";
+		std::wstring partsName = L"";
+		std::wstring weaponName = L"";
 
 		unsigned long waitTime = 0;
 		std::vector<ChPtr::Shared<AttackData>>attackData;

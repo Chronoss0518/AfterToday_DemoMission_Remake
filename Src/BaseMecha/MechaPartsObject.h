@@ -41,7 +41,7 @@ public:
 
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
 
 public:
 
@@ -55,7 +55,7 @@ public:
 		externalFunctions.push_back(_function);
 	}
 
-	inline void AddChildObject(const std::string& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
+	inline void AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
 	{
 		if (_partsObject == nullptr)return;
 
@@ -90,7 +90,7 @@ public:
 
 public:
 
-	inline void RemoveChildObject(const std::string& _objectType)
+	inline void RemoveChildObject(const std::wstring& _objectType)
 	{
 		auto findObject = positions.find(_objectType);
 		if (findObject == positions.end())return;
@@ -107,9 +107,9 @@ public:
 
 public:
 
-	void SetPositoinObject(MechaPartsObject* _parent, ChPtr::Shared<ChCpp::FrameObject>_positionObject) { positionObject = _positionObject; parentObject = _parent; }
+	void SetPositoinObject(MechaPartsObject* _parent, ChPtr::Shared<ChCpp::FrameObject<wchar_t>>_positionObject) { positionObject = _positionObject; parentObject = _parent; }
 
-	void SetPostureRotation(ChCpp::BaseObject* const _target, float _rotation)
+	void SetPostureRotation(ChCpp::BaseObject<wchar_t>* const _target, float _rotation)
 	{
 		ChPtr::Shared<PostureRotateData>rotateData = postureRotateList[_target];
 		if (rotateData == nullptr)
@@ -143,7 +143,7 @@ public:
 
 	BaseMecha* GetBaseMecha() { return mecha; }
 
-	ChPtr::Shared<ChCpp::FrameObject> GetPositionObject() { return positionObject; }
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>> GetPositionObject() { return positionObject; }
 
 	std::vector<ChPtr::Shared<ExternalFunction>>& GetExternalFunctions()
 	{
@@ -194,7 +194,7 @@ public:
 
 	std::wstring GetReloadCount();
 
-	ChPtr::Shared<MechaPartsObject> GetChildParts(const std::string& _childPosition)
+	ChPtr::Shared<MechaPartsObject> GetChildParts(const std::wstring& _childPosition)
 	{
 		auto findObject = positions.find(_childPosition);
 		if (findObject == positions.end())return nullptr;
@@ -210,7 +210,7 @@ public:
 
 public:
 
-	void AddPostureRotation(ChCpp::BaseObject* const _target, float _rotation)
+	void AddPostureRotation(ChCpp::BaseObject<wchar_t>* const _target, float _rotation)
 	{
 		ChPtr::Shared<PostureRotateData>rotateData = postureRotateList[_target];
 		if (rotateData == nullptr)
@@ -278,7 +278,7 @@ private:
 	GameFrame* frame = nullptr;
 
 	//Autoで敵を追尾する時用に修正//
-	std::map<ChCpp::BaseObject*, ChPtr::Shared<PostureRotateData>>postureRotateList;
+	std::map<ChCpp::BaseObject<wchar_t>*, ChPtr::Shared<PostureRotateData>>postureRotateList;
 	std::vector<ChPtr::Shared<ControllerListItem>>controllerList;
 	StartRotatePosture startRotatePosture = StartRotatePosture::None;
 	bool isInitRunFlg = false;
@@ -286,11 +286,11 @@ private:
 	std::vector<ChPtr::Shared<ExternalFunction>>externalFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
 
-	std::map<std::string,ChPtr::Shared<MechaPartsObject>> positions;
+	std::map<std::wstring,ChPtr::Shared<MechaPartsObject>> positions;
 
 	unsigned long useAttackType = 0;
 
-	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>positionObject = nullptr;
 	MechaPartsObject* parentObject = nullptr;
 
 	//パーツの解除フラグ//
@@ -313,7 +313,7 @@ class ExternalFunction
 
 public:
 
-	virtual void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device) {};
+	virtual void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device) {};
 
 	virtual void Release() {};
 
@@ -321,7 +321,7 @@ public:
 
 	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
-	virtual void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
+	virtual void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject) = 0;
 
 	virtual void Update() = 0;
 

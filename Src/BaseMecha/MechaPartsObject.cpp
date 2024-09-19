@@ -25,7 +25,7 @@ void MechaPartsObject::CreatePostureList()
 	MechaPartsObject* tmpObj = this;
 	while (true)
 	{
-		ChPtr::Shared<ChCpp::FrameObject> controller = tmpObj->GetPositionObject();
+		ChPtr::Shared<ChCpp::FrameObject<wchar_t>> controller = tmpObj->GetPositionObject();
 
 		tmpObj = tmpObj->GetParent();
 		if (ChPtr::NullCheck(tmpObj))break;
@@ -33,7 +33,7 @@ void MechaPartsObject::CreatePostureList()
 		while (controller != nullptr)
 		{
 			auto&& controllerObj = controller->GetComponent<PostureController>();
-			controller = ChPtr::SharedSafeCast<ChCpp::FrameObject>(controller->GetParent().lock());
+			controller = ChPtr::SharedSafeCast<ChCpp::FrameObject<wchar_t>>(controller->GetParent().lock());
 
 			if (controllerObj == nullptr)continue;
 
@@ -85,16 +85,16 @@ void MechaPartsObject::Release()
 	positions.clear();
 }
 
-ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 {
-	auto&& res = ChPtr::Make_S< ChCpp::JsonObject>();
-	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString::CreateObject(baseParts->GetThisFilePath()));
+	auto&& res = ChPtr::Make_S< ChCpp::JsonObject<wchar_t>>();
+	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(baseParts->GetThisFilePath()));
 
 	if (GetRWeapon())
-		res->Set(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+		res->Set(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
 
 	if (GetLWeapon())
-		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
 
 
 	for (auto&& partsObject : positions)
@@ -116,8 +116,8 @@ void MechaPartsObject::SetHitSize()
 
 std::wstring MechaPartsObject::GetPartsName()
 {
-	std::wstring result = ChStr::UTF8ToWString(baseParts->GetThisFileName());
-	unsigned long extensionStringPos = result.find_last_of('.');
+	std::wstring result = baseParts->GetThisFileName();
+	unsigned long extensionStringPos = result.find_last_of(L'.');
 	unsigned long fileNameLength = result.length();
 
 	for (unsigned long i = extensionStringPos; i < fileNameLength; i++)
