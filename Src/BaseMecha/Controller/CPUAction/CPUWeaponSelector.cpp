@@ -15,28 +15,28 @@
 #include"CPUTargetSelector.h"
 #include"CPUAttack.h"
 
-ChPtr::Shared<ChCpp::JsonObject> CPUWeaponSelect::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUWeaponSelect::Serialize()
 {
 	auto&& res = CPUActionBase::Serialize();
 
-	res->Set("AttackType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(attackType)));
+	res->Set(L"AttackType", ChCpp::JsonNumber<wchar_t>::CreateObject(ChStd::EnumCast(attackType)));
 
-	res->Set("UnStopFlg", ChCpp::JsonBoolean::CreateObject(unStopFlg));
+	res->Set(L"UnStopFlg", ChCpp::JsonBoolean<wchar_t>::CreateObject(unStopFlg));
 
 	return res;
 }
 
-void CPUWeaponSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUWeaponSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 
 	if (_jsonObject == nullptr)return;
 
 	CPUActionBase::Deserialize(_jsonObject);
 
-	auto&& attackTypeObject = _jsonObject->GetJsonNumber("AttackType");
+	auto&& attackTypeObject = _jsonObject->GetJsonNumber(L"AttackType");
 	if (attackTypeObject != nullptr)attackType = static_cast<AttackType>((unsigned char)*attackTypeObject);
 
-	auto&& unStopFlgObject = _jsonObject->GetJsonBoolean("UnStopFlg");
+	auto&& unStopFlgObject = _jsonObject->GetJsonBoolean(L"UnStopFlg");
 	if (unStopFlgObject != nullptr)unStopFlg = *unStopFlgObject;
 
 }
@@ -50,27 +50,27 @@ bool CPUWeaponSelect::Update(unsigned long _lookTarget, GameFrame& _frame, CPUAt
 	return true;
 }
 
-ChPtr::Shared<ChCpp::JsonObject> CPUWeaponSelector::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUWeaponSelector::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	auto&& functionArray = ChPtr::Make_S<ChCpp::JsonArray>();
+	auto&& functionArray = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
 
 	for (auto&& function : functions)
 	{
 		functionArray->Add(function->Serialize());
 	}
 
-	res->Set("WeaponSelectorFunctions", functionArray);
+	res->Set(L"WeaponSelectorFunctions", functionArray);
 
 	return res;
 }
 
-void CPUWeaponSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUWeaponSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& functionArray = _jsonObject->GetJsonArray("WeaponSelectorFunctions");
+	auto&& functionArray = _jsonObject->GetJsonArray(L"WeaponSelectorFunctions");
 
 	if (functionArray == nullptr)return;
 
@@ -101,7 +101,7 @@ void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _f
 
 	if (!selectWeaponsQueue.empty())return;
 
-	OutputDebugString("CPUWeaponSelector Update Start\n");
+	OutputDebugString(L"CPUWeaponSelector Update Start\n");
 
 	for (auto&& func : functions)
 	{
@@ -109,5 +109,5 @@ void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _f
 		selectWeaponsQueue.push_back(func);
 	}
 
-	OutputDebugString("CPUWeaponSelector Update End\n");
+	OutputDebugString(L"CPUWeaponSelector Update End\n");
 }
