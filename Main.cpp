@@ -74,7 +74,7 @@ int WINAPI WinMain(
 
 	auto testData = ChPtr::Make_S<StageDataStructure>();
 
-	testData->stageScriptPath = "stage1.chs";
+	testData->stageScriptPath = L"stage1.chs";
 
 	frameList.SetSendData(testData);
 
