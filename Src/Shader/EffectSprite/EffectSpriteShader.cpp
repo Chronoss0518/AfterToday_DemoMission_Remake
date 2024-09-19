@@ -126,19 +126,6 @@ void EffectSpriteShader::SetEffectTexture(ChPtr::Shared<ChD3D11::TextureBase11> 
 	SetEffectTexture(_effectTexture, ChMath::Vector2Base<unsigned long>(_horizontalAnimationCount, _verticalAnimationCount));
 }
 
-void EffectSpriteShader::SetEffectTexture(const std::string& _texturePath, const ChMath::Vector2Base<unsigned long>& _animationCount)
-{
-	ChPtr::Shared<ChD3D11::Texture11> texture = ChPtr::Make_S<ChD3D11::Texture11>();
-	texture->CreateTexture(_texturePath, ChD3D11::Shader::SampleShaderBase11::GetDevice());
-
-	SetEffectTexture(texture, _animationCount);
-}
-
-void EffectSpriteShader::SetEffectTexture(const std::string& _texturePath, const unsigned long _horizontalAnimationCount, const unsigned long _verticalAnimationCount)
-{
-	SetEffectTexture(_texturePath, ChMath::Vector2Base<unsigned long>(_horizontalAnimationCount, _verticalAnimationCount));
-}
-
 void EffectSpriteShader::SetEffectTexture(const std::wstring& _texturePath, const ChMath::Vector2Base<unsigned long>& _animationCount)
 {
 	ChPtr::Shared<ChD3D11::Texture11> texture = ChPtr::Make_S<ChD3D11::Texture11>();
