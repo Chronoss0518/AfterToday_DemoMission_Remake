@@ -29,11 +29,11 @@ private:
 	unsigned char deviceTexChenge = 0;
 	unsigned char chengeCount = 20;
 
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 
-	ChPtr::Shared<ChD3D11::Mesh11> msd = ChPtr::Make_S<ChD3D11::Mesh11>();
-	ChPtr::Shared<ChD3D11::Mesh11> desk = ChPtr::Make_S<ChD3D11::Mesh11>();
-	ChPtr::Shared<ChD3D11::Mesh11> room = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> msd = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> desk = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> room = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
 
 	ChD3D11::Texture11 title_name;
 	ChD3D11::Texture11 title;
