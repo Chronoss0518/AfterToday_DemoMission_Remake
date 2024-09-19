@@ -11,7 +11,7 @@ class WeaponComponent;
 
 class PhysicsMachine;
 
-class BaseMecha :public ChCpp::BaseObject
+class BaseMecha :public ChCpp::BaseObject<wchar_t>
 {
 public://Inner Struct Class Enum//
 
@@ -61,23 +61,23 @@ private:
 
 public://SerializeDeserialize//
 
-	void Deserialize(const std::string& _fileName);
+	void Deserialize(const std::wstring& _fileName);
 
-	std::string Serialize();
+	std::wstring Serialize();
 
 public://Create Function//
 
-	void Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11& _drawer, GameFrame* _frame);
+	void Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer, GameFrame* _frame);
 
 public:
 
-	void Load(ID3D11Device* _device, const std::string& _fileName);
+	void Load(ID3D11Device* _device, const std::wstring& _fileName);
 
-	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
+	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
-	void Save(const std::string& _fileName);
+	void Save(const std::wstring& _fileName);
 
-	ChPtr::Shared<ChCpp::JsonObject> SavePartsList();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> SavePartsList();
 
 public:
 
@@ -169,7 +169,7 @@ public://Get Function//
 
 	long GetHitEffectDrawStartFrame();
 
-	inline std::string GetMechaName() { return mechaName; }
+	inline std::wstring GetMechaName() { return mechaName; }
 
 	unsigned long GetAnchorRegistNum();
 
@@ -242,9 +242,9 @@ protected:
 	ChCpp::SphereCollider testCollider;
 	ChCpp::SphereCollider testAttackCollider;
 
-	std::string mechaName = "";
+	std::wstring mechaName = L"";
 
-	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t>* drawer = nullptr;
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;

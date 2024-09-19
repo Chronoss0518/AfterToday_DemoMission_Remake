@@ -22,17 +22,17 @@
 #define HIT_EFFECT_DRAW_FRAME static_cast<long>(BASE_FPS * 2.0f)
 
 
-#define JSON_MECHA_NAME "Name"
-#define JSON_CORE "Core"
+#define JSON_MECHA_NAME L"Name"
+#define JSON_CORE L"Core"
 
-static const std::string partsTypeName[]
+static const std::wstring partsTypeName[]
 {
-	"Body","Head","Foot","RightArm","LeftArm","Boost","Weapon","Extra"
+	L"Body",L"Head",L"Foot",L"RightArm",L"LeftArm",L"Boost",L"Weapon",L"Extra"
 };
 
-static const std::string weaponTypeName[]
+static const std::wstring weaponTypeName[]
 {
-	"R*","L*"
+	L"R*",L"L*"
 };
 
 BaseMecha::BaseMecha()
@@ -46,7 +46,7 @@ BaseMecha::~BaseMecha()
 
 }
 
-void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11& _drawer, GameFrame* _frame)
+void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer, GameFrame* _frame)
 {
 	viewSize = _viewSize;
 	drawer = &_drawer;
@@ -56,22 +56,22 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11&
 	mechasNo = frame->GetMechas().size();
 }
 
-void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
+void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 {
 
-	std::string text = "";
+	std::wstring text = L"";
 
-	ChCpp::CharFile file;
+	ChCpp::WCharFile file;
 	file.FileOpen(_fileName);
 	text = file.FileReadText();
 	file.FileClose();
 
-	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject>(ChCpp::JsonBaseType::GetParameter(text));
+	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(ChCpp::JsonBaseType<wchar_t>::GetParameter(text));
 
 	LoadPartsList(_device, jsonObject);
 }
 
-void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	if (_jsonObject == nullptr) return;
 	SetComponent<LookAnchor>();
@@ -95,22 +95,22 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 }
 
-void BaseMecha::Save(const std::string& _fileName)
+void BaseMecha::Save(const std::wstring& _fileName)
 {
 
-	ChPtr::Shared<ChCpp::JsonObject> res = SavePartsList();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> res = SavePartsList();
 
-	ChCpp::CharFile file;
+	ChCpp::WCharFile file;
 	file.FileOpen(_fileName);
-	file.FileWriteText(ChCpp::JsonBaseType::FormatDocument(res->GetRawData()));
+	file.FileWriteText(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData()));
 	file.FileClose();
 
 }
 
-ChPtr::Shared<ChCpp::JsonObject> BaseMecha::SavePartsList()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> BaseMecha::SavePartsList()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
-	res->Set(JSON_MECHA_NAME, ChCpp::JsonString::CreateObject(mechaName));
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	res->Set(JSON_MECHA_NAME, ChCpp::JsonString<wchar_t>::CreateObject(mechaName));
 	res->Set(JSON_CORE, core->Serialize());
 
 	return res;
@@ -137,7 +137,7 @@ void BaseMecha::UpdateEnd()
 
 	physics->Update();
 
-	float moveSize = physics->GetAddMovePowerVector().Len();
+	float moveSize = physics->GetAddMovePowerVector().GetLen();
 
 	testCollider.SetScalling(moveSize + baseHitSize);
 
@@ -240,13 +240,13 @@ void BaseMecha::BaseMove()
 
 	testCollider.SetPosition(pos);
 
-	float tmp = normal.Len();
+	float tmp = normal.GetLen();
 
 	normal.val.SetLen(tmp * 0.15f);
 	centerPos += normal;
 	return;
 
-	float tmpLen = normal.Len() - CENTER_LEN;
+	float tmpLen = normal.GetLen() - CENTER_LEN;
 
 	normal.Normalize();
 
@@ -285,14 +285,14 @@ void BaseMecha::Draw2D()
 
 }
 
-void BaseMecha::Deserialize(const std::string& _fileName)
+void BaseMecha::Deserialize(const std::wstring& _fileName)
 {
 
 }
 
-std::string BaseMecha::Serialize()
+std::wstring BaseMecha::Serialize()
 {
-	return "";
+	return L"";
 }
 
 void BaseMecha::SetTeamNo(const unsigned long _team)
@@ -396,7 +396,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	ChVec3 dir = _obj.GetMovePower();
 
-	float moveLen = dir.Len();
+	float moveLen = dir.GetLen();
 
 	float hitSize = _obj.GetHitSize();
 
