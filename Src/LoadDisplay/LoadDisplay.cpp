@@ -232,7 +232,7 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 	progressCircleTexture.CreateTexture(TEXTURE_DIRECTORY("ProgressCircleMask.png"));
 
 	{
-		auto&& color = ColorTextToColorVector3("66","F6","FF");
+		auto&& color = ColorTextToColorVector3(L"66",L"F6",L"FF");
 
 		progressCircleColor = ChVec4::FromColor(
 			color.r,
@@ -453,12 +453,12 @@ void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 
 	dc = _dc;
 
-	ChCpp::CharFile file;
+	ChCpp::WCharFile file;
 	file.FileOpen(PLAYER_MECHA_PATH);
-	std::string fileText = file.FileReadText();
+	std::wstring fileText = file.FileReadText();
 	file.FileClose();
 
-	loadFileList = ChPtr::Make_S<ChCpp::JsonArray>();
+	loadFileList = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
 
 	loadFileList->SetRawData(fileText);
 }
@@ -524,7 +524,7 @@ bool LoadDisplay::LoadFile(unsigned long _openNumber)
 	textDrawer.drawer.DrawStart();
 
 	textDrawer.drawer.DrawToScreen(
-		ChStr::UTF8ToWString(loadMecha->mecha->GetMechaName()),
+		loadMecha->mecha->GetMechaName(),
 		textDrawer.format,
 		textDrawer.brush,
 		ChVec4::FromRect(0.0f, 0.0f, MECHA_NAME_TEXT_WIDTH, MECHA_NAME_TEXT_HEIGHT)

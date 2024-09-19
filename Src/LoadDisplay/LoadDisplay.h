@@ -94,12 +94,12 @@ private:
 	ID3D11Device* device = nullptr;
 	ChD3D11::DepthStencilTexture11 dsTex;
 
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
 
 	ChPtr::Shared<LoadPanelList> selectList = nullptr;
 
-	ChPtr::Shared<ChCpp::JsonArray> loadFileList;
+	ChPtr::Shared<ChCpp::JsonArray<wchar_t>> loadFileList;
 	ChD3D11::Texture11 progressCircleTexture;
 	ChD3D11::Sprite11 progressCircleTexturePosition;
 	ChVec4 progressCircleColor = ChVec4();
