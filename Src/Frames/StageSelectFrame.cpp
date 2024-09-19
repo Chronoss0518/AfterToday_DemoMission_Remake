@@ -116,7 +116,7 @@ void StageSelectFrame::InitStageDataList()
 		std::wstring successFee = L"$" + CreateMoneyText(std::to_wstring(stageData->stageDatas->drawSuccessFee));
 
 		std::wstring location =
-			L"ìí’nˆæ|" + ChStr::UTF8ToWString(stageData->stageDatas->stageLocationName);
+			L"ìí’nˆæ|" + stageData->stageDatas->stageLocationName;
 
 		std::wstring hh = std::to_wstring(static_cast<unsigned long>(stageData->stageDatas->missionTimeSeccond / 60 / 60));
 		if (hh.length() < 2)hh += L"0";
@@ -131,7 +131,7 @@ void StageSelectFrame::InitStageDataList()
 		stagePanelTextDrawer.DrawStart();
 
 		stagePanelTextDrawer.DrawToScreen(
-			ChStr::UTF8ToWString(stageData->stageDatas->stageName), 
+			stageData->stageDatas->stageName,
 			stagePanelNameFormat, 
 			stagePanelBrush, 
 			ChVec4::FromRect(PANEL_TEXT_SIDE_PADDING, 0.0f, PANEL_TEXT_WIDTH, PANEL_TEXT_HEIGHT));
