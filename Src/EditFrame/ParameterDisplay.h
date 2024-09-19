@@ -26,19 +26,19 @@ protected:
 
 	void AddAttackParameters(ChPtr::Shared<PartsParameterStruct::WeaponData>& _parameterList, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 
-	void AddBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
+	void AddBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 
-	void AddBoostBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
+	void AddBoostBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 	
-	void AddHighExplosiveBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
+	void AddHighExplosiveBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 	
-	void AddMissileParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::string& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
+	void AddMissileParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 
-	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::string& _title);
+	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title);
 
-	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::string& _title, TextDrawerWICBitmap& _titleDrawer, const std::string& _itemName, TextDrawerWICBitmap& _valueDrawer, unsigned long* _baseValue, unsigned long* _nextValue, bool _inversOperatorFlg);
+	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title, TextDrawerWICBitmap& _titleDrawer, const std::wstring& _itemName, TextDrawerWICBitmap& _valueDrawer, unsigned long* _baseValue, unsigned long* _nextValue, bool _inversOperatorFlg);
 
-	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::string& _title, TextDrawerWICBitmap& _titleDrawer, const std::string& _itemName, TextDrawerWICBitmap& _valueDrawer, float* _baseValue, float* _nextValue, bool _inversOperatorFlg);
+	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title, TextDrawerWICBitmap& _titleDrawer, const std::wstring& _itemName, TextDrawerWICBitmap& _valueDrawer, float* _baseValue, float* _nextValue, bool _inversOperatorFlg);
 
 public:
 

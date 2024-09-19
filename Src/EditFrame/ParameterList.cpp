@@ -303,7 +303,7 @@ void ParameterList::AddAllParameterData(PartsParameters& _parameter, ChPtr::Shar
 
 	for (auto&& nextPos : nextPosList)
 	{
-		std::string nexPosName = nextPos->GetObjectName();
+		std::wstring nexPosName = nextPos->GetObjectName();
 		AddAllParameterData(_parameter,_partsObject->GetChildParts(nexPosName));
 	}
 
@@ -332,7 +332,7 @@ void ParameterList::SubAllParameterData(PartsParameters& _parameter, ChPtr::Shar
 
 	for (auto&& nextPos : nextPosList)
 	{
-		std::string nexPosName = nextPos->GetObjectName();
+		std::wstring nexPosName = nextPos->GetObjectName();
 		SubAllParameterData(_parameter,_partsObject->GetChildParts(nexPosName));
 	}
 
