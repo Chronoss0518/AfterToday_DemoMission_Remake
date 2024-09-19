@@ -63,7 +63,7 @@ public:
 
 	~GameFrame() { Release(); };
 
-	void Init(ChCpp::SendDataClass* _sendData)override;
+	void Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)override;
 
 	void Release()override;
 

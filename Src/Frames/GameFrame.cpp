@@ -70,10 +70,10 @@
 //Gameƒƒ\ƒbƒh
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void GameFrame::Init(ChCpp::SendDataClass* _sendData)
+void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	std::wstring stageName = L"stage1.chs";
-	auto&& sendData = ChPtr::SafeCast<StageDataStructure>(_sendData);
+	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
 
 	auto&& mouse = ChWin::Mouse();
