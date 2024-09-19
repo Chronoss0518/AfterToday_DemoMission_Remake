@@ -16,9 +16,9 @@ public:
 
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject);
 
 	void SetOperationPoint(const ChVec3& _point) { point = _point; }
 
@@ -53,9 +53,9 @@ public:
 
 	void SetInitPosition(CPUController& _controller, float _distance, bool _xIgnore, bool _yIgnore, bool _zIgnore);
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize()override;
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)override;
 
 	void Update(CPUTargetSelector& _selector, GameFrame& _frame,CPUController& _controller);
 

@@ -12,49 +12,49 @@
 #include"CPUTargetSelector.h"
 #include"CPUMoveInput.h"
 
-ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelect::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUMovePositionSelect::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	auto&& operationPoint = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& operationPoint = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	operationPoint->Set("X", ChCpp::JsonNumber::CreateObject(point.x));
+	operationPoint->Set(L"X", ChCpp::JsonNumber<wchar_t>::CreateObject(point.x));
 
-	operationPoint->Set("Y", ChCpp::JsonNumber::CreateObject(point.y));
+	operationPoint->Set(L"Y", ChCpp::JsonNumber<wchar_t>::CreateObject(point.y));
 
-	operationPoint->Set("Z", ChCpp::JsonNumber::CreateObject(point.z));
+	operationPoint->Set(L"Z", ChCpp::JsonNumber<wchar_t>::CreateObject(point.z));
 
-	res->Set("OperationPoint", operationPoint);
+	res->Set(L"OperationPoint", operationPoint);
 
-	res->Set("Distance", ChCpp::JsonNumber::CreateObject(distance));
+	res->Set(L"Distance", ChCpp::JsonNumber<wchar_t>::CreateObject(distance));
 
-	res->Set("AxisFlg", ChCpp::JsonNumber::CreateObject(axisFlg.GetValue()));
+	res->Set(L"AxisFlg", ChCpp::JsonNumber<wchar_t>::CreateObject(axisFlg.GetValue()));
 
 	return res;
 }
 
-void CPUMovePositionSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUMovePositionSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& operationPoint = _jsonObject->GetJsonObject("OperationPoint");
+	auto&& operationPoint = _jsonObject->GetJsonObject(L"OperationPoint");
 
 	if (operationPoint != nullptr)
 	{
-		auto&& x = operationPoint->GetJsonNumber("X");
+		auto&& x = operationPoint->GetJsonNumber(L"X");
 		if (x != nullptr)point.x = *x;
 
-		auto&& y = operationPoint->GetJsonNumber("Y");
+		auto&& y = operationPoint->GetJsonNumber(L"Y");
 		if (y != nullptr)point.y = *y;
 
-		auto&& z = operationPoint->GetJsonNumber("Z");
+		auto&& z = operationPoint->GetJsonNumber(L"Z");
 		if (z != nullptr)point.z = *z;
 	}
 
-	auto&& distanceObject = _jsonObject->GetJsonNumber("Distance");
+	auto&& distanceObject = _jsonObject->GetJsonNumber(L"Distance");
 	if (distanceObject != nullptr)distance = *distanceObject;
 
-	auto&& axisFlgObject = _jsonObject->GetJsonNumber("AxisFlg");
+	auto&& axisFlgObject = _jsonObject->GetJsonNumber(L"AxisFlg");
 	if (axisFlgObject != nullptr)axisFlg.SetValue(*axisFlgObject);
 }
 
@@ -93,31 +93,31 @@ void CPUMovePositionSelector::SetInitPosition(CPUController& _controller, float 
 	Add(point);
 }
 
-ChPtr::Shared<ChCpp::JsonObject> CPUMovePositionSelector::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUMovePositionSelector::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	auto&& operationPointArray = ChPtr::Make_S<ChCpp::JsonArray>();
+	auto&& operationPointArray = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
 
 	for (auto&& positions : functions)
 	{
 		operationPointArray->Add(positions->Serialize());
 	}
 
-	res->Set("OperatorPositions", operationPointArray);
+	res->Set(L"OperatorPositions", operationPointArray);
 
-	res->Set("CombatModeOff", ChCpp::JsonNumber::CreateObject(combatModeOffTime));
+	res->Set(L"CombatModeOff", ChCpp::JsonNumber<wchar_t>::CreateObject(combatModeOffTime));
 
-	res->Set("IsTargetPositionInAreaLength", ChCpp::JsonNumber::CreateObject(isTargetPositionInAreaLength));
+	res->Set(L"IsTargetPositionInAreaLength", ChCpp::JsonNumber<wchar_t>::CreateObject(isTargetPositionInAreaLength));
 
 	return res;
 }
 
-void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& operationPointArray = _jsonObject->GetJsonArray("OperatorPositions");
+	auto&& operationPointArray = _jsonObject->GetJsonArray(L"OperatorPositions");
 
 	if (operationPointArray != nullptr)
 	{
@@ -131,18 +131,18 @@ void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>
 		}
 	}
 
-	auto&& combatModeOffTimeObject = _jsonObject->GetJsonNumber("CombatModeOff");
+	auto&& combatModeOffTimeObject = _jsonObject->GetJsonNumber(L"CombatModeOff");
 	if (combatModeOffTimeObject != nullptr)combatModeOffTime = *combatModeOffTimeObject;
 
 
-	auto&& isTargetPositionInAreaLengthObject = _jsonObject->GetJsonNumber("IsTargetPositionInAreaLength");
+	auto&& isTargetPositionInAreaLengthObject = _jsonObject->GetJsonNumber(L"IsTargetPositionInAreaLength");
 	if (isTargetPositionInAreaLengthObject != nullptr)isTargetPositionInAreaLength = *isTargetPositionInAreaLengthObject;
 
 }
 
 void CPUMovePositionSelector::Update(CPUTargetSelector& _selector, GameFrame& _frame, CPUController& _controller)
 {
-	//OutputDebugString("CPUMovePositionSelector Update Start\n");
+	//OutputDebugString(L"CPUMovePositionSelector Update Start\n");
 
 	runUpdateLookTargetFlg = false;
 
@@ -150,7 +150,7 @@ void CPUMovePositionSelector::Update(CPUTargetSelector& _selector, GameFrame& _f
 
 	UpdateUnLookTarget(_controller);
 
-	//OutputDebugString("CPUMovePositionSelector Update End\n");
+	//OutputDebugString(L"CPUMovePositionSelector Update End\n");
 }
 
 void CPUMovePositionSelector::UpdateLookTarget(CPUTargetSelector& _selector, GameFrame& _frame)
@@ -211,7 +211,7 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 		if (combatModeOffTime < combatModeOffTimeNow)return;
 		combatModeOffTimeNow = combatModeOffTime;
 
-		float testLookPosLength = (lastLookPoint - mecha->GetPosition()).Len();
+		float testLookPosLength = (lastLookPoint - mecha->GetPosition()).GetLen();
 
 		if (testLookPosLength < isTargetPositionInAreaLength)isDamageFlg = isBattleFlg = false;
 
@@ -232,5 +232,5 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 
 	point = functions[moveOperationPointCount]->GetOperationPoint();
 
-	//OutputDebugString(("Operation Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
+	//OutputDebugString((L"Operation Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
 }
