@@ -6,9 +6,9 @@ class CPUActionBase
 {
 public:
 
-	virtual ChPtr::Shared<ChCpp::JsonObject> Serialize();
+	virtual ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
 
-	virtual void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
+	virtual void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject);
 
 	inline void SetActiveFlg(const bool _flg) { activeFlg = _flg; }
 

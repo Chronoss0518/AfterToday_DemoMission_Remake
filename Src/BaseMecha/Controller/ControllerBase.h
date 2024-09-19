@@ -203,9 +203,9 @@ class FunctionsBase
 {
 public:
 
-	virtual ChPtr::Shared<ChCpp::JsonObject> Serialize() = 0;
+	virtual ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize() = 0;
 
-	virtual void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject) = 0;
+	virtual void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject) = 0;
 
 	inline void Add(ChPtr::Shared<CPUFunction> _target)
 	{

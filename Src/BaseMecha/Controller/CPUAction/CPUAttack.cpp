@@ -16,35 +16,35 @@
 #include"CPUTargetSelector.h"
 
 
-ChPtr::Shared<ChCpp::JsonObject> CPUAttack::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUAttack::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	res->Set("CenterLength", ChCpp::JsonNumber::CreateObject(centerLength));
+	res->Set(L"CenterLength", ChCpp::JsonNumber<wchar_t>::CreateObject(centerLength));
 	
-	res->Set("PriorityWeaponType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(priorityWeaponType)));
+	res->Set(L"PriorityWeaponType", ChCpp::JsonNumber<wchar_t>::CreateObject(ChStd::EnumCast(priorityWeaponType)));
 	
-	res->Set("AttackCount", ChCpp::JsonNumber::CreateObject(attackCount));
+	res->Set(L"AttackCount", ChCpp::JsonNumber<wchar_t>::CreateObject(attackCount));
 
-	res->Set("AttackType", ChCpp::JsonNumber::CreateObject(attackType.GetValue()));
+	res->Set(L"AttackType", ChCpp::JsonNumber<wchar_t>::CreateObject(attackType.GetValue()));
 
 	return res;
 }
 
-void CPUAttack::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUAttack::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& centerLengthObject = _jsonObject->GetJsonNumber("CenterLength");
+	auto&& centerLengthObject = _jsonObject->GetJsonNumber(L"CenterLength");
 	if (centerLengthObject != nullptr)centerLength = *centerLengthObject;
 	
-	auto&& priorityWeaponTypeObject = _jsonObject->GetJsonNumber("PriorityWeaponType");
+	auto&& priorityWeaponTypeObject = _jsonObject->GetJsonNumber(L"PriorityWeaponType");
 	if (priorityWeaponTypeObject != nullptr)priorityWeaponType = static_cast<PriorityWeaponType>((unsigned char)*priorityWeaponTypeObject);
 
-	auto&& attackCountObject = _jsonObject->GetJsonNumber("AttackCount");
+	auto&& attackCountObject = _jsonObject->GetJsonNumber(L"AttackCount");
 	if (attackCountObject != nullptr)attackCount = *attackCountObject;
 
-	auto&& attackTypeObject = _jsonObject->GetJsonNumber("AttackType");
+	auto&& attackTypeObject = _jsonObject->GetJsonNumber(L"AttackType");
 	if (attackTypeObject != nullptr)attackType.SetValue(*attackTypeObject);
 
 }
@@ -79,7 +79,7 @@ void CPUAttack::Update(
 
 	if (selectWeapon == nullptr)return;
 
-	//OutputDebugString("CPUAttack Update Start\n");
+	//OutputDebugString(L"CPUAttack Update Start\n");
 
 	FindRightPriorityAttack();
 
@@ -89,7 +89,7 @@ void CPUAttack::Update(
 
 	AttackFunction(_controller, rightCommandList);
 
-	//OutputDebugString("CPUAttack Update End\n");
+	//OutputDebugString(L"CPUAttack Update End\n");
 }
 
 void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
