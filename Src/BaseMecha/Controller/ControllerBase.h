@@ -42,9 +42,9 @@ public:
 
 	void UpdateBegin()override;
 
-	void Save(const std::string& _fileName);
+	void Save(const std::wstring& _fileName);
 
-	void Load(const std::string& _fileName);
+	void Load(const std::wstring& _fileName);
 
 	void ChangeKey(const InputName _inputType);
 
@@ -145,9 +145,9 @@ public:
 
 public:
 
-	void SaveCPUData(const std::string& _fileName);
+	void SaveCPUData(const std::wstring& _fileName);
 
-	void LoadCPUData(const std::string& _fileName);
+	void LoadCPUData(const std::wstring& _fileName);
 
 	void SampleCreate();
 
@@ -182,7 +182,7 @@ private:
 	ChPtr::Shared<CPUAvoidTest> cpuAvoidTest = nullptr;
 	ChPtr::Shared<CPUMoveInput>cpuMoveInput = nullptr;
 
-	static const std::string cutChar;
+	static const std::wstring cutChar;
 
 	unsigned long actionMoveMaxTime = 5;
 	unsigned long actionMoveMinTime = 2;
