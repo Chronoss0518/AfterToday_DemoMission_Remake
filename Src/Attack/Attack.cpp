@@ -9,8 +9,8 @@
 
 #define CREATE_TYPE(_enum,_class) {ChStd::EnumCast(_enum),[]()->ChPtr::Shared<Attack::AttackBase>{return ChPtr::Make_S<_class>();}}
 
-#define ATTACK_FILE_SWORD ""
-#define ATTACK_FILE_EXPLOSIVE ""
+#define ATTACK_FILE_SWORD L""
+#define ATTACK_FILE_EXPLOSIVE L""
 
 
 std::map<unsigned char, std::function<ChPtr::Shared<Attack::AttackBase>()>> CreateAttackType
@@ -21,7 +21,7 @@ std::map<unsigned char, std::function<ChPtr::Shared<Attack::AttackBase>()>> Crea
 	CREATE_TYPE(AttackType::Missile,MissileData),
 };
 
-ChPtr::Shared<Attack> Attack::CreateAttackDataFromSword(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateAttackDataFromSword(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName)
 {
 	auto&& attackList = LoadAttackList();
 
@@ -45,7 +45,7 @@ ChPtr::Shared<Attack> Attack::CreateAttackDataFromSword(ChD3D11::Shader::BaseDra
 
 }
 
-ChPtr::Shared<Attack> Attack::CreateAttackDataFromExplosive(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateAttackDataFromExplosive(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName)
 {
 	auto&& attackList = LoadAttackList();
 
@@ -69,7 +69,7 @@ ChPtr::Shared<Attack> Attack::CreateAttackDataFromExplosive(ChD3D11::Shader::Bas
 
 }
 
-ChPtr::Shared<Attack> Attack::CreateAttackDataFromBullet(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateAttackDataFromBullet(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName)
 {
 	auto&& attackList = LoadAttackList();
 
@@ -93,18 +93,18 @@ ChPtr::Shared<Attack> Attack::CreateAttackDataFromBullet(ChD3D11::Shader::BaseDr
 
 }
 
-ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName)
+ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName)
 {
 	auto&& attackList = LoadAttackList();
 
-	std::string text = "";
-	ChCpp::TextObject textObject;
+	std::wstring text = L"";
+	ChCpp::TextObject<wchar_t> textObject;
 
 	{
-		ChCpp::CharFile file;
+		ChCpp::WCharFile file;
 		file.FileOpen(_fileName);
 		text = file.FileReadText();
-		textObject.SetText(text);
+		textObject.SetText(text.c_str());
 		file.FileClose();
 	}
 
@@ -115,14 +115,14 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* 
 	attack->useFileName = _fileName;
 	attack->objectName = _fileName;
 
-	if (_fileName.find("/"))
+	if (_fileName.find(L"/"))
 	{
-		attack->objectName = _fileName.substr(_fileName.find_last_of("/") + 1);
+		attack->objectName = _fileName.substr(_fileName.find_last_of(L"/") + 1);
 	}
 
-	if (attack->objectName.find("."))
+	if (attack->objectName.find(L"."))
 	{
-		attack->objectName = attack->objectName.substr(0, attack->objectName.find("."));
+		attack->objectName = attack->objectName.substr(0, attack->objectName.find(L"."));
 	}
 
 	attack->SetMeshDrawer(_drawer);
@@ -140,20 +140,20 @@ void Attack::AllRelease()
 	attackList.clear();
 }
 
-void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
+void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 {
-	ChCpp::TextObject textObject;
-	textObject.SetText(_text);
+	ChCpp::TextObject<wchar_t> textObject;
+	textObject.SetText(_text.c_str());
 	
-	penetration = static_cast<unsigned long>(std::atoll(textObject.GetTextLine(1).c_str()));
-	hitSize = static_cast<float>(std::atof(textObject.GetTextLine(2).c_str()));
+	penetration = ChStr::GetNumFromText<unsigned long,wchar_t>(textObject.GetTextLine(1).c_str());
+	hitSize = ChStr::GetNumFromText<float,wchar_t>(textObject.GetTextLine(2).c_str());
 
 	{
-		ChCpp::ModelLoader::XFile loader;
+		ChCpp::ModelLoader::XFile<wchar_t> loader;
 		bullet->Init(_device);
 		loader.CreateModel(bullet, textObject.GetTextLine(3));
 
-		if (bullet->GetMyName() == "Root")
+		if (bullet->GetMyName() == L"Root")
 		{
 			defaultMat = bullet->GetDrawLHandMatrix();
 		}
@@ -164,7 +164,7 @@ void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
 
 	for (unsigned long pos = 4; pos < textObject.LineCount(); pos++)
 	{
-		unsigned char atkType = ChStr::GetIntegialFromText<unsigned char>(textObject.GetTextLine(pos));
+		unsigned char atkType = ChStr::GetNumFromText<unsigned char,wchar_t>(textObject.GetTextLine(pos));
 
 		if (atkType > ChStd::EnumCast(attackType))attackType = static_cast<AttackType>(atkType);
 
@@ -178,14 +178,14 @@ void Attack::Deserialize(ID3D11Device* _device, const std::string& _text)
 
 }
 
-std::string Attack::Serialize()
+std::wstring Attack::Serialize()
 {
-	std::string res = "";
+	std::wstring res = L"";
 
-	res += std::to_string(penetration) + "\n";
-	res += std::to_string(hitSize) + "\n";
+	res += std::to_wstring(penetration) + L"\n";
+	res += std::to_wstring(hitSize) + L"\n";
 
-	res += bullet->GetModelName() + "\n";
+	res += bullet->GetModelName() + L"\n";
 
 	for (auto&& bulletFunction : externulFunctions)
 	{
@@ -242,18 +242,18 @@ void Attack::Draw(const ChMat_11& _mat)
 	drawer->Draw(*bullet, _mat);
 }
 
-unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
 	unsigned long nowPos = _nowPos;
-	firstSpeed = static_cast<float>(std::atof(_text.GetTextLine(nowPos).c_str()));
+	firstSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(nowPos).c_str());
 	return nowPos + 1;
 }
 
-std::string BulletData::Serialize()
+std::wstring BulletData::Serialize()
 {
-	std::string res =  std::to_string(ChStd::EnumCast(AttackType::Bullet)) + "\n";
-	res += std::to_string(firstSpeed) + "\n";
+	std::wstring res =  std::to_wstring(ChStd::EnumCast(AttackType::Bullet)) + L"\n";
+	res += std::to_wstring(firstSpeed) + L"\n";
 	return res;
 }
 
@@ -324,24 +324,24 @@ void BulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
-	startBoostTime = std::atol(_text.GetTextLine(_nowPos).c_str());
-	useBoostTime = std::atol(_text.GetTextLine(_nowPos + 1).c_str());
-	boostPow = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 2).c_str()));
+	startBoostTime = ChStr::GetNumFromText<unsigned long, wchar_t>(_text.GetTextLine(_nowPos).c_str());
+	useBoostTime = ChStr::GetNumFromText<unsigned long, wchar_t>(_text.GetTextLine(_nowPos + 1).c_str());
+	boostPow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos + 2).c_str());
 
 	return _nowPos + 3;
 
 }
 
-std::string BoostBulletData::Serialize()
+std::wstring BoostBulletData::Serialize()
 {
-	std::string res = std::to_string(ChStd::EnumCast(AttackType::BoostBullet)) + "\n";
+	std::wstring res = std::to_wstring(ChStd::EnumCast(AttackType::BoostBullet)) + L"\n";
 
-	res += std::to_string(startBoostTime) + "\n";
-	res += std::to_string(useBoostTime) + "\n";
-	res += std::to_string(boostPow) + "\n";
+	res += std::to_wstring(startBoostTime) + L"\n";
+	res += std::to_wstring(useBoostTime) + L"\n";
+	res += std::to_wstring(boostPow) + L"\n";
 
 	return res;
 }
@@ -361,19 +361,19 @@ void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
-	blastRange = static_cast<float>(std::atof(_text.GetTextLine(_nowPos).c_str()));
+	blastRange = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos).c_str());
 
 	return _nowPos + 1;
 }
 
-std::string HighExplosiveBulletData::Serialize()
+std::wstring HighExplosiveBulletData::Serialize()
 {
-	std::string res = std::to_string(ChStd::EnumCast(AttackType::HighExplosive)) + "\n";
+	std::wstring res = std::to_wstring(ChStd::EnumCast(AttackType::HighExplosive)) + L"\n";
 
-	res += std::to_string(blastRange) + "\n";
+	res += std::to_wstring(blastRange) + L"\n";
 
 	return res;
 }
@@ -391,20 +391,20 @@ void HighExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long MissileData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos)
+unsigned long MissileData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
-	rotateSpeed = static_cast<float>(std::atof(_text.GetTextLine(_nowPos).c_str()));
-	lostRange = static_cast<float>(std::atof(_text.GetTextLine(_nowPos + 1).c_str()));
+	rotateSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos).c_str());
+	lostRange = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos + 1).c_str());
 
 	return _nowPos + 2;
 }
 
-std::string MissileData::Serialize()
+std::wstring MissileData::Serialize()
 {
-	std::string res = std::to_string(ChStd::EnumCast(AttackType::Missile)) + "\n";
+	std::wstring res = std::to_wstring(ChStd::EnumCast(AttackType::Missile)) + L"\n";
 
-	res += std::to_string(rotateSpeed) + "\n";
-	res += std::to_string(lostRange) + "\n";
+	res += std::to_wstring(rotateSpeed) + L"\n";
+	res += std::to_wstring(lostRange) + L"\n";
 
 	return res;
 }

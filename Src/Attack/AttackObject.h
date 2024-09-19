@@ -8,7 +8,7 @@ class MissileData;
 class GameFrame;
 class ControllerBase;
 
-class AttackObject :public ChCpp::BaseObject
+class AttackObject :public ChCpp::BaseObject<wchar_t>
 {
 public:
 	
