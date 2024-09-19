@@ -6,7 +6,7 @@
 #include"../BaseMecha/MechaPartsObject.h"
 #include"StageDataStructure.h"
 
-#define RESULT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Result/") current_path
+#define RESULT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Result/") current_path
 
 #define RESULT_TITLE_TOP 42.0f
 #define RESULT_TITLE_LEFT 422.0f
@@ -52,16 +52,16 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	auto&& device = ChD3D11::D3D11Device();
 
-	resultTitle.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Result_Title_JP.png")));
+	resultTitle.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Result_Title_JP.png"));
 	SPRITE_INIT(resultTitle.sprite, RectToGameWindow(ChVec4::FromRect(RESULT_TITLE_LEFT,RESULT_TITLE_TOP, RESULT_TITLE_RIGHT, RESULT_TITLE_BOTTOM)));
 	
 	SPRITE_INIT(button[ChStd::EnumCast(SelectButtonType::Left)].sprite, RectToGameWindow(ChVec4::FromRect(BUTTON_LEFT_LEFT, BUTTON_TOP, BUTTON_LEFT_LEFT + BUTTON_WIDTH, BUTTON_BOTTOM)));
-	button[ChStd::EnumCast(SelectButtonType::Left)].image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeLeftButton.png")));
-	button[ChStd::EnumCast(SelectButtonType::Left)].select.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeLeftButton_Select.png")));
+	button[ChStd::EnumCast(SelectButtonType::Left)].image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"ChangeLeftButton.png"));
+	button[ChStd::EnumCast(SelectButtonType::Left)].select.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"ChangeLeftButton_Select.png"));
 
 	SPRITE_INIT(button[ChStd::EnumCast(SelectButtonType::Right)].sprite, RectToGameWindow(ChVec4::FromRect(BUTTON_RIGHT_LEFT, BUTTON_TOP, BUTTON_RIGHT_LEFT + BUTTON_WIDTH, BUTTON_BOTTOM)));
-	button[ChStd::EnumCast(SelectButtonType::Right)].image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeRightButton.png")));
-	button[ChStd::EnumCast(SelectButtonType::Right)].select.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("ChangeRightButton_Select.png")));
+	button[ChStd::EnumCast(SelectButtonType::Right)].image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"ChangeRightButton.png"));
+	button[ChStd::EnumCast(SelectButtonType::Right)].select.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"ChangeRightButton_Select.png"));
 
 	float top = BLOCK_TOP;
 	float bottom = top + BLOCK_HEIGHT;
@@ -235,7 +235,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 	format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
 
 
-	block[ChStd::EnumCast(BlockType::SuccessFee)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Success_Fee_JP.png")));
+	block[ChStd::EnumCast(BlockType::SuccessFee)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Success_Fee_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(_result.successFee)),
@@ -248,7 +248,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 
 	finalIncome += _result.successFee;
 
-	block[ChStd::EnumCast(BlockType::AdditionalCompensation)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Additional_Compensation_JP.png")));
+	block[ChStd::EnumCast(BlockType::AdditionalCompensation)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Additional_Compensation_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(_result.additionalCompensation)),
@@ -261,7 +261,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 
 	finalIncome += _result.additionalCompensation;
 
-	block[ChStd::EnumCast(BlockType::SpecialPayReduction)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Special_Pay_Reduction_JP.png")));
+	block[ChStd::EnumCast(BlockType::SpecialPayReduction)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Special_Pay_Reduction_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(_result.specialPayReduction)),
@@ -274,7 +274,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 
 	finalIncome -= _result.specialPayReduction;
 
-	block[ChStd::EnumCast(BlockType::RepairCosts)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Repair_Costs_JP.png")));
+	block[ChStd::EnumCast(BlockType::RepairCosts)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Repair_Costs_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(_result.repairCosts)),
@@ -287,7 +287,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 
 	finalIncome -= _result.repairCosts;
 
-	block[ChStd::EnumCast(BlockType::AmmunitionExpense)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Ammunition_Expense_JP.png")));
+	block[ChStd::EnumCast(BlockType::AmmunitionExpense)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Ammunition_Expense_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(_result.ammunitionExpense)),
@@ -300,7 +300,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 
 	finalIncome -= _result.ammunitionExpense;
 
-	block[ChStd::EnumCast(BlockType::EnergyCosts)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Energy_Costs_JP.png")));
+	block[ChStd::EnumCast(BlockType::EnergyCosts)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Energy_Costs_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(_result.energyCosts)),
@@ -313,7 +313,7 @@ void ResultFrame::CreateBlockData(ID3D11Device* _device, const ResultStructure& 
 
 	finalIncome -= _result.energyCosts;
 
-	block[ChStd::EnumCast(BlockType::FinalIncome)].back.image.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Final_Income_JP.png")));
+	block[ChStd::EnumCast(BlockType::FinalIncome)].back.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Final_Income_JP.png"));
 	CreateTextImageFromBlock(
 		_device,
 		CreateMoneyText(std::to_wstring(finalIncome)),
@@ -344,10 +344,10 @@ void ResultFrame::CreateExplanationData(ID3D11Device* _device, const ResultStruc
 	format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-	explanation[ChStd::EnumCast(ExplanationType::AdditionalCompensation)].backGround.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Additional_Compensation_Explanation_JP.png")));
+	explanation[ChStd::EnumCast(ExplanationType::AdditionalCompensation)].backGround.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Additional_Compensation_Explanation_JP.png"));
 	CreateTextImageFromExplanation(
 		_device,
-		ChStr::UTF8ToWString(_result.additionalCompensationExplanation),
+		_result.additionalCompensationExplanation,
 		explanation[ChStd::EnumCast(ExplanationType::AdditionalCompensation)].text,
 		drawer,
 		bitmap,
@@ -355,10 +355,10 @@ void ResultFrame::CreateExplanationData(ID3D11Device* _device, const ResultStruc
 		format
 	);
 
-	explanation[ChStd::EnumCast(ExplanationType::SpecialPayReduction)].backGround.CreateTexture(ChStr::UTF8ToWString(RESULT_TEXTURE_DIRECTORY("Special_Pay_Reduction_Explanation_JP.png")));
+	explanation[ChStd::EnumCast(ExplanationType::SpecialPayReduction)].backGround.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Special_Pay_Reduction_Explanation_JP.png"));
 	CreateTextImageFromExplanation(
 		_device,
-		ChStr::UTF8ToWString(_result.specialPayReductionExplanation),
+		_result.specialPayReductionExplanation,
 		explanation[ChStd::EnumCast(ExplanationType::SpecialPayReduction)].text,
 		drawer,
 		bitmap,
