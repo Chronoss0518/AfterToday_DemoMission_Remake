@@ -62,6 +62,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 	std::wstring text = L"";
 
 	ChCpp::WCharFile file;
+	file.SetLocaleName("Japanese");
 	file.FileOpen(_fileName);
 	text = file.FileReadText();
 	file.FileClose();
@@ -101,6 +102,7 @@ void BaseMecha::Save(const std::wstring& _fileName)
 	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> res = SavePartsList();
 
 	ChCpp::WCharFile file;
+	file.SetLocaleName("Japanese");
 	file.FileOpen(_fileName);
 	file.FileWriteText(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData()));
 	file.FileClose();

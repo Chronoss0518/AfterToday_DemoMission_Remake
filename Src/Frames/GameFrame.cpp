@@ -468,6 +468,7 @@ void GameFrame::LoadStage(std::wstring& _stageScriptName)
 
 	{
 		ChCpp::File<wchar_t> file;
+		file.SetLocaleName("Japanese");
 		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName));
 
 		stageScript = file.FileReadText();

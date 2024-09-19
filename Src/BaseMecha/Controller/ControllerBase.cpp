@@ -345,6 +345,7 @@ void CPUController::SaveCPUData(const std::wstring& _fileName)
 
 
 	ChCpp::WCharFile file;
+	file.SetLocaleName("Japanese");
 	file.FileOpen(CPU_DIRECTORY(+_fileName));
 	file.FileWriteText(ChCpp::JsonBaseType<wchar_t>::FormatDocument(saveData->GetRawData()));
 	file.FileClose();
@@ -357,6 +358,7 @@ void CPUController::LoadCPUData(const std::wstring& _fileName)
 
 	{
 		ChCpp::WCharFile file;
+		file.SetLocaleName("Japanese");
 		file.FileOpen(CPU_DIRECTORY(+_fileName));
 		textData = file.FileReadText();
 		file.FileClose();
