@@ -59,7 +59,7 @@ protected:
 
 private:
 
-	std::string weaponName = "";
+	std::wstring weaponName = L"";
 	unsigned long useWeaponNo = 0;
 	std::vector<ChPtr::Shared<MechaPartsObject>>weapon;
 

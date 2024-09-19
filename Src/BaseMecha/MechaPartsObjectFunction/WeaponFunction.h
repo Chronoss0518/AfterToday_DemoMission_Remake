@@ -73,14 +73,14 @@ class SwordFunction : public WeaponFunction
 {
 public:
 
-	void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)override;
+	void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 
 	void UpdateFunction()override {};
 
 	//持ち手部分と刀身の区切り部分//
-	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _hitStart) { hitObjectStart = _hitStart; }
+	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _hitStart) { hitObjectStart = _hitStart; }
 
 	void SetData(WeaponData* _data)override;
 
@@ -94,7 +94,7 @@ private:
 
 	SwordData* swordData = nullptr;
 
-	ChPtr::Shared<ChCpp::FrameObject>hitObjectStart = nullptr;
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>hitObjectStart = nullptr;
 
 	//攻撃開始から現在までの時間//
 	unsigned long nowAttackTime = 0;
@@ -106,7 +106,7 @@ class GunFunction : public WeaponFunction
 {
 public:
 
-	void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)override;
+	void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 
@@ -121,7 +121,7 @@ public:
 public:
 
 	//弾が出てくる場所//
-	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }
+	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _shotPos) { shotPos = _shotPos; }
 
 	void SetData(WeaponData* _data)override;
 
@@ -139,7 +139,7 @@ private:
 
 	GunData* gunData = nullptr;
 
-	ChPtr::Shared<ChCpp::FrameObject>shotPos = nullptr;
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>shotPos = nullptr;
 
 	ChLMat lastShotPos;
 
