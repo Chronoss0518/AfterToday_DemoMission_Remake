@@ -30,11 +30,11 @@
 #define DEBUG_FLG false
 
 #ifndef PARTS_DIRECTORY
-#define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY("RobotParts/" current_path)
+#define PARTS_DIRECTORY(current_path) TARGET_DIRECTORY(L"RobotParts/" current_path)
 #endif
 
 #ifndef FIELD_DIRECTORY
-#define FIELD_DIRECTORY(current_path) MESH_DIRECTORY("Field/" current_path)
+#define FIELD_DIRECTORY(current_path) MESH_DIRECTORY(L"Field/" current_path)
 #endif
 
 #define INIT_SMOKE_DISPERSAL_POWER 5.0f
@@ -70,10 +70,10 @@
 //Gameメソッド
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
+void GameFrame::Init(ChCpp::SendDataClass* _sendData)
 {
-	std::string stageName = "stage1.chs";
-	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
+	std::wstring stageName = L"stage1.chs";
+	auto&& sendData = ChPtr::SafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
 
 	auto&& mouse = ChWin::Mouse();
@@ -95,7 +95,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 
 #if DISPLAY_FPS_FLG | DISPLAY_NOW_BULLET_NUM_FLG
-	box.Create("Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
+	box.Create(L"Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
 	box.SetEnableFlg(false);
 #endif
 
@@ -126,7 +126,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		shotTargetBorad.SetPos(i, pos);
 	}
 
-	shotTargetMarkerTex.CreateTexture(TEXTURE_DIRECTORY("ATKCurrsol.png"), ChD3D11::D3D11Device());
+	shotTargetMarkerTex.CreateTexture(TEXTURE_DIRECTORY(L"ATKCurrsol.png"), ChD3D11::D3D11Device());
 
 
 	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
@@ -134,7 +134,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	fireShader = ChPtr::Make_S<EffectObjectShader>();
 	fireShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
-	fireShader->SetEffectTexture(TEXTURE_DIRECTORY(""), 1, 1);
+	fireShader->SetEffectTexture(TEXTURE_DIRECTORY(L""), 1, 1);
 
 	shotEffectList = ChPtr::Make_S<ShotEffectList>();
 	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 10);
@@ -148,7 +148,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	enemyMarkerShader = ChPtr::Make_S<EffectSpriteShader>();
 	enemyMarkerShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT);
-	enemyMarkerShader->SetEffectTexture(ChStr::UTF8ToWString(TEXTURE_DIRECTORY("Ts.png")),1,1);
+	enemyMarkerShader->SetEffectTexture(TEXTURE_DIRECTORY(L"Ts.png"),1,1);
 	enemyMarkerShader->SetObjectSize(ChVec2(ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_WIDTH, ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_HEIGHT));
 	for (unsigned long i = 0; i < MAX_MECHA_OBJECT_COUNT; i++)
 	{
@@ -159,9 +159,9 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	light.SetUseLightFlg(true);
 	light.SetDirectionLightData(true, ChVec3(1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 
-	centerUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBarFrame.png"));
-	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Damage.png"));
-	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY("BattleBarUI/BattleBar_Enelgy.png"));
+	centerUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBarFrame.png"));
+	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Damage.png"));
+	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Enelgy.png"));
 
 	gageDrawer.Init(ChD3D11::D3D11Device());
 
@@ -181,7 +181,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	hitIcon.sprite.Init();
 	hitIcon.sprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(HIT_ICON_LEFT, HIT_ICON_TOP, HIT_ICON_RIGHT, HIT_ICON_BOTTOM)));
-	hitIcon.image.CreateTexture(TEXTURE_DIRECTORY("HitIcon.png"), ChD3D11::D3D11Device());
+	hitIcon.image.CreateTexture(TEXTURE_DIRECTORY(L"HitIcon.png"), ChD3D11::D3D11Device());
 
 	{
 		ChMat_11 proMat;
@@ -217,63 +217,63 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 void GameFrame::InitScriptFunction()
 {
-	script->SetFunction("Initialize", [&](const std::string& _text) {initFlg = true; });
+	script->SetFunction(L"Initialize", [&](const std::wstring& _text) {initFlg = true; });
 
-	script->SetFunction("LoadBGM", [&](const std::string& _text) {
+	script->SetFunction(L"LoadBGM", [&](const std::wstring& _text) {
 		AddBGM(_text);
 		});
 
-	script->SetFunction("Play", [&](const std::string& _text) {
-		auto argment = ChStr::Split(_text, " ");
+	script->SetFunction(L"Play", [&](const std::wstring& _text) {
+		auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
-		if (nowPlayAudio != "")audios[nowPlayAudio]->Stop();
+		if (nowPlayAudio != L"")audios[nowPlayAudio]->Stop();
 
 		nowPlayAudio = argment[0];
 		audios[nowPlayAudio]->Play();
 		});
 
-	script->SetFunction("Stop", [&](const std::string& _text) {
+	script->SetFunction(L"Stop", [&](const std::wstring& _text) {
 		audios[nowPlayAudio]->Stop();
 		});
 
-	script->SetFunction("Pause", [&](const std::string& _text) {
+	script->SetFunction(L"Pause", [&](const std::wstring& _text) {
 		audios[nowPlayAudio]->Pause();
 		});
 
-	script->SetFunction("LoadMap", [&](const std::string& _text) {AddField(_text); });
+	script->SetFunction(L"LoadMap", [&](const std::wstring& _text) {AddField(_text); });
 
-	script->SetFunction("LoadMecha", [&](const std::string& _text) {AddMecha(_text); });
+	script->SetFunction(L"LoadMecha", [&](const std::wstring& _text) {AddMecha(_text); });
 
-	script->SetFunction("LoadSkyObject", [&](const std::string& _text) {AddSkyObject(_text); });
+	script->SetFunction(L"LoadSkyObject", [&](const std::wstring& _text) {AddSkyObject(_text); });
 
-	script->SetFunction("Loop", [&](const std::string& _text)
+	script->SetFunction(L"Loop", [&](const std::wstring& _text)
 		{
 			script->SetLoopPos(_text);
 		});
 
-	script->SetFunction("End", [&](const std::string& _text)
+	script->SetFunction(L"End", [&](const std::wstring& _text)
 		{
 			script->SetPosToLoopStart(_text);
 		});
 
-	script->SetFunction("SetControllerUsing", [&](const std::string& _text)
+	script->SetFunction(L"SetControllerUsing", [&](const std::wstring& _text)
 		{
 			bool setFlg = false;
-			std::string test = "";
+			std::wstring test = L"";
 			if (_text.length() == 4)
 			{
 				setFlg = true;
-				test = "true";
+				test = L"true";
 			}
 
 			if (_text.length() == 5)
 			{
 				setFlg = false;
-				test = "false";
+				test = L"false";
 			}
 
 			bool testFlg = true;
-			std::string useText = _text;
+			std::wstring useText = _text;
 			for (unsigned long i = 0; i < test.size(); i++)
 			{
 				useText[i] = useText[i] < 'a' ? useText[i] + ('a' - 'A') : useText[i];
@@ -287,43 +287,43 @@ void GameFrame::InitScriptFunction()
 			allControllFlg = setFlg;
 		});
 
-	script->SetFunction("Message", [&](const std::string& _text) {
+	script->SetFunction(L"Message", [&](const std::wstring& _text) {
 
-		auto&& texts = ChStr::Split(_text, " ");
+		auto&& texts = ChStr::Split<wchar_t>(_text, L" ");
 
-		std::wstring messenger = L"COM",message = ChStr::UTF8ToWString(texts[0]);
+		std::wstring messenger = L"COM",message = texts[0];
 		long afterFrame = 20 * BASE_FPS, messageAddFrame = 0;
 
 		for (unsigned long i = 1; i < texts.size(); i++)
 		{
 			
-			if (texts[i] == "--messenger")
+			if (texts[i] == L"--messenger")
 			{
 				if (texts.size() <= i + 1)continue;
 				i++;
-				messenger = ChStr::UTF8ToWString(texts[i]);
+				messenger = texts[i];
 			}
 
-			if (texts[i] == "--addFrame")
+			if (texts[i] == L"--addFrame")
 			{
 				if (texts.size() <= i + 1)continue;
 				i++;
-				messageAddFrame = static_cast<long>(ChStr::GetFloatingFromText<float>(texts[i]) * BASE_FPS);
+				messageAddFrame = static_cast<long>(ChStr::GetNumFromText<float,wchar_t>(texts[i]) * BASE_FPS);
 			}
 
-			if (texts[i] == "--afterFrame")
+			if (texts[i] == L"--afterFrame")
 			{
 				if (texts.size() <= i + 1)continue;
 				i++;
-				afterFrame = static_cast<long>(ChStr::GetFloatingFromText<float>(texts[i]) * BASE_FPS);
+				afterFrame = static_cast<long>(ChStr::GetNumFromText<float,wchar_t>(texts[i]) * BASE_FPS);
 			}
 
-			if (texts[i] == "--stop")
+			if (texts[i] == L"--stop")
 			{
 				scriptPauseOnMessageFlg = true;
 			}
 
-			if (texts[i] == "--endDrawKeyFlg")
+			if (texts[i] == L"--endDrawKeyFlg")
 			{
 				endDrawKeyFlg = true;
 			}
@@ -332,34 +332,34 @@ void GameFrame::InitScriptFunction()
 		messageBox->SetMessage(messenger,message,afterFrame,messageAddFrame);
 		});
 
-	script->SetFunction("MissionStart", [&](const std::string& _text) {
+	script->SetFunction(L"MissionStart", [&](const std::wstring& _text) {
 		missionStartAnimationFlg = true;
 		});
 
-	script->SetFunction("Animation", [&](const std::string& _text) {
+	script->SetFunction(L"Animation", [&](const std::wstring& _text) {
 		SetAnimation(_text);
 		animationFlg = true;
 		});
 
-	script->SetFunction("Success", [&](const std::string& _text) {
+	script->SetFunction(L"Success", [&](const std::wstring& _text) {
 		messageBox->SetMessage(L"COM", L"作戦終了。\n戦闘状態を解除します。", SF_MESSAGE_AFTER_FRAME, SF_MESSAGE_ADD_MESSAGE_FRAME);
 		successFlg = true;
 		successPauseCount = SUCCESS_PAUSE_COUNT;
 		});
 
-	script->SetFunction("Failed", [&](const std::string& _text) {
+	script->SetFunction(L"Failed", [&](const std::wstring& _text) {
 		messageBox->SetMessage(L"COM", L"作戦失敗。\n搭乗者の安否を確認します。", SF_MESSAGE_AFTER_FRAME, SF_MESSAGE_ADD_MESSAGE_FRAME);
 		failedFlg = true;
 		});
 
 	//target < inputNum//
-	script->SetFunction("SkipIfGreater", [&](const std::string& _text)
+	script->SetFunction(L"SkipIfGreater", [&](const std::wstring& _text)
 		{
-			auto args = ChStr::Split(_text, " ");
+			auto args = ChStr::Split<wchar_t>(_text, L" ");
 
-			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 			if (targetNum >= base)return;
 
@@ -368,12 +368,12 @@ void GameFrame::InitScriptFunction()
 
 
 	//target <= inputNum//
-	script->SetFunction("SkipIfMore", [&](const std::string& _text)
+	script->SetFunction(L"SkipIfMore", [&](const std::wstring& _text)
 		{
-			auto args = ChStr::Split(_text, " ");
-			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			auto args = ChStr::Split<wchar_t>(_text, L" ");
+			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum > base)return;
@@ -382,12 +382,12 @@ void GameFrame::InitScriptFunction()
 		});
 
 	//target == inputNum//
-	script->SetFunction("SkipIfEqual", [&](const std::string& _text)
+	script->SetFunction(L"SkipIfEqual", [&](const std::wstring& _text)
 		{
-			auto args = ChStr::Split(_text, " ");
-			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			auto args = ChStr::Split<wchar_t>(_text, L" ");
+			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum != base)return;
@@ -396,12 +396,12 @@ void GameFrame::InitScriptFunction()
 		});
 
 	//target >= inputNum//
-	script->SetFunction("SkipIfLess", [&](const std::string& _text)
+	script->SetFunction(L"SkipIfLess", [&](const std::wstring& _text)
 		{
-			auto args = ChStr::Split(_text, " ");
-			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			auto args = ChStr::Split<wchar_t>(_text, L" ");
+			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum < base)return;
@@ -410,12 +410,12 @@ void GameFrame::InitScriptFunction()
 		});
 
 	//target > inputNum//
-	script->SetFunction("SkipIfSmaller", [&](const std::string& _text)
+	script->SetFunction(L"SkipIfSmaller", [&](const std::wstring& _text)
 		{
-			auto args = ChStr::Split(_text, " ");
-			unsigned long skip = ChStr::GetIntegialFromText<unsigned char>(args[0]);
+			auto args = ChStr::Split<wchar_t>(_text, L" ");
+			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetIntegialFromText<unsigned char>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum <= base)return;
@@ -431,11 +431,11 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 
 	ChVec3 fieldSize;
 
-	for (auto&& child : _map->model->GetAllChildlen<ChCpp::FrameObject>())
+	for (auto&& child : _map->model->GetAllChildlen<ChCpp::FrameObject<wchar_t>>())
 	{
 		auto childObj = child.lock();
 		if (childObj == nullptr)continue;
-		auto frameCom = childObj->GetComponent<ChCpp::FrameComponent>();
+		auto frameCom = childObj->GetComponent<ChCpp::FrameComponent<wchar_t>>();
 		if (frameCom == nullptr)continue;
 		childObj->UpdateAllDrawTransform();
 		ChLMat tmpMat = childObj->GetDrawLHandMatrix() * _map->mat;
@@ -459,15 +459,15 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 }
 
 
-void GameFrame::LoadStage(std::string& _stageScriptName)
+void GameFrame::LoadStage(std::wstring& _stageScriptName)
 {
 
 	auto playerData = ChPtr::SharedSafeCast<PlayerData>(BaseFrame::GetData());
 
-	std::string stageScript = "";
+	std::wstring stageScript = L"";
 
 	{
-		ChCpp::File<char> file;
+		ChCpp::File<wchar_t> file;
 		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName));
 
 		stageScript = file.FileReadText();
@@ -494,10 +494,10 @@ void GameFrame::LoadStage(std::string& _stageScriptName)
 	ChD3D::XAudioManager().LoadEnd();
 }
 
-void GameFrame::LoadScript(const std::string& _text)
+void GameFrame::LoadScript(const std::wstring& _text)
 {
-	ChCpp::TextObject text;
-	text.SetText(_text);
+	ChCpp::TextObject<wchar_t> text;
+	text.SetText(_text.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -893,11 +893,11 @@ void GameFrame::Render2D(void)
 
 }
 
-void GameFrame::AddMecha(const std::string& _text)
+void GameFrame::AddMecha(const std::wstring& _text)
 {
-	auto argment = ChStr::Split(_text, " ");
+	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
-	auto&& mecha = mechaList.SetObject<BaseMecha>("");
+	auto&& mecha = mechaList.SetObject<BaseMecha>();
 
 	mecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, this);
 
@@ -906,8 +906,8 @@ void GameFrame::AddMecha(const std::string& _text)
 	bool playerFlg = false;
 	bool cpuFlg = false;
 
-	std::string cpuLoadData = "";
-	std::string loadFile = PLAYER_USE_MECHA_PATH;
+	std::wstring cpuLoadData = L"";
+	std::wstring loadFile = PLAYER_USE_MECHA_PATH;
 	bool loadCPUFlg = false;
 
 	ChVec3 position;
@@ -915,31 +915,31 @@ void GameFrame::AddMecha(const std::string& _text)
 
 	for (unsigned long i = 0; i < argment.size(); i++)
 	{
-		if (argment[i] == "-l" || argment[i] == "-load")
+		if (argment[i] == L"-l" || argment[i] == L"-load")
 		{
 			i++;
 			loadFile = CPU_MECHA_PATH(+argment[i]);
 			loadCPUFlg = true;
 		}
-		if (argment[i] == "-u" || argment[i] == "--username")
+		if (argment[i] == L"-u" || argment[i] == L"--username")
 		{
 			i++;
 			mecha->SetMyName(argment[i]);
 			continue;
 		}
-		if (argment[i] == "-p" || argment[i] == "--position")
+		if (argment[i] == L"-p" || argment[i] == L"--position")
 		{
 			i++;
-			position.Deserialize(argment[i], 0, ",", ";");
+			position.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			continue;
 		}
-		if (argment[i] == "-r" || argment[i] == "--rotation")
+		if (argment[i] == L"-r" || argment[i] == L"--rotation")
 		{
 			i++;
-			rotation.Deserialize(argment[i], 0, ",", ";");
+			rotation.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			continue;
 		}
-		if (argment[i] == "-rp" || argment[i] == "--randomposition")
+		if (argment[i] == L"-rp" || argment[i] == L"--randomposition")
 		{
 			ChVec3 min = 0.0f;
 			ChVec3 max = 1.0f;
@@ -948,13 +948,13 @@ void GameFrame::AddMecha(const std::string& _text)
 				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'i' && argment[i + 1][2] == 'n')
 				{
 					i++;
-					min.Deserialize(argment[i], 3, ",", ";");
+					min.Deserialize<wchar_t>(argment[i], 3, L",", L";");
 				}
 
 				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'a' && argment[i + 1][2] == 'x')
 				{
 					i++;
-					max.Deserialize(argment[i], 3, ",", ";");
+					max.Deserialize<wchar_t>(argment[i], 3, L",", L";");
 				}
 			}
 
@@ -965,7 +965,7 @@ void GameFrame::AddMecha(const std::string& _text)
 			position += random;
 			continue;
 		}
-		if (argment[i] == "-rr" || argment[i] == "--randomrotation")
+		if (argment[i] == L"-rr" || argment[i] == L"--randomrotation")
 		{
 
 			ChVec3 min = 0.0f;
@@ -975,13 +975,13 @@ void GameFrame::AddMecha(const std::string& _text)
 				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'i' && argment[i + 1][2] == 'n')
 				{
 					i++;
-					min.Deserialize(argment[i], 3, ",", ";");
+					min.Deserialize<wchar_t>(argment[i], 3, L",", L";");
 				}
 
 				if (argment[i + 1][0] == 'm' && argment[i + 1][1] == 'a' && argment[i + 1][2] == 'x')
 				{
 					i++;
-					max.Deserialize(argment[i], 3, ",", ";");
+					max.Deserialize<wchar_t>(argment[i], 3, L",", L";");
 				}
 			}
 
@@ -993,7 +993,7 @@ void GameFrame::AddMecha(const std::string& _text)
 			continue;
 
 		}
-		if (argment[i] == "-pc" || argment[i] == "--playercontroller")
+		if (argment[i] == L"-pc" || argment[i] == L"--playercontroller")
 		{
 			if (!cpuFlg)
 			{
@@ -1001,7 +1001,7 @@ void GameFrame::AddMecha(const std::string& _text)
 			}
 			continue;
 		}
-		if (argment[i] == "-cc" || argment[i] == "--cpucontroller")
+		if (argment[i] == L"-cc" || argment[i] == L"--cpucontroller")
 		{
 			if (!playerFlg)
 			{
@@ -1012,10 +1012,10 @@ void GameFrame::AddMecha(const std::string& _text)
 			}
 			continue;
 		}
-		if (argment[i] == "-t" || argment[i] == "--team")
+		if (argment[i] == L"-t" || argment[i] == L"--team")
 		{
 			i++;
-			teamNo = ChStr::GetIntegialFromText<unsigned char>(argment[i]);
+			teamNo = ChStr::GetNumFromText<unsigned char,wchar_t>(argment[i]);
 			continue;
 		}
 	}
@@ -1061,20 +1061,20 @@ void GameFrame::AddMecha(const std::string& _text)
 	mechaPartyCounter[teamNo] += 1;
 }
 
-void GameFrame::AddField(const std::string& _text)
+void GameFrame::AddField(const std::wstring& _text)
 {
-	auto argment = ChStr::Split(_text, " ");
+	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
 	auto mainMap = ChPtr::Make_S<MapObject>();
 	mainMap->model->Init(ChD3D11::D3D11Device());
-	unsigned long pos = argment[0].find_last_of(".");
+	unsigned long pos = argment[0].find_last_of(L".");
 
-	if (argment[0].substr(pos) == ".x") {
-		ChCpp::ModelLoader::XFile loader;
+	if (argment[0].substr(pos) == L".x") {
+		ChCpp::ModelLoader::XFile<wchar_t> loader;
 		loader.CreateModel(mainMap->model, FIELD_DIRECTORY(+argment[0]));
 	}
-	else if (argment[0].substr(pos) == ".obj") {
-		ChCpp::ModelLoader::ObjFile loader;
+	else if (argment[0].substr(pos) == L".obj") {
+		ChCpp::ModelLoader::ObjFile<wchar_t> loader;
 		loader.CreateModel(mainMap->model, FIELD_DIRECTORY(+argment[0]));
 	}
 	else
@@ -1090,25 +1090,25 @@ void GameFrame::AddField(const std::string& _text)
 
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
-		if (argment[i] == "-p" || argment[i] == "--position")
+		if (argment[i] == L"-p" || argment[i] == L"--position")
 		{
 			i++;
-			position.Deserialize(argment[i], 0, ",", ";");
+			position.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			continue;
 		}
-		if (argment[i] == "-r" || argment[i] == "--rotation")
+		if (argment[i] == L"-r" || argment[i] == L"--rotation")
 		{
 			i++;
-			rotation.Deserialize(argment[i], 0, ",", ";");
+			rotation.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			continue;
 		}
-		if (argment[i] == "-s" || argment[i] == "--scalling")
+		if (argment[i] == L"-s" || argment[i] == L"--scalling")
 		{
 			i++;
-			scalling.Deserialize(argment[i], 0, ",", ";");
+			scalling.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			continue;
 		}
-		if (argment[i] == "-h" || argment[i] == "--hit")
+		if (argment[i] == L"-h" || argment[i] == L"--hit")
 		{
 			hitMapFlg = true;
 			continue;
@@ -1128,19 +1128,19 @@ void GameFrame::AddField(const std::string& _text)
 
 }
 
-void GameFrame::AddSkyObject(const std::string& _text)
+void GameFrame::AddSkyObject(const std::wstring& _text)
 {
-	auto argment = ChStr::Split(_text, " ");
+	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
-	skySphere = ChPtr::Make_S<ChD3D11::Mesh11>();
+	skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
 	skySphere->Init(ChD3D11::D3D11Device());
-	unsigned long pos = argment[0].find_last_of(".");
-	if (argment[0].substr(pos) == ".x") {
-		ChCpp::ModelLoader::XFile loader;
+	unsigned long pos = argment[0].find_last_of(L".");
+	if (argment[0].substr(pos) == L".x") {
+		ChCpp::ModelLoader::XFile<wchar_t> loader;
 		loader.CreateModel(skySphere, FIELD_DIRECTORY(+argment[0]));
 	}
-	else if (argment[0].substr(pos) == ".obj") {
-		ChCpp::ModelLoader::ObjFile loader;
+	else if (argment[0].substr(pos) == L".obj") {
+		ChCpp::ModelLoader::ObjFile<wchar_t> loader;
 		loader.CreateModel(skySphere, FIELD_DIRECTORY(+argment[0]));
 	}
 	else
@@ -1150,11 +1150,11 @@ void GameFrame::AddSkyObject(const std::string& _text)
 
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
-		if (argment[i] == "-s" || argment[i] == "--scalling")
+		if (argment[i] == L"-s" || argment[i] == L"--scalling")
 		{
 			i++;
 			ChVec3 tmp;
-			tmp.Deserialize(argment[i], 0, ",", ";");
+			tmp.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			ChLMat mat;
 			mat.SetScalling(tmp);
 			skySphere->SetOutSizdTransform(mat);
@@ -1163,52 +1163,52 @@ void GameFrame::AddSkyObject(const std::string& _text)
 	}
 }
 
-void GameFrame::AddBGM(const std::string& _text)
+void GameFrame::AddBGM(const std::wstring& _text)
 {
-	auto argment = ChStr::Split(_text, " ");
+	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 	auto audio = ChPtr::Make_S< ChD3D::AudioObject>();
 
-	std::string audioName = argment[0];
+	std::wstring audioName = argment[0];
 
 	ChD3D::XAudioManager().LoadSound(*audio, SOUND_DIRECTORY(+audioName));
 	audio->SetLoopFlg(false);
 
 	for (unsigned long i = 1; i < argment.size(); i++)
 	{
-		if (argment[i] == "-l" || argment[i] == "--loop")
+		if (argment[i] == L"-l" || argment[i] == L"--loop")
 		{
 			audio->SetLoopFlg(true);
 			continue;
 		}
 
-		if (argment[i] == "-sp" || argment[i] == "--startpos")
+		if (argment[i] == L"-sp" || argment[i] == L"--startpos")
 		{
 			i++;
-			unsigned long start = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
+			unsigned long start = ChStr::GetNumFromText<unsigned long,wchar_t>(argment[i]);
 			audio->SetPlayTime(start);
 			continue;
 		}
 
-		if (argment[i] == "-ls" || argment[i] == "--loopstart")
+		if (argment[i] == L"-ls" || argment[i] == L"--loopstart")
 		{
 			i++;
-			unsigned long start = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
+			unsigned long start = ChStr::GetNumFromText<unsigned long,wchar_t>(argment[i]);
 			audio->SetLoopStartPos(start);
 			continue;
 		}
 
-		if (argment[i] == "-le" || argment[i] == "--loopend")
+		if (argment[i] == L"-le" || argment[i] == L"--loopend")
 		{
 			i++;
-			unsigned long end = ChStr::GetIntegialFromText<unsigned long>(argment[i]);
+			unsigned long end = ChStr::GetNumFromText<unsigned long,wchar_t>(argment[i]);
 			audio->SetLoopEndPos(end);
 			continue;
 		}
 
-		if (argment[i] == "-v" || argment[i] == "--volume")
+		if (argment[i] == L"-v" || argment[i] == L"--volume")
 		{
 			i++;
-			float vol = ChStr::GetFloatingFromText<float>(argment[i]);
+			float vol = ChStr::GetNumFromText<float,wchar_t>(argment[i]);
 			audio->SetVolume(vol);
 			continue;
 		}
@@ -1300,14 +1300,14 @@ void GameFrame::CamUpdate(void)
 
 }
 
-unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
+unsigned long GameFrame::GettargetNum(std::vector<std::wstring>& _args)
 {
 
 	unsigned long targetNum = 0;
 
 	for (unsigned long i = 2; i < _args.size(); i++)
 	{
-		if (_args[i] == "-e" || _args[i] == "--enemyAll")
+		if (_args[i] == L"-e" || _args[i] == L"--enemyAll")
 		{
 			for (auto count : mechaPartyCounter)
 			{
@@ -1316,10 +1316,10 @@ unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
 			}
 			continue;
 		}
-		if (_args[i] == "-p" || _args[i] == "--party" || _args[i] == "-t" || _args[i] == "--teamNo")
+		if (_args[i] == L"-p" || _args[i] == L"--party" || _args[i] == L"-t" || _args[i] == L"--teamNo")
 		{
 			i++;
-			unsigned char no = ChStr::GetIntegialFromText<unsigned char>(_args[i]);
+			unsigned char no = ChStr::GetNumFromText<unsigned char,wchar_t>(_args[i]);
 
 			auto&& it = mechaPartyCounter.find(no);
 
@@ -1331,7 +1331,7 @@ unsigned long GameFrame::GettargetNum(std::vector<std::string>& _args)
 			targetNum = it->second;
 			continue;
 		}
-		if (_args[i] == "-m" || _args[i] == "--memberAll")
+		if (_args[i] == L"-m" || _args[i] == L"--memberAll")
 		{
 			targetNum = mechaPartyCounter[playerParty];
 			continue;
@@ -1352,7 +1352,7 @@ void GameFrame::MissionStartAnimation()
 	allControllFlg = true;
 }
 
-void GameFrame::SetAnimation(const std::string& _animationFilePath)
+void GameFrame::SetAnimation(const std::wstring& _animationFilePath)
 {
 
 }

@@ -24,9 +24,9 @@ class GameInMessageBox;
 class WeaponDataDrawUI;
 
 
-struct MapObject : public ChCpp::BaseObject
+struct MapObject : public ChCpp::BaseObject<wchar_t>
 {
-	ChPtr::Shared<ChD3D11::Mesh11> model = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> model = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
 	ChLMat mat;
 };
 
@@ -39,19 +39,19 @@ public:
 		collider.SetMatrix(_mat);
 	}
 
-	void SetPolygon(ChCpp::FrameObject& _frame)
+	void SetPolygon(ChCpp::FrameObject<wchar_t>& _frame)
 	{
 		collider.SetModel(_frame);
 	}
 
-	ChCpp::PolygonCollider& GetCollider()
+	ChCpp::PolygonCollider<wchar_t>& GetCollider()
 	{
 		return collider;
 	}
 
 private:
 
-	ChCpp::PolygonCollider collider;
+	ChCpp::PolygonCollider<wchar_t> collider;
 	
 };
 
@@ -63,7 +63,7 @@ public:
 
 	~GameFrame() { Release(); };
 
-	void Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)override;
+	void Init(ChCpp::SendDataClass* _sendData)override;
 
 	void Release()override;
 
@@ -75,19 +75,19 @@ private:
 
 	void SetHitMap(ChPtr::Shared<MapObject> _map);
 
-	void LoadScript(const std::string& _text);
+	void LoadScript(const std::wstring& _text);
 
-	void LoadStage(std::string& _stageScriptName);
+	void LoadStage(std::wstring& _stageScriptName);
 
 public:
 
-	void AddMecha(const std::string& _text);
+	void AddMecha(const std::wstring& _text);
 
-	void AddField(const std::string& _text);
+	void AddField(const std::wstring& _text);
 
-	void AddSkyObject(const std::string& _text);
+	void AddSkyObject(const std::wstring& _text);
 
-	void AddBGM(const std::string& _text);
+	void AddBGM(const std::wstring& _text);
 
 	void AddBullet(ChPtr::Shared<AttackObject> _bullet);
 
@@ -125,7 +125,7 @@ public:
 
 private:
 
-	unsigned long GettargetNum(std::vector<std::string>& _args);
+	unsigned long GettargetNum(std::vector<std::wstring>& _args);
 
 	void UpdateFunction();
 
@@ -138,7 +138,7 @@ private:
 	void MissionStartAnimation();
 	bool missionStartAnimationFlg = false;
 
-	void SetAnimation(const std::string& _animationFilePath);
+	void SetAnimation(const std::wstring& _animationFilePath);
 	void Aniamtion();
 	bool animationFlg = false;
 
@@ -165,10 +165,10 @@ private:
 
 	std::vector<ChPtr::Shared<MapObject>> hitMapList;
 
-	ChPtr::Shared<ChD3D11::Mesh11> skySphere = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
 
-	std::map<std::string,ChPtr::Shared<ChD3D::AudioObject>>audios;
-	std::string nowPlayAudio = "";
+	std::map<std::wstring,ChPtr::Shared<ChD3D::AudioObject>>audios;
+	std::wstring nowPlayAudio = L"";
 
 	bool startFlg = false;
 	
@@ -218,7 +218,7 @@ private:
 	ChD3D11::DepthStencilTexture11 dsTex;
 
 	ChD3D11::CB::CBLight11 light;
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	bool isFrendryFireFlg = false;
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
