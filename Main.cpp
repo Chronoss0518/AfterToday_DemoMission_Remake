@@ -25,7 +25,7 @@ int WINAPI WinMain(
 	auto&& system = *ChSystem::SysManager().Init<ChSystem::Windows>();
 
 	ChWin::WindClassObject windClass;
-	windClass.RegistClass("ChGame");
+	windClass.RegistClass(L"ChGame-MW");
 
 	auto s_screen = ChWin::GetScreenSize();
 	{
@@ -43,7 +43,7 @@ int WINAPI WinMain(
 
 			system.Init(creater,
 				//"AfterToday_DemoMission",
-				"MechanizedWar TestProject",
+				L"MechanizedWar TestProject",
 				windClass.GetWindClassName(),
 				hInst,
 				nCmdshow);
@@ -57,7 +57,7 @@ int WINAPI WinMain(
 		ChWin::MsgBox msg;
 		msg.ClearDisplayButtonType();
 		msg.AddDisplayButtonType(ChWin::MsgBox::DisplayButtonType::YesNo);
-		bool fullScreenFlg = msg.Display(system.GethWnd(), "全画面確認", "全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
+		bool fullScreenFlg = msg.Display(system.GethWnd(), L"全画面確認", L"全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
 
 		ChD3D11::D3D11API().Init(system.GethWnd(), fullScreenFlg, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
