@@ -40,7 +40,7 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 {
 	device = _device;
 
-	backGround.CreateTexture(TEXTURE_DIRECTORY("WeaponData.png"), device);
+	backGround.CreateTexture(TEXTURE_DIRECTORY(L"WeaponData.png"), device);
 	
 	CreateTextDrawer(bulletDrawer, static_cast<unsigned long>(NOW_BULLET_NUM_WIDTH), static_cast<unsigned long>(NOW_BULLET_NUM_HEIGHT), NOW_BULLET_NUM_TEXT_SIZE);
 	bulletDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);

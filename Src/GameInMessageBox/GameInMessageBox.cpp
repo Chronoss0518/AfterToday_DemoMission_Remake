@@ -47,7 +47,7 @@ void GameInMessageBox::Init(ID3D11Device* _device)
 	messageDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	messageDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 
-	messageBox.image.CreateTexture(ChStr::UTF8ToWString(TEXTURE_DIRECTORY("MessageBox.png")));
+	messageBox.image.CreateTexture(TEXTURE_DIRECTORY(L"MessageBox.png"));
 	SPRITE_INIT(messageBox.sprite, RectToGameWindow(ChVec4::FromRect(MESSAGE_BOX_LEFT,MESSAGE_BOX_TOP, MESSAGE_BOX_LEFT + MESSAGE_BOX_WIDTH, MESSAGE_BOX_TOP + MESSAGE_BOX_HEIGHT)));
 
 	SPRITE_INIT(messengerText.sprite, RectToGameWindow(ChVec4::FromRect(MESSAGE_BOX_LEFT + MESSENGER_TEXT_PADDING,MESSAGE_BOX_TOP + MESSENGER_TEXT_PADDING, MESSAGE_BOX_LEFT + messengerW + MESSENGER_TEXT_PADDING, MESSAGE_BOX_TOP + messengerH + MESSENGER_TEXT_PADDING)));
