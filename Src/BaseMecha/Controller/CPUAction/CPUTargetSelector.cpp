@@ -12,12 +12,12 @@
 
 #include"CPUTargetSelector.h"
 
-ChPtr::Shared<ChCpp::JsonObject> CPUTargetSelect::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUTargetSelect::Serialize()
 {
 	return CPUActionBase::Serialize();
 }
 
-void CPUTargetSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUTargetSelect::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
@@ -33,27 +33,27 @@ unsigned long CPUTargetSelect::Update(CPUObjectLooker& _lookTarget, GameFrame& _
 	return lookTargetNo;
 }
 
-ChPtr::Shared<ChCpp::JsonObject> CPUTargetSelector::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUTargetSelector::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	auto&& functionArray = ChPtr::Make_S<ChCpp::JsonArray>();
+	auto&& functionArray = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
 
 	for (auto&& function : functions)
 	{
 		functionArray->Add(function->Serialize());
 	}
 
-	res->Set("TargetSelectorFunctions", functionArray);
+	res->Set(L"TargetSelectorFunctions", functionArray);
 
 	return res;
 }
 
-void CPUTargetSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUTargetSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& functionArray = _jsonObject->GetJsonArray("TargetSelectorFunctions");
+	auto&& functionArray = _jsonObject->GetJsonArray(L"TargetSelectorFunctions");
 
 	if (functionArray == nullptr)return;
 
