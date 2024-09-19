@@ -7,7 +7,7 @@ struct LookSquareValue
 {
 	ChCpp::MathSquare square = ChCpp::MathSquare();
 	float distance = (10e+37f) * -1.0f;
-	std::string objectName = "";
+	std::wstring objectName = L"";
 };
 
 class LookAnchor : public ChCpp::BaseComponent
@@ -60,7 +60,7 @@ public:
 	{
 		std::vector<ChPtr::Shared<MapLookAnchorPosition>> anchors;
 		ChLMat drawMatrix = ChLMat();
-		std::string objectName = "";
+		std::wstring objectName = L"";
 	};
 
 
@@ -70,7 +70,7 @@ public:
 		CutCount() = _cutCount;
 	}
 
-	void SetPositionList(ChCpp::FrameObject& _model, const ChLMat& _drawMat);
+	void SetPositionList(ChCpp::FrameObject<wchar_t>& _model, const ChLMat& _drawMat);
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetMapSquares(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
 
@@ -78,7 +78,7 @@ public:
 
 private:
 
-	void CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat& _drawMat);
+	void CreateFramePosition(ChCpp::FrameObject<wchar_t>& _frame, const ChLMat& _drawMat);
 
 	std::vector<ChPtr::Shared<MapLookAnchorObject>> positionList;
 

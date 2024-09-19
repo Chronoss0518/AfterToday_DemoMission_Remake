@@ -385,11 +385,11 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 
 }
 
-void MapLookAnchor::SetPositionList(ChCpp::FrameObject& _model, const ChLMat& _drawMat)
+void MapLookAnchor::SetPositionList(ChCpp::FrameObject<wchar_t>& _model, const ChLMat& _drawMat)
 {
 	CreateFramePosition(_model, _drawMat);
 
-	for (auto&& frame : _model.GetChildlen<ChCpp::FrameObject>())
+	for (auto&& frame : _model.GetChildlen<ChCpp::FrameObject<wchar_t>>())
 	{
 		auto&& frameObject = frame.lock();
 		if (frameObject == nullptr)continue;
@@ -398,28 +398,28 @@ void MapLookAnchor::SetPositionList(ChCpp::FrameObject& _model, const ChLMat& _d
 	}
 }
 
-void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat& _drawMat)
+void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject<wchar_t>& _frame, const ChLMat& _drawMat)
 {
 	ChLMat drawMatrix = _frame.GetDrawLHandMatrix() * _drawMat;
 	//ChLMat drawMatrix = _drawMat;
 
-	auto&& frameCom = _frame.GetComponent<ChCpp::FrameComponent>();
+	auto&& frameCom = _frame.GetComponent<ChCpp::FrameComponent<wchar_t>>();
 
 	if (frameCom == nullptr)return;
 
-	auto&& vertexList = frameCom->vertexList;
+	auto&& vertexList = frameCom->ValueIns().vertexList;
 
 	auto lookAnchor = ChPtr::Make_S<MapLookAnchorObject>();
 
 	lookAnchor->drawMatrix = drawMatrix;
 
-	for (auto&& primitive : frameCom->primitives)
+	for (auto&& primitive : frameCom->ValueIns().primitives)
 	{
-		if (frameCom->primitives.size() <= 2)continue;
+		if (frameCom->ValueIns().primitives.size() <= 2)continue;
 
 		auto&& anchorPos = ChPtr::Make_S<MapLookAnchorPosition>();
 
-		for (auto&& vertexData : primitive->vertexData)
+		for (auto&& vertexData : primitive->ValueIns().vertexData)
 		{
 			auto&& pos = vertexList[vertexData->vertexNo]->pos;
 			//auto&& pos = _frame.GetDrawLHandMatrix().Transform(vertexList[vertexData->vertexNo]->pos);
@@ -566,10 +566,10 @@ void CPUObjectLooker::Draw2D()
 
 			ChD3D11::TextureBase11* base = &mapTexture_Cube;
 
-			if (map->objectName == "Cube")base = &mapTexture_Cube;
-			if (map->objectName == "Cube_001")base = &mapTexture_Cube_001;
-			if (map->objectName == "Cube_002")base = &mapTexture_Cube_002;
-			if (map->objectName == "Plane_002")base = &mapTexture_Plane_002;
+			if (map->objectName == L"Cube")base = &mapTexture_Cube;
+			if (map->objectName == L"Cube_001")base = &mapTexture_Cube_001;
+			if (map->objectName == L"Cube_002")base = &mapTexture_Cube_002;
+			if (map->objectName == L"Plane_002")base = &mapTexture_Plane_002;
 
 			spriteDrawer.Draw(*base, sprite);
 
@@ -675,7 +675,7 @@ void CPUObjectLooker::FindMecha()
 
 		ChVec3 direction = targetPos - pos;
 
-		float tmpLength = direction.Len();
+		float tmpLength = direction.GetLen();
 
 		direction.Normalize();
 
@@ -691,7 +691,7 @@ void CPUObjectLooker::FindMecha()
 
 			if (!collider->GetCollider().IsHit(&ray))continue;
 
-			if (ray.GetHitVectol().Len() > tmpLength)continue;
+			if (ray.GetHitVectol().GetLen() > tmpLength)continue;
 
 			lookFlg = false;
 			break;
