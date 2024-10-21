@@ -588,7 +588,7 @@ void EditFrame::Load()
 	{
 		std::wstring path = file.path().c_str();
 
-		unsigned long len = path.rfind(L".");
+		size_t len = path.rfind(L".");
 
 		if (len == std::wstring::npos)continue;
 

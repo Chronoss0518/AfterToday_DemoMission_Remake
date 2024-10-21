@@ -95,7 +95,7 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstrin
 	{
 		ChCpp::WCharFile file;
 		file.SetLocaleName("Japanese");
-		file.FileOpen(_fileName);
+		file.FileOpen(_fileName, std::ios::in | std::ios::out);
 		text = file.FileReadText();
 	}
 
@@ -125,8 +125,8 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 	LoadModel(_device, textObject.GetTextLine(0));
 
-	hardness = ChStr::GetNumFromText<unsigned long,wchar_t>(textObject.GetTextLine(1).c_str());
-	mass = ChStr::GetNumFromText<float,wchar_t>(textObject.GetTextLine(2).c_str());
+	hardness = ChStr::GetNumFromText<unsigned long>(textObject.GetTextLine(1).c_str());
+	mass = ChStr::GetNumFromText<float>(textObject.GetTextLine(2).c_str());
 
 	for (unsigned long i = 3; i < lineCount; i++)
 	{
@@ -261,7 +261,7 @@ std::wstring MechaParts::Save(const std::wstring& _fileName)
 	{
 		ChCpp::WCharFile file;
 		file.SetLocaleName("Japanese");
-		file.FileOpen(_fileName);
+		file.FileOpen(_fileName, std::ios::in | std::ios::out);
 		file.FileWriteText(res);
 		file.FileClose();
 	}
@@ -317,8 +317,8 @@ void EnelgyTankData::RemoveParameter(BaseMecha& _base)
 
 unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	maxEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos).c_str());
-	chargeEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
+	maxEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos).c_str());
+	chargeEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
 
 	return _textPos + 2;
 }
@@ -347,8 +347,8 @@ void EnelgyTankData::SetPartsParameter(PartsParameters& _base)
 
 unsigned long CameraData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	fovy = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
-	cameraCount = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
+	fovy = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos).c_str());
+	cameraCount = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
 	cameraObject = _text.GetTextLine(_textPos + 2);
 	return _textPos + 3;
 }
@@ -373,9 +373,9 @@ void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 unsigned long ScopeData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = CameraData::Deserialize(_text, _textPos);
-	minFovy = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(textPos).c_str());
-	maxFovy = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(textPos + 1).c_str());
-	fovySlideSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(textPos + 2).c_str());
+	minFovy = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos).c_str());
+	maxFovy = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 1).c_str());
+	fovySlideSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 2).c_str());
 	return textPos + 3;
 }
 
@@ -399,7 +399,7 @@ void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 
 unsigned long Aerodynamics::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	upPowerParSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
+	upPowerParSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos).c_str());
 	return _textPos + 1;
 }
 
@@ -420,8 +420,8 @@ void Aerodynamics::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts,
 
 unsigned long MoveAcceleration::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	acceleration = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
-	deceleration = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
+	acceleration = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos).c_str());
+	deceleration = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 1).c_str());
 	return _textPos + 2;
 }
 
@@ -452,9 +452,9 @@ void WalkData::RemoveParameter(BaseMecha& _base)
 
 unsigned long WalkData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	movePow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos).c_str());
-	rotatePow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
-	jumpPow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 2).c_str());
+	movePow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos).c_str());
+	rotatePow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 1).c_str());
+	jumpPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 2).c_str());
 	return _textPos + 3;
 }
 
@@ -541,11 +541,11 @@ void BoostBrust::RemoveParameter(BaseMecha& _base)
 unsigned long BoostBrust::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	objectName = _text.GetTextLine(_textPos);
-	useEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 1).c_str());
-	boostPower = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 2).c_str());
-	avoidUseEnelgy = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 3).c_str());
-	avoidPow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_textPos + 4).c_str());
-	avoidWait = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(_textPos + 5).c_str());
+	useEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
+	boostPower = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 2).c_str());
+	avoidUseEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 3).c_str());
+	avoidPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 4).c_str());
+	avoidWait = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 5).c_str());
 	return _textPos + 6;
 }
 
@@ -640,7 +640,7 @@ unsigned long WeaponData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, c
 	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
 	weaponName = _text.GetTextLine(textPos);
 	seFile = _text.GetTextLine(textPos + 1);
-	waitTime = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 2).c_str());
+	waitTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 2).c_str());
 	lookTarget = _text.GetTextLine(textPos + 3) == L"1";
 	return textPos + 4;
 }
@@ -677,7 +677,7 @@ void WeaponData::SetWeaponData(PartsParameterStruct::WeaponData& _base)
 unsigned long SwordData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = WeaponData::Deserialize(_text, _textPos);
-	attackTime = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos).c_str());
+	attackTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos).c_str());
 	return textPos + 1;
 }
 
@@ -724,11 +724,11 @@ void SwordData::SetPartsParameter(PartsParameters& _base)
 unsigned long GunData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = WeaponData::Deserialize(_text, _textPos);
-	fireNum = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos).c_str());
-	bulletNum = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 1).c_str());
-	magazineNum = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 2).c_str());
-	reloadTime = ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 3).c_str());
-	range = static_cast<unsigned char>(ChStr::GetNumFromText<unsigned long,wchar_t>(_text.GetTextLine(textPos + 4).c_str()));
+	fireNum = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos).c_str());
+	bulletNum = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 1).c_str());
+	magazineNum = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 2).c_str());
+	reloadTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 3).c_str());
+	range = ChStr::GetNumFromText<unsigned char>(_text.GetTextLine(textPos + 4).c_str());
 	frontDir.Deserialize<wchar_t>(_text.GetTextLine(textPos + 5).c_str());
 	bulletFile = _text.GetTextLine(textPos + 6).c_str();
 

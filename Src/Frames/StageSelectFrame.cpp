@@ -107,9 +107,9 @@ void StageSelectFrame::InitStageDataList()
 
 
 
-	for (auto&& file : std::filesystem::directory_iterator(STAGE_DATA_DIRECTORY("")))
+	for (auto&& file : std::filesystem::directory_iterator(STAGE_DATA_DIRECTORY(L"")))
 	{
-		std::string path = ChStr::UTF8ToString(file.path().c_str());
+		std::wstring path = file.path().c_str();
 		auto stageData = ChPtr::Make_S<StageData>();
 		stageData->LoadData(path);
 

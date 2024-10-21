@@ -455,7 +455,7 @@ void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 
 	ChCpp::WCharFile file;
 	file.SetLocaleName("Japanese");
-	file.FileOpen(PLAYER_MECHA_PATH);
+	file.FileOpen(PLAYER_MECHA_PATH, std::ios::in | std::ios::out);
 	std::wstring fileText = file.FileReadText();
 	file.FileClose();
 

@@ -16,16 +16,16 @@
 
 
 int WINAPI WinMain(
-	HINSTANCE hInst
-	, HINSTANCE hPrev
-	, LPSTR lpszCmdParam
-	, int nCmdshow)
+	HINSTANCE hInst,
+	HINSTANCE hPrev,
+	LPSTR lpszCmdParam,
+	int nCmdshow)
 {
 
 	auto&& system = *ChSystem::SysManager().Init<ChSystem::Windows>();
 
 	ChWin::WindClassObject windClass;
-	windClass.RegistClass(L"ChGame-MW");
+	windClass.RegistClass(L"ChGame-MX-64");
 
 	auto s_screen = ChWin::GetScreenSize();
 	{
@@ -42,7 +42,7 @@ int WINAPI WinMain(
 			creater.SetInitSize(s_screen);
 
 			system.Init(creater,
-				//"AfterToday_DemoMission",
+				//L"AfterToday_DemoMission",
 				L"MechanizedWar TestProject",
 				windClass.GetWindClassName(),
 				hInst,
@@ -128,6 +128,8 @@ int WINAPI WinMain(
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();
 	ChD3D::WICBitmapCreatorObj().Release();
+
+	windClass.Release();
 
 	return (int)system.GetReturnMassage()->wParam;
 }

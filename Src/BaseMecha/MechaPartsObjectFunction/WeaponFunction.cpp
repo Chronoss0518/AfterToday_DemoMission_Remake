@@ -40,7 +40,7 @@ void WeaponFunction::Update()
 std::wstring WeaponFunction::GetWeaponName()
 {
 	if (ChPtr::NullCheck(data))return L"";
-	return ChStr::UTF8ToWString(data->GetWeaponName());
+	return data->GetWeaponName();
 }
 
 void SwordFunction::SetData(WeaponData* _data)
@@ -53,7 +53,7 @@ void SwordFunction::AttackFunction()
 
 }
 
-void SwordFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)
+void SwordFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)
 {
 
 	//attackData = Attack::CreateAttackData(_drawer, _device, swordData->GetObjectName());
@@ -120,7 +120,7 @@ void GunFunction::AttackFunction()
 	StartSubFunction();
 }
 
-void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)
+void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)
 {
 	nowBulletNum = gunData->GetBulletNum();
 
@@ -187,7 +187,7 @@ void GunFunction::DrawEnd()
 		//lastShotPos = defaultMat * shotPos->GetDrawLHandMatrix();
 		lastShotPos = shotPos->GetDrawLHandMatrix();
 
-		float len = lastShotPos.GetZAxisDirection().Len();
+		float len = lastShotPos.GetZAxisDirection().GetLen();
 		if (isnan(len))
 		{
 			ChLMat tmp;
@@ -230,7 +230,7 @@ std::wstring GunFunction::GetReloadCount()
 
 void GunFunction::UpdatePosture()
 {
-	OutputDebugString("------ Start Update Posture ------\r\n");
+	OutputDebugString(L"------ Start Update Posture ------\r\n");
 
 	auto&& startRotatePosture = obj->GetStartRotatePosture();
 
@@ -259,7 +259,7 @@ void GunFunction::UpdatePosture()
 
 	nowDirection.Normalize();
 
-	float len = nowDirection.Len();
+	float len = nowDirection.GetLen();
 	if (isnan(len))
 	{
 		int test;
@@ -267,23 +267,23 @@ void GunFunction::UpdatePosture()
 		return;
 	}
 
-	OutputDebugString(("Now Direction[" + nowDirection.Serialize("],[", "]\r\n")).c_str());
+	OutputDebugString((L"Now Direction[" + nowDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
 
 	auto&& targetFrontDirection = gunData->GetFrontDirection();
 	targetFrontDirection.Normalize();
 	//targetFrontDirection = obj->GetLastDrawMat().TransformCoord(targetFrontDirection);
 
-	OutputDebugString(("Target Direction[" + targetFrontDirection.Serialize("],[", "]\r\n")).c_str());
+	OutputDebugString((L"Target Direction[" + targetFrontDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
 	ChQua rotation;
 	rotation.SetRotation(nowDirection, targetFrontDirection);
 	
-	ChVec3 setRotate = rotation.Mul(nowDirection);
+	ChVec3 setRotate = rotation.GetMul(nowDirection);
 
-	OutputDebugString(("To Direction[" + setRotate.Serialize("],[", "]\r\n")).c_str());
+	OutputDebugString((L"To Direction[" + setRotate.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
-	len = setRotate.Len();
+	len = setRotate.GetLen();
 	if (isnan(len))
 	{
 		rotation.Identity();
@@ -327,8 +327,8 @@ void GunFunction::UpdatePosture()
 	rotateVector.y = ChMath::ToDegree(rotateVector.y);
 	rotateVector.z = ChMath::ToDegree(rotateVector.z);
 
-	OutputDebugString(("Rotate Data[" + rotateVector.Serialize("],[", "]\r\n")).c_str());
+	OutputDebugString((L"Rotate Data[" + rotateVector.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
-	OutputDebugString("------ End Update Posture ------\r\n");
+	OutputDebugString(L"------ End Update Posture ------\r\n");
 
 }

@@ -308,14 +308,14 @@ void GameFrame::InitScriptFunction()
 			{
 				if (texts.size() <= i + 1)continue;
 				i++;
-				messageAddFrame = static_cast<long>(ChStr::GetNumFromText<float,wchar_t>(texts[i]) * BASE_FPS);
+				messageAddFrame = static_cast<long>(ChStr::GetNumFromText<float>(texts[i]) * BASE_FPS);
 			}
 
 			if (texts[i] == L"--afterFrame")
 			{
 				if (texts.size() <= i + 1)continue;
 				i++;
-				afterFrame = static_cast<long>(ChStr::GetNumFromText<float,wchar_t>(texts[i]) * BASE_FPS);
+				afterFrame = static_cast<long>(ChStr::GetNumFromText<float>(texts[i]) * BASE_FPS);
 			}
 
 			if (texts[i] == L"--stop")
@@ -357,9 +357,9 @@ void GameFrame::InitScriptFunction()
 		{
 			auto args = ChStr::Split<wchar_t>(_text, L" ");
 
-			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
+			unsigned long skip = ChStr::GetNumFromText<unsigned char>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 			if (targetNum >= base)return;
 
@@ -371,9 +371,9 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction(L"SkipIfMore", [&](const std::wstring& _text)
 		{
 			auto args = ChStr::Split<wchar_t>(_text, L" ");
-			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
+			unsigned long skip = ChStr::GetNumFromText<unsigned char>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum > base)return;
@@ -385,9 +385,9 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction(L"SkipIfEqual", [&](const std::wstring& _text)
 		{
 			auto args = ChStr::Split<wchar_t>(_text, L" ");
-			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
+			unsigned long skip = ChStr::GetNumFromText<unsigned char>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum != base)return;
@@ -399,9 +399,9 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction(L"SkipIfLess", [&](const std::wstring& _text)
 		{
 			auto args = ChStr::Split<wchar_t>(_text, L" ");
-			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
+			unsigned long skip = ChStr::GetNumFromText<unsigned char>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum < base)return;
@@ -413,9 +413,9 @@ void GameFrame::InitScriptFunction()
 	script->SetFunction(L"SkipIfSmaller", [&](const std::wstring& _text)
 		{
 			auto args = ChStr::Split<wchar_t>(_text, L" ");
-			unsigned long skip = ChStr::GetNumFromText<unsigned char,wchar_t>(args[0]);
+			unsigned long skip = ChStr::GetNumFromText<unsigned char>(args[0]);
 			if (skip <= 0)skip = 1;
-			unsigned long base = ChStr::GetNumFromText<unsigned char,wchar_t>(args[1]);
+			unsigned long base = ChStr::GetNumFromText<unsigned char>(args[1]);
 			unsigned long targetNum = GettargetNum(args);
 
 			if (targetNum <= base)return;
@@ -469,7 +469,7 @@ void GameFrame::LoadStage(std::wstring& _stageScriptName)
 	{
 		ChCpp::File<wchar_t> file;
 		file.SetLocaleName("Japanese");
-		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName));
+		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName),std::ios::in | std::ios::out);
 
 		stageScript = file.FileReadText();
 
@@ -1016,7 +1016,7 @@ void GameFrame::AddMecha(const std::wstring& _text)
 		if (argment[i] == L"-t" || argment[i] == L"--team")
 		{
 			i++;
-			teamNo = ChStr::GetNumFromText<unsigned char,wchar_t>(argment[i]);
+			teamNo = ChStr::GetNumFromText<unsigned char>(argment[i]);
 			continue;
 		}
 	}
@@ -1185,7 +1185,7 @@ void GameFrame::AddBGM(const std::wstring& _text)
 		if (argment[i] == L"-sp" || argment[i] == L"--startpos")
 		{
 			i++;
-			unsigned long start = ChStr::GetNumFromText<unsigned long,wchar_t>(argment[i]);
+			unsigned long start = ChStr::GetNumFromText<unsigned long>(argment[i]);
 			audio->SetPlayTime(start);
 			continue;
 		}
@@ -1193,7 +1193,7 @@ void GameFrame::AddBGM(const std::wstring& _text)
 		if (argment[i] == L"-ls" || argment[i] == L"--loopstart")
 		{
 			i++;
-			unsigned long start = ChStr::GetNumFromText<unsigned long,wchar_t>(argment[i]);
+			unsigned long start = ChStr::GetNumFromText<unsigned long>(argment[i]);
 			audio->SetLoopStartPos(start);
 			continue;
 		}
@@ -1201,7 +1201,7 @@ void GameFrame::AddBGM(const std::wstring& _text)
 		if (argment[i] == L"-le" || argment[i] == L"--loopend")
 		{
 			i++;
-			unsigned long end = ChStr::GetNumFromText<unsigned long,wchar_t>(argment[i]);
+			unsigned long end = ChStr::GetNumFromText<unsigned long>(argment[i]);
 			audio->SetLoopEndPos(end);
 			continue;
 		}
@@ -1209,7 +1209,7 @@ void GameFrame::AddBGM(const std::wstring& _text)
 		if (argment[i] == L"-v" || argment[i] == L"--volume")
 		{
 			i++;
-			float vol = ChStr::GetNumFromText<float,wchar_t>(argment[i]);
+			float vol = ChStr::GetNumFromText<float>(argment[i]);
 			audio->SetVolume(vol);
 			continue;
 		}
@@ -1320,7 +1320,7 @@ unsigned long GameFrame::GettargetNum(std::vector<std::wstring>& _args)
 		if (_args[i] == L"-p" || _args[i] == L"--party" || _args[i] == L"-t" || _args[i] == L"--teamNo")
 		{
 			i++;
-			unsigned char no = ChStr::GetNumFromText<unsigned char,wchar_t>(_args[i]);
+			unsigned char no = ChStr::GetNumFromText<unsigned char>(_args[i]);
 
 			auto&& it = mechaPartyCounter.find(no);
 

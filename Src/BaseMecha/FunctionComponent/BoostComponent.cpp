@@ -84,7 +84,7 @@ void BoostComponent::BoostDrawBegin()
 			tmp.SetScalling(ChVec3(testScl));
 			boostObject->SetOutSizdTransform(tmp);
 
-			auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11<wchar_t>>()->GetPrimitives()[0]->ValueIns().textures[Ch3D::TextureType::Diffuse];
+			auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11<wchar_t>>()->GetPrimitives()[0]->textures[Ch3D::TextureType::Diffuse];
 		}
 	}
 

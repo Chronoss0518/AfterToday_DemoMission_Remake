@@ -211,7 +211,7 @@ void FighterMoveComponent::MoveFront(float _pow, InputName _input, const ChVec3&
 
 	if (_input == InputName::Back)
 	{
-		float movePower = GetMoveVector().Len();
+		float movePower = GetMoveVector().GetLen();
 
 		if (movePower > movePow)movePower = movePow;
 	}

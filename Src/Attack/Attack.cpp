@@ -103,7 +103,7 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<w
 	{
 		ChCpp::WCharFile file;
 		file.SetLocaleName("Japanese");
-		file.FileOpen(_fileName);
+		file.FileOpen(_fileName, std::ios::in | std::ios::out);
 		text = file.FileReadText();
 		textObject.SetText(text.c_str());
 		file.FileClose();
@@ -146,8 +146,8 @@ void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 	ChCpp::TextObject<wchar_t> textObject;
 	textObject.SetText(_text.c_str());
 	
-	penetration = ChStr::GetNumFromText<unsigned long,wchar_t>(textObject.GetTextLine(1).c_str());
-	hitSize = ChStr::GetNumFromText<float,wchar_t>(textObject.GetTextLine(2).c_str());
+	penetration = ChStr::GetNumFromText<unsigned long>(textObject.GetTextLine(1).c_str());
+	hitSize = ChStr::GetNumFromText<float>(textObject.GetTextLine(2).c_str());
 
 	{
 		ChCpp::ModelLoader::XFile<wchar_t> loader;
@@ -165,7 +165,7 @@ void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 
 	for (unsigned long pos = 4; pos < textObject.LineCount(); pos++)
 	{
-		unsigned char atkType = ChStr::GetNumFromText<unsigned char,wchar_t>(textObject.GetTextLine(pos));
+		unsigned char atkType = ChStr::GetNumFromText<unsigned char>(textObject.GetTextLine(pos));
 
 		if (atkType > ChStd::EnumCast(attackType))attackType = static_cast<AttackType>(atkType);
 
@@ -247,7 +247,7 @@ unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, co
 {
 
 	unsigned long nowPos = _nowPos;
-	firstSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(nowPos).c_str());
+	firstSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(nowPos).c_str());
 	return nowPos + 1;
 }
 
@@ -328,9 +328,9 @@ void BulletData::UpdateBulletObject(AttackObject& _bullet)
 unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
-	startBoostTime = ChStr::GetNumFromText<unsigned long, wchar_t>(_text.GetTextLine(_nowPos).c_str());
-	useBoostTime = ChStr::GetNumFromText<unsigned long, wchar_t>(_text.GetTextLine(_nowPos + 1).c_str());
-	boostPow = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos + 2).c_str());
+	startBoostTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_nowPos).c_str());
+	useBoostTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_nowPos + 1).c_str());
+	boostPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos + 2).c_str());
 
 	return _nowPos + 3;
 
@@ -365,7 +365,7 @@ void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
-	blastRange = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos).c_str());
+	blastRange = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos).c_str());
 
 	return _nowPos + 1;
 }
@@ -394,8 +394,8 @@ void HighExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 unsigned long MissileData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
-	rotateSpeed = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos).c_str());
-	lostRange = ChStr::GetNumFromText<float,wchar_t>(_text.GetTextLine(_nowPos + 1).c_str());
+	rotateSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos).c_str());
+	lostRange = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos + 1).c_str());
 
 	return _nowPos + 2;
 }

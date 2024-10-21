@@ -23,7 +23,7 @@ Application* app = nullptr;
 void Application::Init(HINSTANCE hInst, int nCmdshow)
 {
 	ChWin::WindClassObject windClass;
-	windClass.RegistClass("ChGame");
+	windClass.RegistClass(L"ChGame");
 
 	auto s_screen = ChWin::GetScreenSize();
 	{
@@ -38,9 +38,8 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 			}
 
 			creater.SetInitSize(s_screen);
-
-			creater.Create(&window,
-				"AfterToday_DemoMission",
+			creater.Create(window,
+				L"AfterToday_DemoMission",
 				windClass.GetWindClassName());
 
 			window.SetWindProcedure(WM_DESTROY, [&](HWND _hWnd, UINT _msg, WPARAM _wPalam, LPARAM _lParam)->LRESULT {
@@ -52,7 +51,7 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 		ChWin::MsgBox msg;
 		msg.ClearDisplayButtonType();
 		msg.AddDisplayButtonType(ChWin::MsgBox::DisplayButtonType::YesNo);
-		bool fullScreenFlg = msg.Display(window.GethWnd(), "全画面確認", "全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
+		bool fullScreenFlg = msg.Display(window.GethWnd(), L"全画面確認", L"全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
 
 		d3dApi.Init(window.GethWnd(), fullScreenFlg, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 

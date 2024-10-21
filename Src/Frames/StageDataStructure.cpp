@@ -26,7 +26,7 @@ void StageDataStructure::Load(const std::wstring& _filePath)
 	{
 		ChCpp::WCharFile file;
 		file.SetLocaleName("Japanese");
-		file.FileOpen(_filePath);
+		file.FileOpen(_filePath, std::ios::in | std::ios::out);
 		text = file.FileReadText();
 		file.FileClose();
 	}
@@ -111,7 +111,7 @@ void StageDataStructure::Save(const std::wstring& _filePath)
 	{
 		ChCpp::WCharFile file;
 		file.SetLocaleName("Japanese");
-		file.FileOpen(_filePath);
+		file.FileOpen(_filePath, std::ios::in | std::ios::out);
 		auto result = file.FileWriteText(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData()));
 		file.FileClose();
 	}

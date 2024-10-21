@@ -555,9 +555,9 @@ public://Serialize Deserialize//
 	inline unsigned long Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos = 0)override
 	{
 		unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
-		SetRotateAxis(static_cast<RotateAxis>(ChStr::GetNumFromText<int,wchar_t>(_text[textPos])));
-		SetMinRotate(ChStr::GetNumFromText<float, wchar_t>(_text[textPos + 1]));
-		SetMaxRotate(ChStr::GetNumFromText<float, wchar_t>(_text[textPos + 2]));
+		SetRotateAxis(static_cast<RotateAxis>(ChStr::GetNumFromText<int>(_text[textPos])));
+		SetMinRotate(ChStr::GetNumFromText<float>(_text[textPos + 1]));
+		SetMaxRotate(ChStr::GetNumFromText<float>(_text[textPos + 2]));
 
 		return textPos + 3;
 	}

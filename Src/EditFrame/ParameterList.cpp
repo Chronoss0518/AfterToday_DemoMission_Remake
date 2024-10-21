@@ -21,14 +21,14 @@
 #define PARAMETER_PANEL_VALUE_WIDTH (PARAMETER_PANEL_WIDTH - PARAMETER_PANEL_TITLE_WIDTH)
 
 
-ChPtr::Shared<ParameterTitlePanel> ParameterTitlePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::string& _title)
+ChPtr::Shared<ParameterTitlePanel> ParameterTitlePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title)
 {
 	auto&& res = ChPtr::Make_S<ParameterTitlePanel>();
 	res->CreateTitle(_textDrawer, _device, _title);
 	return res;
 }
 
-void ParameterTitlePanel::CreateTitle(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title)
+void ParameterTitlePanel::CreateTitle(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _title)
 {
 	if (_title.length() <= 0)return;
 	title = nullptr;
@@ -37,12 +37,12 @@ void ParameterTitlePanel::CreateTitle(TextDrawerWICBitmap& _textDrawer, ID3D11De
 	CreateTitleImage(_textDrawer, _device, _title);
 }
 
-void ParameterTitlePanel::CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title)
+void ParameterTitlePanel::CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _title)
 {
 	CreateTexture(*title, _textDrawer, _device, _title, ChVec2::FromSize(PARAMETER_PANEL_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
 }
 
-ChPtr::Shared<ParameterValuePanel> ParameterValuePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::string& _title, TextDrawerWICBitmap& _valueDrawer, unsigned long* _baseValue, unsigned long* _nextValue, bool _inversOperatorFlg)
+ChPtr::Shared<ParameterValuePanel> ParameterValuePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::wstring& _title, TextDrawerWICBitmap& _valueDrawer, unsigned long* _baseValue, unsigned long* _nextValue, bool _inversOperatorFlg)
 {
 	auto&& res = ChPtr::Make_S<ParameterULValuePanel>();
 	res->SetInversOperatorFlg(_inversOperatorFlg);
@@ -51,7 +51,7 @@ ChPtr::Shared<ParameterValuePanel> ParameterValuePanel::CreatePanel(ID3D11Device
 	return res;
 }
 
-ChPtr::Shared<ParameterValuePanel> ParameterValuePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::string& _title, TextDrawerWICBitmap& _valueDrawer, float* _baseValue, float* _nextValue, bool _inversOperatorFlg)
+ChPtr::Shared<ParameterValuePanel> ParameterValuePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::wstring& _title, TextDrawerWICBitmap& _valueDrawer, float* _baseValue, float* _nextValue, bool _inversOperatorFlg)
 {
 	auto&& res = ChPtr::Make_S<ParameterFValuePanel>();
 	res->SetInversOperatorFlg(_inversOperatorFlg);
@@ -60,7 +60,7 @@ ChPtr::Shared<ParameterValuePanel> ParameterValuePanel::CreatePanel(ID3D11Device
 	return res;
 }
 
-void ParameterValuePanel::CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title)
+void ParameterValuePanel::CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _title)
 {
 	CreateTexture(*title, _textDrawer, _device, _title, ChVec2::FromSize(PARAMETER_PANEL_TITLE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
 }
@@ -98,22 +98,22 @@ void ParameterTitlePanel::DrawBackGround(ChD3D11::Shader::BaseDrawSprite11& _dra
 	_drawer.Draw(*background, sprite);
 }
 
-void ParameterTitlePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _text, const ChVec2& _size)
+void ParameterTitlePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _text, const ChVec2& _size)
 {
 	_textDrawer.brush.SetColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	_textDrawer.drawer.DrawStart();
-	_textDrawer.drawer.DrawToScreen(ChStr::UTF8ToWString(_text), _textDrawer.format, _textDrawer.brush, ChVec4::FromRect(0.0f, 0.0f, _size.w, _size.h));
+	_textDrawer.drawer.DrawToScreen(_text, _textDrawer.format, _textDrawer.brush, ChVec4::FromRect(0.0f, 0.0f, _size.w, _size.h));
 	_textDrawer.drawer.DrawEnd();
 	_outTexture.CreateColorTexture(_device, _textDrawer.bitmap.GetBitmap());
 }
 
-void ParameterValuePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _text, const ChVec2& _size)
+void ParameterValuePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _text, const ChVec2& _size)
 {
 	_textDrawer.brush.SetColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	_textDrawer.drawer.DrawStart();
-	_textDrawer.drawer.DrawToScreen(ChStr::UTF8ToWString(_text), _textDrawer.format, _textDrawer.brush, ChVec4::FromRect(0.0f, 0.0f, _size.w, _size.h));
+	_textDrawer.drawer.DrawToScreen(_text, _textDrawer.format, _textDrawer.brush, ChVec4::FromRect(0.0f, 0.0f, _size.w, _size.h));
 	_textDrawer.drawer.DrawEnd();
 	_outTexture.CreateColorTexture(_device, _textDrawer.bitmap.GetBitmap());
 }
@@ -164,7 +164,7 @@ void ParameterULValuePanel::CreateValue(TextDrawerWICBitmap& _textDrawer, ID3D11
 	if (ChPtr::NullCheck(_device))return;
 	value = nullptr;
 	value = ChPtr::Make_S<ChD3D11::Texture11>();
-	CreateTexture(*value, _textDrawer, _device, std::to_string(*_nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
+	CreateTexture(*value, _textDrawer, _device, std::to_wstring(*_nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
 	baseValue = _baseValue;
 	nextValue = _nextValue;
 	beforeValue = *nextValue;
@@ -187,7 +187,7 @@ void ParameterULValuePanel::UpdateValue(TextDrawerWICBitmap& _textDrawer, ID3D11
 	if (ChPtr::NullCheck(_device))return;
 	if (*nextValue == beforeValue)return;
 	value->Release();
-	CreateTexture(*value, _textDrawer, _device, std::to_string(*nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
+	CreateTexture(*value, _textDrawer, _device, std::to_wstring(*nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
 	beforeValue = *nextValue;
 }
 
@@ -197,7 +197,7 @@ void ParameterFValuePanel::CreateValue(TextDrawerWICBitmap& _textDrawer, ID3D11D
 	if (ChPtr::NullCheck(_nextValue))return;
 	if (ChPtr::NullCheck(_device))return;
 	value = ChPtr::Make_S<ChD3D11::Texture11>();
-	CreateTexture(*value, _textDrawer, _device, std::to_string(*_nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
+	CreateTexture(*value, _textDrawer, _device, std::to_wstring(*_nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
 	baseValue = _baseValue;
 	nextValue = _nextValue;
 	beforeValue = *nextValue;
@@ -220,7 +220,7 @@ void ParameterFValuePanel::UpdateValue(TextDrawerWICBitmap& _textDrawer, ID3D11D
 	if (ChPtr::NullCheck(_device))return;
 	if (std::abs(*nextValue - beforeValue) < FLOATING_TEST_VALUE)return;
 	value->Release();
-	CreateTexture(*value, _textDrawer, _device, std::to_string(*nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
+	CreateTexture(*value, _textDrawer, _device, std::to_wstring(*nextValue), ChVec2(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f), PARAMETER_PANEL_HEIGHT));
 	beforeValue = *nextValue;
 }
 
@@ -231,10 +231,10 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 	CreateTextDrawer(valueTextDrawer, static_cast<unsigned long>(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f)), static_cast<unsigned long>(PARAMETER_PANEL_HEIGHT), VALUE_TITLE_FONT_SIZE);
 
 	titleBGTexture = ChPtr::Make_S<ChD3D11::Texture11>();
-	titleBGTexture->CreateTexture(EDIT_TEXTURE_DIRECTORY("ParameterTitle.png"), _device);
+	titleBGTexture->CreateTexture(EDIT_TEXTURE_DIRECTORY(L"ParameterTitle.png"), _device);
 
 	valueBGTexture = ChPtr::Make_S<ChD3D11::Texture11>();
-	valueBGTexture->CreateTexture(EDIT_TEXTURE_DIRECTORY("ParameterValue.png"), _device);
+	valueBGTexture->CreateTexture(EDIT_TEXTURE_DIRECTORY(L"ParameterValue.png"), _device);
 
 	displays[ChStd::EnumCast(DisplayType::Partial)] = ChPtr::Make_S<ParameterPartialDisplay>();
 	displays[ChStd::EnumCast(DisplayType::Entire)] = ChPtr::Make_S<ParameterEntireDisplay>();

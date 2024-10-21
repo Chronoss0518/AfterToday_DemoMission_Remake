@@ -407,19 +407,19 @@ void MapLookAnchor::CreateFramePosition(ChCpp::FrameObject<wchar_t>& _frame, con
 
 	if (frameCom == nullptr)return;
 
-	auto&& vertexList = frameCom->ValueIns().vertexList;
+	auto&& vertexList = frameCom->vertexList;
 
 	auto lookAnchor = ChPtr::Make_S<MapLookAnchorObject>();
 
 	lookAnchor->drawMatrix = drawMatrix;
 
-	for (auto&& primitive : frameCom->ValueIns().primitives)
+	for (auto&& primitive : frameCom->primitives)
 	{
-		if (frameCom->ValueIns().primitives.size() <= 2)continue;
+		if (frameCom->primitives.size() <= 2)continue;
 
 		auto&& anchorPos = ChPtr::Make_S<MapLookAnchorPosition>();
 
-		for (auto&& vertexData : primitive->ValueIns().vertexData)
+		for (auto&& vertexData : primitive->vertexData)
 		{
 			auto&& pos = vertexList[vertexData->vertexNo]->pos;
 			//auto&& pos = _frame.GetDrawLHandMatrix().Transform(vertexList[vertexData->vertexNo]->pos);

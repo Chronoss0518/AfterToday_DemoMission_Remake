@@ -33,7 +33,7 @@ void MechaPartsObject::CreatePostureList()
 		while (controller != nullptr)
 		{
 			auto&& controllerObj = controller->GetComponent<PostureController>();
-			controller = ChPtr::SharedSafeCast<ChCpp::FrameObject<wchar_t>>(controller->GetParent().lock());
+			controller = ChPtr::SharedSafeCast<ChCpp::FrameObject<wchar_t>>(controller->GetParent());
 
 			if (controllerObj == nullptr)continue;
 
