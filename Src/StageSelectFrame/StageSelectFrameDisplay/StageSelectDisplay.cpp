@@ -85,28 +85,28 @@ void StageSelectDisplay::Init()
 
 	auto&& device = ChD3D11::D3D11Device();
 
-	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
+	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"StageNamePanel.png"), device);
 
 	SPRITE_INIT(
 		stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Up)].sprite,
 		RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, SELECT_UP_BUTTON_TOP, SELECT_PANEL_RIGHT, SELECT_PANEL_BUTTON_BOTTOM(SELECT_UP_BUTTON_TOP))));
-	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Up)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("UPButton.png"), device);
+	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Up)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 
 	SPRITE_INIT(
 		stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Down)].sprite,
 		RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, SELECT_DOWN_BUTTON_TOP, SELECT_PANEL_RIGHT, SELECT_PANEL_BUTTON_BOTTOM(SELECT_DOWN_BUTTON_TOP))));
-	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Down)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("DownButton.png"), device);
-	buttonSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("ButtonSelect.png"), device);
+	stageSelectButton[ChStd::EnumCast(StageSelectButtonType::Down)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"DownButton.png"), device);
+	buttonSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"ButtonSelect.png"), device);
 
 	SPRITE_INIT(displayMap.sprite, RectToGameWindow(ChVec4::FromRect(DISPLAY_MAP_LEFT, DISPLAY_MAP_TOP, DISPLAY_MAP_RIGHT, DISPLAY_MAP_BOTTOM)));
-	displayMap.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Map(NoImage).png"), device);
+	displayMap.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Map(NoImage).png"), device);
 
 	SPRITE_INIT(description, RectToGameWindow(ChVec4::FromRect(DESCRIPTION_LEFT, DESCRIPTION_TOP, DESCRIPTION_RIGHT, DESCRIPTION_BOTTOM)));
 
 	SPRITE_INIT(stageSelectPanelList.sprite, RectToGameWindow(ChVec4::FromRect(SELECT_PANEL_LEFT, SELECT_PANEL_LIST_TOP, SELECT_PANEL_RIGHT, SELECT_PANEL_LIST_BOTTOM)));
-	stageSelectPanelList.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("SelectRange.png"), device);
-	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StageNamePanel.png"), device);
-	panelSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("PanelSelect.png"), device);
+	stageSelectPanelList.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"SelectRange.png"), device);
+	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"StageNamePanel.png"), device);
+	panelSelectImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"PanelSelect.png"), device);
 
 	selectList = ChPtr::Make_S<StageSelectList>();
 	selectList->Init();

@@ -183,7 +183,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	nowLoadingSprite.Init();
 	nowLoadingSprite.SetInitPosition();
-	nowLoading.CreateTexture(TEXTURE_DIRECTORY("NowLoading.png"), device);
+	nowLoading.CreateTexture(TEXTURE_DIRECTORY(L"NowLoading.png"), device);
 	InitNowLoadingRect();
 
 
@@ -212,21 +212,21 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	partsList->SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
 	partsList->SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
 	partsList->SetAlighSize(0.0f, PANEL_SIZE_H);
-	partsList->CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY("PartsPanel.png"), device);
-	partsList->CreateSelectImage(EDIT_TEXTURE_DIRECTORY("PartsPanelSelect.png"), device);
+	partsList->CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
+	partsList->CreateSelectImage(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
 
-	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY("UPButton.png"), device);
+	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
 		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, UP_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, UP_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 
-	selectButton[ChStd::EnumCast(SelectButtonType::Down)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY("DownButton.png"), device);
+	selectButton[ChStd::EnumCast(SelectButtonType::Down)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"DownButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Down)].sprite,
 		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, DOWN_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, DOWN_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 
 	selectFlg = false;
 
-	rightPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY("PanelList.png"), device);
-	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY("PanelList.png"), device);
+	rightPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
+	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
 	
 	Load();
 
@@ -584,7 +584,7 @@ ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTexture(const std::wstrin
 void EditFrame::Load()
 {
 
-	for (auto&& file : std::filesystem::directory_iterator(PARTS_DIRECTORY("")))
+	for (auto&& file : std::filesystem::directory_iterator(PARTS_DIRECTORY(L"")))
 	{
 		std::wstring path = file.path().c_str();
 

@@ -5,11 +5,11 @@
 #include"MenuBase.h"
 
 #ifndef STAGE_IMAGE_TEXTURE_DIRECTORY
-#define STAGE_IMAGE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageImage/") current_path
+#define STAGE_IMAGE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"StageImage/") current_path
 #endif
 
 #ifndef STAGE_SELECT_TEXTURE_DIRECTORY
-#define STAGE_SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageSelect/") current_path
+#define STAGE_SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"StageSelect/") current_path
 #endif
 
 #ifndef STAGE_SELECT_PANEL_WIDTH

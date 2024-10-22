@@ -49,18 +49,18 @@ void StageDetailedDisplay::Init()
 	
 	SPRITE_INIT(strategyOverview.sprite, RectToGameWindow(ChVec4::FromRect(STAGE_STRATEGY_OVERVIEW_LEFT, STAGE_STRATEGY_OVERVIEW_TOP, STAGE_STRATEGY_OVERVIEW_RIGHT, STAGE_STRATEGY_OVERVIEW_BOTTOM)));
 	
-	strategyOverview.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StrategyOverview.png"), device);
+	strategyOverview.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"StrategyOverview.png"), device);
 	SPRITE_INIT(strategyOverviewText.sprite, RectToGameWindow(ChVec4::FromRect(STAGE_STRATEGY_OVERVIEW_LEFT, STAGE_STRATEGY_OVERVIEW_TEXT_TOP, STAGE_STRATEGY_OVERVIEW_RIGHT, STAGE_STRATEGY_OVERVIEW_TEXT_BOTTOM)));
 
 
-	button[ChStd::EnumCast(MenuButtonType::Start)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Start.png"), device);
-	button[ChStd::EnumCast(MenuButtonType::Edit)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Edit.png"), device);
-	button[ChStd::EnumCast(MenuButtonType::Load)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Load.png"), device);
-	button[ChStd::EnumCast(MenuButtonType::Cancel)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Cancel.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Start)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Start.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Edit)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Edit.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Load)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Load.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Cancel)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Cancel.png"), device);
 
-	buttonSelect.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("MenuSelect.png"), device);
-	comingSoonImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Coming Soon.png"), device);
-	unUsedMethodImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("UnUsedText.png"), device);
+	buttonSelect.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"MenuSelect.png"), device);
+	comingSoonImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Coming Soon.png"), device);
+	unUsedMethodImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"UnUsedText.png"), device);
 
 	float top = MENU_PANEL_TOP;
 	float bottom = top + MENU_PANEL_HEIGHT;
