@@ -2,7 +2,7 @@
 
 struct FromStageSelectFrameData : public ChCpp::SendDataClass
 {
-	int selectStage = 0;
-	int selectDrawTop = 0;
-	int selectMenu = 0;
+	size_t selectStage = 0;
+	size_t selectDrawTop = 0;
+	size_t selectMenu = 0;
 };

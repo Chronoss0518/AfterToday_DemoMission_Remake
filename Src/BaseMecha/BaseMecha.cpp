@@ -348,7 +348,7 @@ ChVec3 BaseMecha::GetRotation()
 	return physics->GetRotation();
 }
 
-unsigned long BaseMecha::GetTeamNo()
+size_t BaseMecha::GetTeamNo()
 {
 	auto controller = GetComponent<ControllerBase>();
 	if (controller == nullptr)return 0;
@@ -360,7 +360,7 @@ long BaseMecha::GetHitEffectDrawStartFrame()
 	return HIT_EFFECT_DRAW_FRAME;
 }
 
-unsigned long BaseMecha::GetAnchorRegistNum()
+size_t BaseMecha::GetAnchorRegistNum()
 {
 	auto&& anchor = GetComponent<LookAnchor>();
 	if (anchor == nullptr)return 0;
@@ -368,7 +368,7 @@ unsigned long BaseMecha::GetAnchorRegistNum()
 	return anchor->GetPositionListCount();
 }
 
-void BaseMecha::UpdateAnchor(unsigned long _no, const ChLMat& _drawMat)
+void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)
 {
 	auto&& anchor = GetComponent<LookAnchor>();
 	if (anchor == nullptr)return;

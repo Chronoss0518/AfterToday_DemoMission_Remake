@@ -206,8 +206,8 @@ std::wstring GunFunction::GetBulletNum()
 {
 	std::wstring res = std::to_wstring(nowBulletNum);
 
-	unsigned long len = res.length();
-	for (unsigned long i = len; i < NOW_BULLET_NUM_TEXT_COUNT; i++)
+	size_t len = res.length();
+	for (size_t i = len; i < NOW_BULLET_NUM_TEXT_COUNT; i++)
 	{
 		res = L'0' + res;
 	}
@@ -219,8 +219,8 @@ std::wstring GunFunction::GetReloadCount()
 {
 	std::wstring res = std::to_wstring(nowMagazineNum);
 
-	unsigned long len = res.length();
-	for (unsigned long i = len; i < NOW_MAGAZINE_TEXT_COUNT; i++)
+	size_t len = res.length();
+	for (size_t i = len; i < NOW_MAGAZINE_TEXT_COUNT; i++)
 	{
 		res = L'0' + res;
 	}

@@ -61,7 +61,7 @@ public:
 
 	}	
 
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<StageSelectListItem>(_drawItem);
 		if (item == nullptr)return;
@@ -168,7 +168,7 @@ void StageSelectDisplay::UpdateAction(MenuBase::ActionType _type)
 void StageSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
 	auto&& stageDataList = GetStageDataList();
-	unsigned long drawCount = stageDataList.size();
+	size_t drawCount = stageDataList.size();
 	drawCount = drawCount > PANEL_DRAW_COUNT ? PANEL_DRAW_COUNT : drawCount;
 
 

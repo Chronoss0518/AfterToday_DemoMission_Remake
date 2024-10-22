@@ -75,9 +75,9 @@ private:
 		ControllerBase::InputName _typeDownChange);
 
 	void CreateAttackCommand(
-		unsigned long maxSize,
-		unsigned long nowSelectCount,
-		unsigned long targetSelectCount,
+		size_t maxSize,
+		size_t nowSelectCount,
+		size_t targetSelectCount,
 		std::vector<ControllerBase::InputName>& _commandList,
 		ControllerBase::InputName _upChange,
 		ControllerBase::InputName _downChange);

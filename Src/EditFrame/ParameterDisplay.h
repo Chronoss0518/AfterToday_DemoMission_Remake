@@ -65,9 +65,9 @@ public:
 private:
 
 	std::vector<ChPtr::Weak<ParameterTitlePanel>>countPanels;
-	unsigned long countPanelsBeforNum = 0;
+	size_t countPanelsBeforNum = 0;
 	std::vector<ChPtr::Shared<ParameterTitlePanel>>panels;
-	unsigned long baseParameterCount = 0;
+	size_t baseParameterCount = 0;
 	ChPtr::Shared<ParameterTitlePanel> emptyPanel = nullptr;
 
 };

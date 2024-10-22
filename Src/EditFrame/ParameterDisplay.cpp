@@ -288,8 +288,8 @@ void ParameterPartialDisplay::AddParameters(ID3D11Device* _device, TextDrawerWIC
 
 void ParameterPartialDisplay::Update(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
 {
-	unsigned long tmp = panels.size();
-	for (unsigned long i = baseParameterCount; i < tmp; i++)
+	size_t tmp = panels.size();
+	for (size_t i = baseParameterCount; i < tmp; i++)
 	{
 		panels.pop_back();
 	}
@@ -368,11 +368,11 @@ void ParameterPartialDisplay::Down()
 void ParameterPartialDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
 
-	unsigned long drawStarPoint = (PARTIAL_PANEL_COUNT * drawPosition) % panels.size();
+	size_t drawStarPoint = (PARTIAL_PANEL_COUNT * drawPosition) % panels.size();
 
 	ChVec2 startPosition = GetDrawStartPosition();
 	
-	for (unsigned long i = 0; i < PARTIAL_PANEL_COUNT; i++)
+	for (size_t i = 0; i < PARTIAL_PANEL_COUNT; i++)
 	{
 		panels[drawStarPoint + i]->Draw(_drawer,startPosition);
 

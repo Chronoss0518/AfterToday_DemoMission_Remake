@@ -67,9 +67,9 @@ public:
 
 public:
 
-	unsigned long GetMaxEffectCount() { return effectPosList.size(); }
+	size_t GetMaxEffectCount() { return effectPosList.size(); }
 
-	EOS_In_Vertex GetEffectPos(unsigned long _num)
+	EOS_In_Vertex GetEffectPos(size_t _num)
 	{ 
 		EOS_In_Vertex res;
 		if (_num < effectPosList.size())

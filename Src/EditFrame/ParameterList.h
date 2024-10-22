@@ -57,9 +57,9 @@ public:
 
 protected:
 
-	unsigned long drawPosition = 0;
+	size_t drawPosition = 0;
 
-	unsigned long* GetULWeaponParameter() 
+	unsigned long* GetULWeaponParameter()
 	{
 		static unsigned long ins = 0;
 		ins = 0;

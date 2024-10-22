@@ -6,6 +6,13 @@ class GameScript
 {
 public:
 
+	GameScript()
+	{
+		scripts.SetCutChar(L"\n");
+	}
+
+public:
+
 	void CreateAllScript(const std::wstring& _text);
 
 	void ResetNowScriptCount() { nowScriptCount = 0; }
@@ -16,9 +23,9 @@ public:
 
 	void SetFunction(const std::wstring& _type,const std::function<void(const std::wstring&)>& _function);
 
-	void SetSkipCount(unsigned long _skipCount) { skipCount = _skipCount; }
+	void SetSkipCount(size_t _skipCount) { skipCount = _skipCount; }
 
-	void SetNowScriptCount(unsigned long _scriptCount) { nowScriptCount = _scriptCount; }
+	void SetNowScriptCount(size_t _scriptCount) { nowScriptCount = _scriptCount; }
 
 	void SetLoopPos(const std::wstring& _name) { loopPosList[_name] = nowScriptCount; }
 
@@ -28,7 +35,7 @@ public:
 
 	ChCpp::TextObject<wchar_t> GetScripts() { return scripts; }
 
-	unsigned long GetScriptCount() { return nowScriptCount; }
+	size_t GetScriptCount() { return nowScriptCount; }
 
 	static long GetRand(long _min = 1, long _max = 0xffffffff);
 
@@ -49,9 +56,9 @@ private:
 		return ins;
 	}
 
-	unsigned long nowScriptCount = 0;
-	unsigned long skipCount = 0;
-	std::map<std::wstring, unsigned long>loopPosList;
+	size_t nowScriptCount = 0;
+	size_t skipCount = 0;
+	std::map<std::wstring, size_t>loopPosList;
 
 	ChCpp::TextObject<wchar_t> scripts;
 

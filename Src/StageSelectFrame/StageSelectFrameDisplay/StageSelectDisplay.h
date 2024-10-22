@@ -37,7 +37,7 @@ private:
 
 	static constexpr int PANEL_DRAW_COUNT = 4;
 
-	unsigned long drawNowSelect = 0;
+	size_t drawNowSelect = 0;
 
 	ImageSprite stageSelectButton[ChStd::EnumCast(StageSelectButtonType::None)];
 	ChD3D11::Texture11 buttonSelectImage;

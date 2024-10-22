@@ -22,14 +22,14 @@ void LookAnchor::AddLookAnchorPosition(const ChVec3& _size, const ChLMat& _drawM
 	positionList.push_back(lookAnchor);
 }
 
-void LookAnchor::UpdateLookAnchorPosition(unsigned long _num, const ChLMat& _drawMat)
+void LookAnchor::UpdateLookAnchorPosition(size_t _num, const ChLMat& _drawMat)
 {
 	if (_num >= positionList.size())return;
 
 	positionList[_num]->drawMatrix = _drawMat;
 }
 
-void LookAnchor::RemoveLookAnchorPosition(unsigned long _num)
+void LookAnchor::RemoveLookAnchorPosition(size_t _num)
 {
 	if (_num >= positionList.size())return;
 
@@ -41,7 +41,7 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
-	for (unsigned long i = 0; i < positionList.size(); i++)
+	for (size_t i = 0; i < positionList.size(); i++)
 	{
 		auto&& anchorPos = positionList[i];
 

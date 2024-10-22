@@ -71,7 +71,7 @@ void GameScript::UpdateScript()
 	auto function = scriptFunctions.find(scriptArgs[0]);
 	if (function == scriptFunctions.end())return;
 
-	unsigned long argsPos = scriptArgs[0].size() + 1;
+	size_t argsPos = scriptArgs[0].size() + 1;
 	std::wstring args = L"";
 	if(script.size() > argsPos)args = script.substr(argsPos);
 	function->second(args);

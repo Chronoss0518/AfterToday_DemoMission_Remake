@@ -157,9 +157,9 @@ public://Get Function//
 
 	inline unsigned long GetMaxEnelgy() { return maxEnelgy; }
 
-	inline unsigned long GetMechaNo() { return mechasNo; }
+	inline size_t GetMechaNo() { return mechasNo; }
 
-	unsigned long GetTeamNo();
+	size_t GetTeamNo();
 
 	inline float GetMaxDamageGage() { return durable; }
 
@@ -171,7 +171,7 @@ public://Get Function//
 
 	inline std::wstring GetMechaName() { return mechaName; }
 
-	unsigned long GetAnchorRegistNum();
+	size_t GetAnchorRegistNum();
 
 	ChPtr::Shared<MechaPartsObject> GetCoreParts() { return core; }
 
@@ -181,7 +181,7 @@ public:
 
 public:
 
-	void UpdateAnchor(unsigned long _no, const ChLMat& _drawMat);
+	void UpdateAnchor(size_t _no, const ChLMat& _drawMat);
 
 public:
 
@@ -217,7 +217,7 @@ protected:
 
 	float mass = 1.0f;
 
-	unsigned long mechasNo = 0;
+	size_t mechasNo = 0;
 
 	unsigned long maxEnelgy = 0;
 	unsigned long chargeEnelgy = 0;
@@ -232,7 +232,7 @@ protected:
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
-	unsigned long useCameraNo = 0;
+	size_t useCameraNo = 0;
 	std::vector<ChPtr::Shared<CameraObject>>cameraList;
 
 	ChVec3 damageDir = ChVec3();

@@ -121,7 +121,7 @@ public:
 		rotateData->updateFlg = true;
 	}
 
-	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
+	void SetPartsPosData(unsigned char _names, size_t _no) { partsPosName = _names; partsPosNo = _no; }
 
 	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
 
@@ -131,7 +131,7 @@ public:
 
 	void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
-	void SetLookAnchorNo(const unsigned long _no) { lookAnchorNo = _no; }
+	void SetLookAnchorNo(const size_t _no) { lookAnchorNo = _no; }
 
 	void SetHitSize();
 
@@ -168,7 +168,7 @@ public:
 
 	unsigned char GetPartsPosName() { return partsPosName; }
 
-	unsigned long GetPartsPosNo() { return partsPosNo; }
+	size_t GetPartsPosNo() { return partsPosNo; }
 
 	bool GetRWeapon() { return weaponType.GetBitFlg(0); }
 
@@ -182,9 +182,9 @@ public:
 
 	ChVec3 GetColliderSize() { return collider.GetScl(); }
 
-	unsigned long GetLookAnchorNo() { return lookAnchorNo; }
+	size_t GetLookAnchorNo() { return lookAnchorNo; }
 
-	unsigned long GetUseAttackType() { return useAttackType; }
+	size_t GetUseAttackType() { return useAttackType; }
 
 	std::wstring GetPartsName();
 
@@ -288,7 +288,7 @@ private:
 
 	std::map<std::wstring,ChPtr::Shared<MechaPartsObject>> positions;
 
-	unsigned long useAttackType = 0;
+	size_t useAttackType = 0;
 
 	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>positionObject = nullptr;
 	MechaPartsObject* parentObject = nullptr;
@@ -300,10 +300,10 @@ private:
 	float durableValue = 100.0f;
 
 	unsigned char partsPosName = -1;
-	unsigned long partsPosNo = 0;
+	size_t partsPosNo = 0;
 	ChCpp::BitBool weaponType;
 
-	unsigned long lookAnchorNo = 0xffffffff;
+	size_t lookAnchorNo = -1;
 
 	BaseMecha* mecha = nullptr;
 };

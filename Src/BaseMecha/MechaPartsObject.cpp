@@ -117,10 +117,10 @@ void MechaPartsObject::SetHitSize()
 std::wstring MechaPartsObject::GetPartsName()
 {
 	std::wstring result = baseParts->GetThisFileName();
-	unsigned long extensionStringPos = result.find_last_of(L'.');
-	unsigned long fileNameLength = result.length();
+	size_t extensionStringPos = result.find_last_of(L'.');
+	size_t fileNameLength = result.length();
 
-	for (unsigned long i = extensionStringPos; i < fileNameLength; i++)
+	for (size_t i = extensionStringPos; i < fileNameLength; i++)
 	{
 		result.pop_back();
 	}

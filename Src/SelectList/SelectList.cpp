@@ -53,7 +53,7 @@ bool SelectListBase::UpdateMouse()
 
 	ChVec4 rect = GetStartRect();
 
-	for (unsigned long i = drawPos; i < drawCount + drawPos; i++)
+	for (size_t i = drawPos; i < drawCount + drawPos; i++)
 	{
 		if (IsMoucePosOnRect(RectToGameWindow(rect)))
 		{
@@ -114,13 +114,13 @@ void SelectListBase::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	ChVec4 rect = GetStartRect();
 
-	unsigned long drawUseCount = drawCount;
+	size_t drawUseCount = drawCount;
 
 	if (itemList.size() <= drawUseCount)drawUseCount = itemList.size();
 
-	for (unsigned long i = drawPos;i< drawUseCount + drawPos;i++)
+	for (size_t i = drawPos;i< drawUseCount + drawPos;i++)
 	{
-		unsigned long num = i % itemList.size();
+		size_t num = i % itemList.size();
 		DrawPanel(_drawer, rect, itemList[num],i,nowSelectPanel == num);
 
 		rect = GetNextRect(rect);
@@ -143,7 +143,7 @@ void SelectListBase::RemoveItem(ChPtr::Shared<SelectListItemBase> _item)
 	itemList.erase(it);
 }
 
-void SelectListBase::RemoveItem(unsigned long _num)
+void SelectListBase::RemoveItem(size_t _num)
 {
 	if (_num >= itemList.size())return;
 	auto&& it = itemList.begin() + _num;

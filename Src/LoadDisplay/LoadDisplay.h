@@ -43,7 +43,7 @@ private:
 
 	void Load();
 
-	bool LoadFile(unsigned long _openNumber);
+	bool LoadFile(size_t _openNumber);
 
 private:
 

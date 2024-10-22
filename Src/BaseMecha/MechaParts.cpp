@@ -119,9 +119,10 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 {
 
 	ChCpp::TextObject<wchar_t> textObject;
+	textObject.SetCutChar(L"\n");
 	textObject.SetText(_text.c_str());
 
-	unsigned long lineCount = textObject.LineCount();
+	size_t lineCount = textObject.LineCount();
 
 	LoadModel(_device, textObject.GetTextLine(0));
 

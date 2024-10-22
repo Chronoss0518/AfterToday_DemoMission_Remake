@@ -99,6 +99,7 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<w
 
 	std::wstring text = L"";
 	ChCpp::TextObject<wchar_t> textObject;
+	textObject.SetCutChar(L"\n");
 
 	{
 		ChCpp::WCharFile file;
@@ -144,6 +145,8 @@ void Attack::AllRelease()
 void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 {
 	ChCpp::TextObject<wchar_t> textObject;
+
+	textObject.SetCutChar(L"\n");
 	textObject.SetText(_text.c_str());
 	
 	penetration = ChStr::GetNumFromText<unsigned long>(textObject.GetTextLine(1).c_str());

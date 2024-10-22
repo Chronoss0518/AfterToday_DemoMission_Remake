@@ -125,7 +125,7 @@ public:
 
 private:
 
-	unsigned long GettargetNum(std::vector<std::wstring>& _args);
+	size_t GettargetNum(std::vector<std::wstring>& _args);
 
 	void UpdateFunction();
 
@@ -174,10 +174,10 @@ private:
 	
 	ChCpp::ObjectList mechaList;
 	std::vector<ChPtr::Weak<BaseMecha>>mechas;
-	std::map<unsigned long, unsigned long>mechaPartyCounter;
+	std::map<size_t, size_t>mechaPartyCounter;
 
 	unsigned char playerParty = 0;
-	unsigned long mechaView = 0;
+	size_t mechaView = 0;
 	ChCpp::ObjectList bulletList;
 
 	ChPtr::Shared<BaseMecha> drawMecha = nullptr;

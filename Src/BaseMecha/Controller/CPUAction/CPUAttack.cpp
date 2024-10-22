@@ -174,26 +174,26 @@ void CPUAttack::FindAttackFunction(
 	if (ChPtr::NullCheck(&_weaponFunction))return;
 	if (!_commandList.empty())return;
 
-	unsigned long nowSelectWeapon = _weaponFunction.GetUseWeaponNo();
-	unsigned long nowSelectAttack = -1;
+	size_t nowSelectWeapon = _weaponFunction.GetUseWeaponNo();
+	size_t nowSelectAttack = -1;
 
-	unsigned long targetWeapon = -1;
-	unsigned long targetAttackType = -1;
+	size_t targetWeapon = -1;
+	size_t targetAttackType = -1;
 
 	auto&& registWeaponList = _weaponFunction.GetWeaponMechaPartsList();
 
-	unsigned long maxWeaponSize = registWeaponList.size();
-	unsigned long maxAttackSize = 0;
+	size_t maxWeaponSize = registWeaponList.size();
+	size_t maxAttackSize = 0;
 	ChPtr::Shared<MechaPartsObject> weapon = nullptr;
 
-	for (unsigned long i = 0; i < maxWeaponSize; i++)
+	for (size_t i = 0; i < maxWeaponSize; i++)
 	{
 		weapon = registWeaponList[i].lock();
 		if (weapon == nullptr)continue;
 
 		auto&& weaponFunctions = weapon->GetWeaponFunctions();
 		maxAttackSize = weaponFunctions.size();
-		for (unsigned long j = 0; j < maxAttackSize; j++)
+		for (size_t j = 0; j < maxAttackSize; j++)
 		{
 			ChCpp::BitBool attackTypes = weaponFunctions[j]->GetAttackData()->GetAttackType();
 			if (!attackType.GetBitFlg(ChStd::EnumCast(selectWeapon->GetAttackType())))continue;
@@ -211,7 +211,7 @@ void CPUAttack::FindAttackFunction(
 
 	if (targetWeapon > maxWeaponSize || targetAttackType > maxAttackSize)return;
 
-	for (unsigned long i = 0; i < attackCount; i++)
+	for (size_t i = 0; i < attackCount; i++)
 	{
 		_commandList.push_back(_attack);
 	}
@@ -223,18 +223,18 @@ void CPUAttack::FindAttackFunction(
 }
 
 void CPUAttack::CreateAttackCommand(
-	unsigned long maxSize,
-	unsigned long nowSelectCount,
-	unsigned long targetSelectCount,
+	size_t maxSize,
+	size_t nowSelectCount,
+	size_t targetSelectCount,
 	std::vector<ControllerBase::InputName>& _commandList,
 	ControllerBase::InputName _upChange,
 	ControllerBase::InputName _downChange)
 {
 
 	bool upFlg = true;
-	unsigned long moveCount = (maxSize + nowSelectCount - targetSelectCount) % maxSize;
+	size_t moveCount = (maxSize + nowSelectCount - targetSelectCount) % maxSize;
 
-	unsigned long testMoveCount = ((maxSize * 2) - nowSelectCount - targetSelectCount) % maxSize;
+	size_t testMoveCount = ((maxSize * 2) - nowSelectCount - targetSelectCount) % maxSize;
 
 	if (moveCount > testMoveCount)
 	{
@@ -242,7 +242,7 @@ void CPUAttack::CreateAttackCommand(
 		upFlg = false;
 	}
 
-	for (unsigned long i = 0; i < moveCount; i++)
+	for (size_t i = 0; i < moveCount; i++)
 	{
 		_commandList.push_back(upFlg ? _upChange : _downChange);
 	}

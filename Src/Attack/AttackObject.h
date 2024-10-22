@@ -30,9 +30,9 @@ public:
 
 	inline void SetFrame(GameFrame* _frame) { frame = _frame; }
 
-	inline void SetBaseMechaNo(unsigned long _no) { mechasNo = _no; }
+	inline void SetBaseMechaNo(size_t _no) { mechasNo = _no; }
 
-	inline void SetTeamNo(unsigned long _no) { teamNo = _no; }
+	inline void SetTeamNo(size_t _no) { teamNo = _no; }
 
 	inline void SetPosition(const ChVec3& _pos) { physics->SetPosition(_pos); }
 
@@ -60,9 +60,9 @@ public:
 
 	bool IsHit() { return hitFlg; }
 
-	bool IsUseMechaTest(unsigned long _no) { return mechasNo == _no; }
+	bool IsUseMechaTest(size_t _no) { return mechasNo == _no; }
 
-	bool IsUseMechaTeamTest(unsigned long _no) { return teamNo == _no; }
+	bool IsUseMechaTeamTest(size_t _no) { return teamNo == _no; }
 
 public:
 
@@ -85,8 +85,8 @@ private:
 	ChCpp::SphereCollider collider;
 
 	GameFrame* frame = nullptr;
-	unsigned long teamNo = -1;
-	unsigned long mechasNo = -1;
+	size_t teamNo = -1;
+	size_t mechasNo = -1;
 	Attack* data = nullptr;
 	bool hitFlg = false;
 	unsigned long nowCreateSmokeCount = 0;

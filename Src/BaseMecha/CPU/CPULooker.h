@@ -16,11 +16,11 @@ public:
 
 	void AddLookAnchorPosition(const ChVec3& _size, const ChLMat& _drawMat);
 
-	void RemoveLookAnchorPosition(unsigned long _num);
+	void RemoveLookAnchorPosition(size_t _num);
 
-	void UpdateLookAnchorPosition(unsigned long _num, const ChLMat& _drawMat);
+	void UpdateLookAnchorPosition(size_t _num, const ChLMat& _drawMat);
 
-	inline unsigned long GetPositionListCount() { return positionList.size(); }
+	inline size_t GetPositionListCount() { return positionList.size(); }
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetMapSquares(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
 

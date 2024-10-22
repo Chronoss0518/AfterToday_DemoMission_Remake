@@ -124,7 +124,7 @@ public:
 
 public:
 
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<LoadItem>(_drawItem);
 		if (item == nullptr)return;
@@ -482,7 +482,7 @@ void LoadDisplay::Load()
 	mecha->mecha->Save(PLAYER_USE_MECHA_PATH);
 }
 
-bool LoadDisplay::LoadFile(unsigned long _openNumber)
+bool LoadDisplay::LoadFile(size_t _openNumber)
 {
 	if (dc == nullptr)return false;
 	if (loadFileList == nullptr)return false;

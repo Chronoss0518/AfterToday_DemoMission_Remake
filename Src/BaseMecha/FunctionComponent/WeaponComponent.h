@@ -12,9 +12,9 @@ public:
 
 public:
 
-	inline unsigned long GetUseWeaponNo() { return useWeaponNo; }
+	inline size_t GetUseWeaponNo() { return useWeaponNo; }
 	
-	inline unsigned long GetRegistWeaponCount() { return weapon.size(); }
+	inline size_t GetRegistWeaponCount() { return weapon.size(); }
 
 	std::vector<ChPtr::Weak<WeaponFunction>> GetRegistWeaponList();
 
@@ -60,7 +60,7 @@ protected:
 private:
 
 	std::wstring weaponName = L"";
-	unsigned long useWeaponNo = 0;
+	size_t useWeaponNo = 0;
 	std::vector<ChPtr::Shared<MechaPartsObject>>weapon;
 
 };
