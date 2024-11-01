@@ -466,7 +466,7 @@ void CPUObjectLooker::Init()
 
 				updateFlg = false;
 
-				//OutputDebugString(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
+				//OutputDebugStringW(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
 			}
 		});
 #endif
@@ -529,7 +529,7 @@ void CPUObjectLooker::DrawBegin()
 		FindMecha();
 #endif
 
-		//OutputDebugString(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
+		//OutputDebugStringW(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
 	}
 
 

@@ -94,6 +94,10 @@ class CPUObjectLooker:public ChCpp::BaseComponent
 {
 public:
 
+	virtual ~CPUObjectLooker() { Release(); }
+
+public:
+
 	struct UseSquareValues
 	{
 		std::vector<ChPtr::Shared<LookSquareValue>> values;

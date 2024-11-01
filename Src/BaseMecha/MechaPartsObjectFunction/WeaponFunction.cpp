@@ -230,7 +230,7 @@ std::wstring GunFunction::GetReloadCount()
 
 void GunFunction::UpdatePosture()
 {
-	OutputDebugString(L"------ Start Update Posture ------\r\n");
+	OutputDebugStringW(L"------ Start Update Posture ------\r\n");
 
 	auto&& startRotatePosture = obj->GetStartRotatePosture();
 
@@ -267,21 +267,21 @@ void GunFunction::UpdatePosture()
 		return;
 	}
 
-	OutputDebugString((L"Now Direction[" + nowDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
+	OutputDebugStringW((L"Now Direction[" + nowDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
 
 	auto&& targetFrontDirection = gunData->GetFrontDirection();
 	targetFrontDirection.Normalize();
 	//targetFrontDirection = obj->GetLastDrawMat().TransformCoord(targetFrontDirection);
 
-	OutputDebugString((L"Target Direction[" + targetFrontDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
+	OutputDebugStringW((L"Target Direction[" + targetFrontDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
 	ChQua rotation;
 	rotation.SetRotation(nowDirection, targetFrontDirection);
 	
 	ChVec3 setRotate = rotation.GetMul(nowDirection);
 
-	OutputDebugString((L"To Direction[" + setRotate.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
+	OutputDebugStringW((L"To Direction[" + setRotate.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
 	len = setRotate.GetLen();
 	if (isnan(len))
@@ -327,8 +327,8 @@ void GunFunction::UpdatePosture()
 	rotateVector.y = ChMath::ToDegree(rotateVector.y);
 	rotateVector.z = ChMath::ToDegree(rotateVector.z);
 
-	OutputDebugString((L"Rotate Data[" + rotateVector.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
+	OutputDebugStringW((L"Rotate Data[" + rotateVector.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
 
-	OutputDebugString(L"------ End Update Posture ------\r\n");
+	OutputDebugStringW(L"------ End Update Posture ------\r\n");
 
 }

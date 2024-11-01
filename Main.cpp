@@ -22,9 +22,9 @@ int WINAPI WinMain(
 	int nCmdshow)
 {
 
-	auto&& system = *ChSystem::SysManager().Init<ChSystem::Windows>();
+	auto&& system = *ChSystem::SysManager().Init<ChSystem::WindowsW>();
 
-	ChWin::WindClassObject windClass;
+	ChWin::WindClassObjectW windClass;
 	windClass.RegistClass(L"ChGame-MX-64");
 
 	auto s_screen = ChWin::GetScreenSize();
@@ -54,10 +54,11 @@ int WINAPI WinMain(
 				});
 
 		}
+
 		ChWin::MsgBox msg;
 		msg.ClearDisplayButtonType();
 		msg.AddDisplayButtonType(ChWin::MsgBox::DisplayButtonType::YesNo);
-		bool fullScreenFlg = msg.Display(system.GethWnd(), L"全画面確認", L"全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
+		bool fullScreenFlg = msg.DisplayW(system.GethWnd(), L"全画面確認", L"全画面表示で行いますか?") == ChWin::MsgBox::PushButtonType::Yes;
 
 		ChD3D11::D3D11API().Init(system.GethWnd(), fullScreenFlg, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
@@ -108,9 +109,11 @@ int WINAPI WinMain(
 
 	// ゲームに関する初期化処理 ---------------------------
 
-	while (system.IsUpdate())
+	while (true)
 	{
 		if (!ChSystem::SysManager().FPSProcess())continue;
+		
+		if (!system.IsUpdate())break;
 
 		if (system.IsPushKeyNoHold(VK_ESCAPE))
 		{
@@ -124,6 +127,7 @@ int WINAPI WinMain(
 
 	// ゲームに関する終了処理 ---------------------------
 
+	ChD3D::XAudioManager().Release();
 	frameList.Release();
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();

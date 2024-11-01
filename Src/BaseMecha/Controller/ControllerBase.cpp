@@ -32,7 +32,7 @@ void ControllerBase::Input(const InputName _inputFlgName)
 
 void PlayerController::Init()
 {
-	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::WindowsW>();
 	windSize.h = static_cast<float>(windows.GetWindHeight());
 	windSize.w = static_cast<float>(windows.GetWindWidth());
 	baseLen = (windSize.h < windSize.w ? windSize.h : windSize.w);
@@ -345,9 +345,8 @@ void CPUController::SaveCPUData(const std::wstring& _fileName)
 
 
 	ChCpp::WCharFile file;
-	file.SetLocaleName("Japanese");
-	file.FileOpen(CPU_DIRECTORY(+_fileName), std::ios::in | std::ios::out);
-	file.FileWriteText(ChCpp::JsonBaseType<wchar_t>::FormatDocument(saveData->GetRawData()));
+	file.FileOpen(CPU_DIRECTORY(+_fileName), true);
+	file.FileWrite(ChCpp::JsonBaseType<wchar_t>::FormatDocument(saveData->GetRawData()));
 	file.FileClose();
 
 }
@@ -358,9 +357,9 @@ void CPUController::LoadCPUData(const std::wstring& _fileName)
 
 	{
 		ChCpp::WCharFile file;
-		file.SetLocaleName("Japanese");
-		file.FileOpen(CPU_DIRECTORY(+_fileName), std::ios::in | std::ios::out);
-		textData = file.FileReadText();
+		file.FileOpen(CPU_DIRECTORY(+_fileName), false);
+		textData = file.FileRead();
+		textData = &textData[1];
 		file.FileClose();
 	}
 
@@ -534,17 +533,17 @@ bool CPUActionBase::IsRunTest(unsigned long _lookTarget, GameFrame& _frame, CPUC
 
 	if (mecha->IsBreak())return false;
 
-	OutputDebugString(L"MechaTest Success\n");
+	OutputDebugStringW(L"MechaTest Success\n");
 
 	if (!comparisonOperation[ChStd::EnumCast(damageComparison)](mecha->GetDamage(), testDamage))return false;
 
-	OutputDebugString(L"DamageTest Success\n");
+	OutputDebugStringW(L"DamageTest Success\n");
 
 	float length = ChVec3::GetLen(thisMecha->GetPosition(), mecha->GetPosition());
 
 	if (!comparisonOperation[ChStd::EnumCast(distanceComparison)](length, testDistance))return false;
 
-	OutputDebugString(L"DistanceTest Success\n");
+	OutputDebugStringW(L"DistanceTest Success\n");
 
 	return true;
 }

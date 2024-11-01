@@ -103,9 +103,9 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<w
 
 	{
 		ChCpp::WCharFile file;
-		file.SetLocaleName("Japanese");
-		file.FileOpen(_fileName, std::ios::in | std::ios::out);
-		text = file.FileReadText();
+		file.FileOpen(_fileName, false);
+		text = file.FileRead();
+		text = &text[1];
 		textObject.SetText(text.c_str());
 		file.FileClose();
 	}

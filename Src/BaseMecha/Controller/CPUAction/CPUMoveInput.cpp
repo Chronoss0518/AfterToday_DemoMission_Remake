@@ -57,7 +57,7 @@ void CPUMoveInput::Update(
 
 	bool isBattleFlg = _movePositionSelector.IsBattleFlg();
 
-	//OutputDebugString(L"CPUMoveInput Update Start\n");
+	//OutputDebugStringW(L"CPUMoveInput Update Start\n");
 
 	auto moveDir = _movePositionSelector.GetMovePoint() - baseMecha->GetPosition();
 
@@ -105,9 +105,9 @@ void CPUMoveInput::Update(
 	//if (moveDir.y < lookDir.y)_controller.Input(ControllerBase::InputName::CameraUpRotation, true);
 	//if (moveDir.y > lookDir.y)_controller.Input(ControllerBase::InputName::CameraDownRotation, true);
 
-	//OutputDebugString((L"CrossSize x:[" + std::to_string(cross.x)+"] y:[" + std::to_string(cross.y) + "] z:[" + std::to_string(cross.z) + "]\n").c_str());
+	//OutputDebugStringW((L"CrossSize x:[" + std::to_string(cross.x)+"] y:[" + std::to_string(cross.y) + "] z:[" + std::to_string(cross.z) + "]\n").c_str());
 
-	//OutputDebugString(L"CPUMoveInput Update End\n");
+	//OutputDebugStringW(L"CPUMoveInput Update End\n");
 
 	if (!_targetSelector.IsLookTarget())
 	{

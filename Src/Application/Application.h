@@ -15,8 +15,8 @@ public:
 
 private:
 
-	ChWin::WindObject window;
-	ChWin::WindClassObject windClass;
+	ChWin::WindObjectW window;
+	ChWin::WindClassObjectW windClass;
 
 	ChD3D11::DirectX3D11 d3dApi;
 	ChCpp::FrameList frameList;

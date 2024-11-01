@@ -142,7 +142,7 @@ void CPUMovePositionSelector::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<
 
 void CPUMovePositionSelector::Update(CPUTargetSelector& _selector, GameFrame& _frame, CPUController& _controller)
 {
-	//OutputDebugString(L"CPUMovePositionSelector Update Start\n");
+	//OutputDebugStringW(L"CPUMovePositionSelector Update Start\n");
 
 	runUpdateLookTargetFlg = false;
 
@@ -150,7 +150,7 @@ void CPUMovePositionSelector::Update(CPUTargetSelector& _selector, GameFrame& _f
 
 	UpdateUnLookTarget(_controller);
 
-	//OutputDebugString(L"CPUMovePositionSelector Update End\n");
+	//OutputDebugStringW(L"CPUMovePositionSelector Update End\n");
 }
 
 void CPUMovePositionSelector::UpdateLookTarget(CPUTargetSelector& _selector, GameFrame& _frame)
@@ -232,5 +232,5 @@ void CPUMovePositionSelector::UpdateUnLookTarget(CPUController& _controller)
 
 	point = functions[moveOperationPointCount]->GetOperationPoint();
 
-	//OutputDebugString((L"Operation Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
+	//OutputDebugStringW((L"Operation Point : x[" + std::to_string(point.x) + "] y[" + std::to_string(point.y) + "] z[" + std::to_string(point.z) + "]\n").c_str());
 }

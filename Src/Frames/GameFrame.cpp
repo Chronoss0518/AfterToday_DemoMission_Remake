@@ -467,11 +467,10 @@ void GameFrame::LoadStage(std::wstring& _stageScriptName)
 	std::wstring stageScript = L"";
 
 	{
-		ChCpp::File<wchar_t> file;
-		file.SetLocaleName("Japanese");
-		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName),std::ios::in | std::ios::out);
-
-		stageScript = file.FileReadText();
+		ChCpp::WCharFile file;
+		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName),false);
+		stageScript = file.FileRead();
+		stageScript = &stageScript[1];
 
 		file.FileClose();
 	}
@@ -549,7 +548,7 @@ void GameFrame::Update()
 
 	if (endDrawKeyFlg)
 	{
-		auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+		auto&& windows = ChSystem::SysManager().GetSystem<ChSystem::WindowsW>();
 		if (windows->IsPushKey(VK_LBUTTON))
 		{
 			messageBox->EndSetDrawMessage();
@@ -625,10 +624,10 @@ void GameFrame::UpdateFunction()
 
 	for (auto&& mecha : mechaList.GetObjectList<BaseMecha>())
 	{
-		auto mObj = mecha.lock();
+		auto&& mObj = mecha.lock();
 		for (auto&& bullet : bulletList.GetObjectList<AttackObject>())
 		{
-			auto bObj = bullet.lock();
+			auto&& bObj = bullet.lock();
 			if (bObj->IsHit())continue;
 			mObj->TestBulletHit(*bObj);
 		}
@@ -796,7 +795,7 @@ void GameFrame::DrawFunctionBegin()
 
 }
 
-void GameFrame::Render3D(void)
+void GameFrame::Render3D()
 {
 	light.SetUseLightFlg(true);
 	light.SetPSDrawData(ChD3D11::D3D11DC());
@@ -835,7 +834,6 @@ void GameFrame::Render3D(void)
 	shotTargetDrawer.Draw(shotTargetMarkerTex, shotTargetBorad, (ChMat_11)shotTargetdrawBaseMatrix);
 
 	shotTargetDrawer.DrawEnd();
-
 }
 
 void GameFrame::Render2D(void)

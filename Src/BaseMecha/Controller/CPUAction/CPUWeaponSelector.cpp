@@ -101,7 +101,7 @@ void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _f
 
 	if (!selectWeaponsQueue.empty())return;
 
-	OutputDebugString(L"CPUWeaponSelector Update Start\n");
+	OutputDebugStringW(L"CPUWeaponSelector Update Start\n");
 
 	for (auto&& func : functions)
 	{
@@ -109,5 +109,5 @@ void CPUWeaponSelector::Update(CPUTargetSelector& _targetSelector, GameFrame& _f
 		selectWeaponsQueue.push_back(func);
 	}
 
-	OutputDebugString(L"CPUWeaponSelector Update End\n");
+	OutputDebugStringW(L"CPUWeaponSelector Update End\n");
 }

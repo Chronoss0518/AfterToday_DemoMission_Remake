@@ -94,9 +94,9 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstrin
 
 	{
 		ChCpp::WCharFile file;
-		file.SetLocaleName("Japanese");
-		file.FileOpen(_fileName, std::ios::in | std::ios::out);
-		text = file.FileReadText();
+		file.FileOpen(_fileName, false);
+		text = file.FileRead();
+		text = &text[1];
 	}
 
 	if (text.empty())return;
@@ -261,9 +261,8 @@ std::wstring MechaParts::Save(const std::wstring& _fileName)
 
 	{
 		ChCpp::WCharFile file;
-		file.SetLocaleName("Japanese");
-		file.FileOpen(_fileName, std::ios::in | std::ios::out);
-		file.FileWriteText(res);
+		file.FileOpen(_fileName, true);
+		file.FileWrite(res);
 		file.FileClose();
 	}
 

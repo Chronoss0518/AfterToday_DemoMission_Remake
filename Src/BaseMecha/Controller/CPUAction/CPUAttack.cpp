@@ -79,7 +79,7 @@ void CPUAttack::Update(
 
 	if (selectWeapon == nullptr)return;
 
-	//OutputDebugString(L"CPUAttack Update Start\n");
+	//OutputDebugStringW(L"CPUAttack Update Start\n");
 
 	FindRightPriorityAttack();
 
@@ -89,7 +89,7 @@ void CPUAttack::Update(
 
 	AttackFunction(_controller, rightCommandList);
 
-	//OutputDebugString(L"CPUAttack Update End\n");
+	//OutputDebugStringW(L"CPUAttack Update End\n");
 }
 
 void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
