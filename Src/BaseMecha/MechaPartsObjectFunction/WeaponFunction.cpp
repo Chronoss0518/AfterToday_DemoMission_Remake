@@ -23,7 +23,7 @@ void WeaponFunction::Release()
 
 void WeaponFunction::AttackUpdate()
 {
-	if (nowWaitTime < data->GetWaitTime())return;;
+	if (nowWaitTime < data->GetWaitTime())return;
 
 	AttackFunction();
 
@@ -84,6 +84,7 @@ void GunFunction::AttackFunction()
 
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
+		ChLMat useMat = tmpMat;
 
 		{
 			ChQua tmp;
@@ -94,7 +95,7 @@ void GunFunction::AttackFunction()
 			ChLMat rangeMat;
 			rangeMat.SetRotation(tmp);
 
-			tmpMat = rangeMat * tmpMat;
+			useMat = rangeMat * useMat;
 		}
 
 		auto attackObject = ChPtr::Make_S<AttackObject>();
@@ -104,7 +105,7 @@ void GunFunction::AttackFunction()
 		
 		attackObject->SetBaseMechaNo(mecha->GetMechaNo());
 		attackObject->SetTeamNo(mecha->GetTeamNo());
-		attackObject->Init(tmpMat);
+		attackObject->Init(useMat);
 		frame->AddBullet(attackObject);
 
 		ChVec3 nockback = attackObject->GetMovePower() * 0.01f / -mecha->GetMass();
@@ -165,8 +166,6 @@ void GunFunction::UpdateFunction()
 	nowMagazineNum--;
 
 	reloadFlg = false;
-
-
 }
 
 void GunFunction::DrawBegin()

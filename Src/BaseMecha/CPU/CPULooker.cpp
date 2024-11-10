@@ -558,7 +558,6 @@ void CPUObjectLooker::Draw2D()
 	{
 		for (auto&& square : map->square.GetSquare())
 		{
-
 			sprite.SetPos(ChD3D11::SpritePositionName::LeftTop, ChVec2(square->left, square->top));
 			sprite.SetPos(ChD3D11::SpritePositionName::RightTop, ChVec2(square->right, square->top));
 			sprite.SetPos(ChD3D11::SpritePositionName::RightBottom, ChVec2(square->right, square->bottom));
@@ -572,7 +571,6 @@ void CPUObjectLooker::Draw2D()
 			if (map->objectName == L"Plane_002")base = &mapTexture_Plane_002;
 
 			spriteDrawer.Draw(*base, sprite);
-
 		}
 	}
 
@@ -588,7 +586,6 @@ void CPUObjectLooker::Draw2D()
 				sprite.SetPos(ChD3D11::SpritePositionName::LeftBottom, ChVec2(square->left, square->bottom));
 
 				spriteDrawer.Draw(mechaTexture, sprite);
-
 			}
 		}
 	}

@@ -11,38 +11,22 @@
 
 void WeaponComponent::Update()
 {
-
 	if (weapon.empty())return;
 
 	if (IsPushFlg(attack))
-	{
 		Attack();
-		return;
-	}
 
 	if (IsPushFlg(weaponUpChange))
-	{
 		WeaponUpChange();
-		return;
-	}
 
 	if (IsPushFlg(weaponDownChange))
-	{
 		WeaponDownChange();
-		return;
-	}
 
 	if (IsPushFlg(attackTypeUpChange))
-	{
 		AttackTypeUpChange();
-		return;
-	}
 
 	if (IsPushFlg(attackTypeDownChange))
-	{
 		AttackTypeDownChange();
-		return;
-	}
 }
 
 std::vector<ChPtr::Weak<WeaponFunction>> WeaponComponent::GetRegistWeaponList()

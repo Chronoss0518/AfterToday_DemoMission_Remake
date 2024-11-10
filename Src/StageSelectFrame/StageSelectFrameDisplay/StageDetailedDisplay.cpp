@@ -86,7 +86,6 @@ void StageDetailedDisplay::Update()
 
 void StageDetailedDisplay::UpdateAction(MenuBase::ActionType _type)
 {
-
 	if (_type == MenuBase::ActionType::Decision)
 	{
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Start))
@@ -103,23 +102,18 @@ void StageDetailedDisplay::UpdateAction(MenuBase::ActionType _type)
 	}
 
 	if (_type == MenuBase::ActionType::Up)
-	{
 		nowSelect = (nowSelect + MENU_BUTTON_TYPE - 1) % MENU_BUTTON_TYPE;
-	}
 
 	if (_type == MenuBase::ActionType::Down)
-	{
 		nowSelect = (nowSelect + 1) % MENU_BUTTON_TYPE;
-	}
-
 }
 
 void StageDetailedDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
-
 	auto&& selectStageData = GetNowSelectStageData();
 
 	ChD3D11::TextureBase11* testImage = &selectStageData.stageImage;
+
 	if (!testImage->IsTex())testImage = &GetNonImage();
 
 	_drawer.Draw(*testImage, stageImage);
@@ -136,8 +130,6 @@ void StageDetailedDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	for (unsigned char i = 0; i < MENU_BUTTON_TYPE; i++)
 	{
-		//if (i == ChStd::EnumCast(MenuButtonType::Edit))_drawer.Draw(comingSoonImage, button[i].sprite);
-
 		if ((i == ChStd::EnumCast(MenuButtonType::Edit) ||
 			i == ChStd::EnumCast(MenuButtonType::Load)) && 
 			!selectStageData.stageDatas->selectModelFlg)

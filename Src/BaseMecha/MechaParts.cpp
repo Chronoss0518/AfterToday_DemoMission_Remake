@@ -105,7 +105,7 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstrin
 	
 	if (thisFilePath.find(L"/"))
 	{
-		thisFileName = thisFilePath.substr(thisFilePath.find_last_of(L"/") + 1);
+		thisFileName = thisFilePath.substr(thisFilePath.rfind(L"/") + 1);
 	}
 
 	if (thisFileName.find(L"."))
