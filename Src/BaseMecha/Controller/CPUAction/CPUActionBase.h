@@ -59,8 +59,8 @@ private:
 	bool activeFlg = true;
 
 	CPUObjectLooker::MemberType memberType = CPUObjectLooker::MemberType::Enemy;
-	CPUObjectLooker::DistanceType distanceType = CPUObjectLooker::DistanceType::None;
-	CPUObjectLooker::DamageSizeType damageType = CPUObjectLooker::DamageSizeType::None;
+	CPUObjectLooker::DistanceType distanceType = CPUObjectLooker::DistanceType::Far;
+	CPUObjectLooker::DamageSizeType damageType = CPUObjectLooker::DamageSizeType::Many;
 
 };
 

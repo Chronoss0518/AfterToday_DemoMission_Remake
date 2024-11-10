@@ -117,20 +117,18 @@ public:
 	enum class DistanceType : unsigned char
 	{
 		Near,
-		Far,
-		None
+		Far
 	};
 
-	static const unsigned char DISTANCE_TYPE_COUNT = 3;
+	static const unsigned char DISTANCE_TYPE_COUNT = 2;
 
 	enum class DamageSizeType : unsigned char
 	{
 		Many,
-		Few,
-		None
+		Few
 	};
 
-	static const unsigned char DAMAGE_SIZE_TYPE_COUNT = 3;
+	static const unsigned char DAMAGE_SIZE_TYPE_COUNT = 2;
 
 public:
 

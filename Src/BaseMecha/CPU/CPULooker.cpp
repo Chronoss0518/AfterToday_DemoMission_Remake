@@ -41,6 +41,8 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
+	return res;
+
 	for (size_t i = 0; i < positionList.size(); i++)
 	{
 		auto&& anchorPos = positionList[i];
@@ -71,13 +73,11 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 			float w = position.w;
 			position /= w;
 
-
 			if (square.left > position.x)square.left = position.x;
 			if (square.right < position.x)square.right = position.x;
 			if (square.bottom > position.y)square.bottom = position.y;
 			if (square.top < position.y)square.top = position.y;
 			if (mathSquare->distance < position.z)mathSquare->distance = position.z;
-
 		}
 
 		if (mathSquare->distance < 0.0f)continue;
@@ -96,9 +96,9 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 
 std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLMat& _vpMatrix)
 {
-
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
+	return res;
 	for (unsigned long i = 0; i < positionList.size(); i++)
 	{
 		auto&& anchorPos = positionList[i];
@@ -129,13 +129,11 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 			position /= w;
 			position.z = w;
 
-
 			if (square.left > position.x)square.left = position.x;
 			if (square.right < position.x)square.right = position.x;
 			if (square.bottom > position.y)square.bottom = position.y;
 			if (square.top < position.y)square.top = position.y;
 			if (mathSquare->distance < position.z)mathSquare->distance = position.z;
-
 		}
 
 		if (mathSquare->distance < 0.0f)continue;
@@ -156,6 +154,8 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix)
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
+
+	return res;
 
 	for (auto&& anchorObj : positionList)
 	{
@@ -235,7 +235,6 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 				float w = position.w;
 				position /= w;
 
-
 #if FEATURE
 
 				if (anchorPos[ChStd::EnumCast(AnchorPosName::LeftTop)].x > position.x &&
@@ -285,12 +284,13 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 	}
 
 	return res;
-
 }
 
 std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const ChLMat& _vpMatrix)
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
+
+	return res;
 
 	for (auto&& anchorObj : positionList)
 	{
@@ -641,8 +641,10 @@ void CPUObjectLooker::FindMecha()
 
 	auto&& baseMechaList = frame->GetMechas();
 
-	float nearLength[2] = { 10e+37f,10e+37f };
-	float farLength[2] = { 0.0f ,0.0f };
+	float nearLength[3] = { 10e+37f,10e+37f ,10e+37f };
+	float farLength[3] = { 0.0f ,0.0f ,0.0f };
+
+	bool lookFlg = true;
 
 	ray.SetPosition(LookObj<BaseMecha>()->GetPosition());
 
@@ -680,12 +682,12 @@ void CPUObjectLooker::FindMecha()
 		direction.Normalize();
 
 		ray.SetRayDir(direction);
-
-		bool lookFlg = true;
+		
+		lookFlg = true;
 
 		for (auto&& map : hitTestMap)
 		{
-			auto collider = map->GetComponent<MapCollider>();
+			auto&& collider = map->GetComponent<MapCollider>();
 
 			if (collider == nullptr)continue;
 
@@ -704,24 +706,18 @@ void CPUObjectLooker::FindMecha()
 			lookMechaList.push_back(i);
 		}
 
-		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
-		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
-
 		if (nearLength[memberType] > tmpLength)
 		{
 			nearLength[memberType] = tmpLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = i;
 			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
 			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
-
 		}
 
 		if (farLength[memberType] < tmpLength)
 		{
 			farLength[memberType] = tmpLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = i;
 			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
 			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 		}
