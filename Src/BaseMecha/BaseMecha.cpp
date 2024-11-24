@@ -61,10 +61,9 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 
 	std::wstring text = L"";
 
-	ChCpp::WCharFile file;
+	ChCpp::CharFile file;
 	file.FileOpen(_fileName, false);
-	text = file.FileRead();
-	text = &text[1];
+	text = ChStr::GetUTF16FromUTF8(file.FileRead());
 	file.FileClose();
 
 	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(ChCpp::JsonBaseType<wchar_t>::GetParameter(text));
@@ -101,9 +100,9 @@ void BaseMecha::Save(const std::wstring& _fileName)
 
 	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> res = SavePartsList();
 
-	ChCpp::WCharFile file;
+	ChCpp::CharFile file;
 	file.FileOpen(_fileName, true);
-	file.FileWrite(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData()));
+	file.FileWrite(ChStr::GetUTF8FromUTF16(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData())));
 	file.FileClose();
 
 }

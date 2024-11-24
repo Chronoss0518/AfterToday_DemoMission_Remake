@@ -468,9 +468,9 @@ void GameFrame::LoadStage(std::wstring& _stageScriptName)
 	std::wstring stageScript = L"";
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(STAGE_DIRECTORY(+_stageScriptName),false);
-		stageScript = file.FileRead();
+		stageScript = ChStr::GetUTF16FromUTF8(file.FileRead());
 		stageScript = &stageScript[1];
 
 		file.FileClose();
@@ -1071,12 +1071,14 @@ void GameFrame::AddField(const std::wstring& _text)
 	size_t pos = argment[0].find_last_of(L".");
 
 	if (argment[0].substr(pos) == L".x") {
-		ChCpp::ModelLoader::XFile<wchar_t> loader;
-		loader.CreateModel(mainMap->model, FIELD_DIRECTORY(+argment[0]));
+		ChCpp::ModelController::XFile<wchar_t> loader;
+		loader.LoadModel( FIELD_DIRECTORY(+argment[0]));
+		loader.CreateModel(mainMap->model);
 	}
 	else if (argment[0].substr(pos) == L".obj") {
-		ChCpp::ModelLoader::ObjFile<wchar_t> loader;
-		loader.CreateModel(mainMap->model, FIELD_DIRECTORY(+argment[0]));
+		ChCpp::ModelController::ObjFile<wchar_t> loader;
+		loader.LoadModel(FIELD_DIRECTORY(+argment[0]));
+		loader.CreateModel(mainMap->model);
 	}
 	else
 	{
@@ -1137,12 +1139,14 @@ void GameFrame::AddSkyObject(const std::wstring& _text)
 	skySphere->Init(ChD3D11::D3D11Device());
 	size_t pos = argment[0].find_last_of(L".");
 	if (argment[0].substr(pos) == L".x") {
-		ChCpp::ModelLoader::XFile<wchar_t> loader;
-		loader.CreateModel(skySphere, FIELD_DIRECTORY(+argment[0]));
+		ChCpp::ModelController::XFile<wchar_t> loader;
+		loader.LoadModel(FIELD_DIRECTORY(+argment[0]));
+		loader.CreateModel(skySphere);
 	}
 	else if (argment[0].substr(pos) == L".obj") {
-		ChCpp::ModelLoader::ObjFile<wchar_t> loader;
-		loader.CreateModel(skySphere, FIELD_DIRECTORY(+argment[0]));
+		ChCpp::ModelController::ObjFile<wchar_t> loader;
+		loader.LoadModel(FIELD_DIRECTORY(+argment[0]));
+		loader.CreateModel(skySphere);
 	}
 	else
 	{

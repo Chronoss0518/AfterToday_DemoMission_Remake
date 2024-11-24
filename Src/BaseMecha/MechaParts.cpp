@@ -15,8 +15,8 @@
 #define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
 #endif
 
-ChCpp::ModelLoader::XFile<wchar_t> xfileLoader;
-ChCpp::ModelLoader::ObjFile<wchar_t> objLoader;
+ChCpp::ModelController::XFile<wchar_t> xfileLoader;
+ChCpp::ModelController::ObjFile<wchar_t> objLoader;
 
 std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
 {
@@ -93,10 +93,9 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstrin
 	std::wstring text = L"";
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(_fileName, false);
-		text = file.FileRead();
-		text = &text[1];
+		text = ChStr::GetUTF16FromUTF8(file.FileRead());
 	}
 
 	if (text.empty())return;
@@ -138,10 +137,11 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 void MechaParts::LoadModel(ID3D11Device* _device, const std::wstring& _fileName)
 {
-	ChCpp::ModelLoader::XFile<wchar_t> loader;
+	ChCpp::ModelController::XFile<wchar_t> loader;
 
 	model->Init(_device);
-	loader.CreateModel(model, _fileName);
+	loader.LoadModel(_fileName);
+	loader.CreateModel(model);
 	if (model->GetMyName() == L"Root")
 	{
 		defaultFrameMat = model->GetFrameTransformLMat();
@@ -260,9 +260,9 @@ std::wstring MechaParts::Save(const std::wstring& _fileName)
 	std::wstring res = Serialize();
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(_fileName, true);
-		file.FileWrite(res);
+		file.FileWrite(ChStr::GetUTF8FromUTF16(res));
 		file.FileClose();
 	}
 

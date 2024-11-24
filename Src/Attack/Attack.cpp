@@ -102,10 +102,9 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<w
 	textObject.SetCutChar(L"\n");
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(_fileName, false);
-		text = file.FileRead();
-		text = &text[1];
+		text = ChStr::GetUTF16FromUTF8(file.FileRead());
 		textObject.SetText(text.c_str());
 		file.FileClose();
 	}
@@ -153,9 +152,10 @@ void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 	hitSize = ChStr::GetNumFromText<float>(textObject.GetTextLine(2).c_str());
 
 	{
-		ChCpp::ModelLoader::XFile<wchar_t> loader;
+		ChCpp::ModelController::XFile<wchar_t> loader;
 		bullet->Init(_device);
-		loader.CreateModel(bullet, textObject.GetTextLine(3));
+		loader.LoadModel(textObject.GetTextLine(3));
+		loader.CreateModel(bullet);
 
 		if (bullet->GetMyName() == L"Root")
 		{

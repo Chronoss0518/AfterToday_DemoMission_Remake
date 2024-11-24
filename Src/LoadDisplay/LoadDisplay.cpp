@@ -453,10 +453,9 @@ void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 
 	dc = _dc;
 
-	ChCpp::WCharFile file;
+	ChCpp::CharFile file;
 	file.FileOpen(PLAYER_MECHA_PATH, false);
-	std::wstring fileText = file.FileRead();
-	fileText = &fileText[1];
+	std::wstring fileText = ChStr::GetUTF16FromUTF8(file.FileRead());
 	file.FileClose();
 
 	loadFileList = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();

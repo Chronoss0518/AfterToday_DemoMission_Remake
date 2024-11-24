@@ -344,9 +344,9 @@ void CPUController::SaveCPUData(const std::wstring& _fileName)
 	saveData->Set(L"Attack", cpuAttack->Serialize());
 
 
-	ChCpp::WCharFile file;
+	ChCpp::CharFile file;
 	file.FileOpen(CPU_DIRECTORY(+_fileName), true);
-	file.FileWrite(ChCpp::JsonBaseType<wchar_t>::FormatDocument(saveData->GetRawData()));
+	file.FileWrite(ChStr::GetUTF8FromUTF16(ChCpp::JsonBaseType<wchar_t>::FormatDocument(saveData->GetRawData())));
 	file.FileClose();
 
 }
@@ -356,10 +356,9 @@ void CPUController::LoadCPUData(const std::wstring& _fileName)
 	std::wstring textData;
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(CPU_DIRECTORY(+_fileName), false);
-		textData = file.FileRead();
-		textData = &textData[1];
+		textData = ChStr::GetUTF16FromUTF8(file.FileRead());
 		file.FileClose();
 	}
 

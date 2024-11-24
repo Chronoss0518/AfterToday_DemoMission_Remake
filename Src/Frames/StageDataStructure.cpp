@@ -24,10 +24,9 @@ void StageDataStructure::Load(const std::wstring& _filePath)
 	std::wstring text = L"";
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(_filePath, false);
-		text = file.FileRead();
-		text = &text[1];
+		text = ChStr::GetUTF16FromUTF8(file.FileRead());
 		file.FileClose();
 	}
 
@@ -109,9 +108,9 @@ void StageDataStructure::Save(const std::wstring& _filePath)
 	res->Set(J_SELECT_MODEL_FLG, ChCpp::JsonBoolean<wchar_t>::CreateObject(selectModelFlg));
 
 	{
-		ChCpp::WCharFile file;
+		ChCpp::CharFile file;
 		file.FileOpen(_filePath, true);
-		auto result = file.FileWrite(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData()));
+		auto result = file.FileWrite(ChStr::GetUTF8FromUTF16(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData())));
 		file.FileClose();
 	}
 

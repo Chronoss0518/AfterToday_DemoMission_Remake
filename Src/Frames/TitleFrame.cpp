@@ -8,18 +8,21 @@
 
 void TitleFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
-	ChCpp::ModelLoader::XFile<wchar_t> xfileLoader;
+	ChCpp::ModelController::XFile<wchar_t> xfileLoader;
 
 	xfileLoader.SetMaxBoneNum(100);
 	auto&& device = ChD3D11::D3D11Device();
 	msd->Init(device);
-	xfileLoader.CreateModel(msd,TITLE_MESH_DIRECTORY(L"MSD.x"));
+	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"MSD.x"));
+	xfileLoader.CreateModel(msd);
 	
 	desk->Init(device);
-	xfileLoader.CreateModel(desk,TITLE_MESH_DIRECTORY(L"Desk.x"));
+	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"Desk.x"));
+	xfileLoader.CreateModel(desk);
 
 	room->Init(device);
-	xfileLoader.CreateModel(room,TITLE_MESH_DIRECTORY(L"Room.x"));
+	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"Room.x"));
+	xfileLoader.CreateModel(room);
 
 	meshDrawer.Init(device);
 
