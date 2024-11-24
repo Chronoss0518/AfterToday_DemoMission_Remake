@@ -89,8 +89,9 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	ChSystem::SysManager().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
-	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
-	PhysicsMachine::SetAirRegist(0.2f);
+	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER / BASE_FPS);
+	PhysicsMachine::SetAirRegist(0.0001f);
+	PhysicsMachine::SetGroundRegist(0.2f);
 
 	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
 
