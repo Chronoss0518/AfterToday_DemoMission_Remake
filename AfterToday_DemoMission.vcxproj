@@ -372,19 +372,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
