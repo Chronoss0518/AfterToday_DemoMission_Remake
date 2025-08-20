@@ -1,8 +1,8 @@
 #ifndef Effect_Sprite_Shader
 #define Effect_Sprite_Shader
 
-#include"../../../External/ChCppLibrary/ChCppLibrary/ShaderHeaderFiles/HLSL/ShaderPublicInclude.hlsli"
-#include"../../../External/ChCppLibrary/ChCppLibrary/ShaderHeaderFiles/HLSL/5.0/Texture/BaseTexture.hlsli"
+#include"../../../External/ChCppDirect3DLibrary/ShaderHeaderFiles/ShaderPublicInclude.hlsli"
+#include"../../../External/ChCppDirect3DLibrary/ShaderHeaderFiles/Texture/BaseTexture.hlsli"
 
 #ifdef __SHADER__
 
