@@ -102,7 +102,9 @@ void BaseMecha::Save(const std::wstring& _fileName)
 
 	ChCpp::CharFile file;
 	file.FileOpen(_fileName, true);
-	file.FileWrite(ChStr::GetUTF8FromUTF16(ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData())));
+	std::wstring testFromJson = ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData());
+	std::string textFromComverter = ChStr::GetUTF8FromUTF16(testFromJson);
+	file.FileWrite(textFromComverter);
 	file.FileClose();
 
 }
