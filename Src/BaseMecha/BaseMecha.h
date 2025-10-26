@@ -228,7 +228,7 @@ protected:
 	float durable = 100.0f;
 	float nowDurable = 100.0f;
 
-	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
+	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
