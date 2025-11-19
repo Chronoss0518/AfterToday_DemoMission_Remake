@@ -49,8 +49,8 @@ int WINAPI WinMain(
 				nCmdshow);
 
 			system.SetWinProcedure(WM_DESTROY, [&](HWND _hWnd, UINT _msg, WPARAM _wPalam, LPARAM _lParam)->LRESULT {
-					system.Release();
-					return 0;
+				system.Release();
+				return 0;
 				});
 
 		}
@@ -89,36 +89,34 @@ int WINAPI WinMain(
 	frameList.SetFrame<TitleFrame>();
 #endif
 #if USE_SELECT_FRAME_FLG
-		frameList.SetFrame<SelectFrame>();
+	frameList.SetFrame<SelectFrame>();
 #endif
 #if USE_STAGE_SELECT_FRAME_FLG
-		frameList.SetFrame<StageSelectFrame>();
+	frameList.SetFrame<StageSelectFrame>();
 #endif
 #if USE_GAME_FRAME_FLG
-		frameList.SetFrame<GameFrame>();
+	frameList.SetFrame<GameFrame>();
 #endif
 #if USE_EDIT_FRAME_FLG
-		frameList.SetFrame<EditFrame>();
+	frameList.SetFrame<EditFrame>();
 #endif
 #if USE_SETTING_FRAME_FLG
-		frameList.SetFrame<SettingFrame>();
+	frameList.SetFrame<SettingFrame>();
 #endif
 #if USE_RESULT_FRAME_FLG
-		frameList.SetFrame<ResultFrame>();
+	frameList.SetFrame<ResultFrame>();
 #endif
 
 	// ÉQÅ[ÉÄÇ…ä÷Ç∑ÇÈèâä˙âªèàóù ---------------------------
 
-	while (true)
+	while (system.IsUpdate())
 	{
 		if (!ChSystem::SysManager().FPSProcess())continue;
-		
-		if (!system.IsUpdate())break;
 
 		if (system.IsPushKeyNoHold(VK_ESCAPE))
 		{
 			system.Release();
-			break;
+			continue;
 		}
 
 		frameList.Update();
