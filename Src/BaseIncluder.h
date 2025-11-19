@@ -347,7 +347,7 @@ public://Set Functions//
 		if (ChPtr::NullCheck(frame))return;
 		if(_rotate == 0.0f)
 		{
-			frame->SetOutSizdTransform(ChLMat());
+			((ChCpp::TransformObject<wchar_t>*)frame)->SetOutSideTransform(ChLMat());
 			return;
 		}
 		ChLMat tmpMat;
@@ -360,7 +360,7 @@ public://Set Functions//
 		if(direction == (ChStd::EnumCast(RotateAxis::PY) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationYAxis(rotate);
 		if(direction == (ChStd::EnumCast(RotateAxis::PZ) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationZAxis(rotate);
 
-		frame->SetOutSizdTransform(tmpMat);
+		frame->SetOutSideTransform(tmpMat);
 	}
 
 

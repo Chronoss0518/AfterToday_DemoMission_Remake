@@ -1,4 +1,4 @@
-#include"../../../BaseIncluder.h"
+#include"../../BaseIncluder.h"
 
-#include"../../../AllStruct.h"
+#include"../../AllStruct.h"
 #include"ProgressObject.h"

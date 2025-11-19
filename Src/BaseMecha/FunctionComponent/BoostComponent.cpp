@@ -79,10 +79,10 @@ void BoostComponent::BoostDrawBegin()
 		auto&& boostData = data[i];
 		for (auto&& boostObject : boostData.boostObject)
 		{
-			float testScl = boostObject->GetOutSizdTransformLMat().GetScalling().x;
+			float testScl = boostObject->GetOutSideTransformLMat().GetScalling().x;
 			testScl = testScl >= boostData.nowBoostPow ? testScl : boostData.nowBoostPow;
 			tmp.SetScalling(ChVec3(testScl));
-			boostObject->SetOutSizdTransform(tmp);
+			boostObject->SetOutSideTransform(tmp);
 
 			auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11<wchar_t>>()->GetPrimitives()[0]->textures[Ch3D::TextureType::Diffuse];
 		}
@@ -102,7 +102,7 @@ void BoostComponent::BoostDrawEnd()
 		auto&& boostData = data[i];
 		for (auto&& boostObject : boostData.boostObject)
 		{
-			boostObject->SetOutSizdTransform(tmp);
+			boostObject->SetOutSideTransform(tmp);
 		}
 	}
 

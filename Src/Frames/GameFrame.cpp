@@ -1162,7 +1162,7 @@ void GameFrame::AddSkyObject(const std::wstring& _text)
 			tmp.Deserialize<wchar_t>(argment[i], 0, L",", L";");
 			ChLMat mat;
 			mat.SetScalling(tmp);
-			skySphere->SetOutSizdTransform(mat);
+			skySphere->SetOutSideTransform(mat);
 			continue;
 		}
 	}

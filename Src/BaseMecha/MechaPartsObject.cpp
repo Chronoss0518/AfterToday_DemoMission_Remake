@@ -209,7 +209,7 @@ void MechaPartsObject::Draw(const ChLMat& _drawMat)
 		//tmp = positionObject->GetDrawLHandMatrix() * tmp;
 		positionLastDrawMat = parentObject->GetBaseObject()->GetDefaultFrameMat() * positionObject->GetDrawLHandMatrix();
 		//positionLastDrawMat = positionObject->GetDrawLHandMatrix();
-		//mesh.SetOutSizdTransform(positionLastDrawMat);
+		//mesh.SetOutSideTransform(positionLastDrawMat);
 		mesh = baseParts->GetMesh();
 	}
 

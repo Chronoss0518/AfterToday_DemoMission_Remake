@@ -173,7 +173,7 @@ void GunFunction::DrawBegin()
 	return;
 	ChLMat tmpMat;
 	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
-	obj->GetParent()->GetPositionObject()->SetOutSizdTransform(tmpMat);
+	obj->GetParent()->GetPositionObject()->SetOutSideTransform(tmpMat);
 }
 
 void GunFunction::DrawEnd()
@@ -198,7 +198,7 @@ void GunFunction::DrawEnd()
 		}
 	}
 
-	//obj->GetParent()->GetPositionObject()->SetOutSizdTransform(ChLMat());
+	//obj->GetParent()->GetPositionObject()->SetOutSideTransform(ChLMat());
 }
 
 std::wstring GunFunction::GetBulletNum()
