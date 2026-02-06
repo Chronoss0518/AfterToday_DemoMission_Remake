@@ -52,11 +52,16 @@ void PlayerController::Init()
 	keyTypes[VK_LEFT] = InputName::LeftRotation;
 	keyTypes[VK_RIGHT] = InputName::RightRotation;
 	
-	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::LeftRotation;
-	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
+	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::LeftRotation;
+	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::CameraLeftRotation;
+	
+	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
+	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::CameraRightRotation;
+
 
 	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Up)] = InputName::CameraUpRotation;
 	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Down)] = InputName::CameraDownRotation;
+
 
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
 	keyTypes[VK_RBUTTON] = InputName::RAttack;
@@ -77,8 +82,12 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::LRight] = InputName::Right;
 	controllerTypes[XInputTypeNames::RTop] = InputName::CameraDownRotation;
 	controllerTypes[XInputTypeNames::RLeft] = InputName::LeftRotation;
+	//controllerTypes[XInputTypeNames::RLeft] = InputName::CameraLeftRotation;
+	
 	controllerTypes[XInputTypeNames::RDown] = InputName::CameraUpRotation;
 	controllerTypes[XInputTypeNames::RRight] = InputName::RightRotation;
+	//controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
+	
 	controllerTypes[XInputTypeNames::L1] = InputName::LAttack;
 	controllerTypes[XInputTypeNames::L2] = InputName::LWDChange;
 	controllerTypes[XInputTypeNames::L3] = InputName::LReload;
