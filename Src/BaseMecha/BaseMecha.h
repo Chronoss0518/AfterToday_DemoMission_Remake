@@ -76,6 +76,8 @@ public:
 
 	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
+	void LoadEnd();
+
 	void Save(const std::wstring& _fileName);
 
 	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> SavePartsList();

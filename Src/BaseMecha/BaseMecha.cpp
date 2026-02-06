@@ -95,6 +95,11 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 }
 
+void BaseMecha::LoadEnd()
+{
+	viewHorizontal = physics->GetRotation().y;
+}
+
 void BaseMecha::Save(const std::wstring& _fileName)
 {
 
