@@ -24,6 +24,7 @@ public://Inner Struct Class Enum//
 	enum class InputName : unsigned char
 	{
 		Front, Back, Right, Left, Up, Down,
+		FrontRight,FrontLeft,BackRight,BackLeft,
 		UpRotation, DownRotation, RightRotation, LeftRotation,
 		CameraUpRotation, CameraDownRotation, CameraRightRotation, CameraLeftRotation,
 		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
