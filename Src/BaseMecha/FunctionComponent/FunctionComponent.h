@@ -36,6 +36,8 @@ public:
 
 	inline void SetPushFlg(InputName _name){ target->inputFlgs.SetBitTrue(ChStd::EnumCast(_name)); }
 
+	inline void RemovePushFlg(InputName _name) { target->inputFlgs.SetBitFalse(ChStd::EnumCast(_name)); }
+
 public:
 
 	ChVec3 GetPosition() { return target->GetPosition(); }
