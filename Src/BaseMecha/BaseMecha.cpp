@@ -151,7 +151,6 @@ void BaseMecha::Move()
 	BaseMove();
 
 	inputFlgs.SetAllDownFlg();
-
 }
 
 void BaseMecha::MoveEnd()
@@ -159,7 +158,8 @@ void BaseMecha::MoveEnd()
 
 	damageDir = ChVec3();
 
-	viewHorizontal = physics->GetRotation().y;
+	if(!isSelfViewHorizontalFlg)viewHorizontal = physics->GetRotation().y;
+	isSelfViewHorizontalFlg = true;
 
 	auto viewPos = GetViewPos();
 	auto viewLookPos = GetViewLookPos();

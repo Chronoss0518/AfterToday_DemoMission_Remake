@@ -677,7 +677,6 @@ ChPtr::Shared<ChCpp::FrameObject<wchar_t>> BoostBrust::GetFrame(BaseMecha& _base
 
 	return boostList[0].lock();
 
-
 }
 
 unsigned long WeaponData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)

@@ -93,6 +93,8 @@ public:
 
 	inline void AddViewVertical(const float& _x) { viewVertical = std::abs(viewVertical + _x) < maxViewVertical ? viewVertical + _x : viewVertical; }
 
+	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
+
 	inline void AddViewHorizontal(const float& _y) { viewHorizontal = std::abs(viewHorizontal + _y) < maxViewHorizontal ? viewHorizontal + _y : viewHorizontal; }
 
 	void AddMass(const float _mass) { mass += _mass; }
@@ -252,6 +254,7 @@ protected:
 	float viewVertical = 0.0f;
 	float maxViewVertical = 85.0f;
 
+	bool isSelfViewHorizontalFlg = true;
 	float viewHorizontal = 0.0f;
 	float maxViewHorizontal = 85.0f;
 
