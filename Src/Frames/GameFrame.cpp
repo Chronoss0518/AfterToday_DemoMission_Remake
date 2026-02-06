@@ -14,7 +14,8 @@
 #include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
 #include"GameFrame.h"
 
-#include"../BaseMecha/Controller/ControllerBase.h"
+#include"../BaseMecha/Controller/PlayerController.h"
+#include"../BaseMecha/Controller/CPUController.h"
 
 #include"../EffectObjects/ShotEffectList/ShotEffectList.h"
 #include"../EffectObjects/SmokeEffectList/SmokeEffectList.h"

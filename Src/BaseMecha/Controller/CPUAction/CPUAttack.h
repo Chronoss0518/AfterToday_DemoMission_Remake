@@ -1,6 +1,6 @@
 #pragma once
 
-#include"../ControllerBase.h"
+#include"../CPUController.h"
 
 class CPUWeaponSelector;
 class CPUWeaponSelect;
