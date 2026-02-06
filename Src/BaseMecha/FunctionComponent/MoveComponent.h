@@ -4,12 +4,6 @@
 
 class MoveComponentBase :public FunctionComponent
 {
-protected:
-
-public:
-
-	void Update()override;
-
 public:
 
 	void SetMovePow(const float _movePow) { movePow = _movePow; }
@@ -22,13 +16,23 @@ public:
 
 protected:
 
-	virtual void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster) = 0;
+	inline float GetMovePow() { return movePow; }
 
-	virtual void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction) = 0;
+	inline float GetRotatePow() { return rotatePow; }
 
-	virtual void CamVerticalRotateUpdate(InputName _input, const float _camRot) = 0;
+	inline float GetCameraRotatePow() { return cameraRotatePow; }
 
-	virtual void CamHorizontalRotateUpdate(InputName _input, const float _camRot) = 0;
+	inline float GetJumpPow() { return jumpPow; }
+
+protected:
+
+	void CamVerticalRotateUpdate(InputName _input, const float _camRot);
+
+	void CamHorizontalRotateUpdate(InputName _input, const float _camRot);
+
+protected:
+
+	void IsAvoBoostTest(InputName _input, InputName _boost, InputName _avoid);
 
 private:
 
@@ -42,16 +46,15 @@ private:
 //êlå^ìãèÊï∫äÌ//
 class BaseMechaMoveComponent :public MoveComponentBase
 {
+public:
+
+	void Update()override;
 
 private:
 
-	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
+	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster);
 
-	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
-
-	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
-
-	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
+	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction);
 
 
 };
@@ -59,48 +62,50 @@ private:
 //ëD//
 class ShipMoveComponent :public MoveComponentBase
 {
+public:
+
+	void Update()override;
 
 private:
-
-	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
-
-	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
-
-	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
-
-	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
-
 };
 
 //êÌé‘//
 class TankMoveComponent :public MoveComponentBase
 {
+public:
+
+	void Update()override;
 
 private:
 
-	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
+	void FlagTest();
 
-	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
+	void FrontBackTest(InputName _frontBack, InputName _right, InputName _left);
 
-	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
+	void RemoveTest(InputName _front, InputName _back);
 
-	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
+	void MoveUpdate(float _movePower, InputName _right,InputName _left,const ChVec3& _direction, const ChLMat& _nowTargetPoster);
 
+	void OneSideMoveUpdate(
+		float _rotatePower,
+		InputName _move,
+		InputName _oneSideFront,
+		InputName _oneSideBack,
+		const ChVec3& _moveDirection,
+		const ChVec3& _rotateDirection,
+		const ChLMat& _nowTargetPoster);
+
+	void RotationUpdate(float _rotatePower, InputName _right, InputName _left, const ChVec3& _direction);
 };
 
 //êÌì¨ã@//
 class FighterMoveComponent :public MoveComponentBase
 {
+public:
+
+	void Update()override;
 
 private:
-
-	void MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)override;
-
-	void RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)override;
-
-	void CamVerticalRotateUpdate(InputName _input, const float _camRot)override;
-
-	void CamHorizontalRotateUpdate(InputName _input, const float _camRot)override;
 
 	void MoveFront(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster);
 
