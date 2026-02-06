@@ -164,7 +164,6 @@ void BaseMecha::MoveEnd()
 	damageDir = ChVec3();
 
 	if(!isSelfViewHorizontalFlg)viewHorizontal = physics->GetRotation().y;
-	isSelfViewHorizontalFlg = true;
 
 	auto viewPos = GetViewPos();
 	auto viewLookPos = GetViewLookPos();
