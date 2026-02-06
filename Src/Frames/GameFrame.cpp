@@ -1060,6 +1060,8 @@ void GameFrame::AddMecha(const std::wstring& _text)
 	mechaList.SetObject(mecha);
 	mechas.push_back(mecha);
 	mechaPartyCounter[teamNo] += 1;
+
+	mecha->LoadEnd();
 }
 
 void GameFrame::AddField(const std::wstring& _text)
