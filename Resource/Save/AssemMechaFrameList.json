@@ -46,7 +46,7 @@
     }
   },
   {
-    "Name": "Normal",
+    "Name": "Norma",
     "Core": {
       "Parts": "Resource/RobotParts/CT.mpd",
       "Armature_HeadPos": { "Parts": "Resource/RobotParts/HT.mpd" },
@@ -135,6 +135,14 @@
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BT.mpd" }
+    }
+  },
+  {
+    "Name": "Simpel-Tank",
+    "Core": {
+      "Parts": "Resource/RobotParts/CST_01.mpd",
+      "Armature_FootPos": { "Parts": "Resource/RobotParts/FST_01.mpd" },
+      "RightWeapon":  true
     }
   }
 ]
