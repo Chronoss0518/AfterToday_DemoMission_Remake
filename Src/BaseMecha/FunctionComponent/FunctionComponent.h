@@ -26,6 +26,8 @@ public:
 
 	inline void AddViewRotateVertical(const float& _viewRotate) { target->AddViewVertical(_viewRotate); }
 
+	inline void SetSelfViewRotateHorizontalFlg(const bool& _flg) { target->SetSelfViewHorizontalFlg(_flg); }
+
 	inline void AddViewRotateHorizontal(const float& _viewRotate) { target->AddViewHorizontal(_viewRotate); }
 
 public:
