@@ -82,6 +82,8 @@ private:
 
 	void FrontBackTest(InputName _frontBack, InputName _right, InputName _left);
 
+	void RightLeftTest(InputName _rightLeft, InputName _front, InputName _back);
+
 	void RemoveTest(InputName _front, InputName _back);
 
 	void MoveUpdate(float _movePower, InputName _right,InputName _left,const ChVec3& _direction, const ChLMat& _nowTargetPoster);

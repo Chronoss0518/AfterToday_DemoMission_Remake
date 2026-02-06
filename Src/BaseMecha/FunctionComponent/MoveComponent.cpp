@@ -16,9 +16,7 @@ void MoveComponentBase::CamHorizontalRotateUpdate(InputName _input, const float 
 {
 	if (!IsPushFlg(_input))return;
 
-	if (_input == InputName::CameraRightRotation)SetPushFlg(InputName::RightRotation);
-
-	if (_input == InputName::CameraLeftRotation)SetPushFlg(InputName::LeftRotation);
+	AddViewRotateHorizontal(_camRot / PhysicsMachine::GetFPS());
 }
 
 void MoveComponentBase::IsAvoBoostTest(InputName _input, InputName _boost, InputName _avoid)
@@ -40,8 +38,9 @@ void BaseMechaMoveComponent::Update()
 	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
 	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
 
-	CamHorizontalRotateUpdate(InputName::CameraRightRotation, GetCameraRotatePow());
-	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, -GetCameraRotatePow());
+	if (IsPushFlg(InputName::CameraRightRotation))SetPushFlg(InputName::RightRotation);
+	if (IsPushFlg(InputName::CameraLeftRotation))SetPushFlg(InputName::LeftRotation);
+
 
 	if (!IsGround())return;
 
@@ -54,6 +53,8 @@ void BaseMechaMoveComponent::Update()
 	
 	RotateUpdate(GetRotatePow(), InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
 	RotateUpdate(GetRotatePow(), InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
+
+	SetSelfViewRotateHorizontalFlg(false);
 
 }
 
@@ -121,10 +122,11 @@ void TankMoveComponent::Update()
 	MoveUpdate(GetMovePow(), InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
 	MoveUpdate(GetMovePow(), InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
 
-	OneSideMoveUpdate(GetRotatePow(), InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(1.0f, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(-1.0f, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-1.0f, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(1.0f, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-1.0f, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(1.0f, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+
+	OneSideMoveUpdate(GetRotatePow(), InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-1.0f, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(1.0f, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
 
 	RotationUpdate(GetRotatePow(), InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
 	RotationUpdate(GetRotatePow(), InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
@@ -138,11 +140,12 @@ void TankMoveComponent::FlagTest()
 	bool isFront = IsPushFlg(InputName::Front);
 	bool isBack = IsPushFlg(InputName::Back);
 	if (isFront && isBack)return;
-	bool isRight = IsPushFlg(InputName::Right);
-	bool isLeft = IsPushFlg(InputName::Left);
 
 	FrontBackTest(InputName::Front, InputName::FrontRight, InputName::FrontLeft);
 	FrontBackTest(InputName::Back, InputName::BackRight, InputName::BackLeft);
+
+	RightLeftTest(InputName::Right,InputName::FrontLeft,InputName::BackRight);
+	RightLeftTest(InputName::Left,InputName::FrontRight,InputName::BackLeft);
 
 	RemoveTest(InputName::FrontRight, InputName::BackRight);
 	RemoveTest(InputName::FrontLeft, InputName::BackLeft);
@@ -171,6 +174,16 @@ void TankMoveComponent::FrontBackTest(InputName _frontBack, InputName _right, In
 
 	SetPushFlg(_right);
 	SetPushFlg(_left);
+
+}
+
+void TankMoveComponent::RightLeftTest(InputName _rightLeft, InputName _front, InputName _back)
+{
+	if (!IsPushFlg(_rightLeft))return;
+	if (IsPushFlg(InputName::Front) || IsPushFlg(InputName::Back))return;
+
+	SetPushFlg(_front);
+	SetPushFlg(_back);
 }
 
 void TankMoveComponent::RemoveTest(InputName _front, InputName _back)
