@@ -37,7 +37,7 @@ public://Inner Struct Class Enum//
 		WeaponDownChange, RWDChange, LWDChange,
 		MagnificationUp, MagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
-		MapOnOff, None
+		MapOnOff, UseTargetLooker, None
 	};
 
 public://Override Functions//
