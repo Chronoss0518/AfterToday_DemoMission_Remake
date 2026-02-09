@@ -20,6 +20,10 @@ public:
 
 public:
 
+	static constexpr unsigned long EMPTY_TEAM_NO = 0xffffffff;
+
+public:
+
 	virtual void Input(const InputName _inputFlgName);
 
 	inline void SetTeamNo(unsigned long _team) { teamNo = _team; }
@@ -30,6 +34,7 @@ public:
 
 private:
 
-	unsigned long teamNo = 0;
+	unsigned long teamNo = EMPTY_TEAM_NO;
 
 };
+
