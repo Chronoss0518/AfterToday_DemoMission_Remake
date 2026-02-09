@@ -97,7 +97,7 @@ public:
 
 	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
 
-	inline void AddViewHorizontal(const float& _y) { viewHorizontal = std::abs(viewHorizontal + _y) < maxViewHorizontal ? viewHorizontal + _y : viewHorizontal; }
+	inline void AddViewHorizontal(const float& _y) { viewHorizontal += _y; }
 
 	void AddMass(const float _mass) { mass += _mass; }
 
@@ -258,7 +258,6 @@ protected:
 
 	bool isSelfViewHorizontalFlg = true;
 	float viewHorizontal = 0.0f;
-	float maxViewHorizontal = 85.0f;
 
 	long hitEffectDrawFrame = -1;
 
