@@ -355,7 +355,7 @@ ChVec3 BaseMecha::GetRotation()
 size_t BaseMecha::GetTeamNo()
 {
 	auto controller = GetComponent<ControllerBase>();
-	if (controller == nullptr)return 0;
+	if (controller == nullptr)return ControllerBase::EMPTY_TEAM_NO;
 	return controller->GetTeamNo();
 }
 
