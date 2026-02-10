@@ -10,7 +10,7 @@ Armature_FootPos
 Foot
 }
 GunData:{
-Armature_ShotPos
+Armature_GunBarrel_ShotPosEnd
 MainShot
 SE_Shot.v2.wav
 5
