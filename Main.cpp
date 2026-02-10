@@ -125,8 +125,8 @@ int WINAPI WinMain(
 
 	// ƒQ[ƒ€‚ÉŠÖ‚·‚éI—¹ˆ— ---------------------------
 
-	ChD3D::XAudioManager().Release();
 	frameList.Release();
+	ChD3D::XAudioManager().Release();
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();
 	ChD3D::WICBitmapCreatorObj().Release();
