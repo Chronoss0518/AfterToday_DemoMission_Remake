@@ -40,8 +40,6 @@ void BaseMechaMoveComponent::Update()
 	if (IsPushFlg(InputName::CameraRightRotation))SetPushFlg(InputName::RightRotation);
 	if (IsPushFlg(InputName::CameraLeftRotation))SetPushFlg(InputName::LeftRotation);
 
-	if (!IsGround())return;
-
 	ChLMat tmp;
 
 	//tmp.SetRotationXAxis(ChMath::ToRadian(GetRotation().x));
@@ -61,12 +59,12 @@ void BaseMechaMoveComponent::Update()
 
 void BaseMechaMoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
 {
-
 	if (!IsPushFlg(_input))return;
 
 	IsAvoBoostTest(_input, _boost, _avoid);
 
 	if (_input == InputName::Down)return;
+	if (!IsGround())return;
 
 	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow);
 
@@ -93,6 +91,13 @@ void ShipMoveComponent::Update()
 
 	SetSelfViewRotateHorizontalFlg(true);
 
+	IsAvoBoostTest(InputName::Front, InputName::FrontBoost, InputName::FrontAvo);
+	IsAvoBoostTest(InputName::Back, InputName::BackBoost, InputName::BackAvo);
+	IsAvoBoostTest(InputName::Right, InputName::RightBoost, InputName::RightAvo);
+	IsAvoBoostTest(InputName::Left, InputName::LeftBoost, InputName::LeftAvo);
+	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
+	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
+
 	if (!IsGround())return;
 
 	ChLMat tmp;
@@ -112,16 +117,16 @@ void TankMoveComponent::Update()
 
 	SetSelfViewRotateHorizontalFlg(true);
 
-	if (!IsGround())return;
-
-	FlagTest();
-
 	IsAvoBoostTest(InputName::Front, InputName::FrontBoost, InputName::FrontAvo);
 	IsAvoBoostTest(InputName::Back, InputName::BackBoost, InputName::BackAvo);
 	IsAvoBoostTest(InputName::Right, InputName::RightBoost, InputName::RightAvo);
 	IsAvoBoostTest(InputName::Left, InputName::LeftBoost, InputName::LeftAvo);
 	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
 	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
+
+	if (!IsGround())return;
+
+	FlagTest();
 
 	ChLMat tmp;
 
