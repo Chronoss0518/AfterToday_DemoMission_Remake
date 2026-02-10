@@ -5,6 +5,8 @@
 
 #include"MoveComponent.h"
 
+#define VIEW_ROTATE_POW_UPPER 16 / 9
+
 void MoveComponentBase::CamVerticalRotateUpdate(InputName _input, const float _camRot)
 {
 	if (!IsPushFlg(_input))return;
@@ -37,7 +39,6 @@ void BaseMechaMoveComponent::Update()
 
 	if (IsPushFlg(InputName::CameraRightRotation))SetPushFlg(InputName::RightRotation);
 	if (IsPushFlg(InputName::CameraLeftRotation))SetPushFlg(InputName::LeftRotation);
-
 
 	if (!IsGround())return;
 
@@ -84,24 +85,34 @@ void BaseMechaMoveComponent::RotateUpdate(float _pow, InputName _input, const Ch
 
 void ShipMoveComponent::Update()
 {
+	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
+	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
+
+	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
+	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
+
 	SetSelfViewRotateHorizontalFlg(true);
+
+	if (!IsGround())return;
 
 	ChLMat tmp;
 
 	//tmp.SetRotationXAxis(ChMath::ToRadian(GetRotation().x));
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
-
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
-
-	CamHorizontalRotateUpdate(InputName::CameraRightRotation, GetCameraRotatePow());
-	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, -GetCameraRotatePow());
 }
 
 void TankMoveComponent::Update()
 {	
 
+	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
+	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
+
+	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
+	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
+
 	SetSelfViewRotateHorizontalFlg(true);
+
+	if (!IsGround())return;
 
 	FlagTest();
 
@@ -111,14 +122,6 @@ void TankMoveComponent::Update()
 	IsAvoBoostTest(InputName::Left, InputName::LeftBoost, InputName::LeftAvo);
 	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
 	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
-
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
-
-	CamHorizontalRotateUpdate(InputName::CameraRightRotation, GetCameraRotatePow());
-	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, -GetCameraRotatePow());
-
-	if (!IsGround())return;
 
 	ChLMat tmp;
 
