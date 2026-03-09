@@ -44,19 +44,19 @@ public:
 
 	float GetAvoidMovePow(InputName _avoidType);
 
-	unsigned long GetAvoidUseEnelgy(InputName _avoidType);
+	unsigned long GetAvoidUseEnergy(InputName _avoidType);
 
 	unsigned long GetAvoidUseWaitTime(InputName _avoidType);
 
 	float GetBoostMovePow(InputName _avoidType);
 
-	unsigned long GetBoostUseEnelgy(InputName _avoidType);
+	unsigned long GetBoostUseEnergy(InputName _avoidType);
 
 private:
 
-	unsigned long GetUseEnelgy(AvoidData& _data);
+	unsigned long GetUseEnergy(AvoidData& _data);
 
-	unsigned long GetUseEnelgy(BoostData& _data, bool _avoidFlg);
+	unsigned long GetUseEnergy(BoostData& _data, bool _avoidFlg);
 
 public:
 
@@ -66,11 +66,11 @@ public:
 
 	void AddBoostPow(const float _boostPow, InputName _boostType);
 
-	void AddBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType);
+	void AddBoostUseEnergy(const unsigned long _boostUseEnergy, InputName _boostType);
 
 	void AddBoostAvoidPow(const float _avoidPow, InputName _avoidType);
 
-	void AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType);
+	void AddBoostAvoidUseEnergy(const unsigned long _avoidUseEnergy, InputName _avoidType);
 
 public:
 
@@ -80,11 +80,11 @@ public:
 		 
 	void SubBoostPow(const float _boostPow, InputName _boostType);
 		 
-	void SubBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType);
+	void SubBoostUseEnergy(const unsigned long _boostUseEnergy, InputName _boostType);
 		 
 	void SubBoostAvoidPow(const float _avoidPow, InputName _avoidType);
 		 
-	void SubBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType);
+	void SubBoostAvoidUseEnergy(const unsigned long _avoidUseEnergy, InputName _avoidType);
 
 private:
 
@@ -105,7 +105,7 @@ private:
 
 		InputName name;
 		float pow = 0.0f;
-		unsigned long useEnelgy = 0;
+		unsigned long useEnergy = 0;
 
 		bool testUseFlg = false;
 
@@ -116,7 +116,7 @@ private:
 
 		InputName name;
 		float pow = 0.0f;
-		unsigned long useEnelgy = 0;
+		unsigned long useEnergy = 0;
 		unsigned long wait = 0;
 
 		bool useFlg = false;

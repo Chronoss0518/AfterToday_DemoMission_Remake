@@ -4,6 +4,7 @@
 #include"../../AllStruct.h"
 
 #include"BoostComponent.h"
+#include"EnergyComponent.h"
 
 
 BoostComponent::BoostComponent()
@@ -44,20 +45,22 @@ void BoostComponent::ClearBoostAvoidWait(InputName _avoidType)
 
 void BoostComponent::Update()
 {
-	unsigned long useEnelgy = 0;
+	target->GetComponentObject<EnergyComponent>();
+
+	unsigned long useEnergy = 0;
 
 	for (unsigned char i = 0; i < 6; i++)
 	{
-		useEnelgy += GetUseEnelgy(data[i].avoid);
-		useEnelgy += GetUseEnelgy(data[i].boost, data[i].avoid.testUseFlg);
+		useEnergy += GetUseEnergy(data[i].avoid);
+		useEnergy += GetUseEnergy(data[i].boost, data[i].avoid.testUseFlg);
 	}
 
-	unsigned long nowEnelgy = GetNowEnelgy();
+	unsigned long nowEnergy = GetNowEnergy();
 
 	for (unsigned char i = 0; i < 6; i++)
 	{
-		data[i].boost.testUseFlg = (nowEnelgy > useEnelgy) && data[i].boost.testUseFlg;
-		data[i].avoid.testUseFlg = (nowEnelgy > useEnelgy) && data[i].avoid.testUseFlg;
+		data[i].boost.testUseFlg = (nowEnergy > useEnergy) && data[i].boost.testUseFlg;
+		data[i].avoid.testUseFlg = (nowEnergy > useEnergy) && data[i].avoid.testUseFlg;
 
 		UpdateInputFunction(data[i]);
 		UpdateModelFunction(data[i]);
@@ -133,7 +136,7 @@ void BoostComponent::BoostComponent::UpdateBoost(Data& _data, const ChLMat& _now
 
 	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.boost.pow);
 
-	SubNowEnelgy(_data.boost.useEnelgy);
+	SubNowEnergy(_data.boost.useEnergy);
 
 	_data.nowBoostPow += 1.5f;
 }
@@ -161,7 +164,7 @@ void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
 
 	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.avoid.pow);
 
-	SubNowEnelgy(_data.avoid.useEnelgy);
+	SubNowEnergy(_data.avoid.useEnergy);
 
 	_data.nowBoostPow = 10.0f;
 }
@@ -175,7 +178,7 @@ void BoostComponent::SetBoostAvoidWait(const unsigned long _avoidWait, InputName
 	data[num].avoid.wait = data[num].avoid.wait < _avoidWait ? _avoidWait : data[num].avoid.wait;
 }
 
-unsigned long BoostComponent::GetUseEnelgy(AvoidData& _data)
+unsigned long BoostComponent::GetUseEnergy(AvoidData& _data)
 {
 	_data.testUseFlg = false;
 
@@ -186,10 +189,10 @@ unsigned long BoostComponent::GetUseEnelgy(AvoidData& _data)
 
 	_data.testUseFlg = true;
 
-	return _data.useEnelgy;
+	return _data.useEnergy;
 }
 
-unsigned long BoostComponent::GetUseEnelgy(BoostData& _data, bool _avoidFlg)
+unsigned long BoostComponent::GetUseEnergy(BoostData& _data, bool _avoidFlg)
 {
 	_data.testUseFlg = false;
 	if (_avoidFlg)return 0;
@@ -197,7 +200,7 @@ unsigned long BoostComponent::GetUseEnelgy(BoostData& _data, bool _avoidFlg)
 
 	_data.testUseFlg = true;
 
-	return _data.useEnelgy;
+	return _data.useEnergy;
 }
 
 void BoostComponent::AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _avoidType)
@@ -227,13 +230,13 @@ void BoostComponent::AddBoostPow(const float _boostPow, InputName _boostType)
 	data[num].boost.pow += _boostPow;
 }
 
-void BoostComponent::AddBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType)
+void BoostComponent::AddBoostUseEnergy(const unsigned long _boostUseEnergy, InputName _boostType)
 {
 	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
 
 	if (num < 0 || num >= 6)return;
 
-	data[num].boost.useEnelgy += _boostUseEnelgy;
+	data[num].boost.useEnergy += _boostUseEnergy;
 }
 
 void BoostComponent::AddBoostAvoidPow(const float _avoidPow, InputName _avoidType)
@@ -245,13 +248,13 @@ void BoostComponent::AddBoostAvoidPow(const float _avoidPow, InputName _avoidTyp
 	data[num].avoid.pow += _avoidPow;
 }
 
-void BoostComponent::AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType)
+void BoostComponent::AddBoostAvoidUseEnergy(const unsigned long _avoidUseEnergy, InputName _avoidType)
 {
 	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
 
 	if (num < 0 || num >= 6)return;
 
-	data[num].avoid.useEnelgy += _avoidUseEnelgy;
+	data[num].avoid.useEnergy += _avoidUseEnergy;
 }
 
 void BoostComponent::SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _boost, InputName _avoidType)
@@ -283,13 +286,13 @@ void BoostComponent::SubBoostPow(const float _boostPow, InputName _boostType)
 	data[num].boost.pow -= _boostPow;
 }
 
-void BoostComponent::SubBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType)
+void BoostComponent::SubBoostUseEnergy(const unsigned long _boostUseEnergy, InputName _boostType)
 {
 	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
 
 	if (num < 0 || num >= 6)return;
 
-	data[num].boost.useEnelgy -= _boostUseEnelgy;
+	data[num].boost.useEnergy -= _boostUseEnergy;
 }
 
 void BoostComponent::SubBoostAvoidPow(const float _avoidPow, InputName _avoidType)
@@ -301,11 +304,11 @@ void BoostComponent::SubBoostAvoidPow(const float _avoidPow, InputName _avoidTyp
 	data[num].avoid.pow -= _avoidPow;
 }
 
-void BoostComponent::SubBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType)
+void BoostComponent::SubBoostAvoidUseEnergy(const unsigned long _avoidUseEnergy, InputName _avoidType)
 {
 	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
 
 	if (num < 0 || num >= 6)return;
 
-	data[num].avoid.useEnelgy -= _avoidUseEnelgy;
+	data[num].avoid.useEnergy -= _avoidUseEnergy;
 }
