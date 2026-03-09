@@ -3,6 +3,8 @@
 #include"../../AllStruct.h"
 
 #include"../../EditFrame/PartsParameters.h"
+#include"../../Attack/Attack.h"
+#include"../MechaPartsObjectFunction/WeaponFunction.h"
 
 #include"WeaponDataBase.h"
 
