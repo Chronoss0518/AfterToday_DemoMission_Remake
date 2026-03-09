@@ -8,10 +8,10 @@ namespace PartsParameterStruct
 		float mass = 0.0f;
 	};
 
-	struct EnelgyTankData
+	struct EnergyTankData
 	{
-		unsigned long maxEnelgy = 0;
-		unsigned long chargeEnelgy = 0;
+		unsigned long maxEnergy = 0;
+		unsigned long chargeEnergy = 0;
 	};
 
 	struct WalkData
@@ -121,7 +121,7 @@ struct PartsParameters:public ChCpp::BaseComponent
 
 	PartsParameterStruct::MainData mainData;
 
-	PartsParameterStruct::EnelgyTankData enelgyTankData;
+	PartsParameterStruct::EnergyTankData energyTankData;
 
 	PartsParameterStruct::WalkData walkData;
 
