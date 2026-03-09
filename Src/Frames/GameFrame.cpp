@@ -8,6 +8,7 @@
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../BaseMecha/MechaParts.h"
 #include"../BaseMecha/FunctionComponent/WeaponComponents.h"
+#include"../BaseMecha/FunctionComponent/EnergyComponent.h"
 #include"../Attack/AttackObject.h"
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
@@ -843,9 +844,11 @@ void GameFrame::Render2D(void)
 
 	if (drawMecha != nullptr)
 	{
+		auto&& energy = drawMecha->GetComponentObject<EnergyComponent>();
+
 		float damageParcec = static_cast<float>(drawMecha->GetDamage()) / drawMecha->GetMaxDamageGage();
 
-		float enelgyParcec = static_cast<float>(drawMecha->GetNowEnelgy()) / drawMecha->GetMaxEnelgy();
+		float enelgyParcec = static_cast<float>(energy->GetNowEnergy()) / energy->GetMaxEnergy();
 
 		if (!successFlg && !failedFlg)
 		{
