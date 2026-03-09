@@ -346,7 +346,6 @@ void EnergyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _part
 {
 	auto&& energy = GetComponent<EnergyComponent>(_base);
 
-
 	energy->AddMaxEnergy(maxEnergy);
 	energy->AddChargeEnergy(chargeEnergy);
 }
