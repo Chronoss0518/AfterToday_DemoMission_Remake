@@ -2,6 +2,8 @@
 
 #include"FunctionComponent.h"
 
+class EnergyComponent;
+
 class BoostComponent:public FunctionComponent
 {
 private:
@@ -32,9 +34,9 @@ private:
 
 	void UpdateModelFunction(Data& _data);
 
-	void UpdateBoost(Data& _data, const ChLMat& _nowTargetPoster);
+	void UpdateBoost(Data& _data, const ChLMat& _nowTargetPoster, EnergyComponent& _energy);
 
-	void UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster);
+	void UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster, EnergyComponent& _energy);
 
 public:
 

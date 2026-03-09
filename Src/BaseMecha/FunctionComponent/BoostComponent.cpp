@@ -45,7 +45,7 @@ void BoostComponent::ClearBoostAvoidWait(InputName _avoidType)
 
 void BoostComponent::Update()
 {
-	target->GetComponentObject<EnergyComponent>();
+	auto&& energy = GetComponent<EnergyComponent>();
 
 	unsigned long useEnergy = 0;
 
@@ -55,7 +55,7 @@ void BoostComponent::Update()
 		useEnergy += GetUseEnergy(data[i].boost, data[i].avoid.testUseFlg);
 	}
 
-	unsigned long nowEnergy = GetNowEnergy();
+	unsigned long nowEnergy = energy->GetNowEnergy();
 
 	for (unsigned char i = 0; i < 6; i++)
 	{
@@ -117,9 +117,11 @@ void BoostComponent::UpdateInputFunction(Data& _data)
 
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
-	UpdateAvoid(_data, tmp);
+	auto&& energy = GetComponent<EnergyComponent>();
 
-	UpdateBoost(_data, tmp);
+	UpdateAvoid(_data, tmp,*energy);
+
+	UpdateBoost(_data, tmp, *energy);
 
 }
 void BoostComponent::UpdateModelFunction(Data& _data)
@@ -130,19 +132,19 @@ void BoostComponent::UpdateModelFunction(Data& _data)
 	_data.nowBoostPow = _data.nowBoostPow < 0.0f ? 0.0f : _data.nowBoostPow;
 }
 
-void BoostComponent::BoostComponent::UpdateBoost(Data& _data, const ChLMat& _nowTargetPoster)
+void BoostComponent::UpdateBoost(Data& _data, const ChLMat& _nowTargetPoster, EnergyComponent& _energy)
 {
 	if (!_data.boost.testUseFlg)return;
 
 	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.boost.pow);
 
-	SubNowEnergy(_data.boost.useEnergy);
+	_energy.SubNowEnergy(_data.boost.useEnergy);
 
 	_data.nowBoostPow += 1.5f;
 }
 
 
-void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
+void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster, EnergyComponent& _energy)
 {
 	if (_data.avoid.wait >= _data.avoid.nowWaitTime)
 	{
@@ -164,7 +166,7 @@ void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
 
 	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.avoid.pow);
 
-	SubNowEnergy(_data.avoid.useEnergy);
+	_energy.SubNowEnergy(_data.avoid.useEnergy);
 
 	_data.nowBoostPow = 10.0f;
 }
