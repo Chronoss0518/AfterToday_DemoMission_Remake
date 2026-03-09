@@ -3,6 +3,7 @@
 
 #include"ParameterList.h"
 #include"../BaseMecha/MechaParts.h"
+#include"../BaseMecha/MechaPartsData/NextPosData.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"PartsParameters.h"
 #include"ParameterPanel.h"
@@ -299,7 +300,7 @@ void ParameterList::AddAllParameterData(PartsParameters& _parameter, ChPtr::Shar
 
 	_parameter += *coreBaseObj->GetComponent<PartsParameters>();
 
-	auto&& nextPosList = coreBaseObj->GetComponents<NextPos>();
+	auto&& nextPosList = coreBaseObj->GetComponents<NextPosData>();
 
 	for (auto&& nextPos : nextPosList)
 	{
@@ -328,7 +329,7 @@ void ParameterList::SubAllParameterData(PartsParameters& _parameter, ChPtr::Shar
 
 	_parameter -= *coreBaseObj->GetComponent<PartsParameters>();
 
-	auto&& nextPosList = coreBaseObj->GetComponents<NextPos>();
+	auto&& nextPosList = coreBaseObj->GetComponents<NextPosData>();
 
 	for (auto&& nextPos : nextPosList)
 	{
