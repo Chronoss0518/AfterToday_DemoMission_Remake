@@ -11,47 +11,47 @@ PartsParameters& PartsParameters::operator = (const PartsParameters& _parts)
 	mainData.hardness = _parts.mainData.hardness;
 	mainData.mass = _parts.mainData.mass;
 
-	enelgyTankData.chargeEnelgy = _parts.enelgyTankData.chargeEnelgy;
-	enelgyTankData.maxEnelgy = _parts.enelgyTankData.maxEnelgy;
+	energyTankData.chargeEnergy = _parts.energyTankData.chargeEnergy;
+	energyTankData.maxEnergy = _parts.energyTankData.maxEnergy;
 
 	walkData.movePower = _parts.walkData.movePower;
 	walkData.rotatePower = _parts.walkData.rotatePower;
 	walkData.jumpPower = _parts.walkData.jumpPower;
 
 	frontBoostData.boostPower = _parts.frontBoostData.boostPower;
-	frontBoostData.boostUseEnelgy = _parts.frontBoostData.boostUseEnelgy;
+	frontBoostData.boostUseEnergy = _parts.frontBoostData.boostUseEnergy;
 	frontBoostData.avoidPower = _parts.frontBoostData.avoidPower;
-	frontBoostData.avoidUseEnelgy = _parts.frontBoostData.avoidUseEnelgy;
+	frontBoostData.avoidUseEnergy = _parts.frontBoostData.avoidUseEnergy;
 	frontBoostData.avoidWait = _parts.frontBoostData.avoidWait;
 
 	backBoostData.boostPower = _parts.backBoostData.boostPower;
-	backBoostData.boostUseEnelgy = _parts.backBoostData.boostUseEnelgy;
+	backBoostData.boostUseEnergy = _parts.backBoostData.boostUseEnergy;
 	backBoostData.avoidPower = _parts.backBoostData.avoidPower;
-	backBoostData.avoidUseEnelgy = _parts.backBoostData.avoidUseEnelgy;
+	backBoostData.avoidUseEnergy = _parts.backBoostData.avoidUseEnergy;
 	backBoostData.avoidWait = _parts.backBoostData.avoidWait;
 
 	rightBoostData.boostPower = _parts.rightBoostData.boostPower;
-	rightBoostData.boostUseEnelgy = _parts.rightBoostData.boostUseEnelgy;
+	rightBoostData.boostUseEnergy = _parts.rightBoostData.boostUseEnergy;
 	rightBoostData.avoidPower = _parts.rightBoostData.avoidPower;
-	rightBoostData.avoidUseEnelgy = _parts.rightBoostData.avoidUseEnelgy;
+	rightBoostData.avoidUseEnergy = _parts.rightBoostData.avoidUseEnergy;
 	rightBoostData.avoidWait = _parts.rightBoostData.avoidWait;
 
 	leftBoostData.boostPower = _parts.leftBoostData.boostPower;
-	leftBoostData.boostUseEnelgy = _parts.leftBoostData.boostUseEnelgy;
+	leftBoostData.boostUseEnergy = _parts.leftBoostData.boostUseEnergy;
 	leftBoostData.avoidPower = _parts.leftBoostData.avoidPower;
-	leftBoostData.avoidUseEnelgy = _parts.leftBoostData.avoidUseEnelgy;
+	leftBoostData.avoidUseEnergy = _parts.leftBoostData.avoidUseEnergy;
 	leftBoostData.avoidWait = _parts.leftBoostData.avoidWait;
 
 	upBoostData.boostPower = _parts.upBoostData.boostPower;
-	upBoostData.boostUseEnelgy = _parts.upBoostData.boostUseEnelgy;
+	upBoostData.boostUseEnergy = _parts.upBoostData.boostUseEnergy;
 	upBoostData.avoidPower = _parts.upBoostData.avoidPower;
-	upBoostData.avoidUseEnelgy = _parts.upBoostData.avoidUseEnelgy;
+	upBoostData.avoidUseEnergy = _parts.upBoostData.avoidUseEnergy;
 	upBoostData.avoidWait = _parts.upBoostData.avoidWait;
 
 	downBoostData.boostPower = _parts.downBoostData.boostPower;
-	downBoostData.boostUseEnelgy = _parts.downBoostData.boostUseEnelgy;
+	downBoostData.boostUseEnergy = _parts.downBoostData.boostUseEnergy;
 	downBoostData.avoidPower = _parts.downBoostData.avoidPower;
-	downBoostData.avoidUseEnelgy = _parts.downBoostData.avoidUseEnelgy;
+	downBoostData.avoidUseEnergy = _parts.downBoostData.avoidUseEnergy;
 	downBoostData.avoidWait = _parts.downBoostData.avoidWait;
 
 	if (!weaponData.empty())
@@ -70,47 +70,47 @@ PartsParameters& PartsParameters::operator += (const PartsParameters& _parts)
 	mainData.hardness += _parts.mainData.hardness;
 	mainData.mass += _parts.mainData.mass;
 
-	enelgyTankData.chargeEnelgy += _parts.enelgyTankData.chargeEnelgy;
-	enelgyTankData.maxEnelgy += _parts.enelgyTankData.maxEnelgy;
+	energyTankData.chargeEnergy += _parts.energyTankData.chargeEnergy;
+	energyTankData.maxEnergy += _parts.energyTankData.maxEnergy;
 
 	walkData.movePower += _parts.walkData.movePower;
 	walkData.rotatePower += _parts.walkData.rotatePower;
 	walkData.jumpPower += _parts.walkData.jumpPower;
 
 	frontBoostData.boostPower += _parts.frontBoostData.boostPower;
-	frontBoostData.boostUseEnelgy += _parts.frontBoostData.boostUseEnelgy;
+	frontBoostData.boostUseEnergy += _parts.frontBoostData.boostUseEnergy;
 	frontBoostData.avoidPower += _parts.frontBoostData.avoidPower;
-	frontBoostData.avoidUseEnelgy += _parts.frontBoostData.avoidUseEnelgy;
+	frontBoostData.avoidUseEnergy += _parts.frontBoostData.avoidUseEnergy;
 	frontBoostData.avoidWait += _parts.frontBoostData.avoidWait;
 
 	backBoostData.boostPower += _parts.backBoostData.boostPower;
-	backBoostData.boostUseEnelgy += _parts.backBoostData.boostUseEnelgy;
+	backBoostData.boostUseEnergy += _parts.backBoostData.boostUseEnergy;
 	backBoostData.avoidPower += _parts.backBoostData.avoidPower;
-	backBoostData.avoidUseEnelgy += _parts.backBoostData.avoidUseEnelgy;
+	backBoostData.avoidUseEnergy += _parts.backBoostData.avoidUseEnergy;
 	backBoostData.avoidWait += _parts.backBoostData.avoidWait;
 
 	rightBoostData.boostPower += _parts.rightBoostData.boostPower;
-	rightBoostData.boostUseEnelgy += _parts.rightBoostData.boostUseEnelgy;
+	rightBoostData.boostUseEnergy += _parts.rightBoostData.boostUseEnergy;
 	rightBoostData.avoidPower += _parts.rightBoostData.avoidPower;
-	rightBoostData.avoidUseEnelgy += _parts.rightBoostData.avoidUseEnelgy;
+	rightBoostData.avoidUseEnergy += _parts.rightBoostData.avoidUseEnergy;
 	rightBoostData.avoidWait += _parts.rightBoostData.avoidWait;
 
 	leftBoostData.boostPower += _parts.leftBoostData.boostPower;
-	leftBoostData.boostUseEnelgy += _parts.leftBoostData.boostUseEnelgy;
+	leftBoostData.boostUseEnergy += _parts.leftBoostData.boostUseEnergy;
 	leftBoostData.avoidPower += _parts.leftBoostData.avoidPower;
-	leftBoostData.avoidUseEnelgy += _parts.leftBoostData.avoidUseEnelgy;
+	leftBoostData.avoidUseEnergy += _parts.leftBoostData.avoidUseEnergy;
 	leftBoostData.avoidWait += _parts.leftBoostData.avoidWait;
 
 	upBoostData.boostPower += _parts.upBoostData.boostPower;
-	upBoostData.boostUseEnelgy += _parts.upBoostData.boostUseEnelgy;
+	upBoostData.boostUseEnergy += _parts.upBoostData.boostUseEnergy;
 	upBoostData.avoidPower += _parts.upBoostData.avoidPower;
-	upBoostData.avoidUseEnelgy += _parts.upBoostData.avoidUseEnelgy;
+	upBoostData.avoidUseEnergy += _parts.upBoostData.avoidUseEnergy;
 	upBoostData.avoidWait += _parts.upBoostData.avoidWait;
 
 	downBoostData.boostPower += _parts.downBoostData.boostPower;
-	downBoostData.boostUseEnelgy += _parts.downBoostData.boostUseEnelgy;
+	downBoostData.boostUseEnergy += _parts.downBoostData.boostUseEnergy;
 	downBoostData.avoidPower += _parts.downBoostData.avoidPower;
-	downBoostData.avoidUseEnelgy += _parts.downBoostData.avoidUseEnelgy;
+	downBoostData.avoidUseEnergy += _parts.downBoostData.avoidUseEnergy;
 	downBoostData.avoidWait += _parts.downBoostData.avoidWait;
 
 	for (auto&& weapon : _parts.weaponData)
@@ -133,47 +133,47 @@ PartsParameters& PartsParameters::operator -= (const PartsParameters& _parts)
 	mainData.hardness -= _parts.mainData.hardness;
 	mainData.mass -= _parts.mainData.mass;
 
-	enelgyTankData.chargeEnelgy -= _parts.enelgyTankData.chargeEnelgy;
-	enelgyTankData.maxEnelgy -= _parts.enelgyTankData.maxEnelgy;
+	energyTankData.chargeEnergy -= _parts.energyTankData.chargeEnergy;
+	energyTankData.maxEnergy -= _parts.energyTankData.maxEnergy;
 
 	walkData.movePower -= _parts.walkData.movePower;
 	walkData.rotatePower -= _parts.walkData.rotatePower;
 	walkData.jumpPower -= _parts.walkData.jumpPower;
 
 	frontBoostData.boostPower -= _parts.frontBoostData.boostPower;
-	frontBoostData.boostUseEnelgy -= _parts.frontBoostData.boostUseEnelgy;
+	frontBoostData.boostUseEnergy -= _parts.frontBoostData.boostUseEnergy;
 	frontBoostData.avoidPower -= _parts.frontBoostData.avoidPower;
-	frontBoostData.avoidUseEnelgy -= _parts.frontBoostData.avoidUseEnelgy;
+	frontBoostData.avoidUseEnergy -= _parts.frontBoostData.avoidUseEnergy;
 	frontBoostData.avoidWait -= _parts.frontBoostData.avoidWait;
 
 	backBoostData.boostPower -= _parts.backBoostData.boostPower;
-	backBoostData.boostUseEnelgy -= _parts.backBoostData.boostUseEnelgy;
+	backBoostData.boostUseEnergy -= _parts.backBoostData.boostUseEnergy;
 	backBoostData.avoidPower -= _parts.backBoostData.avoidPower;
-	backBoostData.avoidUseEnelgy -= _parts.backBoostData.avoidUseEnelgy;
+	backBoostData.avoidUseEnergy -= _parts.backBoostData.avoidUseEnergy;
 	backBoostData.avoidWait -= _parts.backBoostData.avoidWait;
 
 	rightBoostData.boostPower -= _parts.rightBoostData.boostPower;
-	rightBoostData.boostUseEnelgy -= _parts.rightBoostData.boostUseEnelgy;
+	rightBoostData.boostUseEnergy -= _parts.rightBoostData.boostUseEnergy;
 	rightBoostData.avoidPower -= _parts.rightBoostData.avoidPower;
-	rightBoostData.avoidUseEnelgy -= _parts.rightBoostData.avoidUseEnelgy;
+	rightBoostData.avoidUseEnergy -= _parts.rightBoostData.avoidUseEnergy;
 	rightBoostData.avoidWait -= _parts.rightBoostData.avoidWait;
 
 	leftBoostData.boostPower -= _parts.leftBoostData.boostPower;
-	leftBoostData.boostUseEnelgy -= _parts.leftBoostData.boostUseEnelgy;
+	leftBoostData.boostUseEnergy -= _parts.leftBoostData.boostUseEnergy;
 	leftBoostData.avoidPower -= _parts.leftBoostData.avoidPower;
-	leftBoostData.avoidUseEnelgy -= _parts.leftBoostData.avoidUseEnelgy;
+	leftBoostData.avoidUseEnergy -= _parts.leftBoostData.avoidUseEnergy;
 	leftBoostData.avoidWait -= _parts.leftBoostData.avoidWait;
 
 	upBoostData.boostPower -= _parts.upBoostData.boostPower;
-	upBoostData.boostUseEnelgy -= _parts.upBoostData.boostUseEnelgy;
+	upBoostData.boostUseEnergy -= _parts.upBoostData.boostUseEnergy;
 	upBoostData.avoidPower -= _parts.upBoostData.avoidPower;
-	upBoostData.avoidUseEnelgy -= _parts.upBoostData.avoidUseEnelgy;
+	upBoostData.avoidUseEnergy -= _parts.upBoostData.avoidUseEnergy;
 	upBoostData.avoidWait -= _parts.upBoostData.avoidWait;
 
 	downBoostData.boostPower -= _parts.downBoostData.boostPower;
-	downBoostData.boostUseEnelgy -= _parts.downBoostData.boostUseEnelgy;
+	downBoostData.boostUseEnergy -= _parts.downBoostData.boostUseEnergy;
 	downBoostData.avoidPower -= _parts.downBoostData.avoidPower;
-	downBoostData.avoidUseEnelgy -= _parts.downBoostData.avoidUseEnelgy;
+	downBoostData.avoidUseEnergy -= _parts.downBoostData.avoidUseEnergy;
 	downBoostData.avoidWait -= _parts.downBoostData.avoidWait;
 
 	if (!weaponData.empty())
