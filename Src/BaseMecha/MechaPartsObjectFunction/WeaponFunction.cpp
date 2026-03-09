@@ -5,7 +5,9 @@
 #include"../../Attack/Attack.h"
 #include"../../Attack/AttackObject.h"
 #include"../MechaPartsObject.h"
-#include"../MechaParts.h"
+
+#include"../MechaPartsData/SwordData.h"
+#include"../MechaPartsData/GunData.h"
 
 #include"WeaponFunction.h"
 
