@@ -686,10 +686,7 @@ public://Set Functions//
 
 	void SetBoostData(PartsParameterStruct::BoostData& _boost);
 
-	inline void SetParamName(const std::wstring& _objectName)
-	{
-		objectName = _objectName;
-	}
+	inline void SetParamName(const std::wstring& _objectName) { objectName = _objectName; }
 
 	void SetUseEnergy(const unsigned long _useEnergy) { useEnergy = _useEnergy; }
 
@@ -698,6 +695,8 @@ public://Set Functions//
 	void SetAvoidUseEnergy(const unsigned long _avoidUseEnergy) { avoidUseEnergy = _avoidUseEnergy; }
 
 	void SetAvoidPower(const float _avoidPow) { avoidPow = _avoidPow; }
+
+	void SetAvoidWait(const unsigned long _avoidWait) { avoidWait = _avoidWait; }
 
 public://Get Functions//
 
@@ -719,9 +718,13 @@ public://Get Functions//
 
 	virtual BaseMecha::InputName GetAvoidInputName() = 0;
 
+	std::wstring GetPartsTypeTag()override { return GET_CLASS_NAME(BoostBrust); }
+
 protected:
 
-	std::wstring objectName;
+	std::wstring objectName = L"";
+
+	ChCpp::BitBool directionFlgs = ChCpp::BitBool(1);
 
 	//Boost使用時のエネルギー消費量//
 	unsigned long useEnergy = 0;

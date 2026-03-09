@@ -30,6 +30,7 @@ std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>
 	PARTS_DATA_CREATER(MoveAcceleration),
 	PARTS_DATA_CREATER(NextPos),
 	PARTS_DATA_CREATER(Posture),
+	PARTS_DATA_CREATER(BoostBrust),
 	PARTS_DATA_CREATER(RightBoostBrust),
 	PARTS_DATA_CREATER(LeftBoostBrust),
 	PARTS_DATA_CREATER(FrontBoostBrust),
