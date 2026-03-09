@@ -43,7 +43,7 @@ std::wstring WeaponFunction::GetWeaponName()
 	return data->GetWeaponName();
 }
 
-void SwordFunction::SetData(WeaponData* _data)
+void SwordFunction::SetData(WeaponDataBase* _data)
 {
 	swordData = ChPtr::SafeCast<SwordData>(_data);
 }
@@ -55,9 +55,7 @@ void SwordFunction::AttackFunction()
 
 void SwordFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)
 {
-
 	//attackData = Attack::CreateAttackData(_drawer, _device, swordData->GetObjectName());
-
 }
 
 void GunFunction::AttackFunction()
@@ -146,7 +144,7 @@ void GunFunction::StartSubFunction()
 	reloadFlg = true;
 }
 
-void GunFunction::SetData(WeaponData* _data)
+void GunFunction::SetData(WeaponDataBase* _data)
 {
 	gunData = ChPtr::SafeCast<GunData>(_data);
 }

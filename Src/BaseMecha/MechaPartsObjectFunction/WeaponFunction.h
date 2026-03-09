@@ -18,7 +18,7 @@ public:
 
 	virtual void Update()override;
 
-	inline void SetBaseData(WeaponData* _data)
+	inline void SetBaseData(WeaponDataBase* _data)
 	{
 		if (_data == nullptr)return;
 
@@ -40,7 +40,7 @@ public:
 
 	virtual void UpdateFunction() {};
 
-	virtual void SetData(WeaponData* _data) = 0;
+	virtual void SetData(WeaponDataBase* _data) = 0;
 
 public:
 
@@ -56,7 +56,7 @@ public:
 
 protected:
 
-	WeaponData* data = nullptr;
+	WeaponDataBase* data = nullptr;
 
 	ChD3D::X3DAudioObject se;
 
@@ -82,7 +82,7 @@ public:
 	//‚¿è•”•ª‚Æ“g‚Ì‹æØ‚è•”•ª//
 	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _hitStart) { hitObjectStart = _hitStart; }
 
-	void SetData(WeaponData* _data)override;
+	void SetData(WeaponDataBase* _data)override;
 
 public:
 
@@ -123,7 +123,7 @@ public:
 	//’e‚ªo‚Ä‚­‚éêŠ//
 	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _shotPos) { shotPos = _shotPos; }
 
-	void SetData(WeaponData* _data)override;
+	void SetData(WeaponDataBase* _data)override;
 
 public:
 
