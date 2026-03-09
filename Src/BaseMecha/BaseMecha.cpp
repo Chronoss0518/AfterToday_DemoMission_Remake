@@ -10,6 +10,9 @@
 #include"../Frames/GameFrame.h"
 #include"FunctionComponent/WeaponComponents.h"
 #include"FunctionComponent/BoostComponent.h"
+#include"FunctionComponent/EnergyComponent.h"
+#include"FunctionComponent/MoveComponent.h"
+
 #include"../Attack/AttackObject.h"
 #include"Controller/ControllerBase.h"
 
@@ -68,6 +71,11 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 
 	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(ChCpp::JsonBaseType<wchar_t>::GetParameter(text));
 
+	if (jsonObject == nullptr)return;
+
+	GetComponentObject<EnergyComponent>();
+	GetComponentObject<BaseMechaMoveComponent>();
+
 	LoadPartsList(_device, jsonObject);
 }
 
@@ -84,7 +92,6 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	testCollider.SetScalling(baseHitSize);
 
-	nowEnelgy = maxEnelgy;
 	nowDurable = durable;
 	physics->SetMass(mass);
 
@@ -135,13 +142,6 @@ void BaseMecha::Update()
 
 void BaseMecha::UpdateEnd()
 {
-	unsigned long fps = ChSystem::SysManager().GetFPS();
-
-	nowEnelgy += (chargeEnelgy * (120 / fps));
-
-	nowEnelgy = nowEnelgy > maxEnelgy ? maxEnelgy : nowEnelgy;
-
-
 	physics->Update();
 
 	float moveSize = physics->GetAddMovePowerVector().GetLen();

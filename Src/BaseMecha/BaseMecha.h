@@ -35,7 +35,7 @@ public://Inner Struct Class Enum//
 		Reload, RReload, LReload,
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
-		MagnificationUp, MagnificationDown,
+		ScopeMagnificationUp, ScopeMagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
 		MapOnOff, UseTargetLooker, None
 	};
@@ -101,10 +101,6 @@ public:
 
 	void AddMass(const float _mass) { mass += _mass; }
 
-	void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy += _maxEnelgy; }
-
-	void AddChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy += _chargeEnelgy; }
-
 	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
 
 	void AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
@@ -115,10 +111,6 @@ public:
 
 	void SubMass(const float _mass) { mass -= _mass; }
 
-	void SubMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy -= _maxEnelgy; }
-
-	void SubChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy -= _chargeEnelgy; }
-
 public://Set Function//
 
 	void SetTeamNo(const unsigned long _team);
@@ -128,10 +120,6 @@ public://Set Function//
 	void SetRotation(const ChVec3& _rot);
 
 	void SetMass(const float _mass) { mass = _mass; }
-
-	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
-
-	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
 
 	inline void SetPushFlg(const InputName _inputFlgName)
 	{
@@ -157,10 +145,6 @@ public://Get Function//
 	ChVec3 GetDamageDir() { return damageDir; }
 
 	inline float GetMass() { return mass; }
-
-	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
-
-	inline unsigned long GetMaxEnelgy() { return maxEnelgy; }
 
 	inline size_t GetMechaNo() { return mechasNo; }
 
@@ -198,7 +182,7 @@ public:
 
 	void Break();
 
-private:
+public:
 
 	template<class T>
 	ChPtr::Shared<T> GetComponentObject()
@@ -223,10 +207,6 @@ protected:
 	float mass = 1.0f;
 
 	size_t mechasNo = 0;
-
-	unsigned long maxEnelgy = 0;
-	unsigned long chargeEnelgy = 0;
-	unsigned long nowEnelgy = 0;
 
 	float groundDistance = 0.0f;
 
