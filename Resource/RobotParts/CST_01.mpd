@@ -5,7 +5,7 @@ EnergyTankData:{
 10000
 10
 }
-NextPos:{
+NextPosData:{
 Armature_FootPos
 Foot
 }
