@@ -24,9 +24,9 @@ namespace PartsParameterStruct
 	struct BoostData
 	{
 		float boostPower = 0.0f;
-		unsigned long boostUseEnelgy = 0;
+		unsigned long boostUseEnergy = 0;
 		float avoidPower = 0.0f;
-		unsigned long avoidUseEnelgy = 0;
+		unsigned long avoidUseEnergy = 0;
 		unsigned long avoidWait = 0;
 	};
 
