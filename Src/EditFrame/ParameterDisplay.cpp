@@ -11,16 +11,16 @@
 #define MAIN_DATA_HARDNESS L"硬さ"
 #define MAIN_DATA_MASS L"重量"
 
-#define ENELGY_TANK_DATA_MAX_ENELGY L"エネルギー回復速度"
-#define ENELGY_TANK_DATA_CHARGE_ENELGY L"エネルギー貯蓄量"
+#define ENERGY_TANK_DATA_MAX_ENERGY L"エネルギー回復速度"
+#define ENERGY_TANK_DATA_CHARGE_ENERGY L"エネルギー貯蓄量"
 
 #define WALK_DATA_MOVE_POWER L"移動力"
 #define WALK_DATA_ROTATE_POWER L"回転力"
 #define WALK_DATA_JUMP_POWER L"飛翔力"
 
-#define BOOST_DATA_BOOST_USE_ENELGY L"ブースト消費エネルギー"
+#define BOOST_DATA_BOOST_USE_ENERGY L"ブースト消費エネルギー"
 #define BOOST_DATA_BOOST_POWER L"ブースト推進力"
-#define BOOST_DATA_AVOID_USE_ENELGY L"クイックブースト消費エネルギー"
+#define BOOST_DATA_AVOID_USE_ENERGY L"クイックブースト消費エネルギー"
 #define BOOST_DATA_AVOID_POWER L"クイックブースト推進力"
 #define BOOST_DATA_AVOID_WAIT L"クイックブースト間隔"
 
@@ -82,9 +82,9 @@ void ParameterPartialDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _
 	AddParameters(_device, _textDrawer, L"Main Data",_titleDrawer, MAIN_DATA_HARDNESS, _valueDrawer, &baseParameter->mainData.hardness, &nextParameter->mainData.hardness,false);
 	AddParameters(_device, _textDrawer, L"Main Data",_titleDrawer, MAIN_DATA_MASS, _valueDrawer, &baseParameter->mainData.mass, &nextParameter->mainData.mass, true);
 
-	AddParameters(_device, _textDrawer, L"Enelgy Tank Data");
-	AddParameters(_device, _textDrawer, L"Enelgy Tank Data", _titleDrawer, ENELGY_TANK_DATA_MAX_ENELGY, _valueDrawer, &baseParameter->enelgyTankData.chargeEnelgy, &nextParameter->enelgyTankData.chargeEnelgy, false);
-	AddParameters(_device, _textDrawer, L"Enelgy Tank Data", _titleDrawer, ENELGY_TANK_DATA_CHARGE_ENELGY, _valueDrawer, &baseParameter->enelgyTankData.maxEnelgy, &nextParameter->enelgyTankData.maxEnelgy, false);
+	AddParameters(_device, _textDrawer, L"Energy Tank Data");
+	AddParameters(_device, _textDrawer, L"Energy Tank Data", _titleDrawer, ENERGY_TANK_DATA_MAX_ENERGY, _valueDrawer, &baseParameter->energyTankData.chargeEnergy, &nextParameter->energyTankData.chargeEnergy, false);
+	AddParameters(_device, _textDrawer, L"Energy Tank Data", _titleDrawer, ENERGY_TANK_DATA_CHARGE_ENERGY, _valueDrawer, &baseParameter->energyTankData.maxEnergy, &nextParameter->energyTankData.maxEnergy, false);
 
 	AddParameters(_device, _textDrawer, L"Walk Data");
 	AddParameters(_device, _textDrawer, L"Walk Data", _titleDrawer, WALK_DATA_MOVE_POWER, _valueDrawer, &baseParameter->walkData.movePower, &nextParameter->walkData.movePower,false);
@@ -92,45 +92,45 @@ void ParameterPartialDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _
 	AddParameters(_device, _textDrawer, L"Walk Data", _titleDrawer, WALK_DATA_JUMP_POWER, _valueDrawer, &baseParameter->walkData.jumpPower, &nextParameter->walkData.jumpPower, false);
 
 	AddParameters(_device, _textDrawer, L"Front Boost Data");
-	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->frontBoostData.boostPower, &nextParameter->frontBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->frontBoostData.boostUseEnelgy, &nextParameter->frontBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->frontBoostData.avoidPower, &nextParameter->frontBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->frontBoostData.avoidUseEnelgy, &nextParameter->frontBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->frontBoostData.boostPower, &nextParameter->frontBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->frontBoostData.boostUseEnergy, &nextParameter->frontBoostData.boostUseEnergy, true);
+	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->frontBoostData.avoidPower, &nextParameter->frontBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->frontBoostData.avoidUseEnergy, &nextParameter->frontBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->frontBoostData.avoidWait, &nextParameter->frontBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, L"Back Boost Data");
-	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->backBoostData.boostPower, &nextParameter->backBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->backBoostData.boostUseEnelgy, &nextParameter->backBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->backBoostData.avoidPower, &nextParameter->backBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->backBoostData.avoidUseEnelgy, &nextParameter->backBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->backBoostData.boostPower, &nextParameter->backBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->backBoostData.boostUseEnergy, &nextParameter->backBoostData.boostUseEnergy, true);
+	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->backBoostData.avoidPower, &nextParameter->backBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->backBoostData.avoidUseEnergy, &nextParameter->backBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Back Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->backBoostData.avoidWait, &nextParameter->backBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, L"Right Boost Data");
-	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->rightBoostData.boostPower, &nextParameter->rightBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->rightBoostData.boostUseEnelgy, &nextParameter->rightBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->rightBoostData.avoidPower, &nextParameter->rightBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->rightBoostData.avoidUseEnelgy, &nextParameter->rightBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->rightBoostData.boostPower, &nextParameter->rightBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->rightBoostData.boostUseEnergy, &nextParameter->rightBoostData.boostUseEnergy, true);
+	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->rightBoostData.avoidPower, &nextParameter->rightBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->rightBoostData.avoidUseEnergy, &nextParameter->rightBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Right Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->rightBoostData.avoidWait, &nextParameter->rightBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, L"Left Boost Data");
-	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->leftBoostData.boostPower, &nextParameter->leftBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->leftBoostData.boostUseEnelgy, &nextParameter->leftBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->leftBoostData.avoidPower, &nextParameter->leftBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->leftBoostData.avoidUseEnelgy, &nextParameter->leftBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->leftBoostData.boostPower, &nextParameter->leftBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->leftBoostData.boostUseEnergy, &nextParameter->leftBoostData.boostUseEnergy, true);
+	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->leftBoostData.avoidPower, &nextParameter->leftBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->leftBoostData.avoidUseEnergy, &nextParameter->leftBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Left Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->leftBoostData.avoidWait, &nextParameter->leftBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, L"Up Boost Data");
-	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->upBoostData.boostPower, &nextParameter->upBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->upBoostData.boostUseEnelgy, &nextParameter->upBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->upBoostData.avoidPower, &nextParameter->upBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->upBoostData.avoidUseEnelgy, &nextParameter->upBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->upBoostData.boostPower, &nextParameter->upBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->upBoostData.boostUseEnergy, &nextParameter->upBoostData.boostUseEnergy, true);
+	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->upBoostData.avoidPower, &nextParameter->upBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->upBoostData.avoidUseEnergy, &nextParameter->upBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Up Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->upBoostData.avoidWait, &nextParameter->upBoostData.avoidWait, true);
 
 	AddParameters(_device, _textDrawer, L"Down Boost Data");
-	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENELGY, _valueDrawer, &baseParameter->downBoostData.boostPower, &nextParameter->downBoostData.boostPower, false);
-	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->downBoostData.boostUseEnelgy, &nextParameter->downBoostData.boostUseEnelgy, true);
-	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENELGY, _valueDrawer, &baseParameter->downBoostData.avoidPower, &nextParameter->downBoostData.avoidPower, false);
-	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->downBoostData.avoidUseEnelgy, &nextParameter->downBoostData.avoidUseEnelgy, true);
+	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->downBoostData.boostPower, &nextParameter->downBoostData.boostPower, false);
+	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->downBoostData.boostUseEnergy, &nextParameter->downBoostData.boostUseEnergy, true);
+	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->downBoostData.avoidPower, &nextParameter->downBoostData.avoidPower, false);
+	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->downBoostData.avoidUseEnergy, &nextParameter->downBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->downBoostData.avoidWait, &nextParameter->downBoostData.avoidWait, true);
 
 	UpdateCountPanels(_device, _textDrawer);
