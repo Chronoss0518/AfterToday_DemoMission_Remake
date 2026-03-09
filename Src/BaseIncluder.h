@@ -21,7 +21,6 @@
 #endif
 
 #ifndef TARGET_DIRECTORY 
-//#define	TARGET_DIRECTORY(current_path) "../é¿çs/data/" current_path
 #define	TARGET_DIRECTORY(current_path) L"Resource/" current_path
 #endif
 
@@ -172,7 +171,7 @@ _SPRITE.SetPosRect(_RECT)
 
 
 
-enum class FrameNo :unsigned long
+enum class FrameNo :unsigned char
 {
 #if USE_TITLE_FRAME_FLG
 	Title,
