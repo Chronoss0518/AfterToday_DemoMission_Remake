@@ -1,7 +1,7 @@
 #pragma once
 
-
 #include"../MechaPartsObject.h"
+#include"../MechaPartsData/WeaponDataBase.h"
 
 
 class WeaponData;
