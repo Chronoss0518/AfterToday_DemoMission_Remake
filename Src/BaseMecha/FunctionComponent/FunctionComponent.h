@@ -32,10 +32,6 @@ public:
 
 public:
 
-	inline void SubNowEnelgy(unsigned long _use) { target->nowEnelgy -= (target->nowEnelgy - _use) > 0 ? _use : target->nowEnelgy; }
-
-public:
-
 	inline void SetPushFlg(InputName _name){ target->inputFlgs.SetBitTrue(ChStd::EnumCast(_name)); }
 
 	inline void RemovePushFlg(InputName _name) { target->inputFlgs.SetBitFalse(ChStd::EnumCast(_name)); }
@@ -50,8 +46,14 @@ public:
 
 	ChVec3 GetRotateVector() { return target->physics->GetAddRotatePowerVector(); }
 
-	unsigned long GetNowEnelgy() { return target->nowEnelgy; }
+protected:
 
+	template<class T>
+	ChPtr::Shared<T> GetComponent()
+	{
+		if (ChPtr::NullCheck(target))return nullptr;
+		return target->GetComponentObject<T>();
+	}
 
 private:
 

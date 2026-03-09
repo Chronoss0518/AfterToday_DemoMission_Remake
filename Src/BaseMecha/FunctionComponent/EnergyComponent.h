@@ -10,9 +10,9 @@ public:
 
 public:
 
-	inline void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnergy += _maxEnelgy; nowEnergy = maxEnergy; }
+	inline void AddMaxEnergy(const unsigned long _maxEnelgy) { maxEnergy += _maxEnelgy; nowEnergy = maxEnergy; }
 
-	inline void AddChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnergy += _chargeEnelgy; }
+	inline void AddChargeEnergy(const unsigned long _chargeEnelgy) { chargeEnergy += _chargeEnelgy; }
 
 public:
 
