@@ -43,6 +43,10 @@ class MechaParts : public ChCpp::BaseObject<wchar_t>
 {
 public:
 
+	friend PartsDataBase;
+
+public:
+
 	static std::map<std::wstring,ChPtr::Shared<MechaParts>>& LoadPartsList()
 	{
 		static std::map<std::wstring,ChPtr::Shared<MechaParts>>ins;
@@ -196,16 +200,12 @@ public://Get Functions//
 	virtual std::wstring GetPartsTypeTag() = 0;
 
 	template<class T>
-	ChPtr::Shared<T> GetComponent(ChCpp::BaseObject<wchar_t>& _base)
+	ChPtr::Shared<T> GetComponent(BaseMecha& _base)
 	{
-		auto&& ComList = _base.GetComponents<T>();
-		if (!ComList.empty())
-		{
-			return ComList[0];
-		}
-
-		return _base.SetComponent<T>();
+		return _base.GetComponentObject<T>();
 	}
+
+	ChD3D11::Mesh11<wchar_t>& GetModel(MechaPartsObject& _base);
 
 public:
 
@@ -213,7 +213,7 @@ public:
 
 };
 
-class EnelgyTankData : public PartsDataBase
+class EnergyTankData : public PartsDataBase
 {
 
 public:
@@ -232,25 +232,25 @@ public://Set Functions//
 
 	void SetPartsParameter(PartsParameters& _base)override;
 
-	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
+	void SetMaxEnergy(const unsigned long _maxEnergy) { maxEnergy = _maxEnergy; }
 
-	void SetChargeEnelgy(const unsigned long _createEnelgy) { chargeEnelgy = _createEnelgy; }
+	void SetChargeEnergy(const unsigned long _createEnergy) { chargeEnergy = _createEnergy; }
 
 public://Get Functions//
 
-	virtual std::wstring GetPartsTypeTag()override { return  GET_CLASS_NAME(EnelgyTankData); }
+	virtual std::wstring GetPartsTypeTag()override { return  GET_CLASS_NAME(EnergyTankData); }
 
-	unsigned long GetMaxEnelgy()const { return maxEnelgy; }
+	unsigned long GetMaxEnergy()const { return maxEnergy; }
 
-	unsigned long GetChargeEnelgy()const { return chargeEnelgy; }
+	unsigned long GetChargeEnergy()const { return chargeEnergy; }
 
 protected:
 
 	//保持可能最大エネルギー//
-	unsigned long maxEnelgy = 0;
+	unsigned long maxEnergy = 0;
 
 	//エネルギーの生成量//
-	unsigned long chargeEnelgy = 0;
+	unsigned long chargeEnergy = 0;
 
 };
 
@@ -645,7 +645,6 @@ public://Get Functions//
 
 	std::wstring GetPartsTypeTag()override { return GET_CLASS_NAME(Posture); }
 
-
 	inline RotateAxis GetRotateAxis()
 	{
 		return posture.GetRotateAxis();
@@ -692,11 +691,11 @@ public://Set Functions//
 		objectName = _objectName;
 	}
 
-	void SetUseEnelgy(const unsigned long _useEnelgy) { useEnelgy = _useEnelgy; }
+	void SetUseEnergy(const unsigned long _useEnergy) { useEnergy = _useEnergy; }
 
 	void SetBoostPower(const float _boostPower) { boostPower = _boostPower; }
 
-	void SetAvoidUseEnelgy(const unsigned long _avoidUseEnelgy) { avoidUseEnelgy = _avoidUseEnelgy; }
+	void SetAvoidUseEnergy(const unsigned long _avoidUseEnergy) { avoidUseEnergy = _avoidUseEnergy; }
 
 	void SetAvoidPower(const float _avoidPow) { avoidPow = _avoidPow; }
 
@@ -704,11 +703,11 @@ public://Get Functions//
 
 	inline std::wstring GetObjectNameList() { return objectName; }
 
-	unsigned long GetBoostUseEnelgy()const { return useEnelgy; }
+	unsigned long GetBoostUseEnergy()const { return useEnergy; }
 
 	float GetBoostPower()const { return boostPower; }
 
-	unsigned long GetAvoidUseEnelgy()const { return avoidUseEnelgy; }
+	unsigned long GetAvoidUseEnergy()const { return avoidUseEnergy; }
 
 	float GetAvoidPower()const { return avoidPow; }
 
@@ -725,11 +724,11 @@ protected:
 	std::wstring objectName;
 
 	//Boost使用時のエネルギー消費量//
-	unsigned long useEnelgy = 0;
+	unsigned long useEnergy = 0;
 	//Boost使用時における移動力//
 	float boostPower = 0.0f;
 	//回避時のエネルギー消費量//
-	unsigned long avoidUseEnelgy = 0;
+	unsigned long avoidUseEnergy = 0;
 	//回避する際の移動力//
 	float avoidPow = 0.0f;
 	//回避する際の再使用時間//

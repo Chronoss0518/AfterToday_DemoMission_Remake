@@ -5,6 +5,7 @@
 #include"MechaParts.h"
 #include"../EditFrame/PartsParameters.h"
 #include"FunctionComponent/BoostComponent.h"
+#include"FunctionComponent/EnergyComponent.h"
 #include"FunctionComponent/MoveComponent.h"
 #include"FunctionComponent/CameraComponent.h"
 #include"../Attack/Attack.h"
@@ -20,7 +21,7 @@ ChCpp::ModelController::ObjFile<wchar_t> objLoader;
 
 std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>MechaParts::createFunctions
 {
-	PARTS_DATA_CREATER(EnelgyTankData),
+	PARTS_DATA_CREATER(EnergyTankData),
 	PARTS_DATA_CREATER(CameraData),
 	PARTS_DATA_CREATER(ScopeData),
 	PARTS_DATA_CREATER(WalkData),
@@ -310,40 +311,50 @@ void MechaParts::Draw(const ChMat_11& _mat)
 	drawer->Draw(*model, _mat);
 }
 
-void EnelgyTankData::RemoveParameter(BaseMecha& _base)
+ChD3D11::Mesh11<wchar_t>& PartsDataBase::GetModel(MechaPartsObject& _base)
 {
-	_base.SubMaxEnelgy(maxEnelgy);
-	_base.SubChargeEnelgy(chargeEnelgy);
+	return *_base.GetBaseObject()->model;
 }
 
-unsigned long EnelgyTankData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
+void EnergyTankData::RemoveParameter(BaseMecha& _base)
 {
-	maxEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos).c_str());
-	chargeEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
+	auto&& energy = GetComponent<EnergyComponent>(_base);
+
+	energy->SubMaxEnergy(maxEnergy);
+	energy->SubChargeEnergy(chargeEnergy);
+}
+
+unsigned long EnergyTankData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
+{
+	maxEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos).c_str());
+	chargeEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
 
 	return _textPos + 2;
 }
 
-std::wstring EnelgyTankData::Serialize()
+std::wstring EnergyTankData::Serialize()
 {
 	std::wstring res = L"";
 
-	res += std::to_wstring(maxEnelgy) + L"\n";
-	res += std::to_wstring(chargeEnelgy) + L"\n";
+	res += std::to_wstring(maxEnergy) + L"\n";
+	res += std::to_wstring(chargeEnergy) + L"\n";
 
 	return res;
 }
 
-void EnelgyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
+void EnergyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
-	_base.AddMaxEnelgy(maxEnelgy);
-	_base.AddChargeEnelgy(chargeEnelgy);
+	auto&& energy = GetComponent<EnergyComponent>(_base);
+
+
+	energy->AddMaxEnergy(maxEnergy);
+	energy->AddChargeEnergy(chargeEnergy);
 }
 
-void EnelgyTankData::SetPartsParameter(PartsParameters& _base)
+void EnergyTankData::SetPartsParameter(PartsParameters& _base)
 {
-	_base.enelgyTankData.maxEnelgy += maxEnelgy;
-	_base.enelgyTankData.chargeEnelgy += chargeEnelgy;
+	_base.energyTankData.maxEnergy += maxEnergy;
+	_base.energyTankData.chargeEnergy += chargeEnergy;
 }
 
 unsigned long CameraData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
@@ -521,6 +532,12 @@ void CaterpillarData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _par
 	walk->SetMovePow(movePow);
 	walk->SetRotatePow(rotatePow);
 	walk->SetJumpPow(jumpPow);
+
+	auto&& model = GetModel(_parts);
+
+	auto&& maxPos = model.GetInitAllFrameMaxPos();
+
+	walk->SetSideSize(maxPos.x);
 }
 
 void CaterpillarData::SetPartsParameter(PartsParameters& _base)
@@ -574,9 +591,9 @@ void BoostBrust::RemoveParameter(BaseMecha& _base)
 	auto&& com = GetComponent<BoostComponent>(_base);
 
 	com->SubBoostPow(boostPower, GetBoostInputName());
-	com->SubBoostUseEnelgy(useEnelgy, GetBoostInputName());
+	com->SubBoostUseEnergy(useEnergy, GetBoostInputName());
 	com->SubBoostAvoidPow(avoidPow, GetAvoidInputName());
-	com->SubBoostAvoidUseEnelgy(avoidUseEnelgy, GetAvoidInputName());
+	com->SubBoostAvoidUseEnergy(avoidUseEnergy, GetAvoidInputName());
 	com->SetBoostAvoidWait(avoidWait, GetAvoidInputName());
 
 	com->AddBoostWhereBoostName(obj, GetBoostInputName());
@@ -586,9 +603,9 @@ void BoostBrust::RemoveParameter(BaseMecha& _base)
 unsigned long BoostBrust::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	objectName = _text.GetTextLine(_textPos);
-	useEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
+	useEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str());
 	boostPower = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 2).c_str());
-	avoidUseEnelgy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 3).c_str());
+	avoidUseEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 3).c_str());
 	avoidPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 4).c_str());
 	avoidWait = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 5).c_str());
 	return _textPos + 6;
@@ -600,9 +617,9 @@ std::wstring BoostBrust::Serialize()
 	std::wstring res = L"";
 
 	res = objectName;
-	res += std::to_wstring(useEnelgy) + L"\n";
+	res += std::to_wstring(useEnergy) + L"\n";
 	res += std::to_wstring(boostPower) + L"\n";
-	res += std::to_wstring(avoidUseEnelgy) + L"\n";
+	res += std::to_wstring(avoidUseEnergy) + L"\n";
 	res += std::to_wstring(avoidPow) + L"\n";
 
 	return res;
@@ -617,9 +634,9 @@ void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 	auto&& com = GetComponent<BoostComponent>(_base);
 
 	com->AddBoostPow(boostPower, GetBoostInputName());
-	com->AddBoostUseEnelgy(useEnelgy, GetBoostInputName());
+	com->AddBoostUseEnergy(useEnergy, GetBoostInputName());
 	com->AddBoostAvoidPow(avoidPow, GetAvoidInputName());
-	com->AddBoostAvoidUseEnelgy(avoidUseEnelgy, GetAvoidInputName());
+	com->AddBoostAvoidUseEnergy(avoidUseEnergy, GetAvoidInputName());
 	com->SetBoostAvoidWait(avoidWait, GetAvoidInputName());
 
 	com->AddBoostWhereBoostName(obj, GetBoostInputName());
@@ -628,9 +645,9 @@ void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, G
 void BoostBrust::SetBoostData(PartsParameterStruct::BoostData& _boost)
 {
 	_boost.boostPower = boostPower;
-	_boost.boostUseEnelgy = useEnelgy;
+	_boost.boostUseEnergy = useEnergy;
 	_boost.avoidPower = avoidPow;
-	_boost.avoidUseEnelgy = avoidUseEnelgy;
+	_boost.avoidUseEnergy = avoidUseEnergy;
 	_boost.avoidWait = avoidWait;
 }
 
