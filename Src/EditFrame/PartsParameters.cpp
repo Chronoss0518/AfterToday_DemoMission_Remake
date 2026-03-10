@@ -14,10 +14,6 @@ PartsParameters& PartsParameters::operator = (const PartsParameters& _parts)
 	energyTankData.chargeEnergy = _parts.energyTankData.chargeEnergy;
 	energyTankData.maxEnergy = _parts.energyTankData.maxEnergy;
 
-	walkData.movePower = _parts.walkData.movePower;
-	walkData.rotatePower = _parts.walkData.rotatePower;
-	walkData.jumpPower = _parts.walkData.jumpPower;
-
 	frontBoostData.boostPower = _parts.frontBoostData.boostPower;
 	frontBoostData.boostUseEnergy = _parts.frontBoostData.boostUseEnergy;
 	frontBoostData.avoidPower = _parts.frontBoostData.avoidPower;
@@ -62,6 +58,14 @@ PartsParameters& PartsParameters::operator = (const PartsParameters& _parts)
 		weaponData.push_back(weapon);
 	}
 
+	if (!moveData.empty())
+		moveData.clear();
+
+	for (auto&& move : _parts.moveData)
+	{
+		moveData.push_back(move);
+	}
+
 	return *this;
 }
 
@@ -72,10 +76,6 @@ PartsParameters& PartsParameters::operator += (const PartsParameters& _parts)
 
 	energyTankData.chargeEnergy += _parts.energyTankData.chargeEnergy;
 	energyTankData.maxEnergy += _parts.energyTankData.maxEnergy;
-
-	walkData.movePower += _parts.walkData.movePower;
-	walkData.rotatePower += _parts.walkData.rotatePower;
-	walkData.jumpPower += _parts.walkData.jumpPower;
 
 	frontBoostData.boostPower += _parts.frontBoostData.boostPower;
 	frontBoostData.boostUseEnergy += _parts.frontBoostData.boostUseEnergy;
@@ -118,6 +118,11 @@ PartsParameters& PartsParameters::operator += (const PartsParameters& _parts)
 		weaponData.push_back(weapon);
 	}
 
+	for (auto&& move : _parts.moveData)
+	{
+		moveData.push_back(move);
+	}
+
 	return *this;
 }
 
@@ -135,10 +140,6 @@ PartsParameters& PartsParameters::operator -= (const PartsParameters& _parts)
 
 	energyTankData.chargeEnergy -= _parts.energyTankData.chargeEnergy;
 	energyTankData.maxEnergy -= _parts.energyTankData.maxEnergy;
-
-	walkData.movePower -= _parts.walkData.movePower;
-	walkData.rotatePower -= _parts.walkData.rotatePower;
-	walkData.jumpPower -= _parts.walkData.jumpPower;
 
 	frontBoostData.boostPower -= _parts.frontBoostData.boostPower;
 	frontBoostData.boostUseEnergy -= _parts.frontBoostData.boostUseEnergy;
@@ -178,6 +179,9 @@ PartsParameters& PartsParameters::operator -= (const PartsParameters& _parts)
 
 	if (!weaponData.empty())
 		weaponData.clear();
+
+	if (!moveData.empty())
+		moveData.clear();
 
 	return *this;
 }
