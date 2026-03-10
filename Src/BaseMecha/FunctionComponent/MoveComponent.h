@@ -76,6 +76,10 @@ public:
 
 	void Update()override;
 
+public:
+
+	void SetSideSize(const float& _size) { sideSize = _size; }
+
 private:
 
 	void FlagTest();
@@ -98,6 +102,11 @@ private:
 		const ChLMat& _nowTargetPoster);
 
 	void RotationUpdate(float _rotatePower, InputName _right, InputName _left, const ChVec3& _direction);
+
+private:
+
+	float sideSize = 0.0f;
+
 };
 
 //êÌì¨ã@//

@@ -137,11 +137,11 @@ void TankMoveComponent::Update()
 	MoveUpdate(GetMovePow(), InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
 	MoveUpdate(GetMovePow(), InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
 
-	OneSideMoveUpdate(GetRotatePow(), InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-1.0f, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(1.0f, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	OneSideMoveUpdate(GetRotatePow(), InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-1.0f, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(1.0f, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(GetRotatePow(), InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
 
 	RotationUpdate(GetRotatePow(), InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
 	RotationUpdate(GetRotatePow(), InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
@@ -242,7 +242,7 @@ void TankMoveComponent::OneSideMoveUpdate(
 
 	tmpMat = tmpMat * _nowTargetPoster;
 
-	AddMoveVector(tmpMat.TransformCoord(_moveDirection) * _rotatePower * 0.5f);
+	AddMoveVector(tmpMat.TransformCoord(_moveDirection) * _rotatePower * 0.25f);
 }
 
 void TankMoveComponent::RotationUpdate(float _rotatePower, InputName _right, InputName _left, const ChVec3& _direction)
