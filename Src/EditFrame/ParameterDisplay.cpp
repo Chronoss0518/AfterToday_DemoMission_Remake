@@ -14,9 +14,11 @@
 #define ENERGY_TANK_DATA_MAX_ENERGY L"エネルギー回復速度"
 #define ENERGY_TANK_DATA_CHARGE_ENERGY L"エネルギー貯蓄量"
 
-#define WALK_DATA_MOVE_POWER L"移動力"
-#define WALK_DATA_ROTATE_POWER L"回転力"
-#define WALK_DATA_JUMP_POWER L"飛翔力"
+#define MOVE_DATA_MOVE_POWER L"移動力"
+#define MOVE_DATA_ROTATE_POWER L"水平方向の回転力"
+#define MOVE_DATA_VERTICAL_ROTATE_POWER L"垂直方向の回転力"
+#define MOVE_DATA_VIEW_ROTATE_POWER L"カメラの回転力"
+#define MOVE_DATA_JUMP_POWER L"飛翔力"
 
 #define BOOST_DATA_BOOST_USE_ENERGY L"ブースト消費エネルギー"
 #define BOOST_DATA_BOOST_POWER L"ブースト推進力"
@@ -86,11 +88,6 @@ void ParameterPartialDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _
 	AddParameters(_device, _textDrawer, L"Energy Tank Data", _titleDrawer, ENERGY_TANK_DATA_MAX_ENERGY, _valueDrawer, &baseParameter->energyTankData.chargeEnergy, &nextParameter->energyTankData.chargeEnergy, false);
 	AddParameters(_device, _textDrawer, L"Energy Tank Data", _titleDrawer, ENERGY_TANK_DATA_CHARGE_ENERGY, _valueDrawer, &baseParameter->energyTankData.maxEnergy, &nextParameter->energyTankData.maxEnergy, false);
 
-	AddParameters(_device, _textDrawer, L"Walk Data");
-	AddParameters(_device, _textDrawer, L"Walk Data", _titleDrawer, WALK_DATA_MOVE_POWER, _valueDrawer, &baseParameter->walkData.movePower, &nextParameter->walkData.movePower,false);
-	AddParameters(_device, _textDrawer, L"Walk Data", _titleDrawer, WALK_DATA_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.rotatePower, &nextParameter->walkData.rotatePower, false);
-	AddParameters(_device, _textDrawer, L"Walk Data", _titleDrawer, WALK_DATA_JUMP_POWER, _valueDrawer, &baseParameter->walkData.jumpPower, &nextParameter->walkData.jumpPower, false);
-
 	AddParameters(_device, _textDrawer, L"Front Boost Data");
 	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_USE_ENERGY, _valueDrawer, &baseParameter->frontBoostData.boostPower, &nextParameter->frontBoostData.boostPower, false);
 	AddParameters(_device, _textDrawer, L"Front Boost Data", _titleDrawer, BOOST_DATA_BOOST_POWER, _valueDrawer, &baseParameter->frontBoostData.boostUseEnergy, &nextParameter->frontBoostData.boostUseEnergy, true);
@@ -132,6 +129,13 @@ void ParameterPartialDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _
 	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_USE_ENERGY, _valueDrawer, &baseParameter->downBoostData.avoidPower, &nextParameter->downBoostData.avoidPower, false);
 	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->downBoostData.avoidUseEnergy, &nextParameter->downBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->downBoostData.avoidWait, &nextParameter->downBoostData.avoidWait, true);
+
+	AddParameters(_device, _textDrawer, L"Move Data");
+	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_VIEW_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.cameraRotatePower, &nextParameter->walkData.cameraRotatePower, false);
+	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_MOVE_POWER, _valueDrawer, &baseParameter->walkData.movePower, &nextParameter->walkData.movePower, false);
+	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.rotatePower, &nextParameter->walkData.rotatePower, false);
+	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_VERTICAL_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.verticalRotatePower, &nextParameter->walkData.verticalRotatePower, false);
+	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_JUMP_POWER, _valueDrawer, &baseParameter->walkData.jumpPower, &nextParameter->walkData.jumpPower, false);
 
 	UpdateCountPanels(_device, _textDrawer);
 

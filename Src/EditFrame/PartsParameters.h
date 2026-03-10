@@ -16,8 +16,10 @@ namespace PartsParameterStruct
 
 	struct WalkData
 	{
+		float cameraRotatePower = 0.0f;
 		float movePower = 0.0f;
 		float rotatePower = 0.0f;
+		float verticalRotatePower = 0.0f;
 		float jumpPower = 0.0f;
 	};
 
