@@ -35,6 +35,7 @@ public://Inner Struct Class Enum//
 		Reload, RReload, LReload,
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
+		MoveUpChange, MoveDownChange,
 		ScopeMagnificationUp, ScopeMagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
 		MapOnOff, UseTargetLooker, None
