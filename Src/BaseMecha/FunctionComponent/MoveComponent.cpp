@@ -32,6 +32,13 @@ void MoveComponent::IsAvoBoostTest(InputName _input, InputName _boost, InputName
 
 void MoveComponent::Update()
 {
+	if (IsPushFlg(InputName::MoveUpChange))
+		UpChangeMoveObject();
+
+	if (IsPushFlg(InputName::MoveDownChange))
+		DownChangeMoveObject();
+
+
 	if (moveObjectList.size() <= nowMoveObject)return;
 	auto&& moveObject = moveObjectList[nowMoveObject];
 
