@@ -80,7 +80,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 	if (jsonObject == nullptr)return;
 
 	GetComponentObject<EnergyComponent>();
-	GetComponentObject<BaseMechaMoveComponent>();
+	GetComponentObject<MoveComponent>();
 
 	LoadPartsList(_device, jsonObject);
 }
