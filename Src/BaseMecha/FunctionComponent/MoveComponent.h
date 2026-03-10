@@ -173,7 +173,17 @@ public:
 
 public:
 
+	void SetMovePow(const float _movePow) { movePow = _movePow; }
+
+	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
+
 	void SetSideSize(const float& _size) { sideSize = _size; }
+
+protected:
+
+	inline float GetMovePow() { return movePow; }
+
+	inline float GetJumpPow() { return jumpPow; }
 
 private:
 

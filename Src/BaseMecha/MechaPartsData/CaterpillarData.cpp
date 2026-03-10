@@ -37,22 +37,27 @@ std::wstring CaterpillarData::Serialize()
 
 void CaterpillarData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
-	auto&& walk = GetComponent<TankMoveComponent>(_base);
+	auto&& move = GetComponent<MoveComponent>(_base);
 
-	walk->SetMovePow(movePow);
-	walk->SetRotatePow(rotatePow);
-	walk->SetJumpPow(jumpPow);
+	auto&& tank = ChPtr::Make_S<TankMoveComponent>(_base);
+
+	tank->SetMovePow(movePow);
+	tank->SetJumpPow(jumpPow);
 
 	auto&& model = GetModel(_parts);
 
 	auto&& maxPos = model.GetInitAllFrameMaxPos();
 
-	walk->SetSideSize(maxPos.x);
+	tank->SetSideSize(maxPos.x);
+
+	move->AddMoveObject(tank);
 }
 
 void CaterpillarData::SetPartsParameter(PartsParameters& _base)
 {
-	_base.walkData.movePower = movePow;
-	_base.walkData.rotatePower = rotatePow;
-	_base.walkData.jumpPower = jumpPow;
+	auto&& move = ChPtr::Make_S<PartsParameterStruct::MoveData>();
+	move->movePower = movePow;
+	move->jumpPower = jumpPow;
+
+	_base.moveData.push_back(move);
 }
