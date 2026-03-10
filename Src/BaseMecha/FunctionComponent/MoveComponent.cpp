@@ -7,21 +7,21 @@
 
 #define VIEW_ROTATE_POW_UPPER 16 / 9
 
-void MoveComponentBase::CamVerticalRotateUpdate(InputName _input, const float _camRot)
+void MoveComponent::CamVerticalRotateUpdate(InputName _input, const float _camRot)
 {
 	if (!IsPushFlg(_input))return;
 
 	AddViewRotateVertical(_camRot / PhysicsMachine::GetFPS());
 }
 
-void MoveComponentBase::CamHorizontalRotateUpdate(InputName _input, const float _camRot)
+void MoveComponent::CamHorizontalRotateUpdate(InputName _input, const float _camRot)
 {
 	if (!IsPushFlg(_input))return;
 
 	AddViewRotateHorizontal(_camRot / PhysicsMachine::GetFPS());
 }
 
-void MoveComponentBase::IsAvoBoostTest(InputName _input, InputName _boost, InputName _avoid)
+void MoveComponent::IsAvoBoostTest(InputName _input, InputName _boost, InputName _avoid)
 {
 	if (!IsPushFlg(_input))return;
 
@@ -30,40 +30,72 @@ void MoveComponentBase::IsAvoBoostTest(InputName _input, InputName _boost, Input
 	if (IsPushFlg(InputName::Boost)) SetPushFlg(_boost);
 }
 
-void BaseMechaMoveComponent::Update()
+void MoveComponent::Update()
+{
+	if (moveObjectList.size() <= nowMoveObject)return;
+	auto&& moveObject = moveObjectList[nowMoveObject];
+
+	if (moveObject == nullptr)return;
+
+	moveObject->UpdateBegin();
+	
+
+	IsAvoBoostTest(InputName::Front, InputName::FrontBoost, InputName::FrontAvo);
+	IsAvoBoostTest(InputName::Back, InputName::BackBoost, InputName::BackAvo);
+	IsAvoBoostTest(InputName::Left, InputName::LeftBoost, InputName::LeftAvo);
+	IsAvoBoostTest(InputName::Right, InputName::RightBoost, InputName::RightAvo);
+	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
+	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
+
+
+	CamVerticalRotateUpdate(InputName::CameraUpRotation, cameraRotatePow);
+	CamVerticalRotateUpdate(InputName::CameraDownRotation, -cameraRotatePow);
+
+	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -cameraRotatePow * VIEW_ROTATE_POW_UPPER);
+	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, cameraRotatePow * VIEW_ROTATE_POW_UPPER);
+
+	moveObject->Update();
+}
+
+void BaseMechaMoveComponent::UpdateBegin()
 {
 	SetSelfViewRotateHorizontalFlg(false);
 
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
+	if (IsPushFlg(InputName::CameraRightRotation))
+	{
+		SetPushFlg(InputName::RightRotation);
+		RemovePushFlg(InputName::CameraRightRotation);
+	}
 
-	if (IsPushFlg(InputName::CameraRightRotation))SetPushFlg(InputName::RightRotation);
-	if (IsPushFlg(InputName::CameraLeftRotation))SetPushFlg(InputName::LeftRotation);
+	if (IsPushFlg(InputName::CameraLeftRotation))
+	{
+		SetPushFlg(InputName::LeftRotation);
+		RemovePushFlg(InputName::CameraLeftRotation);
+	}
 
+}
+
+void BaseMechaMoveComponent::Update()
+{
 	ChLMat tmp;
 
 	//tmp.SetRotationXAxis(ChMath::ToRadian(GetRotation().x));
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
-	MoveUpdate(GetMovePow(), InputName::Front, InputName::FrontBoost, InputName::FrontAvo, ChVec3(0.0f, 0.0f, 1.0f), tmp);
-	MoveUpdate(GetMovePow(), InputName::Back, InputName::BackBoost, InputName::BackAvo, ChVec3(0.0f, 0.0f, -1.0f), tmp);
-	MoveUpdate(GetMovePow(), InputName::Left, InputName::LeftBoost, InputName::LeftAvo, ChVec3(-1.0f, 0.0f, 0.0f), tmp);
-	MoveUpdate(GetMovePow(), InputName::Right, InputName::RightBoost, InputName::RightAvo, ChVec3(1.0f, 0.0f, 0.0f), tmp);
-	MoveUpdate(GetJumpPow(), InputName::Up, InputName::UpBoost, InputName::UpAvo, ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	MoveUpdate(GetJumpPow(), InputName::Down, InputName::DownBoost, InputName::DownAvo, ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	MoveUpdate(movePow, InputName::Front, ChVec3(0.0f, 0.0f, 1.0f), tmp);
+	MoveUpdate(movePow, InputName::Back, ChVec3(0.0f, 0.0f, -1.0f), tmp);
+	MoveUpdate(movePow, InputName::Left, ChVec3(-1.0f, 0.0f, 0.0f), tmp);
+	MoveUpdate(movePow, InputName::Right, ChVec3(1.0f, 0.0f, 0.0f), tmp);
+	MoveUpdate(jumpPow, InputName::Up, ChVec3(0.0f, 1.0f, 0.0f), tmp);
 	
-	RotateUpdate(GetRotatePow(), InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
-	RotateUpdate(GetRotatePow(), InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
+	RotateUpdate(rotatePow, InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
+	RotateUpdate(rotatePow, InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
 
 }
 
-void BaseMechaMoveComponent::MoveUpdate(float _pow, InputName _input, InputName _boost, InputName _avoid, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
+void BaseMechaMoveComponent::MoveUpdate(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
 {
 	if (!IsPushFlg(_input))return;
-
-	IsAvoBoostTest(_input, _boost, _avoid);
-
-	if (_input == InputName::Down)return;
 	if (!IsGround())return;
 
 	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _pow);
@@ -83,20 +115,7 @@ void BaseMechaMoveComponent::RotateUpdate(float _pow, InputName _input, const Ch
 
 void ShipMoveComponent::Update()
 {
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
-
-	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
-	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
-
 	SetSelfViewRotateHorizontalFlg(true);
-
-	IsAvoBoostTest(InputName::Front, InputName::FrontBoost, InputName::FrontAvo);
-	IsAvoBoostTest(InputName::Back, InputName::BackBoost, InputName::BackAvo);
-	IsAvoBoostTest(InputName::Right, InputName::RightBoost, InputName::RightAvo);
-	IsAvoBoostTest(InputName::Left, InputName::LeftBoost, InputName::LeftAvo);
-	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
-	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
 
 	if (!IsGround())return;
 
@@ -109,20 +128,7 @@ void ShipMoveComponent::Update()
 void TankMoveComponent::Update()
 {	
 
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, GetCameraRotatePow());
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -GetCameraRotatePow());
-
-	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
-	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, GetCameraRotatePow() * VIEW_ROTATE_POW_UPPER);
-
 	SetSelfViewRotateHorizontalFlg(true);
-
-	IsAvoBoostTest(InputName::Front, InputName::FrontBoost, InputName::FrontAvo);
-	IsAvoBoostTest(InputName::Back, InputName::BackBoost, InputName::BackAvo);
-	IsAvoBoostTest(InputName::Right, InputName::RightBoost, InputName::RightAvo);
-	IsAvoBoostTest(InputName::Left, InputName::LeftBoost, InputName::LeftAvo);
-	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
-	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
 
 	if (!IsGround())return;
 
@@ -134,20 +140,20 @@ void TankMoveComponent::Update()
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
 
-	MoveUpdate(GetMovePow(), InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
-	MoveUpdate(GetMovePow(), InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
+	MoveUpdate(movePow, InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
+	MoveUpdate(movePow, InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
 
-	OneSideMoveUpdate(GetRotatePow(), InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(movePow * 0.5f, InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(movePow * 0.5f, InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	OneSideMoveUpdate(GetRotatePow(), InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(GetRotatePow(), InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(movePow * 0.5f, InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(movePow * 0.5f, InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
 
-	RotationUpdate(GetRotatePow(), InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
-	RotationUpdate(GetRotatePow(), InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
+	RotationUpdate(movePow, InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
+	RotationUpdate(movePow, InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
 
 	if (IsPushFlg(InputName::Up))
-		AddMoveVector(tmp.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f)) * GetJumpPow());
+		AddMoveVector(tmp.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f)) * jumpPow);
 }
 
 void TankMoveComponent::FlagTest()
