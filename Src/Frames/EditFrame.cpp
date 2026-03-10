@@ -98,6 +98,54 @@ public:
 	ChPtr::Shared<MechaPartsObject> targetParts = nullptr;
 };
 
+class EditControlListItem : public SelectListItemBase
+{
+public:
+
+	inline virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)
+	{
+		ChVec4 rect = _rect;
+		rect.left += TEXT_ALIGN;
+		rect.right -= TEXT_ALIGN;
+
+		rect.top = _rect.top + PANEL_TITLE_Y;
+		rect.bottom = rect.top + PANEL_TITLE_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+	}
+
+	ChPtr::Shared<ChD3D11::Texture11> positionNameTexture = nullptr;
+};
+
+class EditControlList : public EditListItem
+{
+public:
+
+	inline void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)override
+	{
+		ChVec4 rect = _rect;
+		rect.left += TEXT_ALIGN;
+		rect.right -= TEXT_ALIGN;
+
+		rect.top = _rect.top + PANEL_POS_TITLE_Y;
+		rect.bottom = rect.top + PANEL_POS_TITLE_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+
+		rect.top = _rect.top + PANEL_POS_PARTS_Y;
+		rect.bottom = rect.top + PANEL_POS_PARTS_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*partsNameTexture, _sprite);
+	}
+
+	ChPtr::Shared<ChD3D11::Texture11>  partsNameTexture = nullptr;
+	ChPtr::Shared<MechaPartsObject> targetParts = nullptr;
+};
+
+
 class EditList :public SelectListBase
 {
 public:

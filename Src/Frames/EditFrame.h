@@ -10,6 +10,9 @@ class LoadDisplay;
 class EditList;
 class EditListItem;
 
+class EditControlListItem;
+class EditControlList;
+
 class ParameterList;
 
 
