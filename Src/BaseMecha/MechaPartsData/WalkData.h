@@ -2,6 +2,8 @@
 
 #include"../MechaParts.h"
 
+class BaseMechaMoveComponent;
+
 class WalkData :public PartsDataBase
 {
 
@@ -47,6 +49,8 @@ protected:
 	float rotatePow = 0.0f;
 	//”òãÄ—Í//
 	float jumpPow = 0.0f;
+
+	ChPtr::Shared<BaseMechaMoveComponent>moveObject = nullptr;
 
 	constexpr static const char* GetSpeedTag() { return "Speed:\n"; }
 

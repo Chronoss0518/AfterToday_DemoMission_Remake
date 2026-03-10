@@ -10,11 +10,9 @@
 
 void WalkData::RemoveParameter(BaseMecha& _base)
 {
-	auto&& walk = GetComponent<BaseMechaMoveComponent>(_base);
+	auto&& move = GetComponent<MoveComponent>(_base);
 
-	walk->SetMovePow(0.0f);
-	walk->SetRotatePow(0.0f);
-	walk->SetJumpPow(0.0f);
+	move->RemoveMoveObject(moveObject);
 }
 
 unsigned long WalkData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
@@ -38,16 +36,23 @@ std::wstring WalkData::Serialize()
 
 void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
-	auto&& walk = GetComponent<BaseMechaMoveComponent>(_base);
+	auto&& move = GetComponent<MoveComponent>(_base);
 
-	walk->SetMovePow(movePow);
-	walk->SetRotatePow(rotatePow);
-	walk->SetJumpPow(jumpPow);
+	moveObject = ChPtr::Make_S<BaseMechaMoveComponent>();
+
+	moveObject->SetMovePow(movePow);
+	moveObject->SetRotatePow(rotatePow);
+	moveObject->SetJumpPow(jumpPow);
+
+	move->AddMoveObject(moveObject);
 }
 
 void WalkData::SetPartsParameter(PartsParameters& _base)
 {
-	_base.walkData.movePower = movePow;
-	_base.walkData.rotatePower = rotatePow;
-	_base.walkData.jumpPower = jumpPow;
+	auto&& move = ChPtr::Make_S<PartsParameterStruct::MoveData>();
+	move->movePower = movePow;
+	move->rotatePower = rotatePow;
+	move->jumpPower = jumpPow;
+
+	_base.moveData.push_back(move);
 }
