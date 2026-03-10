@@ -2,6 +2,8 @@
 
 #include"../MechaParts.h"
 
+class TankMoveComponent;
+
 class CaterpillarData :public PartsDataBase
 {
 
@@ -23,8 +25,6 @@ public://Set Functions//
 
 	void SetMovePow(const float _movePow) { movePow = _movePow; }
 
-	void SetRotatePow(const float _rotatePow) { rotatePow = _rotatePow; }
-
 	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
 
 public://Get Functions//
@@ -35,18 +35,16 @@ public://Get Functions//
 
 	float GetMovePower()const { return movePow; }
 
-	float GetRotatePower()const { return rotatePow; }
-
 	float GetJumpPower()const { return jumpPow; }
 
 protected:
 
 	//ˆÚ“®—Í//
 	float movePow = 0.0f;
-	//‰ñ“]—Í//
-	float rotatePow = 0.0f;
 	//”òãÄ—Í//
 	float jumpPow = 0.0f;
+
+	ChPtr::Shared<TankMoveComponent>moveObject = nullptr;
 
 	constexpr static const char* GetSpeedTag() { return "Speed:\n"; }
 

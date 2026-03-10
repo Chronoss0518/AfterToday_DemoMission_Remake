@@ -9,18 +9,15 @@
 
 void CaterpillarData::RemoveParameter(BaseMecha& _base)
 {
-	auto&& walk = GetComponent<BaseMechaMoveComponent>(_base);
+	auto&& walk = GetComponent<MoveComponent>(_base);
 
-	walk->SetMovePow(0.0f);
-	walk->SetRotatePow(0.0f);
-	walk->SetJumpPow(0.0f);
+	walk->RemoveMoveObject(moveObject);
 }
 
 unsigned long CaterpillarData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	movePow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos).c_str());
-	rotatePow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 1).c_str());
-	jumpPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 2).c_str());
+	jumpPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 1).c_str());
 	return _textPos + 3;
 }
 
@@ -29,7 +26,6 @@ std::wstring CaterpillarData::Serialize()
 	std::wstring res = L"";
 
 	res += std::to_wstring(movePow) + L"\n";
-	res += std::to_wstring(rotatePow) + L"\n";
 	res += std::to_wstring(jumpPow) + L"\n";
 
 	return res;
@@ -39,18 +35,18 @@ void CaterpillarData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _par
 {
 	auto&& move = GetComponent<MoveComponent>(_base);
 
-	auto&& tank = ChPtr::Make_S<TankMoveComponent>(_base);
+	moveObject = ChPtr::Make_S<TankMoveComponent>(_base);
 
-	tank->SetMovePow(movePow);
-	tank->SetJumpPow(jumpPow);
+	moveObject->SetMovePow(movePow);
+	moveObject->SetJumpPow(jumpPow);
 
 	auto&& model = GetModel(_parts);
 
 	auto&& maxPos = model.GetInitAllFrameMaxPos();
 
-	tank->SetSideSize(maxPos.x);
+	moveObject->SetSideSize(maxPos.x);
 
-	move->AddMoveObject(tank);
+	move->AddMoveObject(moveObject);
 }
 
 void CaterpillarData::SetPartsParameter(PartsParameters& _base)
