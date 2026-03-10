@@ -14,6 +14,15 @@ public:
 
 	public:
 
+		inline void SetMoveComponent(MoveComponent* _com)
+		{
+			if (ChPtr::NullCheck(_com))return;
+			if (ChPtr::NotNullCheck(component))return;
+			component = _com;
+		}
+
+	public:
+
 		inline bool IsPushFlg(InputName _name) { return component->IsPushFlg(_name); }
 
 		inline bool IsGround() { return component->IsGround(); }
@@ -67,6 +76,7 @@ public:
 	inline void AddMoveObject(ChPtr::Shared<MoveObject> _moveObject)
 	{
 		if (_moveObject == nullptr)return;
+		_moveObject->SetMoveComponent(this);
 		moveObjectList.push_back(_moveObject);
 	}
 
