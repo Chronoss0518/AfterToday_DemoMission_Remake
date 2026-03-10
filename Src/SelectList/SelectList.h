@@ -28,6 +28,8 @@ public:
 
 public:
 
+	inline void SetIsControl(bool _isControl) { isControlFlg = _isControl; }
+
 	inline void SetLoopFlg(bool _flg) { loopFlg = _flg; }
 
 	void SetStartPosition(float _x, float _y);
@@ -64,6 +66,10 @@ public:
 	{
 		return itemList.size();
 	}
+
+public:
+
+	inline bool IsControl() { return isControlFlg; }
 
 public:
 
@@ -124,4 +130,6 @@ private:
 	MoveDiraction moveDirection = MoveDiraction::Vertical;
 
 	std::vector<ChPtr::Shared<SelectListItemBase>>itemList;
+
+	bool isControlFlg = true;
 };

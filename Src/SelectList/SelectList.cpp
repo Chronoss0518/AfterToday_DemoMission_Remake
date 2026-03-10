@@ -49,6 +49,8 @@ void SelectListBase::SetAlighSize(const ChVec2& _size)
 
 bool SelectListBase::UpdateMouse()
 {
+	if (!isControlFlg)return false;
+
 	drawPos %= itemList.size();
 
 	ChVec4 rect = GetStartRect();
@@ -69,6 +71,8 @@ bool SelectListBase::UpdateMouse()
 
 void SelectListBase::UpdateAction(MenuBase::ActionType _type)
 {
+	if (!isControlFlg)return;
+
 	UpdateActionVertical(_type);
 
 	UpdateActionHorizontal(_type);
