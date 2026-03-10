@@ -72,6 +72,19 @@ public:
 
 public:
 
+	void RemoveMoveObject(ChPtr::Shared<MoveObject> _moveObject)
+	{
+		if (_moveObject == nullptr)return;
+		for (int i = 0; i < moveObjectList.size(); i++)
+		{
+			if (moveObjectList[i].get() != _moveObject.get())continue;
+			moveObjectList.erase(moveObjectList.begin() + i);
+			return;
+		}
+	}
+
+public:
+
 	void UpChangeMoveObject() 
 	{
 		nowMoveObject = (nowMoveObject + 1) % moveObjectList.size();
