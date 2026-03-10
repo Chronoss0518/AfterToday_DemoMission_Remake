@@ -82,6 +82,12 @@
     <Filter Include="EditFrame\ParameterList">
       <UniqueIdentifier>{54b9a59e-aebc-4d8d-9950-8e6d680565e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFrame\Controller">
+      <UniqueIdentifier>{0f30bdd0-ba70-44e5-a744-ce4797dd1e23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFrame\MechaPartsData">
+      <UniqueIdentifier>{be477601-0840-49ff-b299-50e3d4bd4490}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\BaseIncluder.h">
@@ -143,9 +149,6 @@
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUMoveInput.h">
       <Filter>GameFrame\CPU</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h">
-      <Filter>GameFrame</Filter>
     </ClInclude>
     <ClInclude Include="Src\GameScript\GameScript.h">
       <Filter>GameFrame</Filter>
@@ -267,6 +270,57 @@
     <ClInclude Include="Src\EditFrame\ParameterPanel.h">
       <Filter>EditFrame\ParameterList</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h">
+      <Filter>GameFrame\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\PlayerController.h">
+      <Filter>GameFrame\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Controller\CPUController.h">
+      <Filter>GameFrame\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\EnergyComponent.h">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\EnergyTankData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\CameraData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\ScopeData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\AerodynamicsData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\WalkData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\CaterpillarData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosBase.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\PostureData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\BoostBrustData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\WeaponDataBase.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\SwordData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\GunData.h">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -336,9 +390,6 @@
       <Filter>GameFrame</Filter>
     </ClCompile>
     <ClCompile Include="Src\Shader\TextureEffectShader\TextureEffectShader.cpp">
-      <Filter>GameFrame</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BaseMecha\Controller\ControllerBase.cpp">
       <Filter>GameFrame</Filter>
     </ClCompile>
     <ClCompile Include="..\PhysicsMachineTest\Physics_AirPower.cpp">
@@ -436,6 +487,57 @@
     </ClCompile>
     <ClCompile Include="Src\EditFrame\PartsParameters.cpp">
       <Filter>EditFrame\ParameterList</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\ControllerBase.cpp">
+      <Filter>GameFrame\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\PlayerController.cpp">
+      <Filter>GameFrame\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\Controller\CPUController.cpp">
+      <Filter>GameFrame\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\EnergyComponent.cpp">
+      <Filter>GameFrame\FunctionComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\EnergyTankData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\CameraData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\ScopeData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\AerodynamicsData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\WalkData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\CaterpillarData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosBase.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\PostureData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\BoostBrustData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\WeaponDataBase.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\SwordData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\GunData.cpp">
+      <Filter>GameFrame\MechaPartsData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -569,6 +671,18 @@
     </None>
     <None Include="Resource\RobotParts\core_parts_list.lst">
       <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\StageScript\stage_no_cpu.chs">
+      <Filter>StageScript</Filter>
+    </None>
+    <None Include="Resource\RobotParts\CST_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\RobotParts\FST_01.mpd">
+      <Filter>PartsDatas</Filter>
+    </None>
+    <None Include="Resource\StageData\Test_Stage_NoCPU.json">
+      <Filter>StageData</Filter>
     </None>
   </ItemGroup>
 </Project>
