@@ -18,6 +18,12 @@
 
 #include"CPU/CPULooker.h"
 
+#define DEBUG_UP_CAMERA true
+
+#if DEBUG_UP_CAMERA
+#define DEBUG_UP_POS 50.0f
+#endif
+
 #define CAMERA_Y_POS 4.0f
 
 #define CENTER_LEN 5.0f
@@ -169,7 +175,11 @@ void BaseMecha::MoveEnd()
 	auto viewLookPos = GetViewLookPos();
 
 	ChMat_11 tmpMat;
+#if DEBUG_UP_CAMERA
+	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 0.0f, 1.0f));
+#else
 	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
+#endif
 
 	viewMat = tmpMat;
 
@@ -210,6 +220,11 @@ void BaseMecha::AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
 
 ChVec3 BaseMecha::GetViewPos()
 {
+#if DEBUG_UP_CAMERA
+	return centerPos +  ChVec3(0.0f, DEBUG_UP_POS, 0.0f);
+
+#endif
+
 
 	ChLMat camYMat, camXMat;
 
@@ -224,6 +239,11 @@ ChVec3 BaseMecha::GetViewPos()
 ChVec3 BaseMecha::GetViewLookPos()
 {
 
+#if DEBUG_UP_CAMERA
+
+	return centerPos;
+
+#endif
 	ChLMat camYMat, camXMat;
 
 	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
