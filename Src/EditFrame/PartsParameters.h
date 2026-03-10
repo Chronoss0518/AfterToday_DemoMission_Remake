@@ -14,7 +14,7 @@ namespace PartsParameterStruct
 		unsigned long chargeEnergy = 0;
 	};
 
-	struct WalkData
+	struct MoveData
 	{
 		float cameraRotatePower = 0.0f;
 		float movePower = 0.0f;
@@ -125,8 +125,6 @@ struct PartsParameters:public ChCpp::BaseComponent
 
 	PartsParameterStruct::EnergyTankData energyTankData;
 
-	PartsParameterStruct::WalkData walkData;
-
 	PartsParameterStruct::BoostData frontBoostData;
 
 	PartsParameterStruct::BoostData backBoostData;
@@ -138,6 +136,8 @@ struct PartsParameters:public ChCpp::BaseComponent
 	PartsParameterStruct::BoostData upBoostData;
 
 	PartsParameterStruct::BoostData downBoostData;
+
+	std::vector<ChPtr::Shared<PartsParameterStruct::MoveData>>moveData;
 
 	std::vector<ChPtr::Shared<PartsParameterStruct::WeaponData>>weaponData;
 };

@@ -130,12 +130,11 @@ void ParameterPartialDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _
 	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_POWER, _valueDrawer, &baseParameter->downBoostData.avoidUseEnergy, &nextParameter->downBoostData.avoidUseEnergy, true);
 	AddParameters(_device, _textDrawer, L"Down Boost Data", _titleDrawer, BOOST_DATA_AVOID_WAIT, _valueDrawer, &baseParameter->downBoostData.avoidWait, &nextParameter->downBoostData.avoidWait, true);
 
-	AddParameters(_device, _textDrawer, L"Move Data");
-	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_VIEW_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.cameraRotatePower, &nextParameter->walkData.cameraRotatePower, false);
-	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_MOVE_POWER, _valueDrawer, &baseParameter->walkData.movePower, &nextParameter->walkData.movePower, false);
-	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.rotatePower, &nextParameter->walkData.rotatePower, false);
-	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_VERTICAL_ROTATE_POWER, _valueDrawer, &baseParameter->walkData.verticalRotatePower, &nextParameter->walkData.verticalRotatePower, false);
-	AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_JUMP_POWER, _valueDrawer, &baseParameter->walkData.jumpPower, &nextParameter->walkData.jumpPower, false);
+	UpdateCountPanels(_device, _textDrawer);
+
+	AddMoveParameters(_device, _textDrawer, _titleDrawer, _valueDrawer);
+
+	baseParameterCount = panels.size();
 
 	UpdateCountPanels(_device, _textDrawer);
 
@@ -152,6 +151,21 @@ void ParameterPartialDisplay::AddPanelList()
 	countPanels.push_back(countPanel);
 	panels.push_back(countPanel);
 	countPanel->SetBackGround(titleBGTexture);
+}
+
+void ParameterPartialDisplay::AddMoveParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
+{
+	for (size_t i = 0; i < nextParameter->moveData.size(); i++)
+	{
+		auto&& move = nextParameter->moveData[i];
+
+		AddParameters(_device, _textDrawer, L"Move Data" + std::to_wstring(i));
+		AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_VIEW_ROTATE_POWER, _valueDrawer, &move->cameraRotatePower, &move->cameraRotatePower, false);
+		AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_MOVE_POWER, _valueDrawer, &move->movePower, &move->movePower, false);
+		AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_ROTATE_POWER, _valueDrawer, &move->rotatePower, &move->rotatePower, false);
+		AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_VERTICAL_ROTATE_POWER, _valueDrawer, &move->verticalRotatePower, &move->verticalRotatePower, false);
+		AddParameters(_device, _textDrawer, L"Move Data", _titleDrawer, MOVE_DATA_JUMP_POWER, _valueDrawer, &move->jumpPower, &move->jumpPower, false);
+	}
 }
 
 void ParameterPartialDisplay::AddWeaponParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer)
