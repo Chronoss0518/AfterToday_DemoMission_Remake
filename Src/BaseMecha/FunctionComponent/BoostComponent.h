@@ -2,7 +2,9 @@
 
 #include"FunctionComponent.h"
 
+
 class EnergyComponent;
+class BoostBrust;
 
 class BoostComponent:public FunctionComponent
 {
@@ -42,18 +44,6 @@ public:
 
 	void SetBoostAvoidWait(const unsigned long _avoidWait, InputName _avoidType);
 
-public:
-
-	float GetAvoidMovePow(InputName _avoidType);
-
-	unsigned long GetAvoidUseEnergy(InputName _avoidType);
-
-	unsigned long GetAvoidUseWaitTime(InputName _avoidType);
-
-	float GetBoostMovePow(InputName _avoidType);
-
-	unsigned long GetBoostUseEnergy(InputName _avoidType);
-
 private:
 
 	unsigned long GetUseEnergy(AvoidData& _data);
@@ -92,7 +82,7 @@ private:
 
 	static float& GetBoostUpPowerRegister() { static float regist = 0.3f; return regist; }
 
-	enum class BoostDirection
+	enum class BoostDirection : unsigned char
 	{
 		Front,
 		Back,
@@ -145,4 +135,5 @@ private:
 
 	Data data[6];
 
+	std::vector<ChPtr::Shared<BoostBrust>>boostBrustList;
 };
