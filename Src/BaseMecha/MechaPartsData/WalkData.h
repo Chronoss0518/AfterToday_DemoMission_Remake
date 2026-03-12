@@ -1,10 +1,10 @@
 #pragma once
 
-#include"../MechaParts.h"
+#include"MoveDataBase.h"
 
 class BaseMechaMoveComponent;
 
-class WalkData :public PartsDataBase
+class WalkData :public MoveDataBase
 {
 
 public:
@@ -51,7 +51,4 @@ protected:
 	float jumpPow = 0.0f;
 
 	ChPtr::Shared<BaseMechaMoveComponent>moveObject = nullptr;
-
-	constexpr static const char* GetSpeedTag() { return "Speed:\n"; }
-
 };

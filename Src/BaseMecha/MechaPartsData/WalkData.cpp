@@ -12,7 +12,7 @@ void WalkData::RemoveParameter(BaseMecha& _base)
 {
 	auto&& move = GetComponent<MoveComponent>(_base);
 
-	move->RemoveMoveObject(moveObject);
+	move->RemoveMoveObject(this);
 }
 
 unsigned long WalkData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
@@ -40,9 +40,7 @@ void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Gam
 
 	moveObject = ChPtr::Make_S<BaseMechaMoveComponent>();
 
-	moveObject->SetMovePow(movePow);
-	moveObject->SetRotatePow(rotatePow);
-	moveObject->SetJumpPow(jumpPow);
+	moveObject->SetWalkData(this);
 
 	move->AddMoveObject(moveObject);
 }
@@ -50,6 +48,7 @@ void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Gam
 void WalkData::SetPartsParameter(PartsParameters& _base)
 {
 	auto&& move = ChPtr::Make_S<PartsParameterStruct::MoveData>();
+
 	move->movePower = movePow;
 	move->rotatePower = rotatePow;
 	move->jumpPower = jumpPow;

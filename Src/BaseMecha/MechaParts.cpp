@@ -123,7 +123,6 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstrin
 
 void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::wstring& _text)
 {
-
 	ChCpp::TextObject<wchar_t> textObject;
 	textObject.SetCutChar(L"\n");
 	textObject.SetText(_text.c_str());
@@ -139,7 +138,6 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 	{
 		i = CreateDatas(_base, textObject, i);
 	}
-
 }
 
 void MechaParts::LoadModel(ID3D11Device* _device, const std::wstring& _fileName)

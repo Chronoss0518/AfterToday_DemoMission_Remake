@@ -2,6 +2,11 @@
 
 #include"FunctionComponent.h"
 
+class WalkData;
+class CaterpillarData;
+
+class MoveDataBase;
+
 class MoveComponent :public FunctionComponent
 {
 public:
@@ -21,11 +26,25 @@ public:
 			component = _com;
 		}
 
+	protected:
+
+		inline void SetMoveData(MoveDataBase* _data)
+		{
+			if (_data == nullptr)return;
+			data = _data;
+		}
+
+
 	public:
 
 		inline bool IsPushFlg(InputName _name) { return component->IsPushFlg(_name); }
 
 		inline bool IsGround() { return component->IsGround(); }
+
+		inline bool IsMoveData(MoveDataBase* _data)
+		{
+			return _data == data;
+		}
 
 	public:
 
@@ -64,6 +83,8 @@ public:
 	private:
 
 		MoveComponent* component = nullptr;
+
+		MoveDataBase* data = nullptr;
 	};
 
 
@@ -82,16 +103,7 @@ public:
 
 public:
 
-	void RemoveMoveObject(ChPtr::Shared<MoveObject> _moveObject)
-	{
-		if (_moveObject == nullptr)return;
-		for (int i = 0; i < moveObjectList.size(); i++)
-		{
-			if (moveObjectList[i].get() != _moveObject.get())continue;
-			moveObjectList.erase(moveObjectList.begin() + i);
-			return;
-		}
-	}
+	void RemoveMoveObject(MoveDataBase* _moveObject);
 
 public:
 
@@ -136,19 +148,7 @@ public:
 
 public:
 
-	void SetMovePow(const float _movePow) { movePow = _movePow; }
-
-	void SetRotatePow(const float _rotatePow) { rotatePow = _rotatePow; }
-
-	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
-
-protected:
-
-	inline float GetMovePow() { return movePow; }
-
-	inline float GetRotatePow() { return rotatePow; }
-
-	inline float GetJumpPow() { return jumpPow; }
+	void SetWalkData(WalkData* _data);
 
 private:
 
@@ -156,10 +156,7 @@ private:
 
 	void RotateUpdate(float _pow, BaseMecha::InputName _input, const ChVec3& _direction);
 
-
-	float movePow = 0.0f;
-	float jumpPow = 0.0f;
-	float rotatePow = 0.0f;
+	WalkData* data = nullptr;
 
 };
 
@@ -184,17 +181,9 @@ public:
 
 public:
 
-	void SetMovePow(const float _movePow) { movePow = _movePow; }
+	void SetCaterpillarData(CaterpillarData* _data);
 
-	void SetJumpPow(const float _jumpPow) { jumpPow = _jumpPow; }
-
-	void SetSideSize(const float& _size) { sideSize = _size; }
-
-protected:
-
-	inline float GetMovePow() { return movePow; }
-
-	inline float GetJumpPow() { return jumpPow; }
+	inline void SetSideSize(float _size) { sideSize = _size; }
 
 private:
 
@@ -221,8 +210,8 @@ private:
 
 private:
 
-	float movePow = 0.0f;
-	float jumpPow = 0.0f;
+	CaterpillarData* data = nullptr;
+
 	float sideSize = 0.0f;
 
 };

@@ -11,7 +11,7 @@ void CaterpillarData::RemoveParameter(BaseMecha& _base)
 {
 	auto&& walk = GetComponent<MoveComponent>(_base);
 
-	walk->RemoveMoveObject(moveObject);
+	walk->RemoveMoveObject(this);
 }
 
 unsigned long CaterpillarData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
@@ -37,8 +37,7 @@ void CaterpillarData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _par
 
 	moveObject = ChPtr::Make_S<TankMoveComponent>();
 
-	moveObject->SetMovePow(movePow);
-	moveObject->SetJumpPow(jumpPow);
+	moveObject->SetCaterpillarData(this);
 
 	auto&& model = GetModel(_parts);
 

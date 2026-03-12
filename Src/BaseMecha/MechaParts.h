@@ -169,12 +169,6 @@ private:
 
 	std::vector<ChPtr::Weak<PostureController>> postureList;
 
-	constexpr static const char* GetModelNameTag() { return "ModelName:\n"; }
-
-	constexpr static const char* GetHardnessTag() { return "Hardness:\n"; }
-
-	constexpr static const char* GetMassTag() { return "Mass:\n"; }
-
 };
 
 class PartsDataBase :public ChCpp::BaseComponent

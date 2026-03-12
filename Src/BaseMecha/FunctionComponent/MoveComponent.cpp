@@ -5,7 +5,23 @@
 
 #include"MoveComponent.h"
 
+#include"../MechaPartsData/WalkData.h"
+#include"../MechaPartsData/CaterpillarData.h"
+
 #define VIEW_ROTATE_POW_UPPER 16 / 9
+
+void MoveComponent::RemoveMoveObject(MoveDataBase* _moveObject)
+{
+	if (_moveObject == nullptr)return;
+	for (int i = 0; i < moveObjectList.size(); i++)
+	{
+		
+		if (!moveObjectList[i]->IsMoveData(_moveObject))continue;
+
+		moveObjectList.erase(moveObjectList.begin() + i);
+		return;
+	}
+}
 
 void MoveComponent::CamVerticalRotateUpdate(InputName _input, const float _camRot)
 {
@@ -64,6 +80,14 @@ void MoveComponent::Update()
 	moveObject->Update();
 }
 
+void BaseMechaMoveComponent::SetWalkData(WalkData* _data)
+{
+	if (ChPtr::NullCheck(_data))return;
+
+	SetMoveData(_data);
+	data = _data;
+}
+
 void BaseMechaMoveComponent::UpdateBegin()
 {
 	SetSelfViewRotateHorizontalFlg(false);
@@ -84,19 +108,21 @@ void BaseMechaMoveComponent::UpdateBegin()
 
 void BaseMechaMoveComponent::Update()
 {
+	if (data == nullptr)return;
+
 	ChLMat tmp;
 
 	//tmp.SetRotationXAxis(ChMath::ToRadian(GetRotation().x));
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
-	MoveUpdate(movePow, InputName::Front, ChVec3(0.0f, 0.0f, 1.0f), tmp);
-	MoveUpdate(movePow, InputName::Back, ChVec3(0.0f, 0.0f, -1.0f), tmp);
-	MoveUpdate(movePow, InputName::Left, ChVec3(-1.0f, 0.0f, 0.0f), tmp);
-	MoveUpdate(movePow, InputName::Right, ChVec3(1.0f, 0.0f, 0.0f), tmp);
-	MoveUpdate(jumpPow, InputName::Up, ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	MoveUpdate(data->GetMovePower(), InputName::Front, ChVec3(0.0f, 0.0f, 1.0f), tmp);
+	MoveUpdate(data->GetMovePower(), InputName::Back, ChVec3(0.0f, 0.0f, -1.0f), tmp);
+	MoveUpdate(data->GetMovePower(), InputName::Left, ChVec3(-1.0f, 0.0f, 0.0f), tmp);
+	MoveUpdate(data->GetMovePower(), InputName::Right, ChVec3(1.0f, 0.0f, 0.0f), tmp);
+	MoveUpdate(data->GetJumpPower(), InputName::Up, ChVec3(0.0f, 1.0f, 0.0f), tmp);
 	
-	RotateUpdate(rotatePow, InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
-	RotateUpdate(rotatePow, InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
+	RotateUpdate(data->GetRotatePower(), InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
+	RotateUpdate(data->GetRotatePower(), InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
 
 }
 
@@ -132,6 +158,13 @@ void ShipMoveComponent::Update()
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 }
 
+void TankMoveComponent::SetCaterpillarData(CaterpillarData* _data)
+{
+	if (ChPtr::NullCheck(_data))return;
+	SetMoveData(_data);
+	data = _data;
+}
+
 void TankMoveComponent::Update()
 {	
 
@@ -147,20 +180,20 @@ void TankMoveComponent::Update()
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
 
-	MoveUpdate(movePow, InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
-	MoveUpdate(movePow, InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
+	MoveUpdate(data->GetMovePower(), InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
+	MoveUpdate(data->GetMovePower(), InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
 
-	OneSideMoveUpdate(movePow * 0.5f, InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(movePow * 0.5f, InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	OneSideMoveUpdate(movePow * 0.5f, InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(movePow * 0.5f, InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
 
-	RotationUpdate(movePow, InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
-	RotationUpdate(movePow, InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
+	RotationUpdate(data->GetMovePower(), InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
+	RotationUpdate(data->GetMovePower(), InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
 
 	if (IsPushFlg(InputName::Up))
-		AddMoveVector(tmp.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f)) * jumpPow);
+		AddMoveVector(tmp.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f)) * data->GetJumpPower());
 }
 
 void TankMoveComponent::FlagTest()
