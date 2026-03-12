@@ -1,9 +1,29 @@
 {
 	"Core":{
-		"Armature_LeftArmPos": {
-			"Parts": "Resource/RobotParts/HT.mpd"
+		"Armature_BodyPos":{
+			"Parts":"Resource/RobotParts/FG_01.mpd"
 		},
-		"Parts":"Resource/RobotParts/CT.mpd"
+		"Armature_BoostPos":{
+			"Parts":"Resource/RobotParts/BG_01.mpd"
+		},
+		"Armature_HeadPos":{
+			"Parts":"Resource/RobotParts/HG_01.mpd"
+		},
+		"Armature_LeftArmPos":{
+			"LeftArm_WeaponPos":{
+				"LeftWeapon":true,
+				"Parts":"Resource/RobotParts/MF-TPP1.mpd"
+			},
+			"Parts":"Resource/RobotParts/LAG_01.mpd"
+		},
+		"Armature_RightArmPos":{
+			"Parts":"Resource/RobotParts/RAG_01.mpd",
+			"RightArm_WeaponPos":{
+				"Parts":"Resource/RobotParts/MF-TPP1.mpd",
+				"RightWeapon":true
+			}
+		},
+		"Parts":"Resource/RobotParts/CG_01.mpd"
 	},
-	"Name":"Normal"
+	"Name":"Guardian"
 }
