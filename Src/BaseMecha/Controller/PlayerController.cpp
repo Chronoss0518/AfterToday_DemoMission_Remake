@@ -33,14 +33,14 @@ void PlayerController::Init()
 	keyTypes[VK_RIGHT] = InputName::RightRotation;
 
 	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::LeftRotation;
-	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::CameraLeftRotation;
+	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Left)] = InputName::CameraLeftRotation;
 
 	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
-	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::CameraRightRotation;
+	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Right)] = InputName::CameraRightRotation;
 
 
-	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Up)] = InputName::CameraUpRotation;
-	cursolInput[ChStd::EnumCast(CursolMoveTypeName::Down)] = InputName::CameraDownRotation;
+	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Up)] = InputName::CameraUpRotation;
+	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Down)] = InputName::CameraDownRotation;
 
 
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
@@ -48,7 +48,7 @@ void PlayerController::Init()
 
 	//keyTypes[VK_CONTROL] = InputName::MSChange;
 	keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
-	keyTypes[VK_SCROLL] = InputName::MagnificationUp;
+	//keyTypes[VK_SCROLL] = InputName::ScopeMagnificationUp;
 
 	controller.Init();
 
@@ -189,12 +189,12 @@ void PlayerController::CursolUpdate()
 
 	nowPos += vector;
 
-	CursolFunction(vector.x, CursolMoveTypeName::Right, CursolMoveTypeName::Left);
-	CursolFunction(vector.y, CursolMoveTypeName::Up, CursolMoveTypeName::Down);
+	CursolFunction(vector.x, CursolAndWheelMoveTypeName::Right, CursolAndWheelMoveTypeName::Left);
+	CursolFunction(vector.y, CursolAndWheelMoveTypeName::Up, CursolAndWheelMoveTypeName::Down);
 
 }
 
-void PlayerController::CursolFunction(float& _value, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus)
+void PlayerController::CursolFunction(float& _value, const CursolAndWheelMoveTypeName _plus, const CursolAndWheelMoveTypeName _minus)
 {
 
 	if (controllerPushFlg)return;

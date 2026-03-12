@@ -30,7 +30,7 @@ private:
 		RTop, RLeft, RDown, RRight
 	};
 
-	enum class CursolMoveTypeName : unsigned char {
+	enum class CursolAndWheelMoveTypeName : unsigned char {
 		Up, Down, Left, Right, None
 	};
 
@@ -38,7 +38,7 @@ private:
 
 	void CursolUpdate();
 
-	void CursolFunction(float& _value, const CursolMoveTypeName _plus, const CursolMoveTypeName _minus);
+	void CursolFunction(float& _value, const CursolAndWheelMoveTypeName _plus, const CursolAndWheelMoveTypeName _minus);
 
 	void SetXInputFlg(const XInputTypeNames _xinputType);
 
@@ -48,8 +48,8 @@ private:
 	std::map<XInputTypeNames, InputName>controllerTypes;
 	ChD3D::XInputController controller;
 
-	InputName cursolInput[ChStd::EnumCast(CursolMoveTypeName::None)] = { InputName::None,InputName::None,InputName::None,InputName::None };
-	InputName wheelInput[2]{ InputName::None,InputName::None };
+	InputName cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::None)] = { InputName::None,InputName::None,InputName::None,InputName::None };
+	InputName wheelInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::None)]{ InputName::None,InputName::None,InputName::None,InputName::None };
 	ChWin::MouseController* mouse = &ChWin::Mouse();
 	float moveSensitivility = 1.0f;
 	ChVec2 nowPos = ChVec2();
