@@ -170,7 +170,6 @@ void GunFunction::UpdateFunction()
 
 void GunFunction::DrawBegin()
 {
-	return;
 	ChLMat tmpMat;
 	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
 	obj->GetParent()->GetPositionObject()->SetOutSideTransform(tmpMat);
@@ -192,8 +191,6 @@ void GunFunction::DrawEnd()
 			ChLMat tmp;
 			tmp = obj->GetLastDrawMat();
 			tmp = tmp * shotPos->GetDrawLHandMatrix();
-			int test;
-			test = 0;
 			return;
 		}
 	}
@@ -261,8 +258,6 @@ void GunFunction::UpdatePosture()
 	float len = nowDirection.GetLen();
 	if (isnan(len))
 	{
-		int test;
-		test = 0;
 		return;
 	}
 
