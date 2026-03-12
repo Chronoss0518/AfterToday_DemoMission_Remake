@@ -9,6 +9,13 @@ NextPosData:{
 Armature_FootPos
 Foot
 }
+PostureData:{
+Armature_FootPos
+0.0,0.0,1.0;
+1
+-90.000000
+90.000000
+}
 GunData:{
 Armature_GunBarrel_ShotPosEnd
 MainShot

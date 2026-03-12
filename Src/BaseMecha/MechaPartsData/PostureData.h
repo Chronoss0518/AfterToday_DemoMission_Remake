@@ -9,16 +9,18 @@ public://Serialize Deserialize//
 	inline unsigned long Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos = 0)override
 	{
 		unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
-		SetRotateAxis(static_cast<RotateAxis>(ChStr::GetNumFromText<int>(_text[textPos])));
-		SetMinRotate(ChStr::GetNumFromText<float>(_text[textPos + 1]));
-		SetMaxRotate(ChStr::GetNumFromText<float>(_text[textPos + 2]));
+		dir.Deserialize<wchar_t>(_text[textPos], 0);
+		SetRotateAxis(static_cast<RotateAxis>(ChStr::GetNumFromText<int>(_text[textPos + 1])));
+		SetMinRotate(ChStr::GetNumFromText<float>(_text[textPos + 2]));
+		SetMaxRotate(ChStr::GetNumFromText<float>(_text[textPos + 3]));
 
-		return textPos + 3;
+		return textPos + 4;
 	}
 
 	inline std::wstring Serialize()override
 	{
 		std::wstring res = NextPosBase::Serialize();
+		res += dir.Serialize<wchar_t>() + L"\n";
 		res += std::to_wstring(static_cast<unsigned char>(GetRotateAxis())) + L"\n";
 		res += std::to_wstring(GetMinRotate()) + L"\n";
 		res += std::to_wstring(GetMaxRotate()) + L"\n";
@@ -69,4 +71,5 @@ protected:
 
 	PostureController posture;
 
+	ChVec3 dir = ChVec3();
 };
