@@ -188,10 +188,10 @@ public:
 	template<class T>
 	ChPtr::Shared<T> GetComponentObject()
 	{
-		auto&& ComList = GetComponents<T>();
-		if (!ComList.empty())
+		auto&& com = GetComponent<T>();
+		if (com != nullptr)
 		{
-			return ComList[0];
+			return com;
 		}
 
 		return SetComponent<T>();

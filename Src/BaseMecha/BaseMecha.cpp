@@ -175,6 +175,7 @@ void BaseMecha::MoveEnd()
 	auto viewLookPos = GetViewLookPos();
 
 	ChMat_11 tmpMat;
+
 #if DEBUG_UP_CAMERA
 	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 0.0f, 1.0f));
 #else
