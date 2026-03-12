@@ -56,6 +56,7 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\CaterpillarData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\EnergyTankData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\GunData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\MoveDataBase.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosBase.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\PostureData.h" />
