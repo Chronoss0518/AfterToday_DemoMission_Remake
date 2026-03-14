@@ -57,6 +57,8 @@ public://Override Functions//
 
 	void Draw2D()override;
 
+	void DrawEnd()override;
+
 private:
 
 	void BaseMove();

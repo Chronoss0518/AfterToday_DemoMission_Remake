@@ -75,7 +75,8 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 	text = ChStr::GetUTF16FromUTF8(file.FileRead());
 	file.FileClose();
 
-	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(ChCpp::JsonBaseType<wchar_t>::GetParameter(text));
+	auto&& json = ChCpp::JsonBaseType<wchar_t>::GetParameter(text);
+	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(json);
 
 	if (jsonObject == nullptr)return;
 
@@ -100,7 +101,6 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	nowDurable = durable;
 	physics->SetMass(mass);
-
 
 	auto boostComponent = GetComponent<BoostComponent>();
 
@@ -138,16 +138,21 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> BaseMecha::SavePartsList()
 
 void BaseMecha::Release()
 {
+	if (core == nullptr)return;
 	core->Release();
 }
 
 void BaseMecha::Update()
 {
-	core->Update();
+	if (core == nullptr)return;
+	core->UpdateFunction();
 }
 
 void BaseMecha::UpdateEnd()
 {
+	if (core == nullptr)return;
+	core->UpdateEndFunction();
+
 	physics->Update();
 
 	float moveSize = physics->GetAddMovePowerVector().GetLen();
@@ -158,6 +163,8 @@ void BaseMecha::UpdateEnd()
 
 void BaseMecha::Move()
 {
+	if (core == nullptr)return;
+	core->MoveFunction();
 
 	BaseMove();
 
@@ -166,7 +173,6 @@ void BaseMecha::Move()
 
 void BaseMecha::MoveEnd()
 {
-
 	damageDir = ChVec3();
 
 	if(!isSelfViewHorizontalFlg)viewHorizontal = physics->GetRotation().y;
@@ -289,6 +295,9 @@ void BaseMecha::BaseMove()
 
 void BaseMecha::Draw3D()
 {
+	if (core == nullptr)return;
+	core->DrawBeginFunction();
+
 	ChLMat drawMat;
 	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	drawMat.SetPosition(physics->GetPosition());
@@ -297,19 +306,24 @@ void BaseMecha::Draw3D()
 
 	if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
 
-	core->Draw(drawMat);
+	core->SetOutSideTransform(drawMat);
+	core->Draw3DFunction();
 
 	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
+
+	core->DrawEndFunction();
 
 }
 
 void BaseMecha::Draw2D()
 {
-	if (ChPtr::NullCheck(frame))return;
+	if (core == nullptr)return;
+	core->Draw2DFunction();
+}
 
-	
-
-
+void BaseMecha::DrawEnd()
+{
+	if (core == nullptr)return;
 }
 
 void BaseMecha::Deserialize(const std::wstring& _fileName)
@@ -413,6 +427,7 @@ void BaseMecha::SetTestHitSize(const ChVec3& _hitSize)
 
 void BaseMecha::TestBulletHit(AttackObject& _obj)
 {
+	if (core == nullptr)return;
 	if (_obj.IsUseMechaTest(mechasNo))return;
 	if (_obj.IsHit())return;
 	if (_obj.IsUseMechaTeamTest(GetTeamNo()))
