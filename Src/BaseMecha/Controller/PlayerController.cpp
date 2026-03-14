@@ -17,7 +17,6 @@ void PlayerController::Init()
 	windSize.w = static_cast<float>(windows.GetWindWidth());
 	baseLen = (windSize.h < windSize.w ? windSize.h : windSize.w);
 
-
 	keyTypes[VK_SPACE] = InputName::Up;
 	keyTypes[VK_SHIFT] = InputName::Avo;
 	keyTypes[VK_CONTROL] = InputName::Boost;
@@ -33,14 +32,14 @@ void PlayerController::Init()
 	keyTypes[VK_RIGHT] = InputName::RightRotation;
 
 	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Left)] = InputName::LeftRotation;
-	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Left)] = InputName::CameraLeftRotation;
+	cursolInput[ChStd::EnumCast(AxisTypeName::Left)] = InputName::CameraLeftRotation;
 
 	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
-	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Right)] = InputName::CameraRightRotation;
+	cursolInput[ChStd::EnumCast(AxisTypeName::Right)] = InputName::CameraRightRotation;
 
 
-	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Up)] = InputName::CameraUpRotation;
-	cursolInput[ChStd::EnumCast(CursolAndWheelMoveTypeName::Down)] = InputName::CameraDownRotation;
+	cursolInput[ChStd::EnumCast(AxisTypeName::Up)] = InputName::CameraUpRotation;
+	cursolInput[ChStd::EnumCast(AxisTypeName::Down)] = InputName::CameraDownRotation;
 
 
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
@@ -177,7 +176,7 @@ void PlayerController::CursolUpdate()
 {
 	mouse->Update();
 
-	ChVec2 vector = mouse->GetNowPosToChVec2() -= (windSize / 2.0f);
+	ChVec2 vector = mouse->GetNowPosToChVec2() - (windSize / 2.0f);
 	vector /= baseLen;
 
 	if (vector.x > 1.0f)vector.x = 1.0f;
@@ -189,33 +188,33 @@ void PlayerController::CursolUpdate()
 
 	nowPos += vector;
 
-	CursolFunction(vector.x, CursolAndWheelMoveTypeName::Right, CursolAndWheelMoveTypeName::Left);
-	CursolFunction(vector.y, CursolAndWheelMoveTypeName::Up, CursolAndWheelMoveTypeName::Down);
+	CursolFunction(vector.x, MIN_CURSOL_LEN_PARCEC, AxisTypeName::Right, AxisTypeName::Left);
+	CursolFunction(vector.y, MIN_CURSOL_LEN_PARCEC, AxisTypeName::Up, AxisTypeName::Down);
 
 }
 
-void PlayerController::CursolFunction(float& _value, const CursolAndWheelMoveTypeName _plus, const CursolAndWheelMoveTypeName _minus)
+void PlayerController::CursolFunction(float& _value, float _removeSize, const AxisTypeName _plus, const AxisTypeName _minus)
 {
 
 	if (controllerPushFlg)return;
 
-	if (std::abs(_value) < MIN_CURSOL_LEN_PARCEC)
+	if (std::abs(_value) < _removeSize)
 	{
 		_value = 0.0f;
 		return;
 	}
 
 	auto targetMecha = GetBaseMecha();
-	if (_value > MIN_CURSOL_LEN_PARCEC)
+	if (_value > _removeSize)
 	{
 		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
-		_value -= MIN_CURSOL_LEN_PARCEC;
+		_value -= _removeSize;
 	}
 
-	if (_value < -MIN_CURSOL_LEN_PARCEC)
+	if (_value < -_removeSize)
 	{
 		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
-		_value += MIN_CURSOL_LEN_PARCEC;
+		_value += _removeSize;
 	}
 }
 
