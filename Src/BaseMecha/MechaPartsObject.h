@@ -10,12 +10,6 @@ class MechaPartsObject;
 class Attack;
 class AttackObject;
 
-struct ControllerListItem
-{
-	ChPtr::Shared<PostureController> controller = nullptr;
-	MechaPartsObject* partsObejct = nullptr;
-};
-
 enum class StartRotatePosture
 {
 	XY,
@@ -23,7 +17,7 @@ enum class StartRotatePosture
 	None
 };
 
-class MechaPartsObject
+class MechaPartsObject:public ChCpp::TransformObject<wchar_t>
 {
 public:
 
@@ -32,8 +26,6 @@ public:
 public:
 
 	void CreateAnchor();
-
-	void CreatePostureList();
 
 public:
 
@@ -55,38 +47,7 @@ public:
 		externalFunctions.push_back(_function);
 	}
 
-	inline void AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
-	{
-		if (_partsObject == nullptr)return;
-
-		_partsObject->SetPositoinObject(this, baseParts->GetPositionList()[_objectType]);
-
-		auto&& tmpObject = positions.find(_objectType);
-		if (tmpObject == positions.end())
-		{
-			positions[_objectType] = _partsObject;
-
-			_partsObject->CreatePostureList();
-			return;
-		}
-
-		if (tmpObject->second != nullptr)
-		{
-			positions.erase(tmpObject);
-			positions[_objectType] = _partsObject;
-
-			_partsObject->CreatePostureList();
-
-			return;
-		}
-
-		tmpObject->second = _partsObject;
-		_partsObject->CreatePostureList();
-
-	}
-
-
-
+	void AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject);
 
 public:
 
@@ -107,20 +68,6 @@ public:
 
 public:
 
-	void SetPositoinObject(MechaPartsObject* _parent, ChPtr::Shared<ChCpp::FrameObject<wchar_t>>_positionObject) { positionObject = _positionObject; parentObject = _parent; }
-
-	void SetPostureRotation(ChCpp::BaseObject<wchar_t>* const _target, float _rotation)
-	{
-		ChPtr::Shared<PostureRotateData>rotateData = postureRotateList[_target];
-		if (rotateData == nullptr)
-		{
-			rotateData = ChPtr::Make_S<PostureRotateData>();
-			postureRotateList[_target] = rotateData;
-		}
-		rotateData->rotate = ChMath::ToDegree(_rotation);
-		rotateData->updateFlg = true;
-	}
-
 	void SetPartsPosData(unsigned char _names, size_t _no) { partsPosName = _names; partsPosNo = _no; }
 
 	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
@@ -137,13 +84,16 @@ public:
 
 public:
 
-	std::vector<ChPtr::Weak<PostureController>>& GetPostureControllerList() { return baseParts->GetPostureControllerList(); };
+	inline ChPtr::Shared<MechaPartsObject>GetChildParts(const std::wstring& _nextPosName)
+	{
+		auto pos = positions.find(_nextPosName);
+		if (pos == positions.end())return nullptr;
+		return pos->second;
+	}
 
 	MechaParts* GetBaseObject() { return baseParts; }
 
 	BaseMecha* GetBaseMecha() { return mecha; }
-
-	ChPtr::Shared<ChCpp::FrameObject<wchar_t>> GetPositionObject() { return positionObject; }
 
 	std::vector<ChPtr::Shared<ExternalFunction>>& GetExternalFunctions()
 	{
@@ -159,10 +109,6 @@ public:
 	{
 		return &collider;
 	}
-
-	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
-
-	inline ChLMat GetPositionLastDrawMat() { return positionLastDrawMat; }
 
 	float GetDurableValue() { return durableValue; }
 
@@ -194,55 +140,17 @@ public:
 
 	std::wstring GetReloadCount();
 
-	ChPtr::Shared<MechaPartsObject> GetChildParts(const std::wstring& _childPosition)
-	{
-		auto findObject = positions.find(_childPosition);
-		if (findObject == positions.end())return nullptr;
+public:
 
-		return (*findObject).second;
-	}
-
-	MechaPartsObject* GetParent() { return parentObject; }
-
-	inline std::vector<ChPtr::Shared<ControllerListItem>>GetControllerList() { return controllerList; }
-
-	inline StartRotatePosture GetStartRotatePosture() { return startRotatePosture; }
+	void Update()override;
 
 public:
 
-	void AddPostureRotation(ChCpp::BaseObject<wchar_t>* const _target, float _rotation)
-	{
-		ChPtr::Shared<PostureRotateData>rotateData = postureRotateList[_target];
-		if (rotateData == nullptr)
-		{
-			rotateData = ChPtr::Make_S<PostureRotateData>();
-			postureRotateList[_target] = rotateData;
-		}
-		rotateData->rotate += ChMath::ToDegree(_rotation);
-		rotateData->updateFlg = true;
-	}
+	void DrawBegin()override;
 
-public:
-
-	void Update();
-
-private:
-
-	void DrawStart();
-
-public:
-
-	void DrawStartFunction();
-
-	virtual void Draw(const ChLMat& _drawMat);
+	void Draw3D()override;
 
 	void DrawEnd();
-
-private:
-
-	void FunctionDrawBegin();
-
-	void FunctionDrawEnd();
 
 public:
 
@@ -264,22 +172,12 @@ protected:
 
 	ChCpp::SphereCollider collider;
 	MechaParts* baseParts;
-	ChLMat lastDrawMat;
 	ChLMat positionLastDrawMat;
 
 private:
 
-	struct PostureRotateData
-	{
-		float rotate = 0;
-		bool updateFlg = false;
-	};
-
 	GameFrame* frame = nullptr;
 
-	//Autoで敵を追尾する時用に修正//
-	std::map<ChCpp::BaseObject<wchar_t>*, ChPtr::Shared<PostureRotateData>>postureRotateList;
-	std::vector<ChPtr::Shared<ControllerListItem>>controllerList;
 	StartRotatePosture startRotatePosture = StartRotatePosture::None;
 	bool isInitRunFlg = false;
 
@@ -290,9 +188,6 @@ private:
 
 	size_t useAttackType = 0;
 
-	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>positionObject = nullptr;
-	MechaPartsObject* parentObject = nullptr;
-
 	//パーツの解除フラグ//
 	bool releaseFlg = false;
 
@@ -301,6 +196,7 @@ private:
 
 	unsigned char partsPosName = -1;
 	size_t partsPosNo = 0;
+
 	ChCpp::BitBool weaponType;
 
 	size_t lookAnchorNo = -1;
@@ -321,8 +217,6 @@ public:
 
 	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
-	virtual void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject) = 0;
-
 	virtual void Update() = 0;
 
 	virtual void DrawBegin() {};
@@ -332,7 +226,6 @@ public:
 	inline void SetPartsObject(MechaPartsObject* _obj)
 	{
 		if (_obj == nullptr)return;
-
 		obj = _obj;
 	}
 

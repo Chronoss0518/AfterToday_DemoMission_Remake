@@ -18,54 +18,10 @@ void MechaPartsObject::CreateAnchor()
 	mecha->AddAnchorData(GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
 }
 
-void MechaPartsObject::CreatePostureList()
-{
-	if (controllerList.empty())controllerList.clear();
-
-	MechaPartsObject* tmpObj = this;
-	while (true)
-	{
-		ChPtr::Shared<ChCpp::FrameObject<wchar_t>> controller = tmpObj->GetPositionObject();
-
-		tmpObj = tmpObj->GetParent();
-		if (ChPtr::NullCheck(tmpObj))break;
-
-		while (controller != nullptr)
-		{
-			auto&& controllerObj = controller->GetComponent<PostureController>();
-			controller = ChPtr::SharedSafeCast<ChCpp::FrameObject<wchar_t>>(controller->GetParent());
-
-			if (controllerObj == nullptr)continue;
-
-			auto axis = ChStd::EnumCast(controllerObj->GetRotateAxis());
-			axis %= AXIS_BASE_TYPE_NUM;
-
-			if (axis == (ChStd::EnumCast(RotateAxis::PZ) % AXIS_BASE_TYPE_NUM))continue;
-
-			auto&& con = ChPtr::Make_S<ControllerListItem>();
-			con->controller = controllerObj;
-			con->partsObejct = tmpObj;
-			controllerList.push_back(con);
-
-			if (startRotatePosture != StartRotatePosture::None)continue;
-
-			if (axis == (ChStd::EnumCast(RotateAxis::PX) || axis == (ChStd::EnumCast(RotateAxis::MX))))startRotatePosture = StartRotatePosture::XY;
-			if (axis == (ChStd::EnumCast(RotateAxis::PY) || axis == (ChStd::EnumCast(RotateAxis::MY))))startRotatePosture = StartRotatePosture::YX;
-		}
-
-
-	}
-
-	for (auto&& child : positions)
-	{
-		child.second->CreatePostureList();
-	}
-
-
-}
-
 void MechaPartsObject::Release()
 {
+	TransformObject<wchar_t>::Release();
+
 	for (auto&& function : externalFunctions)
 	{
 		if (function == nullptr)continue;
@@ -78,12 +34,50 @@ void MechaPartsObject::Release()
 		function->Release();
 	}
 
-	for (auto&& partsObject : positions)
-	{
-		partsObject.second->Release();
-	}
 	positions.clear();
 }
+
+void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _childObject)
+{
+	ChCpp::TransformObject<wchar_t>::Update();
+
+	if (_childObject == nullptr)return;
+
+	auto&& position = baseParts->GetPositionList()[_objectType];
+
+	_childObject->SetParent(shared_from_this());
+	_childObject->ChCpp::TransformObject<wchar_t>::Update();
+
+	ChVec3 pos = ChVec3();
+	ChLMat lmat = position->GetDrawLHandMatrix();
+
+	pos = lmat.Transform(pos);
+
+	lmat.Identity();
+	lmat.SetPosition(pos);
+
+	_childObject->SetFrameTransform(lmat);
+
+	auto&& tmpObject = positions.find(_objectType);
+	if (tmpObject == positions.end())
+	{
+		positions[_objectType] = _childObject;
+
+		return;
+	}
+
+	if (tmpObject->second != nullptr)
+	{
+		positions.erase(tmpObject);
+		positions[_objectType] = _childObject;
+
+		return;
+	}
+
+	tmpObject->second = _childObject;
+
+}
+
 
 ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 {
@@ -107,9 +101,8 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 void MechaPartsObject::SetHitSize()
 {
 	ChVector3 tmpHitSize = GetColliderSize();
-	auto positionObject = GetPositionObject();
 
-	if (positionObject != nullptr)tmpHitSize += positionObject->GetDrawLHandMatrix().GetPosition();
+	tmpHitSize += GetDrawLHandMatrix().GetPosition();
 
 	mecha->SetTestHitSize(tmpHitSize);
 }
@@ -156,6 +149,8 @@ std::wstring MechaPartsObject::GetReloadCount()
 
 void MechaPartsObject::Update()
 {
+	TransformObject<wchar_t>::Update();
+
 	for (auto&& func : externalFunctions)
 	{
 		func->Update();
@@ -172,91 +167,10 @@ void MechaPartsObject::Update()
 	}
 }
 
-void  MechaPartsObject::DrawStart()
+void  MechaPartsObject::DrawBegin()
 {
+	TransformObject<wchar_t>::DrawBegin();
 
-	for (auto&& posture : baseParts->GetPostureControllerList())
-	{
-		auto&& controller = posture.lock();
-
-		auto&& frame = controller->GetLookObject();
-
-		auto&& postureRotate = postureRotateList.find(frame);
-
-		if (postureRotate == postureRotateList.end())continue;
-
-		controller->SetRotate(ChMath::ToRadian(postureRotate->second->rotate));
-	}
-}
-
-void MechaPartsObject::DrawStartFunction()
-{
-	DrawStart();
-
-	FunctionDrawBegin();
-}
-
-void MechaPartsObject::Draw(const ChLMat& _drawMat)
-{
-	DrawStartFunction();
-
-	positionLastDrawMat = ChLMat();
-	if (positionObject != nullptr)
-	{
-
-		auto&& mesh = baseParts->GetMesh();
-
-		//tmp = positionObject->GetDrawLHandMatrix() * tmp;
-		positionLastDrawMat = parentObject->GetBaseObject()->GetDefaultFrameMat() * positionObject->GetDrawLHandMatrix();
-		//positionLastDrawMat = positionObject->GetDrawLHandMatrix();
-		//mesh.SetOutSideTransform(positionLastDrawMat);
-		mesh = baseParts->GetMesh();
-	}
-
-	lastDrawMat = _drawMat;
-
-	//ChLMat drawMat = positionLastDrawMat * lastDrawMat;
-	ChLMat drawMat = positionLastDrawMat * lastDrawMat;
-	//ChLMat drawMat = lastDrawMat;
-
-	baseParts->Draw((ChMat_11)(drawMat));
-
-	collider.SetMatrix(drawMat);
-
-	mecha->UpdateAnchor(GetLookAnchorNo(), drawMat);
-
-	for (auto&& partsObject : positions)
-	{
-		if (partsObject.second == nullptr)continue;
-		partsObject.second->Draw(drawMat);
-	}
-
-	DrawEnd();
-
-	isInitRunFlg = true;
-}
-
-void  MechaPartsObject::DrawEnd()
-{
-	FunctionDrawEnd();
-
-	for (auto&& posture : baseParts->GetPostureControllerList())
-	{
-		auto&& controller = posture.lock();
-		if (controller == nullptr)continue;
-		controller->SetRotate(0.0f);
-
-		auto&& frame = controller->GetLookObject();
-		auto&& postureRotate = postureRotateList.find(frame);
-		if (postureRotate == postureRotateList.end())continue;
-		if (postureRotate->second->updateFlg)continue;
-		postureRotate->second->updateFlg = false;
-		postureRotate->second->rotate *= 0.1f;
-	}
-}
-
-void MechaPartsObject::FunctionDrawBegin()
-{
 	for (auto func : externalFunctions)
 	{
 		func->DrawBegin();
@@ -268,8 +182,21 @@ void MechaPartsObject::FunctionDrawBegin()
 	}
 }
 
-void MechaPartsObject::FunctionDrawEnd()
+void MechaPartsObject::Draw3D()
 {
+	TransformObject<wchar_t>::Draw3D();
+
+	baseParts->Draw((ChMat_11)(GetDrawLHandMatrix()));
+
+	collider.SetMatrix(GetDrawLHandMatrix());
+
+	mecha->UpdateAnchor(GetLookAnchorNo(), GetDrawLHandMatrix());
+}
+
+void  MechaPartsObject::DrawEnd()
+{
+	TransformObject<wchar_t>::DrawEnd();
+
 	for (auto func : externalFunctions)
 	{
 		func->DrawEnd();
