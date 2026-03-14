@@ -32,7 +32,7 @@ std::wstring WeaponDataBase::Serialize()
 
 void WeaponDataBase::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)
 {
-	_parts.GetWeaponFunctions()[_parts.GetWeaponFunctions().size() - 1]->SetObjectPos(_targetObject);
+	_parts.GetWeaponFunctions()[_parts.GetWeaponFunctions().size() - 1]->SetAttackPos(_targetObject);
 }
 
 void WeaponDataBase::SetWeaponData(PartsParameterStruct::WeaponData& _base)
