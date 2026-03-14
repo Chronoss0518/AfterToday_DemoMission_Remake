@@ -49,7 +49,8 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	_childObject->ChCpp::TransformObject<wchar_t>::Update();
 
 	ChVec3 pos = ChVec3();
-	ChLMat lmat = position->GetDrawLHandMatrix();
+	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
+	lmat = position->connectionRotate * lmat;
 
 	pos = lmat.Transform(pos);
 
