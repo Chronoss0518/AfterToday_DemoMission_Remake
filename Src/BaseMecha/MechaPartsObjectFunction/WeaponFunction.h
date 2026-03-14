@@ -32,6 +32,12 @@ public:
 		return attackData;
 	}
 
+
+	inline void SetAttackPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _attackPos)
+	{
+		attackPos = _attackPos;
+	}
+
 public:
 
 	virtual void StartSubFunction() {};
@@ -58,6 +64,8 @@ protected:
 
 	WeaponDataBase* data = nullptr;
 
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>attackPos = nullptr;
+
 	ChD3D::X3DAudioObject se;
 
 	//次の攻撃可能までの時間//
@@ -79,9 +87,6 @@ public:
 
 	void UpdateFunction()override {};
 
-	//持ち手部分と刀身の区切り部分//
-	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _hitStart) { hitObjectStart = _hitStart; }
-
 	void SetData(WeaponDataBase* _data)override;
 
 public:
@@ -93,8 +98,6 @@ public:
 private:
 
 	SwordData* swordData = nullptr;
-
-	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>hitObjectStart = nullptr;
 
 	//攻撃開始から現在までの時間//
 	unsigned long nowAttackTime = 0;
@@ -120,9 +123,6 @@ public:
 
 public:
 
-	//弾が出てくる場所//
-	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _shotPos) { shotPos = _shotPos; }
-
 	void SetData(WeaponDataBase* _data)override;
 
 public:
@@ -133,15 +133,9 @@ public:
 
 private:
 
-	void UpdatePosture();
-
-private:
-
 	GunData* gunData = nullptr;
 
-	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>shotPos = nullptr;
-
-	ChLMat lastShotPos;
+	ChLMat tmpMat;
 
 	bool reloadFlg = false;
 

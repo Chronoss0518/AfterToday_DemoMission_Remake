@@ -65,9 +65,9 @@ void GunFunction::AttackFunction()
 	if (reloadFlg)return;
 	if (nowBulletNum <= 0)return;
 
-	ChLMat tmpMat = lastShotPos;
+	ChLMat tmpMat = attackPos->GetDrawLHandMatrix() * obj->GetDrawLHandMatrix();;
 
-#if true
+#if false
 	//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
 	tmpMat = lastShotPos * obj->GetPositionLastDrawMat() * obj->GetLastDrawMat();
 
@@ -153,8 +153,6 @@ void GunFunction::SetData(WeaponDataBase* _data)
 
 void GunFunction::UpdateFunction()
 {
-	UpdatePosture();
-
 	if (!reloadFlg)return;
 
 	nowReloadTime++;
@@ -172,25 +170,24 @@ void GunFunction::DrawBegin()
 {
 	ChLMat tmpMat;
 	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
-	obj->GetParent()->GetPositionObject()->SetOutSideTransform(tmpMat);
+	//obj->GetParent()->GetPositionObject()->SetOutSideTransform(tmpMat);
 }
 
 void GunFunction::DrawEnd()
 {
-	if (shotPos != nullptr)
+	if (attackPos != nullptr)
 	{
 		//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
 		//lastShotPos = shotPos->GetDrawLHandMatrix();
 		
 		//lastShotPos = defaultMat * shotPos->GetDrawLHandMatrix();
-		lastShotPos = shotPos->GetDrawLHandMatrix();
 
-		float len = lastShotPos.GetZAxisDirection().GetLen();
+		float len = (attackPos->GetDrawLHandMatrix() * obj->GetDrawLHandMatrix()).GetZAxisDirection().GetLen();
 		if (isnan(len))
 		{
 			ChLMat tmp;
-			tmp = obj->GetLastDrawMat();
-			tmp = tmp * shotPos->GetDrawLHandMatrix();
+			//tmp = obj->GetLastDrawMat();
+			tmp = tmp * attackPos->GetDrawLHandMatrix();
 			return;
 		}
 	}
@@ -222,107 +219,4 @@ std::wstring GunFunction::GetReloadCount()
 	}
 
 	return res;
-}
-
-void GunFunction::UpdatePosture()
-{
-	OutputDebugStringW(L"------ Start Update Posture ------\r\n");
-
-	auto&& startRotatePosture = obj->GetStartRotatePosture();
-
-	if (startRotatePosture == StartRotatePosture::None)return;
-
-	auto&& controllerList = obj->GetControllerList();
-
-	if (controllerList.empty())return;
-
-	//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
-
-	//ChLMat tmpMat = defaultMat * shotPos->GetDrawLHandMatrix();
-	//ChLMat tmpMat = defaultMat * lastShotPos;
-	ChLMat tmpMat = lastShotPos * obj->GetPositionLastDrawMat();
-
-	//ChLMat lastDrawMat = obj->GetLastDrawMat();
-	//lastDrawMat.Inverse();
-	//tmpMat = tmpMat * lastDrawMat;
-
-	auto&& nowDirection = tmpMat.GetYAxisDirection();
-
-	if (gunData->GetLookTargetFlg())
-	{
-
-	}
-
-	nowDirection.Normalize();
-
-	float len = nowDirection.GetLen();
-	if (isnan(len))
-	{
-		return;
-	}
-
-	OutputDebugStringW((L"Now Direction[" + nowDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
-
-
-	auto&& targetFrontDirection = gunData->GetFrontDirection();
-	targetFrontDirection.Normalize();
-	//targetFrontDirection = obj->GetLastDrawMat().TransformCoord(targetFrontDirection);
-
-	OutputDebugStringW((L"Target Direction[" + targetFrontDirection.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
-
-	ChQua rotation;
-	rotation.SetRotation(nowDirection, targetFrontDirection);
-	
-	ChVec3 setRotate = rotation.GetMul(nowDirection);
-
-	OutputDebugStringW((L"To Direction[" + setRotate.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
-
-	len = setRotate.GetLen();
-	if (isnan(len))
-	{
-		rotation.Identity();
-	}
-
-	ChVec3 rotateVector;
-	//ChLMat tmpMat;
-	//tmpMat.SetRotation(rotation);
-	if (startRotatePosture == StartRotatePosture::YX)
-	{
-		setRotate = rotation.GetEulerRotationYXZ();
-		rotateVector = setRotate;
-		
-		controllerList[0]->partsObejct->AddPostureRotation(controllerList[0]->controller->GetLookObject(), setRotate.y);
-		for (unsigned long i = 1;i< controllerList.size();i++)
-		{
-			auto&& controller = controllerList[i]->controller;
-			auto axis = controller->GetRotateAxis();
-			if (axis != RotateAxis::PX && axis != RotateAxis::MX)continue;
-			controllerList[i]->partsObejct->AddPostureRotation(controller->GetLookObject(), setRotate.x);
-			break;
-		}
-	}
-	else
-	{
-		setRotate = rotation.GetEulerRotationXYZ();
-		rotateVector = setRotate;
-
-		controllerList[0]->partsObejct->AddPostureRotation(controllerList[0]->controller->GetLookObject(), setRotate.x);
-		for (unsigned long i = 1; i < controllerList.size(); i++)
-		{
-			auto&& controller = controllerList[i]->controller;
-			auto axis = controller->GetRotateAxis();
-			if (axis != RotateAxis::PY && axis != RotateAxis::MY)continue;
-			controllerList[i]->partsObejct->AddPostureRotation(controller->GetLookObject(), setRotate.y);
-			break;
-		}
-	}
-
-	rotateVector.x = ChMath::ToDegree(rotateVector.x);
-	rotateVector.y = ChMath::ToDegree(rotateVector.y);
-	rotateVector.z = ChMath::ToDegree(rotateVector.z);
-
-	OutputDebugStringW((L"Rotate Data[" + rotateVector.Serialize<wchar_t>(L"],[", L"]\r\n")).c_str());
-
-	OutputDebugStringW(L"------ End Update Posture ------\r\n");
-
 }
