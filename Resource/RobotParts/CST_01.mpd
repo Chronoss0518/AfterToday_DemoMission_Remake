@@ -8,6 +8,10 @@ EnergyTankData:{
 NextPosData:{
 Armature_FootPos
 Foot
+0.0,0.0,1.0
+0.0,1.0,0.0
+0,
+0.0
 }
 PostureData:{
 Armature_FootPos
