@@ -9,9 +9,16 @@ public://Serialize Deserialize//
 	inline unsigned long Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos = 0)override
 	{
 		unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
-		SetConnectionName(_text.GetTextLine(textPos));
+		connectionName = _text.GetTextLine(textPos);
 
-		return textPos + 1;
+		connectionRotateNormal.Deserialize(_text.GetTextLine(textPos + 1));
+		connectionRotateUp.Deserialize(_text.GetTextLine(textPos + 2));
+
+		type = (MechaParts::PartsConnectionType)ChStr::GetNumFromText<int>(_text.GetTextLine(textPos + 3));
+
+		maxWeight = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 4));
+
+		return textPos + 5;
 	}
 
 	inline std::wstring Serialize()override
@@ -20,15 +27,17 @@ public://Serialize Deserialize//
 		std::wstring res = NextPosBase::Serialize();
 		res += connectionName + L"\n";
 
+		res += connectionRotateNormal.Serialize<wchar_t>() + L"\n";
+		res += connectionRotateUp.Serialize<wchar_t>() + L"\n";
+
+		res += ChStr::GetTextFromNum<wchar_t>((int)type) + L"\n";
+
+		res += ChStr::GetTextFromNum<wchar_t>(maxWeight) + L"\n";
+
 		return res;
 	}
 
 public://Set Functions//
-
-	inline void SetConnectionName(const std::wstring& _connectionName)
-	{
-		connectionName = _connectionName;
-	}
 
 	inline void SetMaxWeight(const float _weight)
 	{
@@ -50,6 +59,11 @@ protected:
 
 	//ê⁄ë±ïîÇÃñºèÃ//
 	std::wstring connectionName = L"";
+
+	ChVec3 connectionRotateNormal = ChVec3(0.0f, 0.0f, 1.0f);
+	ChVec3 connectionRotateUp = ChVec3(0.0f, 1.0f, 0.0f);
+
+	MechaParts::PartsConnectionType type = MechaParts::PartsConnectionType::None;
 
 	//ç≈ëÂèdó //
 	float maxWeight = 0.0f;

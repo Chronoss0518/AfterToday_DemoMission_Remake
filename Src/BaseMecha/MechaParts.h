@@ -43,6 +43,23 @@ class MechaParts : public ChCpp::BaseObject<wchar_t>
 {
 public:
 
+	enum class PartsConnectionType
+	{
+		None
+	};
+
+public:
+
+	struct MartsPositionData
+	{
+		ChPtr::Shared<ChCpp::FrameObject<wchar_t>>positionObject = nullptr;
+		ChLMat connectionRotate = ChLMat();
+		PartsConnectionType connectType = PartsConnectionType::None;
+		float maxWeight = 0.0f;
+	};
+
+public:
+
 	friend PartsDataBase;
 
 public:
@@ -124,13 +141,23 @@ public://Get Function//
 
 	inline ChD3D11::Shader::BaseDrawMesh11<wchar_t>* GetMeshDrawer() { return drawer; }
 
-	inline std::map<std::wstring, ChPtr::Shared<ChCpp::FrameObject<wchar_t>>>& GetPositionList() { return positions; }
+	inline std::map<std::wstring, ChPtr::Shared<MartsPositionData>>& GetPositionList() { return positions; }
 
 public:
 
-	inline void AddPosition(const std::wstring& _parameter, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _frame)
+	inline void AddPosition(
+		const std::wstring& _parameter,
+		ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _frame,
+		const ChLMat& _connectRotate,
+		const PartsConnectionType& _type = PartsConnectionType::None,
+		const float _maxWeight = 0.0f)
 	{
-		positions[_parameter] = _frame;
+		auto&& data = ChPtr::Make_S<MartsPositionData>();
+		data->positionObject = _frame;
+		data->connectionRotate = _connectRotate;
+		data->connectType = _type;
+		data->maxWeight = _maxWeight;
+		positions[_parameter] = data;
 	}
 
 	inline void AddPosture(ChPtr::Weak<PostureController> _posture)
@@ -164,7 +191,7 @@ private:
 
 	static std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 
-	std::map<std::wstring, ChPtr::Shared<ChCpp::FrameObject<wchar_t>>> positions;
+	std::map<std::wstring, ChPtr::Shared<MartsPositionData>> positions;
 
 
 	std::vector<ChPtr::Weak<PostureController>> postureList;
