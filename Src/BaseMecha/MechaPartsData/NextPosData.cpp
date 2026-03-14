@@ -10,7 +10,7 @@ void NextPosData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr
 {
 	auto&& mechaParts = LookObj<MechaParts>();
 
-	ChVec3 cross = ChVec3::GetCross(connectionRotateNormal, connectionRotateUp);
+	ChVec3 cross = ChVec3::GetCross(connectionRotateUp, connectionRotateNormal);
 
 	ChLMat lmat;
 	lmat.m[0].Set(cross.val);
