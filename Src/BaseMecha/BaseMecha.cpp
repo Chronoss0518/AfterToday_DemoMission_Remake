@@ -82,6 +82,8 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 
 	GetComponentObject<EnergyComponent>();
 	GetComponentObject<MoveComponent>();
+	GetComponentObject<RightWeaponComponent>();
+	GetComponentObject<LeftWeaponComponent>();
 
 	LoadPartsList(_device, jsonObject);
 }
