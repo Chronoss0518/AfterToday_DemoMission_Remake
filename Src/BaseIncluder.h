@@ -296,16 +296,6 @@ static inline std::wstring CreateMoneyText(const std::wstring& _money)
 	return result;
 }
 
-enum class BoostDirection : unsigned char
-{
-	Front,
-	Back,
-	Right,
-	Left,
-	Up,
-	Down
-};
-
 //X,Y,ZÇÃêî//
 static constexpr unsigned char AXIS_BASE_TYPE_NUM = 3;
 
