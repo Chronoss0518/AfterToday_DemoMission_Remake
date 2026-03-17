@@ -18,5 +18,4 @@ void NextPosData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr
 	lmat.m[2].Set(connectionRotateNormal.val);
 
 	mechaParts->AddPosition(nextPosName, _targetObject, lmat, type, maxWeight);
-
 }
