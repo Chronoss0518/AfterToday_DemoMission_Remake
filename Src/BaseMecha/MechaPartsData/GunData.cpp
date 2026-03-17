@@ -19,7 +19,6 @@ unsigned long GunData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, cons
 	magazineNum = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 2).c_str());
 	reloadTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 3).c_str());
 	range = ChStr::GetNumFromText<unsigned char>(_text.GetTextLine(textPos + 4).c_str());
-	frontDir.Deserialize<wchar_t>(_text.GetTextLine(textPos + 5).c_str());
 	bulletFile = _text.GetTextLine(textPos + 6).c_str();
 
 	return textPos + 7;
@@ -36,7 +35,6 @@ std::wstring GunData::Serialize()
 	res += std::to_wstring(magazineNum) + L"\n";
 	res += std::to_wstring(reloadTime) + L"\n";
 	res += std::to_wstring(range) + L"\n";
-	res += frontDir.Serialize<wchar_t>(L",", L";");
 	res += bulletFile + L"\n";
 
 	return res;

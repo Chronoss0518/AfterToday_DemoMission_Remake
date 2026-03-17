@@ -27,8 +27,6 @@ public://Set Functions//
 
 	inline void SetBulletFile(const std::wstring& _bulletFile) { bulletFile = _bulletFile; }
 
-	inline void SetFrontDirection(const ChVec3& _dir) { frontDir = _dir; }
-
 public://Get Functions//
 
 	inline std::wstring GetPartsTypeTag() override { return GET_CLASS_NAME(GunData); }
@@ -44,8 +42,6 @@ public://Get Functions//
 	inline unsigned char GetRange() const { return range; }
 
 	inline std::wstring GetUseBulletFile() const { return bulletFile; }
-
-	inline ChVec3 GetFrontDirection()const { return frontDir; }
 
 protected:
 
@@ -63,6 +59,4 @@ protected:
 
 	std::wstring bulletFile = L"";
 
-	//UŒ‚‚ÉŒü‚¯‚é•ûŒü//
-	ChVec3 frontDir;
 };
