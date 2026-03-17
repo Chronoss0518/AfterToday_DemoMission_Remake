@@ -2,7 +2,7 @@
 
 #include"MoveDataBase.h"
 
-class BaseMechaMoveComponent;
+class WalkMoveObject;
 
 class WalkData :public MoveDataBase
 {
@@ -50,5 +50,5 @@ protected:
 	//”òãÄ—Í//
 	float jumpPow = 0.0f;
 
-	ChPtr::Shared<BaseMechaMoveComponent>moveObject = nullptr;
+	ChPtr::Shared<WalkMoveObject>moveObject = nullptr;
 };

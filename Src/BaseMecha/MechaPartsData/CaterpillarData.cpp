@@ -35,7 +35,7 @@ void CaterpillarData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _par
 {
 	auto&& move = GetComponent<MoveComponent>(_base);
 
-	moveObject = ChPtr::Make_S<TankMoveComponent>();
+	moveObject = ChPtr::Make_S<CaterpillarMoveObject>();
 
 	moveObject->SetCaterpillarData(this);
 

@@ -2,7 +2,7 @@
 
 #include"MoveDataBase.h"
 
-class TankMoveComponent;
+class CaterpillarMoveObject;
 
 class CaterpillarData :public MoveDataBase
 {
@@ -44,6 +44,6 @@ protected:
 	//”òãÄ—Í//
 	float jumpPow = 0.0f;
 
-	ChPtr::Shared<TankMoveComponent>moveObject = nullptr;
+	ChPtr::Shared<CaterpillarMoveObject>moveObject = nullptr;
 
 };
