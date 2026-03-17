@@ -16,10 +16,9 @@ enum class AttackType :unsigned char
 	Sword,//Œ•//
 	Bullet,//’Êí’e//
 	BoostBullet,//ƒu[ƒXƒg•t‚«’e//
-	HighExplosive,//”š”­’e//
+	Explosive,//”š”­//
 	Missile,//’Ç”ö’e//
 	BirthBullet,//“à‘Ÿ’e//
-	Explosive,//”š”­//
 };
 
 //UŒ‚‘S”Ê//
@@ -172,7 +171,7 @@ protected:
 
 
 //”š”­’e‘S”Ê//
-class HighExplosiveBulletData :public Attack::AttackBase
+class ExplosiveBulletData :public Attack::AttackBase
 {
 public:
 

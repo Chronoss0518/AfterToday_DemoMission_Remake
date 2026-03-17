@@ -17,7 +17,7 @@ std::map<unsigned char, std::function<ChPtr::Shared<Attack::AttackBase>()>> Crea
 {
 	CREATE_TYPE(AttackType::Bullet,BulletData),
 	CREATE_TYPE(AttackType::BoostBullet,BoostBulletData),
-	CREATE_TYPE(AttackType::HighExplosive,HighExplosiveBulletData),
+	CREATE_TYPE(AttackType::Explosive,ExplosiveBulletData),
 	CREATE_TYPE(AttackType::Missile,MissileData),
 };
 
@@ -375,7 +375,7 @@ unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack
 
 std::wstring HighExplosiveBulletData::Serialize()
 {
-	std::wstring res = std::to_wstring(ChStd::EnumCast(AttackType::HighExplosive)) + L"\n";
+	std::wstring res = std::to_wstring(ChStd::EnumCast(AttackType::Explosive)) + L"\n";
 
 	res += std::to_wstring(blastRange) + L"\n";
 
