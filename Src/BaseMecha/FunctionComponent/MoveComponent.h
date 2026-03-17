@@ -138,7 +138,7 @@ private:
 
 
 //êlå^ìãèÊï∫äÌ//
-class BaseMechaMoveComponent :public MoveComponent::MoveObject
+class WalkMoveObject :public MoveComponent::MoveObject
 {
 public:
 
@@ -161,7 +161,7 @@ private:
 };
 
 //ëD//
-class ShipMoveComponent :public MoveComponent::MoveObject
+class ShipMoveObject :public MoveComponent::MoveObject
 {
 public:
 
@@ -173,7 +173,7 @@ private:
 };
 
 //êÌé‘//
-class TankMoveComponent :public MoveComponent::MoveObject
+class CaterpillarMoveObject :public MoveComponent::MoveObject
 {
 public:
 
@@ -217,7 +217,7 @@ private:
 };
 
 //êÌì¨ã@//
-class FighterMoveComponent :public MoveComponent::MoveObject
+class FighterMoveObject :public MoveComponent::MoveObject
 {
 public:
 

@@ -80,7 +80,7 @@ void MoveComponent::Update()
 	moveObject->Update();
 }
 
-void BaseMechaMoveComponent::SetWalkData(WalkData* _data)
+void WalkMoveObject::SetWalkData(WalkData* _data)
 {
 	if (ChPtr::NullCheck(_data))return;
 
@@ -88,7 +88,7 @@ void BaseMechaMoveComponent::SetWalkData(WalkData* _data)
 	data = _data;
 }
 
-void BaseMechaMoveComponent::UpdateBegin()
+void WalkMoveObject::UpdateBegin()
 {
 	SetSelfViewRotateHorizontalFlg(false);
 
@@ -106,7 +106,7 @@ void BaseMechaMoveComponent::UpdateBegin()
 
 }
 
-void BaseMechaMoveComponent::Update()
+void WalkMoveObject::Update()
 {
 	if (data == nullptr)return;
 
@@ -126,7 +126,7 @@ void BaseMechaMoveComponent::Update()
 
 }
 
-void BaseMechaMoveComponent::MoveUpdate(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
+void WalkMoveObject::MoveUpdate(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
 {
 	if (!IsPushFlg(_input))return;
 	if (!IsGround())return;
@@ -135,7 +135,7 @@ void BaseMechaMoveComponent::MoveUpdate(float _pow, InputName _input, const ChVe
 
 }
 
-void BaseMechaMoveComponent::RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)
+void WalkMoveObject::RotateUpdate(float _pow, InputName _input, const ChVec3& _direction)
 {
 	if (!IsPushFlg(_input))return;
 
@@ -146,7 +146,7 @@ void BaseMechaMoveComponent::RotateUpdate(float _pow, InputName _input, const Ch
 	AddRotateVector(vector);
 }
 
-void ShipMoveComponent::Update()
+void ShipMoveObject::Update()
 {
 	SetSelfViewRotateHorizontalFlg(true);
 
@@ -158,14 +158,14 @@ void ShipMoveComponent::Update()
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 }
 
-void TankMoveComponent::SetCaterpillarData(CaterpillarData* _data)
+void CaterpillarMoveObject::SetCaterpillarData(CaterpillarData* _data)
 {
 	if (ChPtr::NullCheck(_data))return;
 	SetMoveData(_data);
 	data = _data;
 }
 
-void TankMoveComponent::Update()
+void CaterpillarMoveObject::Update()
 {	
 
 	SetSelfViewRotateHorizontalFlg(true);
@@ -196,7 +196,7 @@ void TankMoveComponent::Update()
 		AddMoveVector(tmp.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f)) * data->GetJumpPower());
 }
 
-void TankMoveComponent::FlagTest()
+void CaterpillarMoveObject::FlagTest()
 {
 	bool isFront = IsPushFlg(InputName::Front);
 	bool isBack = IsPushFlg(InputName::Back);
@@ -213,7 +213,7 @@ void TankMoveComponent::FlagTest()
 
 }
 
-void TankMoveComponent::FrontBackTest(InputName _frontBack, InputName _right, InputName _left)
+void CaterpillarMoveObject::FrontBackTest(InputName _frontBack, InputName _right, InputName _left)
 {
 	if (!IsPushFlg(_frontBack))return;
 
@@ -238,7 +238,7 @@ void TankMoveComponent::FrontBackTest(InputName _frontBack, InputName _right, In
 
 }
 
-void TankMoveComponent::RightLeftTest(InputName _rightLeft, InputName _front, InputName _back)
+void CaterpillarMoveObject::RightLeftTest(InputName _rightLeft, InputName _front, InputName _back)
 {
 	if (!IsPushFlg(_rightLeft))return;
 	if (IsPushFlg(InputName::Front) || IsPushFlg(InputName::Back))return;
@@ -247,7 +247,7 @@ void TankMoveComponent::RightLeftTest(InputName _rightLeft, InputName _front, In
 	SetPushFlg(_back);
 }
 
-void TankMoveComponent::RemoveTest(InputName _front, InputName _back)
+void CaterpillarMoveObject::RemoveTest(InputName _front, InputName _back)
 {
 	if (!IsPushFlg(_front) || !IsPushFlg(_back))return;
 
@@ -255,7 +255,7 @@ void TankMoveComponent::RemoveTest(InputName _front, InputName _back)
 	RemovePushFlg(_back);
 }
 
-void TankMoveComponent::MoveUpdate(float _movePower, InputName _right, InputName _left, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
+void CaterpillarMoveObject::MoveUpdate(float _movePower, InputName _right, InputName _left, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
 {
 	if (!IsPushFlg(_right) || !IsPushFlg(_left))return;
 
@@ -264,7 +264,7 @@ void TankMoveComponent::MoveUpdate(float _movePower, InputName _right, InputName
 	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * _movePower);
 }
 
-void TankMoveComponent::OneSideMoveUpdate(
+void CaterpillarMoveObject::OneSideMoveUpdate(
 	float _rotatePower,
 	InputName _move,
 	InputName _oneSideFront,
@@ -291,7 +291,7 @@ void TankMoveComponent::OneSideMoveUpdate(
 	AddMoveVector(tmpMat.TransformCoord(_moveDirection) * _rotatePower * 0.25f);
 }
 
-void TankMoveComponent::RotationUpdate(float _rotatePower, InputName _right, InputName _left, const ChVec3& _direction)
+void CaterpillarMoveObject::RotationUpdate(float _rotatePower, InputName _right, InputName _left, const ChVec3& _direction)
 {
 	if (!IsPushFlg(_right) || !IsPushFlg(_left))return;
 
@@ -302,7 +302,7 @@ void TankMoveComponent::RotationUpdate(float _rotatePower, InputName _right, Inp
 	AddRotateVector(vector);
 }
 
-void FighterMoveComponent::MoveFront(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
+void FighterMoveObject::MoveFront(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
 {
 	float movePow = _pow;
 
@@ -316,7 +316,7 @@ void FighterMoveComponent::MoveFront(float _pow, InputName _input, const ChVec3&
 	AddMoveVector(_nowTargetPoster.TransformCoord(_direction) * movePow);
 }
 
-void FighterMoveComponent::MoveSide(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
+void FighterMoveObject::MoveSide(float _pow, InputName _input, const ChVec3& _direction, const ChLMat& _nowTargetPoster)
 {
 
 	if (IsGround())return;
@@ -331,7 +331,7 @@ void FighterMoveComponent::MoveSide(float _pow, InputName _input, const ChVec3& 
 	AddRotateVector(_nowTargetPoster.TransformCoord(rotate) * _pow);
 }
 
-void FighterMoveComponent::RotateUpDown(float _pow, InputName _input, const ChVec3& _direction)
+void FighterMoveObject::RotateUpDown(float _pow, InputName _input, const ChVec3& _direction)
 {
 	if (_input == InputName::RightRotation || _input == InputName::LeftRotation)return;
 
@@ -342,7 +342,7 @@ void FighterMoveComponent::RotateUpDown(float _pow, InputName _input, const ChVe
 	AddRotateVector(vector);
 }
 
-void FighterMoveComponent::RotateZRightZLeft(float _pow, InputName _input, const ChVec3& _direction)
+void FighterMoveObject::RotateZRightZLeft(float _pow, InputName _input, const ChVec3& _direction)
 {
 
 	if (_input == InputName::UpRotation || _input == InputName::DownRotation)return;
