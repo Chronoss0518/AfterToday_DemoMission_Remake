@@ -82,8 +82,8 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 
 	GetComponentObject<EnergyComponent>();
 	GetComponentObject<MoveComponent>();
-	GetComponentObject<RightWeaponComponent>();
-	GetComponentObject<LeftWeaponComponent>();
+	//GetComponentObject<RightWeaponComponent>();
+	//GetComponentObject<LeftWeaponComponent>();
 
 	LoadPartsList(_device, jsonObject);
 }
@@ -103,10 +103,6 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	nowDurable = durable;
 	physics->SetMass(mass);
-
-	auto boostComponent = GetComponent<BoostComponent>();
-
-	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
 
 }
 
@@ -298,22 +294,18 @@ void BaseMecha::BaseMove()
 void BaseMecha::Draw3D()
 {
 	if (core == nullptr)return;
-	core->DrawBeginFunction();
-
 	ChLMat drawMat;
 	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	drawMat.SetPosition(physics->GetPosition());
 
 	auto boostComponent = GetComponent<BoostComponent>();
 
-	if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
+	//if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
 
 	core->SetOutSideTransform(drawMat);
 	core->Draw3DFunction();
 
-	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
-
-	core->DrawEndFunction();
+	//if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
 
 }
 
