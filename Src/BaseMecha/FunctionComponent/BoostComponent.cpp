@@ -40,12 +40,12 @@ void BoostComponent::Update()
 	UpdateAvoid(InputName::UpAvo, Direction::Up, up);
 	UpdateAvoid(InputName::DownAvo, Direction::Down, down);
 
-	UpdateBoost(InputName::FrontAvo, Direction::Front, front);
-	UpdateBoost(InputName::BackAvo, Direction::Back, back);
-	UpdateBoost(InputName::RightAvo, Direction::Right, right);
-	UpdateBoost(InputName::LeftAvo, Direction::Left, left);
-	UpdateBoost(InputName::UpAvo, Direction::Up, up);
-	UpdateBoost(InputName::DownAvo, Direction::Down, down);
+	UpdateBoost(InputName::FrontBoost, Direction::Front, front);
+	UpdateBoost(InputName::BackBoost, Direction::Back, back);
+	UpdateBoost(InputName::RightBoost, Direction::Right, right);
+	UpdateBoost(InputName::LeftBoost, Direction::Left, left);
+	UpdateBoost(InputName::UpBoost, Direction::Up, up);
+	UpdateBoost(InputName::DownBoost, Direction::Down, down);
 }
 
 void BoostComponent::UpdateAvoid(InputName _avoidInput, Direction _direction, const ChVec3& _moveDirection)
