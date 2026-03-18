@@ -324,6 +324,12 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\MoveDataBase.h">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BaseMecha\Direction.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.h">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -542,6 +548,9 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsData\GunData.cpp">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClCompile>
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.cpp">
+      <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
@@ -618,9 +627,6 @@
     <None Include="Resource\RobotParts\LAT.mpd">
       <Filter>PartsDatas</Filter>
     </None>
-    <None Include="Resource\RobotParts\MF-TPP1.mpd">
-      <Filter>PartsDatas</Filter>
-    </None>
     <None Include="Resource\RobotParts\RAA_01.mpd">
       <Filter>PartsDatas</Filter>
     </None>
@@ -686,6 +692,9 @@
     </None>
     <None Include="Resource\StageData\Test_Stage_NoCPU.json">
       <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\RobotParts\MF-TPP1.mpd">
+      <Filter>PartsDatas</Filter>
     </None>
   </ItemGroup>
 </Project>

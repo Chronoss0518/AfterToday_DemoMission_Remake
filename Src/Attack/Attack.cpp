@@ -365,7 +365,7 @@ void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
+unsigned long ExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
 	blastRange = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos).c_str());
@@ -373,7 +373,7 @@ unsigned long HighExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack
 	return _nowPos + 1;
 }
 
-std::wstring HighExplosiveBulletData::Serialize()
+std::wstring ExplosiveBulletData::Serialize()
 {
 	std::wstring res = std::to_wstring(ChStd::EnumCast(AttackType::Explosive)) + L"\n";
 
@@ -382,7 +382,7 @@ std::wstring HighExplosiveBulletData::Serialize()
 	return res;
 }
 
-void HighExplosiveBulletData::SetPartameter(PartsParameterStruct::AttackData& _parameter)
+void ExplosiveBulletData::SetPartameter(PartsParameterStruct::AttackData& _parameter)
 {
 	auto&& data = ChPtr::Make_S<PartsParameterStruct::HighExplosiveBulletData>();
 
@@ -390,7 +390,7 @@ void HighExplosiveBulletData::SetPartameter(PartsParameterStruct::AttackData& _p
 	_parameter.attackDataBase.push_back(data);
 }
 
-void HighExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
+void ExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 {
 
 }

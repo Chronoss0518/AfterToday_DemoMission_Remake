@@ -18,7 +18,7 @@ public:
 
 	bool IsGround();
 
-public:
+protected:
 
 	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->physics->AddMovePowerVector(_moveVecAdd); }
 	
@@ -30,13 +30,13 @@ public:
 
 	inline void AddViewRotateHorizontal(const float& _viewRotate) { target->AddViewHorizontal(_viewRotate); }
 
-public:
+protected:
 
 	inline void SetPushFlg(InputName _name){ target->inputFlgs.SetBitTrue(ChStd::EnumCast(_name)); }
 
 	inline void RemovePushFlg(InputName _name) { target->inputFlgs.SetBitFalse(ChStd::EnumCast(_name)); }
 
-public:
+protected:
 
 	ChVec3 GetPosition() { return target->GetPosition(); }
 

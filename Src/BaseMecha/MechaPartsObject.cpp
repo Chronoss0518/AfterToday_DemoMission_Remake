@@ -45,7 +45,7 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 
 	auto&& position = baseParts->GetPositionList()[_objectType];
 
-	_childObject->SetParent(shared_from_this());
+	SetChild(_childObject);
 	_childObject->ChCpp::TransformObject<wchar_t>::Update();
 
 	ChVec3 pos = ChVec3();
@@ -162,10 +162,6 @@ void MechaPartsObject::Update()
 		func->Update();
 	}
 
-	for (auto&& partsObject : positions)
-	{
-		partsObject.second->Update();
-	}
 }
 
 void  MechaPartsObject::DrawBegin()
@@ -185,6 +181,8 @@ void  MechaPartsObject::DrawBegin()
 
 void MechaPartsObject::Draw3D()
 {
+	DrawBeginFunction();
+
 	TransformObject<wchar_t>::Draw3D();
 
 	baseParts->Draw((ChMat_11)(GetDrawLHandMatrix()));
@@ -192,6 +190,8 @@ void MechaPartsObject::Draw3D()
 	collider.SetMatrix(GetDrawLHandMatrix());
 
 	mecha->UpdateAnchor(GetLookAnchorNo(), GetDrawLHandMatrix());
+
+	DrawEndFunction();
 }
 
 void  MechaPartsObject::DrawEnd()
