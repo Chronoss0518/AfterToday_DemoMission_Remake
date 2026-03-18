@@ -31,7 +31,7 @@
     <ClInclude Include="Src\Attack\AttackObject.h" />
     <ClInclude Include="Src\BaseIncluder.h" />
     <ClInclude Include="Src\BaseMecha\BaseMecha.h" />
-    <ClInclude Include="Src\BaseMecha\BoostDirection.h" />
+    <ClInclude Include="Src\BaseMecha\Direction.h" />
     <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h" />
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUActionBase.h" />
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUAttack.h" />
@@ -66,6 +66,7 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\WalkData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\WeaponDataBase.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObject.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsData\WalkData.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsData\WeaponDataBase.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.cpp" />
     <ClCompile Include="Src\EditFrameDrawObject\PanelList\PanelList.cpp" />
