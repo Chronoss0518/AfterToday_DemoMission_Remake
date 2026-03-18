@@ -40,6 +40,8 @@ public:
 
 	void AddBoostDirection(BoostDirection _direction) { directionFlgs.SetBitTrue(ChStd::EnumCast(_direction)); }
 
+	void SubBoostDirection(BoostDirection _direction){ directionFlgs.SetBitFalse(ChStd::EnumCast(_direction)); }
+
 public://Get Functions//
 
 	inline std::wstring GetObjectNameList() { return objectName; }
