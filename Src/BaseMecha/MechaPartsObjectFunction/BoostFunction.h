@@ -2,8 +2,6 @@
 
 #include"../MechaPartsObject.h"
 
-class BoostBrust;
-
 class BoostFunction :public ChCpp::BaseComponent
 {
 public:

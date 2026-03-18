@@ -9,8 +9,6 @@
 #define REDUCED_SIZE 0.8f
 #define MIN_SIZE 0.01f
 
-
-
 void BoostFunction::Update()
 {
 	nowScaling *= REDUCED_SIZE;
