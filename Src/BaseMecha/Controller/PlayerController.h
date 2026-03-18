@@ -54,5 +54,4 @@ private:
 	float moveSensitivility = 1.0f;
 	ChVec2 nowPos = ChVec2();
 	ChVec2 windSize = ChVec2();
-	float baseLen = 0.0f;
 };

@@ -15,7 +15,6 @@ void PlayerController::Init()
 	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::WindowsW>();
 	windSize.h = static_cast<float>(windows.GetWindHeight());
 	windSize.w = static_cast<float>(windows.GetWindWidth());
-	baseLen = (windSize.h < windSize.w ? windSize.h : windSize.w);
 
 	keyTypes[VK_SPACE] = InputName::Up;
 	keyTypes[VK_SHIFT] = InputName::Avo;
@@ -176,8 +175,8 @@ void PlayerController::CursolUpdate()
 {
 	mouse->Update();
 
-	ChVec2 vector = mouse->GetNowPosToChVec2() - (windSize / 2.0f);
-	vector /= baseLen;
+	ChVec2 vector = mouse->GetNowProPosToChVec2();
+	vector.y = -vector.y;
 
 	if (vector.x > 1.0f)vector.x = 1.0f;
 	if (vector.x < -1.0f)vector.x = -1.0f;
@@ -195,7 +194,6 @@ void PlayerController::CursolUpdate()
 
 void PlayerController::CursolFunction(float& _value, float _removeSize, const AxisTypeName _plus, const AxisTypeName _minus)
 {
-
 	if (controllerPushFlg)return;
 
 	if (std::abs(_value) < _removeSize)
