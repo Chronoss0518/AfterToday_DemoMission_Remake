@@ -9,19 +9,27 @@
 #define REDUCED_SIZE 0.9f
 #define MIN_SIZE 0.01f
 
+#define BOOST_ROTATE 5.0f;
+
 void BoostFunction::Update()
 {
 	nowScaling *= REDUCED_SIZE;
 
 	if (nowScaling < MIN_SIZE)
 		nowScaling = 0.0f;
+
+	boostRotation += BOOST_ROTATE;
+	if (boostRotation >= 360.0f)
+		boostRotation = 0.0f;
 }
 
 void BoostFunction::DrawBegin()
 {
 	if (targetBoostObject == nullptr)return;
 	ChLMat tmpMat;
+	tmpMat.SetRotationYAxis(boostRotation);
 	tmpMat.SetScalling(nowScaling);
+
 	targetBoostObject->SetOutSideTransform(tmpMat);
 }
 

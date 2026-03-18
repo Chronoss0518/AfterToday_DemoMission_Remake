@@ -29,5 +29,5 @@ private:
 	ChPtr::Shared<ChCpp::TransformObject<wchar_t>>targetBoostObject = nullptr;
 
 	float nowScaling = 0.0f;
-
+	float boostRotation = 0.0f;
 };
