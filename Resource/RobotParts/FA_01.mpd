@@ -6,7 +6,7 @@ WalkData:{
 30.000000
 20.000000
 }
-UpBoostBrust:{
+BoostBrust:{
 RightFootJumpBoost
 16
 30
@@ -15,7 +15,7 @@ RightFootJumpBoost
 1800.000000
 50
 }
-UpBoostBrust:{
+BoostBrust:{
 LeftFootJumpBoost
 16
 30
