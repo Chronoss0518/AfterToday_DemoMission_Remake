@@ -324,6 +324,9 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\MoveDataBase.h">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClInclude>
+    <ClInclude Include="Src\BaseMecha\BoostDirection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
