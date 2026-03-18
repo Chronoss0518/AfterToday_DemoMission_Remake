@@ -3,10 +3,10 @@
 
 #include"BoostFunction.h"
 
-#define BOOST_MAX_SCALE_SIZE 1.0f
-#define AVOID_MAX_SCALE_SIZE 2.0f
+#define BOOST_MAX_SCALE_SIZE 2.0f
+#define AVOID_MAX_SCALE_SIZE 5.0f
 
-#define REDUCED_SIZE 0.8f
+#define REDUCED_SIZE 0.9f
 #define MIN_SIZE 0.01f
 
 void BoostFunction::Update()
