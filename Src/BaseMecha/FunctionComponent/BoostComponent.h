@@ -14,23 +14,18 @@ public:
 	struct UseBoostData
 	{
 		BoostBrust* data = nullptr;
+		unsigned long nowAvoidWait = 0;
  	};
-
-public:
-
-	BoostComponent();
-
-public:
-
-	void ClearBoostAvoidWait(InputName _avoidType);
 
 public:
 
 	void Update()override;
 
-public:
+private:
 
-	void SetBoostAvoidWait(const unsigned long _avoidWait, InputName _avoidType);
+	void UpdateAvoid(InputName _avoidInput, BoostDirection _direction,const ChVec3& _moveDirection);
+
+	void UpdateBoost(InputName _boostInput, BoostDirection _direction, const ChVec3& _moveDirection);
 
 public:
 
@@ -40,7 +35,6 @@ public:
 
 private:
 
-	static float& GetBoostUpPowerRegister() { static float regist = 0.3f; return regist; }
-
-	std::vector<BoostBrust*>boostBrustList;
+	std::vector<ChPtr::Shared<UseBoostData>>boostBrustList;
+	bool useAvoidFlg[6] = { false,false,false,false,false,false };
 };
