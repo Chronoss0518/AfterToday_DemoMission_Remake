@@ -7,6 +7,7 @@
 
 #include"BoostComponent.h"
 #include"EnergyComponent.h"
+#include"../MechaPartsObjectFunction/BoostFunction.h"
 
 void BoostComponent::Update()
 {
@@ -15,6 +16,11 @@ void BoostComponent::Update()
 		boostBrustList[i]->nowAvoidWait++;
 		if (boostBrustList[i]->nowAvoidWait > boostBrustList[i]->data->GetAvoidWait())
 			boostBrustList[i]->nowAvoidWait = boostBrustList[i]->data->GetAvoidWait() + 1;
+	}
+
+	for (int i = 0; i < DIRECTION_MAX_COUNT; i++)
+	{
+		useAvoidFlg[i] = false;
 	}
 
 	ChLMat tmp;
@@ -27,22 +33,22 @@ void BoostComponent::Update()
 	ChVec3 up = ChVec3(0.0f, 1.0f, 0.0f);
 	ChVec3 down = ChVec3(0.0f, -1.0f, 0.0f);
 
-	UpdateAvoid(InputName::FrontAvo, BoostDirection::Front, front);
-	UpdateAvoid(InputName::BackAvo, BoostDirection::Back, back);
-	UpdateAvoid(InputName::RightAvo, BoostDirection::Right, right);
-	UpdateAvoid(InputName::LeftAvo, BoostDirection::Left, left);
-	UpdateAvoid(InputName::UpAvo, BoostDirection::Up, up);
-	UpdateAvoid(InputName::DownAvo, BoostDirection::Down, down);
+	UpdateAvoid(InputName::FrontAvo, Direction::Front, front);
+	UpdateAvoid(InputName::BackAvo, Direction::Back, back);
+	UpdateAvoid(InputName::RightAvo, Direction::Right, right);
+	UpdateAvoid(InputName::LeftAvo, Direction::Left, left);
+	UpdateAvoid(InputName::UpAvo, Direction::Up, up);
+	UpdateAvoid(InputName::DownAvo, Direction::Down, down);
 
-	UpdateBoost(InputName::FrontAvo, BoostDirection::Front, front);
-	UpdateBoost(InputName::BackAvo, BoostDirection::Back, back);
-	UpdateBoost(InputName::RightAvo, BoostDirection::Right, right);
-	UpdateBoost(InputName::LeftAvo, BoostDirection::Left, left);
-	UpdateBoost(InputName::UpAvo, BoostDirection::Up, up);
-	UpdateBoost(InputName::DownAvo, BoostDirection::Down, down);
+	UpdateBoost(InputName::FrontAvo, Direction::Front, front);
+	UpdateBoost(InputName::BackAvo, Direction::Back, back);
+	UpdateBoost(InputName::RightAvo, Direction::Right, right);
+	UpdateBoost(InputName::LeftAvo, Direction::Left, left);
+	UpdateBoost(InputName::UpAvo, Direction::Up, up);
+	UpdateBoost(InputName::DownAvo, Direction::Down, down);
 }
 
-void BoostComponent::UpdateAvoid(InputName _avoidInput, BoostDirection _direction, const ChVec3& _moveDirection)
+void BoostComponent::UpdateAvoid(InputName _avoidInput, Direction _direction, const ChVec3& _moveDirection)
 {
 	if (!IsPushFlg(_avoidInput))return;
 
@@ -70,6 +76,7 @@ void BoostComponent::UpdateAvoid(InputName _avoidInput, BoostDirection _directio
 
 	for (int i = 0; i < useBoost.size(); i++)
 	{
+		useBoost[i]->func->SetAvoidScaling();
 		avoidPower += useBoost[i]->data->GetAvoidPower();
 		useBoost[i]->nowAvoidWait = 0;
 	}
@@ -78,7 +85,7 @@ void BoostComponent::UpdateAvoid(InputName _avoidInput, BoostDirection _directio
 
 }
 
-void BoostComponent::UpdateBoost(InputName _avoidInput, BoostDirection _direction, const ChVec3& _moveDirection)
+void BoostComponent::UpdateBoost(InputName _avoidInput, Direction _direction, const ChVec3& _moveDirection)
 {
 	if (!IsPushFlg(_avoidInput))return;
 	if (useAvoidFlg[ChStd::EnumCast(_direction)])return;
@@ -105,22 +112,19 @@ void BoostComponent::UpdateBoost(InputName _avoidInput, BoostDirection _directio
 
 	for (int i = 0; i < useBoost.size(); i++)
 	{
+		useBoost[i]->func->SetBoostScaling();
 		boostPower += useBoost[i]->data->GetBoostPower();
 	}
 
 	AddMoveVector(_moveDirection * boostPower);
 }
 
-void BoostComponent::AddBoostData(BoostBrust* _data)
+void BoostComponent::AddBoostData(BoostBrust* _data,BoostFunction* _func)
 {
-	for (int i = 0; i < boostBrustList.size(); i++)
-	{
-		if (boostBrustList[i]->data == _data)return;
-	}
-
 	auto&& newData = ChPtr::Make_S<UseBoostData>();
 
 	newData->data = _data;
+	newData->func = _func;
 
 	boostBrustList.push_back(newData);
 
@@ -133,7 +137,7 @@ void BoostComponent::SubBoostData(BoostBrust* _data)
 		if (boostBrustList[i]->data != _data)continue;
 
 		boostBrustList.erase(boostBrustList.begin() + i);
-		return;
+		i = 0;
 	}
 
 }

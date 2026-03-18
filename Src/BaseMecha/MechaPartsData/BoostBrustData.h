@@ -2,7 +2,7 @@
 
 #include"NextPosBase.h"
 
-#include"../BoostDirection.h"
+#include"../Direction.h"
 
 class BoostBrust :public PartsDataBase
 {
@@ -22,7 +22,7 @@ public://Set Functions//
 
 	void SetPartsParameter(PartsParameters& _base)override;
 
-	void SetBoostData(BoostDirection _direction, PartsParameterStruct::BoostData& _boost);
+	void SetBoostData(Direction _direction, PartsParameterStruct::BoostData& _boost);
 
 	void SetParamName(const std::wstring& _objectName) { objectName = _objectName; }
 
@@ -38,9 +38,9 @@ public://Set Functions//
 
 public:
 
-	void AddBoostDirection(BoostDirection _direction) { directionFlgs.SetBitTrue(ChStd::EnumCast(_direction)); }
+	void AddBoostDirection(Direction _direction) { directionFlgs.SetBitTrue(ChStd::EnumCast(_direction)); }
 
-	void SubBoostDirection(BoostDirection _direction){ directionFlgs.SetBitFalse(ChStd::EnumCast(_direction)); }
+	void SubBoostDirection(Direction _direction){ directionFlgs.SetBitFalse(ChStd::EnumCast(_direction)); }
 
 public://Get Functions//
 
@@ -56,9 +56,9 @@ public://Get Functions//
 
 	inline unsigned long GetAvoidWait()const { return avoidWait; }
 
-	inline bool GetBoostDirectionFlg(BoostDirection _direction) { return directionFlgs.GetBitFlg(ChStd::EnumCast(_direction)); }
+	inline bool GetBoostDirectionFlg(Direction _direction) { return directionFlgs.GetBitFlg(ChStd::EnumCast(_direction)); }
 
-	ChPtr::Shared<ChCpp::FrameObject<wchar_t>> GetFrame(BaseMecha& _base);
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>> GetFrame();
 
 	std::wstring GetPartsTypeTag()override { return GET_CLASS_NAME(BoostBrust); }
 
