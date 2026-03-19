@@ -58,11 +58,7 @@ public:
 
 		inline void AddRotateVector(const ChVec3& _rotateVecAdd) { component->AddRotateVector(_rotateVecAdd); }
 
-		inline void AddViewRotateVertical(const float& _viewRotate) { component->AddViewRotateVertical(_viewRotate); }
-
 		inline void SetSelfViewRotateHorizontalFlg(const bool& _flg) { component->SetSelfViewRotateHorizontalFlg(_flg); }
-
-		inline void AddViewRotateHorizontal(const float& _viewRotate) { component->AddViewRotateHorizontal(_viewRotate); }
 
 	public:
 
@@ -120,12 +116,6 @@ public:
 
 protected:
 
-	void CamVerticalRotateUpdate(InputName _input, const float _camRot);
-
-	void CamHorizontalRotateUpdate(InputName _input, const float _camRot);
-
-protected:
-
 	void IsAvoBoostTest(InputName _input, InputName _boost, InputName _avoid);
 
 private:
@@ -133,7 +123,6 @@ private:
 	char nowMoveObject = 0;
 	std::vector<ChPtr::Shared<MoveObject>>moveObjectList;
 
-	float cameraRotatePow = 50.0f;
 };
 
 

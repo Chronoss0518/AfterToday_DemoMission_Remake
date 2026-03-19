@@ -8,8 +8,6 @@
 #include"../MechaPartsData/WalkData.h"
 #include"../MechaPartsData/CaterpillarData.h"
 
-#define VIEW_ROTATE_POW_UPPER 16 / 9
-
 void MoveComponent::RemoveMoveObject(MoveDataBase* _moveObject)
 {
 	if (_moveObject == nullptr)return;
@@ -21,20 +19,6 @@ void MoveComponent::RemoveMoveObject(MoveDataBase* _moveObject)
 		moveObjectList.erase(moveObjectList.begin() + i);
 		return;
 	}
-}
-
-void MoveComponent::CamVerticalRotateUpdate(InputName _input, const float _camRot)
-{
-	if (!IsPushFlg(_input))return;
-
-	AddViewRotateVertical(_camRot / PhysicsMachine::GetFPS());
-}
-
-void MoveComponent::CamHorizontalRotateUpdate(InputName _input, const float _camRot)
-{
-	if (!IsPushFlg(_input))return;
-
-	AddViewRotateHorizontal(_camRot / PhysicsMachine::GetFPS());
 }
 
 void MoveComponent::IsAvoBoostTest(InputName _input, InputName _boost, InputName _avoid)
@@ -70,12 +54,6 @@ void MoveComponent::Update()
 	IsAvoBoostTest(InputName::Up, InputName::UpBoost, InputName::UpAvo);
 	IsAvoBoostTest(InputName::Down, InputName::DownBoost, InputName::DownAvo);
 
-
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, cameraRotatePow);
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -cameraRotatePow);
-
-	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -cameraRotatePow * VIEW_ROTATE_POW_UPPER);
-	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, cameraRotatePow * VIEW_ROTATE_POW_UPPER);
 
 	moveObject->Update();
 }
