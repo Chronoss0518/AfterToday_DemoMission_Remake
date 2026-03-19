@@ -702,7 +702,7 @@ void GameFrame::DrawFunction()
 	{
 		ChVec4 fadeOutColor = ChVec4(1.0f);
 		fadeOutColor.a =(SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
-		audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
+		if(nowPlayAudio != L"")audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
 		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
 	}
 
