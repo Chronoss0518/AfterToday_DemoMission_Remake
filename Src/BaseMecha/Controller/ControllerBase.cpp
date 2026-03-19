@@ -9,7 +9,7 @@
 
 void ControllerBase::Input(const InputName _inputFlgName)
 {
-	auto targetMecha = LookObj<BaseMecha>();
+	auto targetMecha = GetBaseMecha();
 	if (ChPtr::NullCheck(targetMecha))Destroy();
 
 	targetMecha->SetPushFlg(_inputFlgName);
