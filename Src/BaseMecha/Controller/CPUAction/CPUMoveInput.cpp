@@ -3,6 +3,7 @@
 #include"../../../AllStruct.h"
 
 #include"../../BaseMecha.h"
+#include"../../FunctionComponent/CameraComponent.h"
 
 #include"../../../Frames/GameFrame.h"
 
@@ -65,9 +66,9 @@ void CPUMoveInput::Update(
 
 	moveDir.Normalize();
 
-	ChLMat tmpMat;
+	auto&& camera = baseMecha->GetComponentObject<CameraComponent>();
 
-	auto lookDir = baseMecha->GetViewLookPos() - baseMecha->GetViewPos();
+	auto lookDir = camera->GetViewLookPos() - camera->GetViewPos();
 
 	lookDir.Normalize();
 
