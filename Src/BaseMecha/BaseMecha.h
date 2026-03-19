@@ -3,11 +3,12 @@
 
 class GameFrame;
 class MechaPartsObject;
-class CameraObject;
 class WeaponObject;
 class FunctionComponent;
 class AttackObject;
 class WeaponComponent;
+
+class ControllerBase;
 
 class PhysicsMachine;
 
@@ -91,17 +92,6 @@ public:
 
 	void AddRotateVector(const ChVec3& _rotateVecAdd);
 
-	inline void AddCamera(ChPtr::Shared<CameraObject> _camera)
-	{
-		cameraList.push_back(_camera);
-	}
-
-	inline void AddViewVertical(const float& _x) { viewVertical = std::abs(viewVertical + _x) < maxViewVertical ? viewVertical + _x : viewVertical; }
-
-	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
-
-	inline void AddViewHorizontal(const float& _y) { viewHorizontal += _y; }
-
 	void AddMass(const float _mass) { mass += _mass; }
 
 	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
@@ -122,6 +112,8 @@ public://Set Function//
 
 	void SetRotation(const ChVec3& _rot);
 
+	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
+
 	void SetMass(const float _mass) { mass = _mass; }
 
 	inline void SetPushFlg(const InputName _inputFlgName)
@@ -139,11 +131,7 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
-	ChLMat GetViewMat() { return viewMat; }
-
-	ChVec3 GetViewPos();
-	
-	ChVec3 GetViewLookPos();
+	ChLMat GetViewMat();
 
 	ChVec3 GetDamageDir() { return damageDir; }
 
@@ -201,9 +189,9 @@ public:
 
 protected:
 
-	ChLMat viewMat;
-
 	ChVec2 viewSize;
+
+	ChPtr::Shared<ControllerBase>controller = nullptr;
 
 	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
 
@@ -220,9 +208,6 @@ protected:
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
-	size_t useCameraNo = 0;
-	std::vector<ChPtr::Shared<CameraObject>>cameraList;
-
 	ChVec3 damageDir = ChVec3();
 
 	float baseHitSize = 0.0f;
@@ -236,16 +221,12 @@ protected:
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;
-	float viewVertical = 0.0f;
-	float maxViewVertical = 85.0f;
-
-	bool isSelfViewHorizontalFlg = true;
-	float viewHorizontal = 0.0f;
 
 	long hitEffectDrawFrame = -1;
 
 	bool breakFlg = false;
 
+	bool isSelfViewHorizontalFlg = true;
 };
 
 #endif

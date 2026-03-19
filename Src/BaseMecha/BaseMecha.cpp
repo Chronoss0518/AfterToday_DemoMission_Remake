@@ -12,19 +12,12 @@
 #include"FunctionComponent/BoostComponent.h"
 #include"FunctionComponent/EnergyComponent.h"
 #include"FunctionComponent/MoveComponent.h"
+#include"FunctionComponent/CameraComponent.h"
 
 #include"../Attack/AttackObject.h"
 #include"Controller/ControllerBase.h"
 
 #include"CPU/CPULooker.h"
-
-#define DEBUG_UP_CAMERA false
-
-#if DEBUG_UP_CAMERA
-#define DEBUG_UP_POS 50.0f
-#endif
-
-#define CAMERA_Y_POS 4.0f
 
 #define CENTER_LEN 5.0f
 
@@ -82,6 +75,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 
 	GetComponentObject<EnergyComponent>();
 	GetComponentObject<MoveComponent>();
+	GetComponentObject<CameraComponent>();
 	//GetComponentObject<RightWeaponComponent>();
 	//GetComponentObject<LeftWeaponComponent>();
 
@@ -108,7 +102,8 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 void BaseMecha::LoadEnd()
 {
-	viewHorizontal = physics->GetRotation().y;
+	auto&& com = GetComponentObject<CameraComponent>();
+	com->SetViewVerticial(true, physics->GetRotation().y);
 }
 
 void BaseMecha::Save(const std::wstring& _fileName)
@@ -173,26 +168,17 @@ void BaseMecha::MoveEnd()
 {
 	damageDir = ChVec3();
 
-	if(!isSelfViewHorizontalFlg)viewHorizontal = physics->GetRotation().y;
+	auto&& camera = GetComponentObject<CameraComponent>();
+	camera->SetViewVerticial(!isSelfViewHorizontalFlg, physics->GetRotation().y);
+	camera->SetCenterPos(centerPos);
 
-	auto viewPos = GetViewPos();
-	auto viewLookPos = GetViewLookPos();
-
-	ChMat_11 tmpMat;
-
-#if DEBUG_UP_CAMERA
-	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 0.0f, 1.0f));
-#else
-	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
-#endif
-
-	viewMat = tmpMat;
+	camera->UpdateCamera();
 
 	auto&& objectLooker = GetComponent<CPUObjectLooker>();
 
 	if (objectLooker == nullptr)return;
 
-	objectLooker->SetViewMatrix(viewMat);
+	objectLooker->SetViewMatrix(camera->GetViewMat());
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
@@ -223,42 +209,6 @@ void BaseMecha::AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
 	_partsObject->SetRWeapon(true);
 }
 
-ChVec3 BaseMecha::GetViewPos()
-{
-#if DEBUG_UP_CAMERA
-	return centerPos +  ChVec3(0.0f, DEBUG_UP_POS, 0.0f);
-
-#endif
-
-
-	ChLMat camYMat, camXMat;
-
-	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
-	camYMat = camXMat * camYMat;
-	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
-
-	return camYMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
-}
-
-ChVec3 BaseMecha::GetViewLookPos()
-{
-
-#if DEBUG_UP_CAMERA
-
-	return centerPos;
-
-#endif
-	ChLMat camYMat, camXMat;
-
-	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
-	camYMat = camXMat * camYMat;
-	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS - 2.0f, 0.0f));
-
-	return camYMat.Transform(ChVec3(0.0f, 0.0f, 5.0f));
-}
-
 void BaseMecha::BaseMove()
 {
 	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
@@ -267,7 +217,7 @@ void BaseMecha::BaseMove()
 	ChVec3 pos = physics->GetPosition();
 	ChVec3 normal = (pos - centerPos);
 	normal.y = 0.0f;
-	centerPos.y = pos.y + CAMERA_Y_POS;
+	centerPos.y = pos.y + CameraComponent::CAMERA_Y_POS;
 
 	testCollider.SetPosition(pos);
 
@@ -298,14 +248,8 @@ void BaseMecha::Draw3D()
 	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	drawMat.SetPosition(physics->GetPosition());
 
-	auto boostComponent = GetComponent<BoostComponent>();
-
-	//if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
-
 	core->SetOutSideTransform(drawMat);
 	core->Draw3DFunction();
-
-	//if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
 
 }
 
@@ -379,6 +323,12 @@ ChVec3 BaseMecha::GetPosition()
 ChVec3 BaseMecha::GetRotation()
 {
 	return physics->GetRotation();
+}
+
+ChLMat BaseMecha::GetViewMat()
+{
+	auto&& camera = GetComponentObject<CameraComponent>();
+	return camera->GetViewMat();
 }
 
 size_t BaseMecha::GetTeamNo()
