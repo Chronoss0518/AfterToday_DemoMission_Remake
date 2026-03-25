@@ -110,8 +110,7 @@ public:
 
 	void DownChangeMoveObject()
 	{
-		nowMoveObject = nowMoveObject - 1;
-		if (nowMoveObject < 0)nowMoveObject = moveObjectList.size() - 1;
+		nowMoveObject = (nowMoveObject + moveObjectList.size() - 1) % moveObjectList.size();
 	}
 
 protected:
