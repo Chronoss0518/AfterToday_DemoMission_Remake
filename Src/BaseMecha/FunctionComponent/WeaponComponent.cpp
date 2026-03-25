@@ -4,104 +4,98 @@
 #include"../../AllStruct.h"
 
 #include"WeaponComponent.h"
-#include"WeaponComponents.h"
 
 #include"../MechaPartsObjectFunction/WeaponFunction.h"
 #include"../MechaPartsObject.h"
 
 void WeaponComponent::Update()
 {
-	if (weapon.empty())return;
-
-	if (IsPushFlg(attack))
-		Attack();
-
-	if (IsPushFlg(weaponUpChange))
-		WeaponUpChange();
-
-	if (IsPushFlg(weaponDownChange))
-		WeaponDownChange();
-
-	if (IsPushFlg(attackTypeUpChange))
-		AttackTypeUpChange();
-
-	if (IsPushFlg(attackTypeDownChange))
-		AttackTypeDownChange();
-}
-
-std::vector<ChPtr::Weak<WeaponFunction>> WeaponComponent::GetRegistWeaponList()
-{
-	std::vector<ChPtr::Weak<WeaponFunction>> res;
-
-	for (auto&& weaponParts : weapon)
+	for (int i = 0; i < PALETTE_COUNT; i++)
 	{
-		for (auto&& weap : weaponParts->GetWeaponFunctions())
-		{
-			res.push_back(weap);
-		}
+		auto weapon = weapons[ChStd::EnumCast(WeaponHandType::Left)][i];
+		if (weapon != nullptr)
+			weapon->Update();
+
+		weapon = weapons[ChStd::EnumCast(WeaponHandType::Right)][i];
+		if (weapon != nullptr)
+			weapon->Update();
+
 	}
 
-	return res;
+	if (IsPushFlg(InputName::LAttack))
+		Attack(WeaponHandType::Left);
+
+	if (IsPushFlg(InputName::LWUChange))
+		WeaponUpChange(WeaponHandType::Left);
+
+	if (IsPushFlg(InputName::LWDChange))
+		WeaponDownChange(WeaponHandType::Left);
+
+
+	if (IsPushFlg(InputName::RAttack))
+		Attack(WeaponHandType::Right);
+
+	if (IsPushFlg(InputName::RWUChange))
+		WeaponUpChange(WeaponHandType::Right);
+
+	if (IsPushFlg(InputName::RWDChange))
+		WeaponDownChange(WeaponHandType::Right);
 }
 
-std::vector<ChPtr::Weak<MechaPartsObject>> WeaponComponent::GetWeaponMechaPartsList()
+ChPtr::Shared<WeaponFunction> WeaponComponent::GetWeaponFunction(WeaponHandType _type, unsigned char _num)
 {
-	std::vector<ChPtr::Weak<MechaPartsObject>> res;
-
-	for (auto&& weaponParts : weapon)
-	{
-		res.push_back(weaponParts);
-	}
-
-	return res;
+	if (_num < 0 || _num >= PALETTE_COUNT)return nullptr;
+	return weapons[ChStd::EnumCast(_type)][_num];
 }
 
-std::wstring WeaponComponent::GetPartsName()
+std::wstring WeaponComponent::GetPartsName(WeaponHandType _type)
 {
-	return weapon[useWeaponNo]->GetPartsName();
+	auto&& weapon = weapons[ChStd::EnumCast(_type)][useWeaponNo[ChStd::EnumCast(_type)]];
+	if (weapon == nullptr)return WeaponFunction::GetDefaultPartsName();
+	return weapon->GetPartsName();
 }
 
-std::wstring WeaponComponent::GetWeaponName()
+std::wstring WeaponComponent::GetWeaponName(WeaponHandType _type)
 {
-	return weapon[useWeaponNo]->GetWeaponName();
+	auto&& weapon = weapons[ChStd::EnumCast(_type)][useWeaponNo[ChStd::EnumCast(_type)]];
+	if (weapon == nullptr)return WeaponFunction::GetDefaultWeaponName();
+	return weapon->GetWeaponName();
 }
 
-std::wstring WeaponComponent::GetNowBulletNum()
+std::wstring WeaponComponent::GetNowBulletNum(WeaponHandType _type)
 {
-	return weapon[useWeaponNo]->GetNowBulletNum();
+	auto&& weapon = weapons[ChStd::EnumCast(_type)][useWeaponNo[ChStd::EnumCast(_type)]];
+	if (weapon == nullptr)return WeaponFunction::GetDefaultBulletNum();
+	return weapon->GetBulletNum();
 }
 
-std::wstring WeaponComponent::GetReloadCount()
+std::wstring WeaponComponent::GetReloadCount(WeaponHandType _type)
 {
-	return weapon[useWeaponNo]->GetReloadCount();
+	auto&& weapon = weapons[ChStd::EnumCast(_type)][useWeaponNo[ChStd::EnumCast(_type)]];
+	if (weapon == nullptr)return WeaponFunction::GetDefaultReloadCount();
+	return weapon->GetReloadCount();
 }
 
-void WeaponComponent::Attack()
+void WeaponComponent::Attack(WeaponHandType _type)
 {
-	weapon[useWeaponNo]->AttackUpdate();
+	auto&& weapon = weapons[ChStd::EnumCast(_type)][useWeaponNo[ChStd::EnumCast(_type)]];
+	if (weapon == nullptr)return;
+	weapon->AttackUpdate();
 }
 
-void WeaponComponent::StartSubFunction()
+void WeaponComponent::StartSubFunction(WeaponHandType _type)
 {
-	weapon[useWeaponNo]->StartWeaponSubFunction();
+	auto&& weapon = weapons[ChStd::EnumCast(_type)][useWeaponNo[ChStd::EnumCast(_type)]];
+	if (weapon == nullptr)return;
+	weapon->StartSubFunction();
 }
 
-void WeaponComponent::WeaponUpChange()
+void WeaponComponent::WeaponUpChange(WeaponHandType _type)
 {
-	useWeaponNo = (useWeaponNo + 1) % weapon.size();
+	useWeaponNo[ChStd::EnumCast(_type)] = (useWeaponNo[ChStd::EnumCast(_type)] + 1) % PALETTE_COUNT;
 }
 
-void WeaponComponent::WeaponDownChange()
+void WeaponComponent::WeaponDownChange(WeaponHandType _type)
 {
-	useWeaponNo = (useWeaponNo + weapon.size() - 1) % weapon.size();
-}
-
-void WeaponComponent::AttackTypeUpChange()
-{
-	weapon[useWeaponNo]->UpUseAttackType();
-}
-
-void WeaponComponent::AttackTypeDownChange()
-{
-	weapon[useWeaponNo]->DownUseAttackType();
+	useWeaponNo[ChStd::EnumCast(_type)] = (useWeaponNo[ChStd::EnumCast(_type)] + PALETTE_COUNT - 1) % PALETTE_COUNT;
 }
