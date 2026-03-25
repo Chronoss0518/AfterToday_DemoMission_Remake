@@ -1,8 +1,7 @@
 #pragma once
 
 class CPUObjectLooker;
-class RightWeaponComponent;
-class LeftWeaponComponent;
+class WeaponComponent;
 
 class ControllerBase:public ChCpp::BaseComponent
 {

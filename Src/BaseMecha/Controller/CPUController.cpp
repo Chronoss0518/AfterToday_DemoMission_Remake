@@ -4,7 +4,7 @@
 
 #include"../BaseMecha.h"
 
-#include"../FunctionComponent/WeaponComponents.h"
+#include"../FunctionComponent/WeaponComponent.h"
 
 #include"../../Frames/GameFrame.h"
 #include"../../Attack/Attack.h"
@@ -46,10 +46,9 @@ void CPUController::Init()
 
 	cpuMoveInput = ChPtr::Make_S<CPUMoveInput>();
 
+	auto&& com = LookObj()->GetComponent<WeaponComponent>();
 
-	cpuAttack->SetRightWeapons(LookObj()->GetComponent<RightWeaponComponent>());
-	cpuAttack->SetLeftWeapons(LookObj()->GetComponent<LeftWeaponComponent>());
-
+	cpuAttack->SetWeapons(com);
 	//SampleCreate();
 }
 
