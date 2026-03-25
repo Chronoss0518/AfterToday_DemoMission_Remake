@@ -114,9 +114,6 @@
     <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponent.h">
       <Filter>GameFrame\FunctionComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h">
-      <Filter>GameFrame\FunctionComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseMecha\CPU\CPULooker.h">
       <Filter>GameFrame\CPU</Filter>
     </ClInclude>
@@ -329,6 +326,12 @@
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.h">
       <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BaseMecha\WeaponHandType.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -550,6 +553,9 @@
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.cpp">
       <Filter>GameFrame\MechaPartsFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.cpp">
+      <Filter>GameFrame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@
       "Parts": "Resource/RobotParts/RAA_01.mpd",
       "RightArm_WeaponPos": {
         "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-        "RightWeapon": true
+        "RightWeapon": [ 0 ]
       }
     },
     "Armature_LeftArmPos": { "Parts": "Resource/RobotParts/LAA_01.mpd" },

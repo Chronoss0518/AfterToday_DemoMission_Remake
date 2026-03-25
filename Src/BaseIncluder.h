@@ -296,6 +296,10 @@ static inline std::wstring CreateMoneyText(const std::wstring& _money)
 	return result;
 }
 
+#ifndef PALETTE_COUNT 
+#define PALETTE_COUNT 5
+#endif
+
 //X,Y,ZÇÃêî//
 static constexpr unsigned char AXIS_BASE_TYPE_NUM = 3;
 

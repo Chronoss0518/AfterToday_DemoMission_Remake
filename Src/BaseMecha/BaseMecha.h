@@ -3,11 +3,12 @@
 
 class GameFrame;
 class MechaPartsObject;
-class CameraObject;
 class WeaponObject;
 class FunctionComponent;
 class AttackObject;
 class WeaponComponent;
+
+class ControllerBase;
 
 class PhysicsMachine;
 
@@ -30,8 +31,6 @@ public://Inner Struct Class Enum//
 		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, RightBoost, LeftBoost, UpBoost, DownBoost,
 		Attack, RAttack, LAttack,
-		AttackTypeUpChange, RATUChange, LATUChange,
-		AttackTypeDownChange, RATDChange, LATDChange,
 		Reload, RReload, LReload,
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
@@ -91,24 +90,9 @@ public:
 
 	void AddRotateVector(const ChVec3& _rotateVecAdd);
 
-	inline void AddCamera(ChPtr::Shared<CameraObject> _camera)
-	{
-		cameraList.push_back(_camera);
-	}
-
-	inline void AddViewVertical(const float& _x) { viewVertical = std::abs(viewVertical + _x) < maxViewVertical ? viewVertical + _x : viewVertical; }
-
-	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
-
-	inline void AddViewHorizontal(const float& _y) { viewHorizontal += _y; }
-
 	void AddMass(const float _mass) { mass += _mass; }
 
 	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
-
-	void AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
-
-	void AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
 
 public:
 
@@ -121,6 +105,8 @@ public://Set Function//
 	void SetPosition(const ChVec3& _pos);
 
 	void SetRotation(const ChVec3& _rot);
+
+	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
 
 	void SetMass(const float _mass) { mass = _mass; }
 
@@ -139,11 +125,7 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
-	ChLMat GetViewMat() { return viewMat; }
-
-	ChVec3 GetViewPos();
-	
-	ChVec3 GetViewLookPos();
+	ChLMat GetViewMat();
 
 	ChVec3 GetDamageDir() { return damageDir; }
 
@@ -201,9 +183,9 @@ public:
 
 protected:
 
-	ChLMat viewMat;
-
 	ChVec2 viewSize;
+
+	ChPtr::Shared<ControllerBase>controller = nullptr;
 
 	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
 
@@ -220,9 +202,6 @@ protected:
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
-	size_t useCameraNo = 0;
-	std::vector<ChPtr::Shared<CameraObject>>cameraList;
-
 	ChVec3 damageDir = ChVec3();
 
 	float baseHitSize = 0.0f;
@@ -236,16 +215,12 @@ protected:
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;
-	float viewVertical = 0.0f;
-	float maxViewVertical = 85.0f;
-
-	bool isSelfViewHorizontalFlg = true;
-	float viewHorizontal = 0.0f;
 
 	long hitEffectDrawFrame = -1;
 
 	bool breakFlg = false;
 
+	bool isSelfViewHorizontalFlg = true;
 };
 
 #endif

@@ -48,7 +48,6 @@
     <ClInclude Include="Src\BaseMecha\FunctionComponent\FunctionComponent.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\MoveComponent.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponent.h" />
-    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h" />
     <ClInclude Include="Src\BaseMecha\MechaEditor.h" />
     <ClInclude Include="Src\BaseMecha\MechaParts.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\AerodynamicsData.h" />
@@ -69,6 +68,7 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.h" />
+    <ClInclude Include="Src\BaseMecha\WeaponHandType.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelObject\PanelObject.h" />
     <ClInclude Include="Src\EditFrame\ParameterDisplay.h" />
@@ -99,6 +99,7 @@
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h" />
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h" />
     <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h" />
+    <ClInclude Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\PhysicsMachineTest\PhysicsMachine.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.cpp" />
     <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.cpp" />
     <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp" />
+    <ClCompile Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\GSEffectObject.hlsl">

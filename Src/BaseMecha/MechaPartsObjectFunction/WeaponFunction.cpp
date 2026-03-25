@@ -65,7 +65,7 @@ void GunFunction::AttackFunction()
 	if (reloadFlg)return;
 	if (nowBulletNum <= 0)return;
 
-	ChLMat tmpMat = attackPos->GetDrawLHandMatrix() * obj->GetDrawLHandMatrix();;
+	ChLMat tmpMat = attackPos->GetDrawLHandMatrix() * parts->GetDrawLHandMatrix();;
 
 #if false
 	//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
@@ -123,6 +123,7 @@ void GunFunction::AttackFunction()
 
 void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)
 {
+
 	nowBulletNum = gunData->GetBulletNum();
 
 	nowMagazineNum = gunData->GetMagazineNum();
@@ -164,35 +165,6 @@ void GunFunction::UpdateFunction()
 	nowMagazineNum--;
 
 	reloadFlg = false;
-}
-
-void GunFunction::DrawBegin()
-{
-	ChLMat tmpMat;
-	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
-	//obj->GetParent()->GetPositionObject()->SetOutSideTransform(tmpMat);
-}
-
-void GunFunction::DrawEnd()
-{
-	if (attackPos != nullptr)
-	{
-		//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
-		//lastShotPos = shotPos->GetDrawLHandMatrix();
-		
-		//lastShotPos = defaultMat * shotPos->GetDrawLHandMatrix();
-
-		float len = (attackPos->GetDrawLHandMatrix() * obj->GetDrawLHandMatrix()).GetZAxisDirection().GetLen();
-		if (isnan(len))
-		{
-			ChLMat tmp;
-			//tmp = obj->GetLastDrawMat();
-			tmp = tmp * attackPos->GetDrawLHandMatrix();
-			return;
-		}
-	}
-
-	//obj->GetParent()->GetPositionObject()->SetOutSideTransform(ChLMat());
 }
 
 std::wstring GunFunction::GetBulletNum()

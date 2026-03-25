@@ -9,14 +9,14 @@
         "Parts": "Resource/RobotParts/RAA_01.mpd",
         "RightArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "RightWeapon": true
+          "RightWeapon": [ 0 ]
         }
       },
       "Armature_LeftArmPos": {
         "Parts": "Resource/RobotParts/LAA_01.mpd",
         "LeftArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "LeftWeapon": true
+          "LeftWeapon": [ 0 ]
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BA_01.mpd" }
@@ -32,14 +32,14 @@
         "Parts": "Resource/RobotParts/RAG_01.mpd",
         "RightArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "RightWeapon": true
+          "RightWeapon": [ 0 ]
         }
       },
       "Armature_LeftArmPos": {
         "Parts": "Resource/RobotParts/LAG_01.mpd",
         "LeftArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "LeftWeapon": true
+          "LeftWeapon": [ 0 ]
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BG_01.mpd" }
@@ -55,14 +55,14 @@
         "Parts": "Resource/RobotParts/RAT.mpd",
         "RightArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "RightWeapon": true
+          "RightWeapon": [ 0 ]
         }
       },
       "Armature_LeftArmPos": {
         "Parts": "Resource/RobotParts/LAT.mpd",
         "LeftArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "LeftWeapon": true
+          "LeftWeapon": [ 0 ]
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BT.mpd" }
@@ -78,14 +78,14 @@
         "Parts": "Resource/RobotParts/RAA_01.mpd",
         "RightArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "RightWeapon": true
+          "RightWeapon": [ 0 ]
         }
       },
       "Armature_LeftArmPos": {
         "Parts": "Resource/RobotParts/LAA_01.mpd",
         "LeftArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "LeftWeapon": true
+          "LeftWeapon": [ 0 ]
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BA_01.mpd" }
@@ -101,14 +101,14 @@
         "Parts": "Resource/RobotParts/RAG_01.mpd",
         "RightArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "RightWeapon": true
+          "RightWeapon": [ 0 ]
         }
       },
       "Armature_LeftArmPos": {
         "Parts": "Resource/RobotParts/LAG_01.mpd",
         "LeftArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "LeftWeapon": true
+          "LeftWeapon": [ 0 ]
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BG_01.mpd" }
@@ -124,14 +124,14 @@
         "Parts": "Resource/RobotParts/RAT.mpd",
         "RightArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "RightWeapon": true
+          "RightWeapon": [ 0 ]
         }
       },
       "Armature_LeftArmPos": {
         "Parts": "Resource/RobotParts/LAT.mpd",
         "LeftArm_WeaponPos": {
           "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-          "LeftWeapon": true
+          "LeftWeapon": [ 0 ]
         }
       },
       "Armature_BoostPos": { "Parts": "Resource/RobotParts/BT.mpd" }
@@ -142,7 +142,7 @@
     "Core": {
       "Parts": "Resource/RobotParts/CST_01.mpd",
       "Armature_FootPos": { "Parts": "Resource/RobotParts/FST_01.mpd" },
-      "RightWeapon":  true
+      "RightWeapon": [ 0 ]
     }
   }
 ]

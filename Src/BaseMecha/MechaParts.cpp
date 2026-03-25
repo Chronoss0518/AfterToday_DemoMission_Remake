@@ -17,6 +17,8 @@
 
 #include"../EditFrame/PartsParameters.h"
 
+#include"FunctionComponent/WeaponComponent.h"
+
 #ifndef PARTS_DATA_CREATER
 #define PARTS_DATA_CREATER(class_type) {GET_CLASS_NAME(class_type),[](MechaParts& _this)->ChPtr::Shared<PartsDataBase> {return _this.SetComponent<class_type>(); }}
 #endif
@@ -198,15 +200,14 @@ ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, Gam
 
 	auto&& parts = SetPartsParameter(_base);
 	parts->SetFrame(_frame);
+	parts->SetBaseMecha(&_base);
+
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
 		com->SetPartsParameter(_base, *parts, _frame);
 	}
 
 	AddWeaponData(parts, _base, _jsonObject);
-
-	parts->SetFrame(_frame);
-	parts->SetBaseMecha(&_base);
 
 	parts->CreateAnchor();
 
@@ -293,13 +294,28 @@ std::wstring MechaParts::Serialize()
 
 void MechaParts::AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
-	auto&& jsonBool = _jsonObject->GetJsonBoolean(JSON_PROPEATY_RIGHT_WEAPON);
-	if (jsonBool != nullptr)
-		_base.AddRightWeaponData(_partsObject);
+	SetWeaponFunction(_partsObject, _base, _jsonObject, JSON_PROPEATY_RIGHT_WEAPON, WeaponHandType::Right);
 
-	jsonBool = _jsonObject->GetJsonBoolean(JSON_PROPEATY_LEFT_WEAPON);
-	if (jsonBool != nullptr)
-		_base.AddLeftWeaponData(_partsObject);
+	SetWeaponFunction(_partsObject, _base, _jsonObject, JSON_PROPEATY_LEFT_WEAPON, WeaponHandType::Left);
+}
+
+void MechaParts::SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject,const std::wstring& _jsonPropertyName, WeaponHandType _type)
+{
+	auto&& jsonArray = _jsonObject->GetJsonArray(_jsonPropertyName);
+	if (jsonArray == nullptr)return;
+
+	auto&& com = _base.GetComponentObject<WeaponComponent>();
+	auto&& weaponFunctions = _partsObject->GetWeaponFunctions();
+
+	for (int i = 0; i < jsonArray->GetCount(); i++)
+	{
+		auto&& jsonNum = jsonArray->GetJsonNumber(i);
+		if (jsonNum == nullptr)continue;
+		auto&& num = (unsigned char)*jsonNum;
+		if (PALETTE_COUNT <= num || num < 0)continue;
+		com->SetWeapon(_type, num, weaponFunctions[i]);
+	}
+
 }
 
 void MechaParts::Draw(const ChMat_11& _mat)

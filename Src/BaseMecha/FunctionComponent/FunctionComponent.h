@@ -24,11 +24,7 @@ protected:
 	
 	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->physics->AddRotatePowerVector(_rotateVecAdd); }
 
-	inline void AddViewRotateVertical(const float& _viewRotate) { target->AddViewVertical(_viewRotate); }
-
 	inline void SetSelfViewRotateHorizontalFlg(const bool& _flg) { target->SetSelfViewHorizontalFlg(_flg); }
-
-	inline void AddViewRotateHorizontal(const float& _viewRotate) { target->AddViewHorizontal(_viewRotate); }
 
 protected:
 

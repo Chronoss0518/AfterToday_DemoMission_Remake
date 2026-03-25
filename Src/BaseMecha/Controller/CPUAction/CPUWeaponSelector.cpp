@@ -4,7 +4,7 @@
 
 #include"../../BaseMecha.h"
 
-#include"../../FunctionComponent/WeaponComponents.h"
+//#include"../../FunctionComponent/WeaponComponent.h"
 
 #include"../../../Frames/GameFrame.h"
 #include"../../../Attack/Attack.h"

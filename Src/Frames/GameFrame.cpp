@@ -7,7 +7,7 @@
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../BaseMecha/MechaParts.h"
-#include"../BaseMecha/FunctionComponent/WeaponComponents.h"
+#include"../BaseMecha/FunctionComponent/WeaponComponent.h"
 #include"../BaseMecha/FunctionComponent/EnergyComponent.h"
 #include"../Attack/AttackObject.h"
 #include"../Attack/Attack.h"
@@ -702,7 +702,7 @@ void GameFrame::DrawFunction()
 	{
 		ChVec4 fadeOutColor = ChVec4(1.0f);
 		fadeOutColor.a =(SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
-		audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
+		if(nowPlayAudio != L"")audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
 		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
 	}
 
@@ -778,23 +778,17 @@ void GameFrame::DrawFunctionBegin()
 	dir.Normalize();
 	light.SetLightDir(dir);
 	
-	auto&& rightWeaponComponent = drawMecha->GetComponent<RightWeaponComponent>();
-	if (rightWeaponComponent != nullptr)
-	{
-		weaponDataDrawer->SetPartsName(rightWeaponComponent->GetPartsName(), WeaponDataDrawUI::DRAW_TYPE::Right);
-		weaponDataDrawer->SetWeaponName(rightWeaponComponent->GetWeaponName(), WeaponDataDrawUI::DRAW_TYPE::Right);
-		weaponDataDrawer->SetNowBulletNum(rightWeaponComponent->GetNowBulletNum(), WeaponDataDrawUI::DRAW_TYPE::Right);
-		weaponDataDrawer->SetReloadCount(rightWeaponComponent->GetReloadCount(), WeaponDataDrawUI::DRAW_TYPE::Right);
-	}
+	auto&& weaponComponent = drawMecha->GetComponentObject<WeaponComponent>();
 
-	auto&& leftWeaponComponent = drawMecha->GetComponent<LeftWeaponComponent>();
-	if (leftWeaponComponent != nullptr)
-	{
-		weaponDataDrawer->SetPartsName(leftWeaponComponent->GetPartsName(), WeaponDataDrawUI::DRAW_TYPE::Left);
-		weaponDataDrawer->SetWeaponName(leftWeaponComponent->GetWeaponName(), WeaponDataDrawUI::DRAW_TYPE::Left);
-		weaponDataDrawer->SetNowBulletNum(leftWeaponComponent->GetNowBulletNum(), WeaponDataDrawUI::DRAW_TYPE::Left);
-		weaponDataDrawer->SetReloadCount(leftWeaponComponent->GetReloadCount(), WeaponDataDrawUI::DRAW_TYPE::Left);
-	}
+	weaponDataDrawer->SetPartsName(weaponComponent->GetPartsName(WeaponHandType::Right), WeaponHandType::Right);
+	weaponDataDrawer->SetWeaponName(weaponComponent->GetWeaponName(WeaponHandType::Right), WeaponHandType::Right);
+	weaponDataDrawer->SetNowBulletNum(weaponComponent->GetNowBulletNum(WeaponHandType::Right), WeaponHandType::Right);
+	weaponDataDrawer->SetReloadCount(weaponComponent->GetReloadCount(WeaponHandType::Right), WeaponHandType::Right);
+
+	weaponDataDrawer->SetPartsName(weaponComponent->GetPartsName(WeaponHandType::Left), WeaponHandType::Left);
+	weaponDataDrawer->SetWeaponName(weaponComponent->GetWeaponName(WeaponHandType::Left), WeaponHandType::Left);
+	weaponDataDrawer->SetNowBulletNum(weaponComponent->GetNowBulletNum(WeaponHandType::Left), WeaponHandType::Left);
+	weaponDataDrawer->SetReloadCount(weaponComponent->GetReloadCount(WeaponHandType::Left), WeaponHandType::Left);
 
 }
 

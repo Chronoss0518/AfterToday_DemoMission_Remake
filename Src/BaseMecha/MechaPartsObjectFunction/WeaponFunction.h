@@ -8,15 +8,19 @@ class WeaponData;
 class SwordData;
 class GunData;
 
-class WeaponFunction :public ExternalFunction
+class WeaponFunction
 {
 public:
 
-	virtual void Release()override;
+	virtual void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device){}
 
 	virtual void AttackUpdate();
 
-	virtual void Update()override;
+	virtual void Update();
+
+	void Release();
+
+public:
 
 	inline void SetBaseData(WeaponDataBase* _data)
 	{
@@ -27,15 +31,22 @@ public:
 		SetData(_data);
 	}
 
-	inline ChPtr::Shared<Attack> GetAttackData()
-	{
-		return attackData;
-	}
-
-
 	inline void SetAttackPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _attackPos)
 	{
 		attackPos = _attackPos;
+	}
+
+	inline void SetFrame(GameFrame* _frame) { if (_frame != nullptr)frame = _frame; }
+
+	inline void SetParts(MechaPartsObject* _parts) { if (_parts != nullptr)parts = _parts; }
+
+	inline void SetBaseMecha(BaseMecha* _mecha) { if (_mecha != nullptr)mecha = _mecha; }
+
+public:
+
+	inline ChPtr::Shared<Attack> GetAttackData()
+	{
+		return attackData;
 	}
 
 public:
@@ -50,11 +61,21 @@ public:
 
 public:
 
+	static constexpr const wchar_t* const GetDefaultWeaponName() { return L"-"; }
+
+	static constexpr const wchar_t* const GetDefaultPartsName() { return L"-"; }
+
 	static constexpr const wchar_t* const GetDefaultBulletNum() { return L"-"; }
 
 	static constexpr const wchar_t* const GetDefaultReloadCount() { return L"-"; }
 
 	std::wstring GetWeaponName();
+
+	std::wstring GetPartsName()
+	{
+		if (parts == nullptr)return GetDefaultPartsName();
+		return parts->GetPartsName();
+	}
 
 	virtual std::wstring GetBulletNum() = 0;
 
@@ -62,7 +83,11 @@ public:
 
 protected:
 
+	BaseMecha* mecha = nullptr;
+	GameFrame* frame = nullptr;
 	WeaponDataBase* data = nullptr;
+	MechaPartsObject* parts = nullptr;
+
 
 	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>attackPos = nullptr;
 
@@ -116,10 +141,6 @@ public:
 	void StartSubFunction();
 
 	void UpdateFunction()override;
-
-	void DrawBegin()override;
-
-	void DrawEnd()override;
 
 public:
 

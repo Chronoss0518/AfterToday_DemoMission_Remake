@@ -46,15 +46,15 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 
 	auto function = ChPtr::Make_S<GunFunction>();
 
-	function->SetPartsObject(&_parts);
+	function->SetParts(&_parts);
 
 	function->SetBaseMecha(&_base);
 
 	function->SetBaseData(this);
 
-	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
+	function->SetFrame(_frame);
 
-	function->SetFrmae(_frame);
+	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
 
 	_parts.AddWeaponFunction(function);
 
