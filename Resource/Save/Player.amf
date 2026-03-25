@@ -12,7 +12,7 @@
 		"Armature_LeftArmPos":{
 			"LeftArm_WeaponPos": {
 				"Parts": "Resource/RobotParts/MF-TPP1.mpd",
-				"LeftWeapon": true
+				"LeftWeapon": [ 0 ]
 			},
 			"Parts":"Resource/RobotParts/LAG_01.mpd"
 		},
@@ -20,7 +20,7 @@
 			"Parts":"Resource/RobotParts/RAG_01.mpd",
 			"RightArm_WeaponPos":{
 				"Parts":"Resource/RobotParts/MF-TPP1.mpd",
-				"RightWeapon":true
+				"RightWeapon": [ 0 ]
 			}
 		},
 		"Parts":"Resource/RobotParts/CG_01.mpd"
