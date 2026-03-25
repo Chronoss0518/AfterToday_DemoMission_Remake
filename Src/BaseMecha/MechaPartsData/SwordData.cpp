@@ -33,15 +33,15 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 
 	auto function = ChPtr::Make_S<SwordFunction>();
 
-	function->SetPartsObject(&_parts);
+	function->SetParts(&_parts);
 
 	function->SetBaseMecha(&_base);
+
+	function->SetFrame(_frame);
 
 	function->SetBaseData(this);
 
 	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
-
-	function->SetFrmae(_frame);
 
 	_parts.AddWeaponFunction(function);
 
