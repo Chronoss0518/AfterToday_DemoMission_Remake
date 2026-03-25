@@ -8,12 +8,13 @@
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
 #include"../Frames/GameFrame.h"
-#include"FunctionComponent/WeaponComponents.h"
+#include"FunctionComponent/WeaponComponent.h"
 #include"FunctionComponent/BoostComponent.h"
 #include"FunctionComponent/EnergyComponent.h"
 #include"FunctionComponent/MoveComponent.h"
 #include"FunctionComponent/CameraComponent.h"
 
+#include"MechaPartsObjectFunction/WeaponFunction.h"
 #include"../Attack/AttackObject.h"
 #include"Controller/ControllerBase.h"
 
@@ -189,24 +190,6 @@ void BaseMecha::AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat)
 	auto&& anchor = GetComponent<LookAnchor>();
 	if (anchor == nullptr)return;
 	anchor->AddLookAnchorPosition(_size, _drawMat);
-}
-
-void BaseMecha::AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
-{
-	if (_partsObject == nullptr)return;
-	auto&& weap = GetComponentObject<LeftWeaponComponent>();
-
-	weap->AddWeapon(_partsObject);
-	_partsObject->SetLWeapon(true);
-}
-
-void BaseMecha::AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
-{
-	if (_partsObject == nullptr)return;
-	auto&& weap = GetComponentObject<RightWeaponComponent>();
-
-	weap->AddWeapon(_partsObject);
-	_partsObject->SetRWeapon(true);
 }
 
 void BaseMecha::BaseMove()

@@ -31,8 +31,6 @@ public://Inner Struct Class Enum//
 		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, RightBoost, LeftBoost, UpBoost, DownBoost,
 		Attack, RAttack, LAttack,
-		AttackTypeUpChange, RATUChange, LATUChange,
-		AttackTypeDownChange, RATDChange, LATDChange,
 		Reload, RReload, LReload,
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
@@ -95,10 +93,6 @@ public:
 	void AddMass(const float _mass) { mass += _mass; }
 
 	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
-
-	void AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
-
-	void AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
 
 public:
 
