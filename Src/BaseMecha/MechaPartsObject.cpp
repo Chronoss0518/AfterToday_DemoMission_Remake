@@ -22,18 +22,6 @@ void MechaPartsObject::Release()
 {
 	TransformObject<wchar_t>::Release();
 
-	for (auto&& function : externalFunctions)
-	{
-		if (function == nullptr)continue;
-		function->Release();
-	}
-
-	for (auto&& function : weaponFunctions)
-	{
-		if (function == nullptr)continue;
-		function->Release();
-	}
-
 	positions.clear();
 }
 
@@ -85,12 +73,13 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 	auto&& res = ChPtr::Make_S< ChCpp::JsonObject<wchar_t>>();
 	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(baseParts->GetThisFilePath()));
 
+#if false
 	if (GetRWeapon())
 		res->Set(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
 
 	if (GetLWeapon())
 		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
-
+#endif
 
 	for (auto&& partsObject : positions)
 	{
@@ -122,45 +111,9 @@ std::wstring MechaPartsObject::GetPartsName()
 	return result;
 }
 
-std::wstring MechaPartsObject::GetWeaponName()
-{
-	std::wstring result = L"";
-	if (!weaponFunctions.empty())
-		if (weaponFunctions.size() > useAttackType)
-			result = weaponFunctions[useAttackType]->GetWeaponName();
-
-	return result;
-}
-
-std::wstring MechaPartsObject::GetNowBulletNum()
-{
-	if (weaponFunctions.empty())return WeaponFunction::GetDefaultBulletNum();
-	if (weaponFunctions.size() <= useAttackType)return WeaponFunction::GetDefaultBulletNum();
-
-	return weaponFunctions[useAttackType]->GetBulletNum();
-}
-
-std::wstring MechaPartsObject::GetReloadCount()
-{
-	if (weaponFunctions.empty())return WeaponFunction::GetDefaultReloadCount();
-	if (weaponFunctions.size() <= useAttackType)return WeaponFunction::GetDefaultReloadCount();
-
-	return weaponFunctions[useAttackType]->GetReloadCount();
-}
-
 void MechaPartsObject::Update()
 {
 	TransformObject<wchar_t>::Update();
-
-	for (auto&& func : externalFunctions)
-	{
-		func->Update();
-	}
-
-	for (auto&& func : weaponFunctions)
-	{
-		func->Update();
-	}
 
 }
 
@@ -168,15 +121,6 @@ void  MechaPartsObject::DrawBegin()
 {
 	TransformObject<wchar_t>::DrawBegin();
 
-	for (auto func : externalFunctions)
-	{
-		func->DrawBegin();
-	}
-
-	for (auto func : weaponFunctions)
-	{
-		func->DrawBegin();
-	}
 }
 
 void MechaPartsObject::Draw3D()
@@ -198,15 +142,6 @@ void  MechaPartsObject::DrawEnd()
 {
 	TransformObject<wchar_t>::DrawEnd();
 
-	for (auto func : externalFunctions)
-	{
-		func->DrawEnd();
-	}
-
-	for (auto func : weaponFunctions)
-	{
-		func->DrawEnd();
-	}
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)
@@ -256,14 +191,4 @@ float MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
 	if (!collider.IsHit(&_collider))return 0.0f;
 
 	return 0.0f;
-}
-
-void MechaPartsObject::AttackUpdate()
-{
-	weaponFunctions[useAttackType]->AttackUpdate();
-}
-
-void MechaPartsObject::StartWeaponSubFunction()
-{
-	weaponFunctions[useAttackType]->StartSubFunction();
 }
