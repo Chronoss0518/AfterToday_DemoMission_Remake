@@ -1,9 +1,10 @@
-#ifndef _BRobParts
-#define _BRobParts
+#pragma once
 
 #include<wchar.h>
 #include <stdio.h>
 #include <string.h>
+
+#include"WeaponHandType.h"
 
 #ifndef GET_CLASS_NAME
 #define GET_CLASS_NAME(cls) L## #cls
@@ -30,6 +31,7 @@
 class MechaPartsObject;
 class CameraComponent;
 class PartsDataBase;
+class WeaponDataBase;
 
 struct PartsParameters;
 
@@ -165,7 +167,12 @@ public:
 		postureList.push_back(_posture);
 	}
 
+private:
+
+	void SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _jsonPropertyName, WeaponHandType _type);
+
 	void AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
+
 
 public:
 
@@ -195,7 +202,6 @@ private:
 
 
 	std::vector<ChPtr::Weak<PostureController>> postureList;
-
 };
 
 class PartsDataBase :public ChCpp::BaseComponent
@@ -233,5 +239,3 @@ public:
 	//virtual void ReleaseParts(BaseMecha& _base) = 0;
 
 };
-
-#endif
