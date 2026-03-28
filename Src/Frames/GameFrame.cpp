@@ -354,6 +354,16 @@ void GameFrame::InitScriptFunction()
 		failedFlg = true;
 		});
 
+	script->SetFunction(L"UseChangeMechaCamera", [&](const std::wstring& _text)
+		{
+			isUseChangeCameraFlg = true;
+		});
+
+	script->SetFunction(L"UnUseChangeMechaCamera", [&](const std::wstring& _text)
+		{
+			isUseChangeCameraFlg = false;
+		});
+
 	//target < inputNum//
 	script->SetFunction(L"SkipIfGreater", [&](const std::wstring& _text)
 		{
@@ -653,9 +663,22 @@ void GameFrame::UpdateFunction()
 	{
 		enemyMarkerShader->SetEffectDisplayFlg(false,i);
 	}
+
+	UpdatePlayerLostKeys();
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+void GameFrame::UpdatePlayerLostKeys()
+{
+	if (playerCount > 0)return;
+	if (!isUseChangeCameraFlg)return;
+
+
+	if (ChSystem::SysManager().IsPushKey(VK_UP))
+		mechaView = (mechaView + 1) % mechas.size();
+
+	if (ChSystem::SysManager().IsPushKey(VK_DOWN))
+		mechaView = (mechaView + mechas.size() - 1) % mechas.size();
+}
 
 void GameFrame::DrawFunction()
 {
@@ -712,7 +735,6 @@ void GameFrame::DrawFunction()
 	ChD3D11::Shader11().DrawEnd(rt3D);
 
 	mechaList.ObjectDrawEnd();
-
 
 }
 
@@ -1016,11 +1038,12 @@ void GameFrame::AddMecha(const std::wstring& _text)
 
 	if (playerFlg)
 	{	
-		mecha->SetComponent<PlayerController>();
+		auto&& con = mecha->SetComponent<PlayerController>();
+		con->SetGameFrame(this);
 		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
 		cpuObjectLooker->SetGameFrame(this);
 		cpuObjectLooker->SetProjectionMatrix(projectionMat);
-
+		playerCount++;
 		playerParty = teamNo;
 	}
 

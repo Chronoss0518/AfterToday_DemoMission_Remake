@@ -122,11 +122,15 @@ public:
 
 	void BreakMecha(BaseMecha* _mecha);
 
+	inline void PlayerLost() { playerCount--; }
+
 private:
 
 	size_t GettargetNum(std::vector<std::wstring>& _args);
 
 	void UpdateFunction();
+
+	void UpdatePlayerLostKeys();
 
 	void DrawFunctionBegin();
 
@@ -174,9 +178,11 @@ private:
 	ChCpp::ObjectList mechaList;
 	std::vector<ChPtr::Weak<BaseMecha>>mechas;
 	std::map<size_t, size_t>mechaPartyCounter;
-
 	unsigned char playerParty = 0;
 	size_t mechaView = 0;
+	size_t playerCount = 0;
+	bool isUseChangeCameraFlg = false;
+
 	ChCpp::ObjectList bulletList;
 
 	ChPtr::Shared<BaseMecha> drawMecha = nullptr;
