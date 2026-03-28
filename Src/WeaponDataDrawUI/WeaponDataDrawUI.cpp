@@ -1,6 +1,9 @@
 #include"../BaseIncluder.h"
 #include"WeaponDataDrawUI.h"
 
+#include"../BaseMecha/BaseMecha.h"
+#include"../BaseMecha/FunctionComponent/WeaponComponent.h"
+
 #define PANEL_TOP 475.0f
 #define PANEL_BOTTOM PANEL_TOP + 70.0f
 #define PANEL_WIDTH 134.0f
@@ -150,6 +153,14 @@ void WeaponDataDrawUI::CreateTextImage(ChD3D11::Texture11& _outImage, TextDrawer
 	_outImage.CreateColorTexture(device,_drawer.bitmap.GetBitmap());
 }
 
+void WeaponDataDrawUI::SetWeaponDatas(WeaponComponent& _com, WeaponHandType _type)
+{
+	SetPartsName(_com.GetPartsName(_type), _type);
+	SetWeaponName(_com.GetWeaponName(_type), _type);
+	SetNowBulletNum(_com.GetNowBulletNum(_type), _type);
+	SetReloadCount(_com.GetReloadCount(_type), _type);
+}
+
 void WeaponDataDrawUI::SetNowBulletNum(const std::wstring& _num, WeaponHandType _type)
 {
 	if (brawData[ChStd::EnumCast(_type)].nowBulletNum == _num)return;
@@ -178,8 +189,16 @@ void WeaponDataDrawUI::SetPartsName(const std::wstring& _name, WeaponHandType _t
 	brawData[ChStd::EnumCast(_type)].isUpdatePartsName = true;
 }
 
-void WeaponDataDrawUI::Update()
+void WeaponDataDrawUI::Update(BaseMecha* _drawMecha)
 {
+	if (ChPtr::NotNullCheck(_drawMecha))
+	{
+		auto&& weaponComponent = _drawMecha->GetComponentObject<WeaponComponent>();
+
+		SetWeaponDatas(*weaponComponent, WeaponHandType::Right);
+		SetWeaponDatas(*weaponComponent, WeaponHandType::Left);
+	}
+
 	for (unsigned char i = 0; i < DRAW_TYPE_COUNT; i++)
 	{
 		auto&& draw = brawData[i];

@@ -2,6 +2,9 @@
 
 #include"../BaseMecha/WeaponHandType.h"
 
+class BaseMecha;
+class WeaponComponent;
+
 class WeaponDataDrawUI
 {
 private:
@@ -33,7 +36,9 @@ public:
 
 	void CreateTextImage(ChD3D11::Texture11& _outImage, TextDrawerWICBitmap& _drawer, const std::wstring& _text, float _w, float _h);
 
-public:
+private:
+
+	void SetWeaponDatas(WeaponComponent& _com, WeaponHandType _type);
 
 	void SetNowBulletNum(const std::wstring& _num, WeaponHandType _type);
 	
@@ -45,7 +50,7 @@ public:
 
 public:
 
-	void Update();
+	void Update(BaseMecha* _drawMecha);
 
 public:
 
