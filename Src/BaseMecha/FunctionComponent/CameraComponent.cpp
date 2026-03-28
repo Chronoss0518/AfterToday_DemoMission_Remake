@@ -42,14 +42,8 @@ void CameraComponent::CamHorizontalRotateUpdate(InputName _input, const float _c
 	AddViewHorizontal(_camRot / PhysicsMachine::GetFPS());
 }
 
-ChVec3 CameraComponent::GetViewPos()
+ChLMat CameraComponent::CreateViewMatrix()
 {
-#if DEBUG_UP_CAMERA
-	return centerPos + ChVec3(0.0f, DEBUG_UP_POS, 0.0f);
-
-#endif
-
-
 	ChLMat camYMat, camXMat;
 
 	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
@@ -57,10 +51,20 @@ ChVec3 CameraComponent::GetViewPos()
 	camYMat = camXMat * camYMat;
 	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
 
-	return camYMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
+	return camYMat;
 }
 
-ChVec3 CameraComponent::GetViewLookPos()
+ChVec3 CameraComponent::GetViewPos(const ChLMat& _mat)
+{
+#if DEBUG_UP_CAMERA
+	return centerPos + ChVec3(0.0f, DEBUG_UP_POS, 0.0f);
+
+#endif
+
+	return _mat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
+}
+
+ChVec3 CameraComponent::GetViewLookPos(const ChLMat& _mat)
 {
 
 #if DEBUG_UP_CAMERA
@@ -68,20 +72,18 @@ ChVec3 CameraComponent::GetViewLookPos()
 	return centerPos;
 
 #endif
-	ChLMat camYMat, camXMat;
 
-	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
-	camYMat = camXMat * camYMat;
-	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS - 2.0f, 0.0f));
-
-	return camYMat.Transform(ChVec3(0.0f, 0.0f, 5.0f));
+	return _mat.Transform(ChVec3(0.0f, 0.0f, 5.0f));
 }
 
 void CameraComponent::UpdateCamera()
 {
-	auto viewPos = GetViewPos();
-	auto viewLookPos = GetViewLookPos();
+	auto&& lMat = CreateViewMatrix();
+
+	auto&& viewPos = GetViewPos(lMat);
+	auto&& viewLookPos = GetViewLookPos(lMat);
+
+	lookDir = viewLookPos - viewPos;
 
 	ChMat_11 tmpMat;
 

@@ -68,7 +68,7 @@ void CPUMoveInput::Update(
 
 	auto&& camera = baseMecha->GetComponentObject<CameraComponent>();
 
-	auto lookDir = camera->GetViewLookPos() - camera->GetViewPos();
+	auto lookDir = camera->GetViewLookDir();
 
 	lookDir.Normalize();
 

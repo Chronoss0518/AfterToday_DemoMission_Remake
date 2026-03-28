@@ -40,11 +40,17 @@ public:
 
 	inline ChLMat GetViewMat() { return viewMat; }
 
-public:
+	inline ChVec3 GetViewLookDir() { return lookDir; }
 
-	ChVec3 GetViewPos();
+private:
 
-	ChVec3 GetViewLookPos();
+	ChLMat CreateViewMatrix();
+
+private:
+
+	ChVec3 GetViewPos(const ChLMat& _mat);
+
+	ChVec3 GetViewLookPos(const ChLMat& _mat);
 
 private:
 
@@ -60,6 +66,7 @@ private:
 
 	float cameraRotatePow = 50.0f;
 
-	ChLMat viewMat;
+	ChLMat viewMat = ChLMat();
+	ChVec3 lookDir = ChVec3(0.0f, 0.0f, 1.0f);
 
 };
