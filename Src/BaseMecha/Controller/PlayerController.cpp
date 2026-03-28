@@ -1,7 +1,7 @@
 #include"../../BaseIncluder.h"
 
 #include"../../AllStruct.h"
-
+#include"../../Frames/GameFrame.h"
 #include"../BaseMecha.h"
 
 #include"PlayerController.h"
@@ -73,6 +73,12 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::R2] = InputName::RWDChange;
 	controllerTypes[XInputTypeNames::R3] = InputName::RReload;
 
+}
+
+void PlayerController::Release()
+{
+	if (ChPtr::NullCheck(frame))return;
+	frame->PlayerLost();
 }
 
 void PlayerController::UpdateBegin()

@@ -2,17 +2,23 @@
 
 #include"ControllerBase.h"
 
+class GameFrame;
+
 class PlayerController :public ControllerBase
 {
 public:
 
 	void Init()override;
 
+	void Release()override;
+
 	void UpdateBegin()override;
 
 	void Save(const std::wstring& _fileName);
 
 	void Load(const std::wstring& _fileName);
+
+	void SetGameFrame(GameFrame* _frame) { frame = _frame; }
 
 	void ChangeKey(const InputName _inputType);
 
@@ -54,4 +60,6 @@ private:
 	float moveSensitivility = 1.0f;
 	ChVec2 nowPos = ChVec2();
 	ChVec2 windSize = ChVec2();
+
+	GameFrame* frame = nullptr;
 };

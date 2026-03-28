@@ -49,7 +49,6 @@ void CPUController::Init()
 	auto&& com = LookObj()->GetComponent<WeaponComponent>();
 
 	cpuAttack->SetWeapons(com);
-	//SampleCreate();
 }
 
 void CPUController::UpdateBegin()
