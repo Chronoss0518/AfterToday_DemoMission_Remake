@@ -13,7 +13,6 @@ class BaseMecha;
 class GameScript;
 class EffectObjectShader;
 class EffectSpriteShader;
-class WeaponComponent;
 
 struct LookSquareValue;
 

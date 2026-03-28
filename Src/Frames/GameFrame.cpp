@@ -7,7 +7,6 @@
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../BaseMecha/MechaParts.h"
-#include"../BaseMecha/FunctionComponent/WeaponComponent.h"
 #include"../BaseMecha/FunctionComponent/EnergyComponent.h"
 #include"../Attack/AttackObject.h"
 #include"../Attack/Attack.h"
@@ -714,12 +713,12 @@ void GameFrame::DrawFunction()
 
 	mechaList.ObjectDrawEnd();
 
-	drawMecha = nullptr;
 
 }
 
 void GameFrame::DrawFunctionBegin()
 {
+	drawMecha = nullptr;
 	if (mechas.size() <= mechaView)return;
 	auto&& tmpMecha = mechas[mechaView];
 	if (tmpMecha.expired())return;
