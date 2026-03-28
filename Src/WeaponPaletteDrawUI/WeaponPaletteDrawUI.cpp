@@ -1,48 +1,18 @@
 #include"../BaseIncluder.h"
 #include"WeaponPaletteDrawUI.h"
 
-#define PANEL_TOP 475.0f
-#define PANEL_BOTTOM PANEL_TOP + 70.0f
-#define PANEL_WIDTH 134.0f
 
-#define LEFT_PANEL_LEFT 309.0f
-#define LEFT_PANEL_RIGHT LEFT_PANEL_LEFT + PANEL_WIDTH
-
-#define RIGHT_PANEL_LEFT 836.0f
-#define RIGHT_PANEL_RIGHT RIGHT_PANEL_LEFT + PANEL_WIDTH
-
-#define NOW_BULLET_NUM_TOP  505.0f - PANEL_TOP
-#define NOW_BULLET_NUM_LEFT 310.0f - LEFT_PANEL_LEFT
-#define NOW_BULLET_NUM_WIDTH 80.0f
-#define NOW_BULLET_NUM_HEIGHT 40.0f
-
-#define RELOAD_COUNT_TOP 505.0f - PANEL_TOP
-#define RELOAD_COUNT_LEFT 390.0f - LEFT_PANEL_LEFT
-#define RELOAD_COUNT_WIDTH 53.0f
-#define RELOAD_COUNT_HEIGHT 40.0f
-
-#define WEAPON_NAME_LEFT 314.0f - LEFT_PANEL_LEFT
-#define WEAPON_NAME_WIDTH 124.0f
-
-#define WEAPON_PARTS_NAME_TOP 475.0f - PANEL_TOP
-#define WEAPON_PARTS_NAME_HEIGHT 12.0f
-
-#define WEAPON_NAME_TOP WEAPON_PARTS_NAME_HEIGHT + WEAPON_PARTS_NAME_TOP
-#define WEAPON_NAME_HEIGHT 16.0f
-
-#define NOW_BULLET_NUM_TEXT_SIZE 16.0f
-#define RELOAD_COUNT_TEXT_SIZE 24.0f
-#define WEAPON_PARTS_NAME_TEXT_SIZE 10.0f
-#define WEAPON_NAME_TEXT_SIZE 12.0f
+#ifndef PALETTE_TEXTURE_DIRECTORY
+#define PALETTE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"WeaponPalette/" current_path) 
+#endif
 
 
 void WeaponPaletteDrawUI::Init(ID3D11Device* _device)
 {
 	device = _device;
 
-	backGround.CreateTexture(TEXTURE_DIRECTORY(L"WeaponPalette.png"), device);
-
-
+	backGround.CreateTexture(PALETTE_TEXTURE_DIRECTORY(L"WeaponPalette.png"), device);
+	palette.CreateTexture(PALETTE_TEXTURE_DIRECTORY(L"Palette.png"), device);
 }
 
 void WeaponPaletteDrawUI::Release()

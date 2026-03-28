@@ -39,6 +39,7 @@ private:
 
 	DrawData brawData[DRAW_TYPE_COUNT];
 	ChD3D11::Texture11 backGround;
+	ChD3D11::Texture11 palette;
 
 
 
