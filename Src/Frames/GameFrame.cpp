@@ -648,7 +648,7 @@ void GameFrame::UpdateFunction()
 	Failed();
 
 	messageBox->Update();
-	weaponDataDrawer->Update();
+	weaponDataDrawer->Update(drawMecha.get());
 
 	for (size_t i = 0; i < ENEMY_TARGET_MARKER_SIZE; i++)
 	{
@@ -778,18 +778,6 @@ void GameFrame::DrawFunctionBegin()
 	dir.Normalize();
 	light.SetLightDir(dir);
 	
-	auto&& weaponComponent = drawMecha->GetComponentObject<WeaponComponent>();
-
-	weaponDataDrawer->SetPartsName(weaponComponent->GetPartsName(WeaponHandType::Right), WeaponHandType::Right);
-	weaponDataDrawer->SetWeaponName(weaponComponent->GetWeaponName(WeaponHandType::Right), WeaponHandType::Right);
-	weaponDataDrawer->SetNowBulletNum(weaponComponent->GetNowBulletNum(WeaponHandType::Right), WeaponHandType::Right);
-	weaponDataDrawer->SetReloadCount(weaponComponent->GetReloadCount(WeaponHandType::Right), WeaponHandType::Right);
-
-	weaponDataDrawer->SetPartsName(weaponComponent->GetPartsName(WeaponHandType::Left), WeaponHandType::Left);
-	weaponDataDrawer->SetWeaponName(weaponComponent->GetWeaponName(WeaponHandType::Left), WeaponHandType::Left);
-	weaponDataDrawer->SetNowBulletNum(weaponComponent->GetNowBulletNum(WeaponHandType::Left), WeaponHandType::Left);
-	weaponDataDrawer->SetReloadCount(weaponComponent->GetReloadCount(WeaponHandType::Left), WeaponHandType::Left);
-
 }
 
 void GameFrame::Render3D()
