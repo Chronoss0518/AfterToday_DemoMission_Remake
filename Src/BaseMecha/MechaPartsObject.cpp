@@ -74,14 +74,6 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 	auto&& res = ChPtr::Make_S< ChCpp::JsonObject<wchar_t>>();
 	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(baseParts->GetThisFilePath()));
 
-#if false
-	if (GetRWeapon())
-		res->Set(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
-
-	if (GetLWeapon())
-		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
-#endif
-
 	SerializeWeapon(res, JSON_PROPEATY_RIGHT_WEAPON, WeaponHandType::Right);
 
 	SerializeWeapon(res, JSON_PROPEATY_LEFT_WEAPON, WeaponHandType::Left);
