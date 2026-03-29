@@ -99,13 +99,18 @@ void MechaPartsObject::SerializeWeapon(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>
 
 	auto weaponNumbers = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
 
+	bool isRegist = false;
+
 	for (size_t i = 0; i < weaponFunctions.size(); i++)
 	{
+		int val = weaponCom->GetWeaponCount(weaponFunctions[i], _type);
+		if (val >= 0)isRegist = true;
 		auto num = ChPtr::Make_S<ChCpp::JsonNumber<wchar_t>>();
-		(*num) = weaponCom->GetWeaponCount(weaponFunctions[i], _type);
+		(*num) = val;
 		weaponNumbers->Add(num);
 	}
 
+	if (!isRegist)return;
 	if (weaponNumbers->GetCount() <= 0)return;
 
 	_obj->Set(_jsonParameterText, weaponNumbers);
