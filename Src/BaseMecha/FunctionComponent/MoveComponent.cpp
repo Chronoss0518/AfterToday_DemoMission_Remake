@@ -98,7 +98,7 @@ void WalkMoveObject::Update()
 	MoveUpdate(data->GetMovePower(), InputName::Left, ChVec3(-1.0f, 0.0f, 0.0f), tmp);
 	MoveUpdate(data->GetMovePower(), InputName::Right, ChVec3(1.0f, 0.0f, 0.0f), tmp);
 	MoveUpdate(data->GetJumpPower(), InputName::Up, ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	
+
 	RotateUpdate(data->GetRotatePower(), InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
 	RotateUpdate(data->GetRotatePower(), InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
 
@@ -161,11 +161,11 @@ void CaterpillarMoveObject::Update()
 	MoveUpdate(data->GetMovePower(), InputName::FrontRight, InputName::FrontLeft, ChVec3(0.0f, 0.0f, 1.0f), tmp);
 	MoveUpdate(data->GetMovePower(), InputName::BackRight, InputName::BackLeft, ChVec3(0.0f, 0.0f, -1.0f), tmp);
 
-	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::FrontRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::FrontLeft, InputName::FrontRight, InputName::BackRight, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
-	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
+	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
 	RotationUpdate(data->GetMovePower(), InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
 	RotationUpdate(data->GetMovePower(), InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
@@ -257,7 +257,7 @@ void CaterpillarMoveObject::OneSideMoveUpdate(
 
 	auto vector = _rotateDirection;
 
-	vector *= _rotatePower  * 0.5f;
+	vector *= _rotatePower;
 
 	AddRotateVector(vector);
 
@@ -266,7 +266,7 @@ void CaterpillarMoveObject::OneSideMoveUpdate(
 
 	tmpMat = tmpMat * _nowTargetPoster;
 
-	AddMoveVector(tmpMat.TransformCoord(_moveDirection) * _rotatePower * 0.25f);
+	AddMoveVector(tmpMat.TransformCoord(_moveDirection));
 }
 
 void CaterpillarMoveObject::RotationUpdate(float _rotatePower, InputName _right, InputName _left, const ChVec3& _direction)
