@@ -141,7 +141,7 @@
     "Name": "Simpel-Tank",
     "Core": {
       "Parts": "Resource/RobotParts/CST_01.mpd",
-      "Armature_FootPos": { "Parts": "Resource/RobotParts/FST_01.mpd" },
+      "Foot": { "Parts": "Resource/RobotParts/FST_01.mpd" },
       "RightWeapon": [ 0 ]
     }
   }
