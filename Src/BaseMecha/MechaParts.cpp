@@ -311,7 +311,7 @@ void MechaParts::SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject,
 	{
 		auto&& jsonNum = jsonArray->GetJsonNumber(i);
 		if (jsonNum == nullptr)continue;
-		auto&& num = (unsigned char)*jsonNum;
+		auto&& num = static_cast<char>(jsonNum->GetIntValue());
 		if (PALETTE_COUNT <= num || num < 0)continue;
 		com->SetWeapon(_type, num, weaponFunctions[i]);
 	}
