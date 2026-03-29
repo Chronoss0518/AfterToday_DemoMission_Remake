@@ -10,6 +10,7 @@
 #include"CPU/CPULooker.h"
 
 #include"MechaPartsObjectFunction/WeaponFunction.h"
+#include"FunctionComponent/WeaponComponent.h"
 
 void MechaPartsObject::CreateAnchor()
 {
@@ -81,11 +82,33 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean<wchar_t>::CreateObject(true));
 #endif
 
+	SerializeWeapon(res, JSON_PROPEATY_RIGHT_WEAPON, WeaponHandType::Right);
+
+	SerializeWeapon(res, JSON_PROPEATY_LEFT_WEAPON, WeaponHandType::Left);
+
 	for (auto&& partsObject : positions)
 	{
 		res->Set(partsObject.first, partsObject.second->Serialize());
 	}
 	return res;
+}
+
+void MechaPartsObject::SerializeWeapon(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _obj, const std::wstring& _jsonParameterText, WeaponHandType _type)
+{
+	auto&& weaponCom = mecha->GetComponentObject<WeaponComponent>();
+
+	auto weaponNumbers = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
+
+	for (size_t i = 0; i < weaponFunctions.size(); i++)
+	{
+		auto num = ChPtr::Make_S<ChCpp::JsonNumber<wchar_t>>();
+		(*num) = weaponCom->GetWeaponCount(weaponFunctions[i], _type);
+		weaponNumbers->Add(num);
+	}
+
+	if (weaponNumbers->GetCount() <= 0)return;
+
+	_obj->Set(_jsonParameterText, weaponNumbers);
 }
 
 void MechaPartsObject::SetHitSize()

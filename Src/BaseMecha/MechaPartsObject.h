@@ -2,6 +2,8 @@
 
 #include"MechaParts.h"
 
+#include"WeaponHandType.h"
+
 class GameFrame;
 class ExternalFunction;
 class WeaponFunction;
@@ -34,6 +36,8 @@ public:
 public:
 
 	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
+
+	void SerializeWeapon(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _obj, const std::wstring& _jsonParameterText, WeaponHandType _type);
 
 public:
 
