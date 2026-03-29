@@ -34,6 +34,8 @@ public:
 
 	std::wstring GetReloadCount(WeaponHandType _type);
 
+	int GetWeaponCount(ChPtr::Shared<WeaponFunction>& _func, WeaponHandType _type);
+
 public:
 
 	void Attack(WeaponHandType _type);

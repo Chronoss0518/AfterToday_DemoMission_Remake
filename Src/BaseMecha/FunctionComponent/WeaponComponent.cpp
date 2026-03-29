@@ -8,6 +8,8 @@
 #include"../MechaPartsObjectFunction/WeaponFunction.h"
 #include"../MechaPartsObject.h"
 
+#define	NOT_REGIST_NUM -1
+
 void WeaponComponent::Update()
 {
 	for (int i = 0; i < PALETTE_COUNT; i++)
@@ -40,6 +42,21 @@ void WeaponComponent::Update()
 
 	if (IsPushFlg(InputName::RWDChange))
 		WeaponDownChange(WeaponHandType::Right);
+}
+
+int WeaponComponent::GetWeaponCount(ChPtr::Shared<WeaponFunction>& _func, WeaponHandType _type)
+{
+	if (_func == nullptr)return NOT_REGIST_NUM;
+
+	for (int i = 0; i < PALETTE_COUNT; i++)
+	{
+		if (weapons[ChStd::EnumCast(_type)][i] == nullptr)continue;
+		if (weapons[ChStd::EnumCast(_type)][i].get() != _func.get())continue;
+
+		return i;
+	}
+
+	return NOT_REGIST_NUM;
 }
 
 ChPtr::Shared<WeaponFunction> WeaponComponent::GetWeaponFunction(WeaponHandType _type, unsigned char _num)
