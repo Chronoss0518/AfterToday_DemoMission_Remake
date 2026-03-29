@@ -1,24 +1,24 @@
 {
 	"Core":{
-		"Armature_BodyPos":{
+		"Foot":{
 			"Parts":"Resource/RobotParts/FG_01.mpd"
 		},
-		"Armature_BoostPos":{
+		"Boost":{
 			"Parts":"Resource/RobotParts/BG_01.mpd"
 		},
-		"Armature_HeadPos":{
+		"Head":{
 			"Parts":"Resource/RobotParts/HG_01.mpd"
 		},
-		"Armature_LeftArmPos":{
-			"LeftArm_WeaponPos": {
+		"Left Arm":{
+			"Hand": {
 				"Parts": "Resource/RobotParts/MF-TPP1.mpd",
 				"LeftWeapon": [ 0 ]
 			},
 			"Parts":"Resource/RobotParts/LAG_01.mpd"
 		},
-		"Armature_RightArmPos":{
+		"Right Arm":{
 			"Parts":"Resource/RobotParts/RAG_01.mpd",
-			"RightArm_WeaponPos":{
+			"Hand":{
 				"Parts":"Resource/RobotParts/MF-TPP1.mpd",
 				"RightWeapon": [ 0 ]
 			}
