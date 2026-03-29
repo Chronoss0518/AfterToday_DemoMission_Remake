@@ -9,7 +9,7 @@
 #include"CameraComponent.h"
 #include"../BaseMecha.h"
 
-#define DEBUG_UP_CAMERA true
+#define DEBUG_UP_CAMERA false
 
 #if DEBUG_UP_CAMERA
 #define DEBUG_UP_POS 50.0f
