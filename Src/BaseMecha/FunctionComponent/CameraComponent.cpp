@@ -9,7 +9,7 @@
 #include"CameraComponent.h"
 #include"../BaseMecha.h"
 
-#define DEBUG_UP_CAMERA false
+#define DEBUG_UP_CAMERA true
 
 #if DEBUG_UP_CAMERA
 #define DEBUG_UP_POS 50.0f
@@ -76,21 +76,38 @@ ChVec3 CameraComponent::GetViewLookPos(const ChLMat& _mat)
 	return _mat.Transform(ChVec3(0.0f, 0.0f, 5.0f));
 }
 
+ChVec3 CameraComponent::GetViewCrossDir(const ChLMat& _mat)
+{
+#if DEBUG_UP_CAMERA
+
+	return ChVec3(1.0f,0.0f,0.0f);
+
+#endif
+	ChVec3 tmp = ChVec3();
+	tmp.val.Set(_mat.m[0]);
+
+	return tmp;
+}
+
 void CameraComponent::UpdateCamera()
 {
 	auto&& lMat = CreateViewMatrix();
 
 	auto&& viewPos = GetViewPos(lMat);
 	auto&& viewLookPos = GetViewLookPos(lMat);
+	auto&& viewCrossDir = GetViewCrossDir(lMat);
 
 	lookDir = viewLookPos - viewPos;
+	lookDir.Normalize();
+	ChVec3 up;
+	up.SetCross(lookDir, viewCrossDir);
 
 	ChMat_11 tmpMat;
 
 #if DEBUG_UP_CAMERA
-	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 0.0f, 1.0f));
+	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, up);
 #else
-	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
+	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, up);
 #endif
 
 	viewMat = tmpMat;

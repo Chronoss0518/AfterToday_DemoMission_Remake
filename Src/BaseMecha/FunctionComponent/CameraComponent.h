@@ -52,6 +52,8 @@ private:
 
 	ChVec3 GetViewLookPos(const ChLMat& _mat);
 
+	ChVec3 GetViewCrossDir(const ChLMat& _mat);
+
 private:
 
 	size_t useCameraNo = 0;
