@@ -24,11 +24,13 @@ public:
 
 public:
 
-	ChWin::WindObjectW& GetWindow() { return window; }
+	inline ChWin::WindObjectW& GetWindow() { return window; }
 
-	ChD3D11::DirectX3D11& GetDirect3D11() { return d3dApi; }
+	inline ChD3D11::DirectX3D11& GetDirect3D11() { return d3dApi; }
 
-	ChD3D::XAudioList& GetAudioManager() { return audioList; }
+	inline ChD3D::XAudioList& GetAudioManager() { return audioList; }
+
+	inline ChWin::WinKeyInput& GetKeyInput() { return keyInput; }
 
 private:
 
