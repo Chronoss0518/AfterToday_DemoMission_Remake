@@ -231,7 +231,7 @@ void LoadDisplay::Init()
 
 	//SPRITE_INIT(progressCircleTexturePosition, RectToGameWindow(ChVec4::FromRect(PROGRESS_CIRCLE_LEFT, PROGRESS_CIRCLE_TOP, PROGRESS_CIRCLE_RIGHT, PROGRESS_CIRCLE_BOTTOM)));
 	SPRITE_INIT(progressCircleTexturePosition, ChVec4::FromRect(-0.5f, 0.5f, 0.5f, -0.5f));
-	progressCircleTexture.CreateTexture(TEXTURE_DIRECTORY("ProgressCircleMask.png"));
+	progressCircleTexture.CreateTexture(TEXTURE_DIRECTORY("ProgressCircleMask.png"), device);
 
 	{
 		auto&& color = ColorTextToColorVector3(L"66",L"F6",L"FF");
