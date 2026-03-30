@@ -5,6 +5,8 @@
 #include"../StageData/StageData.h"
 #include"../../SelectList/SelectList.h"
 
+#include"../../Application/Application.h"
+
 #define SELECT_PANEL_LEFT 45.0f
 
 #define SELECT_PANEL_RIGHT STAGE_SELECT_PANEL_WIDTH + SELECT_PANEL_LEFT
@@ -83,7 +85,7 @@ private:
 void StageSelectDisplay::Init()
 {
 
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	stagePanelBackground.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"StageNamePanel.png"), device);
 
@@ -206,12 +208,12 @@ void StageSelectDisplay::GetSelectData(FromStageSelectFrameData& _selectData)
 
 void StageSelectDisplay::UpdateMouse()
 {
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
 
-	AddAction(MenuBase::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	AddAction(MenuBase::ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
-	AddAction(MenuBase::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
+	AddAction(MenuBase::ActionType::Cancel, keyInput.IsPushKeyNoHold(VK_RBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
