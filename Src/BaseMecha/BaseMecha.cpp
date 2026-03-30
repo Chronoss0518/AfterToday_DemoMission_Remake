@@ -197,6 +197,8 @@ void BaseMecha::BaseMove()
 	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
 	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
 
+	physics->SetAddRotatePowerVector(0.0f);
+
 	ChVec3 pos = physics->GetPosition();
 	ChVec3 normal = (pos - centerPos);
 	normal.y = 0.0f;

@@ -8,7 +8,7 @@
 #include"../MechaPartsData/WalkData.h"
 #include"../MechaPartsData/CaterpillarData.h"
 
-#define ADD_ROTATE_MAGNIFICATION 3.0f
+#define ADD_ROTATE_MAGNIFICATION 10.0f
 
 void MoveComponent::RemoveMoveObject(MoveDataBase* _moveObject)
 {
@@ -169,8 +169,8 @@ void CaterpillarMoveObject::Update()
 	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackRight, InputName::FrontLeft, InputName::BackLeft, ChVec3(-sideSize, 0.0f, 0.0f), ChVec3(0.0f, -1.0f, 0.0f), tmp);
 	OneSideMoveUpdate(data->GetMovePower() * 0.5f, InputName::BackLeft, InputName::FrontRight, InputName::BackRight, ChVec3(sideSize, 0.0f, 0.0f), ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	RotationUpdate(data->GetMovePower(), InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
-	RotationUpdate(data->GetMovePower(), InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
+	RotationUpdate(data->GetMovePower() * ADD_ROTATE_MAGNIFICATION, InputName::FrontLeft, InputName::BackRight, ChVec3(0.0f, -1.0f, 0.0f));
+	RotationUpdate(data->GetMovePower() * ADD_ROTATE_MAGNIFICATION, InputName::FrontRight,InputName::BackLeft, ChVec3(0.0f, 1.0f, 0.0f));
 
 	if (IsPushFlg(InputName::Up))
 		AddMoveVector(tmp.TransformCoord(ChVec3(0.0f, 1.0f, 0.0f)) * data->GetJumpPower());
@@ -261,7 +261,7 @@ void CaterpillarMoveObject::OneSideMoveUpdate(
 
 	vector *= _rotatePower;
 
-	AddRotateVector(vector);
+	AddRotateVector(vector * ADD_ROTATE_MAGNIFICATION);
 
 	ChLMat tmpMat;
 	tmpMat.SetRotationYPR(vector);
