@@ -21,7 +21,7 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	gameEndFlg = false;
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
-	effectShader->Init(AppIns().GetDirect3D11().GetDevice(), _maxCount);
+	effectShader->Init(_device, _maxCount);
 	effectMoveDataList.resize(_maxCount);
 
 	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"SircleTexture.png"), 1, 1);
