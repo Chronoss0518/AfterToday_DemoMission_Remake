@@ -56,6 +56,13 @@ private:
 
 class GameFrame:public ChCpp::BaseFrame
 {
+private:
+
+	enum class SelectMechaType
+	{
+		Up,Down,None
+	};
+
 public:
 
 	GameFrame() {};

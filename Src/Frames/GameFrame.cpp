@@ -1,5 +1,7 @@
 #include"../BaseIncluder.h"
 
+#include"../Application/Application.h"
+
 #include"../Shader/EffectObject/EffectObjectShader.h"
 #include"../Shader/EffectSprite/EffectSpriteShader.h"
 
@@ -615,8 +617,6 @@ void GameFrame::Update()
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-
 void GameFrame::UpdateFunction()
 {
 	if (allControllFlg)
@@ -672,12 +672,27 @@ void GameFrame::UpdatePlayerLostKeys()
 	if (playerCount > 0)return;
 	if (!isUseChangeCameraFlg)return;
 
+	SelectMechaType type = SelectMechaType::None;
 
 	if (ChSystem::SysManager().IsPushKey(VK_UP))
-		mechaView = (mechaView + 1) % mechas.size();
+		type = SelectMechaType::Up;
+	
 
 	if (ChSystem::SysManager().IsPushKey(VK_DOWN))
-		mechaView = (mechaView + mechas.size() - 1) % mechas.size();
+		type = SelectMechaType::Down;
+
+	if (type == SelectMechaType::None)
+		return;
+
+	do
+	{
+		if(type == SelectMechaType::Up)
+			mechaView = (mechaView + 1) % mechas.size();
+
+		if (type == SelectMechaType::Down)
+			mechaView = (mechaView + mechas.size() - 1) % mechas.size();
+
+	} while (mechas[mechaView].expired());
 }
 
 void GameFrame::DrawFunction()
@@ -1180,12 +1195,14 @@ void GameFrame::AddSkyObject(const std::wstring& _text)
 
 void GameFrame::AddBGM(const std::wstring& _text)
 {
+	auto&& mgr = AppIns().GetAudioManager();
+
 	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 	auto audio = ChPtr::Make_S< ChD3D::AudioObject>();
 
 	std::wstring audioName = argment[0];
 
-	ChD3D::XAudioManager().LoadSound(*audio, SOUND_DIRECTORY(+audioName));
+	mgr.LoadSound(*audio, SOUND_DIRECTORY(+audioName));
 	audio->SetLoopFlg(false);
 
 	for (size_t i = 1; i < argment.size(); i++)
