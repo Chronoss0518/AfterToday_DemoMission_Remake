@@ -12,6 +12,8 @@
 
 #include"../SelectList/SelectList.h"
 
+#include"../Application/Application.h"
+
 #define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
 
 #define MECHA_ROTATION_SPEED 1.0f
@@ -207,11 +209,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
-	controller.Init();
+	MenuBase::InitMenu();
 
-	MenuBase::InitMenu(&controller);
-
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 	spriteShader.Init(device);
 	rtView.CreateRenderTarget(GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	dsView.CreateDepthBuffer(GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
@@ -248,7 +248,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
-	loadDisplay->Init(device, &controller);
+	loadDisplay->Init(device);
 
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
@@ -464,12 +464,12 @@ void EditFrame::UpdateAction(ActionType _type)
 void EditFrame::UpdateMouse()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
 
-	InputTest(MenuBase::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	InputTest(MenuBase::ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
-	InputTest(MenuBase::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
+	InputTest(MenuBase::ActionType::Cancel, keyInput.IsPushKeyNoHold(VK_RBUTTON));
 
 	auto&& mouse = ChWin::Mouse();
 	mouse.Update();
@@ -517,7 +517,7 @@ void EditFrame::UpdateNowLoadingRect()
 
 void EditFrame::DrawFunction()
 {
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 	rtView.SetBackColor(dc, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 0.0f));
 	dsView.ClearDepthBuffer(dc);

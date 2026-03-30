@@ -79,8 +79,6 @@ private:
 
 private:
 
-	ChD3D::XInputController controller;
-
 	ChPtr::Shared<LoadDisplay>loadDisplay = nullptr;
 
 	ChD3D11::RenderTarget11 rtView;
