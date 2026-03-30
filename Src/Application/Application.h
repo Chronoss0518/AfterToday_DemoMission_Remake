@@ -1,7 +1,10 @@
 #pragma once
 
-class Application
+class Application : public ChCp::Initializer
 {
+private:
+
+	Application(){}
 
 public:
 
@@ -13,6 +16,20 @@ public:
 
 public:
 
+	inline void SetFPS(unsigned long _fps) { fpsController.SetFPS(_fps); }
+
+public:
+
+	inline unsigned long GetFPS() { return fpsController.GetFPS(); }
+
+public:
+
+	ChWin::WindObjectW& GetWindow() { return window; }
+
+	ChD3D11::DirectX3D11& GetDirect3D11() { return d3dApi; }
+
+	ChD3D::XAudioList& GetAudioManager() { return audioList; }
+
 private:
 
 	ChWin::WindObjectW window;
@@ -21,8 +38,23 @@ private:
 	ChD3D11::DirectX3D11 d3dApi;
 	ChCpp::FrameList frameList;
 
+	ChD3D::XAudioList audioList;
+
+	ChWin::WinKeyInput keyInput;
+
+	ChCpp::FPSController fpsController;
+
+public:
+
+	static inline Application& GetIns()
+	{
+		static Application ins;
+		return ins;
+	}
+
 };
 
-static Application& getApp();
-
-static void setApp(Application& _app);
+inline Application& AppIns()
+{
+	return Application::GetIns();
+}

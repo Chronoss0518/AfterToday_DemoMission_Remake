@@ -13,17 +13,19 @@
 #include"../Frames/SelectFrame.h"
 #include"../Frames/EditFrame.h"
 #include"../Frames/StageSelectFrame.h"
+#include"../Frames/ResultFrame.h"
 
 #include"../BaseMecha/Controller/ControllerBase.h"
 #include"../StageSelectFrame/StageData/StageData.h"
-Application* app = nullptr;
 
-
+#define TEST_STAGE_NAME L"stage1.chs"
 
 void Application::Init(HINSTANCE hInst, int nCmdshow)
 {
+	if (IsInit())return;
+
 	ChWin::WindClassObjectW windClass;
-	windClass.RegistClass(L"ChGame");
+	windClass.RegistClass(L"ChGame-MX-64");
 
 	auto s_screen = ChWin::GetScreenSize();
 	{
@@ -39,7 +41,8 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 			creater.SetInitSize(s_screen);
 			creater.Create(window,
-				L"AfterToday_DemoMission",
+				//L"AfterToday_DemoMission",
+				L"MechanizedWar TestProject",
 				windClass.GetWindClassName());
 
 			window.SetWindProcedure(WM_DESTROY, [&](HWND _hWnd, UINT _msg, WPARAM _wPalam, LPARAM _lParam)->LRESULT {
@@ -59,7 +62,7 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 		ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
-		ChD3D::XAudioManager().Init();
+		audioList.Init();
 
 		ChWin::Mouse().Init(window);
 	}
@@ -74,22 +77,61 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 	ChD3D::WICBitmapCreatorObj().Init();
 
-	frameList.SetFrame<SelectFrame>();
-	frameList.SetFrame<TitleFrame>();
-	frameList.SetFrame<StageSelectFrame>();
-	frameList.SetFrame<EditFrame>();
-	frameList.SetFrame<GameFrame>();
-	auto gameFrame = frameList.GetNowFrame<GameFrame>();
+	auto testData = ChPtr::Make_S<StageDataStructure>();
 
+	testData->stageScriptPath = TEST_STAGE_NAME;
+
+	frameList.SetSendData(testData);
+
+	auto playerData = ChPtr::Make_S<PlayerData>();
+
+	frameList.SaveData(playerData);
+
+#if USE_TITLE_FRAME_FLG
+	frameList.SetFrame<TitleFrame>();
+#endif
+#if USE_SELECT_FRAME_FLG
+	frameList.SetFrame<SelectFrame>();
+#endif
+#if USE_STAGE_SELECT_FRAME_FLG
+	frameList.SetFrame<StageSelectFrame>();
+#endif
+#if USE_GAME_FRAME_FLG
+	frameList.SetFrame<GameFrame>();
+#endif
+#if USE_EDIT_FRAME_FLG
+	frameList.SetFrame<EditFrame>();
+#endif
+#if USE_SETTING_FRAME_FLG
+	frameList.SetFrame<SettingFrame>();
+#endif
+#if USE_RESULT_FRAME_FLG
+	frameList.SetFrame<ResultFrame>();
+#endif
+
+	fpsController.SetFPS(BASE_FPS);
+
+	SetInitFlg(true);
 }
 
 int Application::Update()
 {
+	if (!IsInit())return;
+
 	while (window.Update())
 	{
-		if (!ChSystem::SysManager().FPSProcess())continue;
+		keyInput.Update();
+		audioList.Update();
+		if (!fpsController.Update(timeGetTime()))continue;
+
+		if (keyInput.IsPushKeyNoHold(VK_ESCAPE))
+		{
+			PostQuitMessage(0);
+			continue;
+		}
+
 		frameList.Update();
-		ChD3D::XAudioManager().Update();
+		keyInput.SetAllFlgDown();
 	}
 
 	return (int)window.GetReturnMassage()->wParam;
@@ -97,25 +139,16 @@ int Application::Update()
 
 void Application::Release()
 {
+	if (!IsInit())return;
+
 	frameList.Release();
+	audioList.Release();
+	
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();
-}
 
-static Application& getApp()
-{
-	if (ChPtr::NullCheck(app))
-	{
-		static Application baseApp;
-		app = &baseApp;
-	}
+	window.Release();
+	windClass.Release();
 
-	return *app;
-}
-
-static void setApp(Application& _app)
-{
-	if (ChPtr::NullCheck(&_app))return;
-
-	app = &_app;
+	SetInitFlg(false);
 }
