@@ -17,7 +17,7 @@ public:
 
 protected:
 
-	void InitMenu(ChD3D::XInputController* _controller);
+	void InitMenu();
 
 protected:
 
@@ -50,7 +50,6 @@ private:
 	ChCpp::BitBool beforeInputMenuType;
 	ChCpp::BitBool afterInputMenuType;
 	ChCpp::BitBool inputMenuType;
-	ChD3D::XInputController* controller = nullptr;
 
 	bool isPushControllerFlg = false;
 

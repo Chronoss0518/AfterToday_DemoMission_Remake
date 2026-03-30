@@ -3,14 +3,14 @@
 
 #include"MenuBase.h"
 
+#include"../Application/Application.h"
+
 #define STICK_INPUT_SIZE 0.6f
 
-void MenuBase::InitMenu(ChD3D::XInputController* _controller)
+void MenuBase::InitMenu()
 {
 	afterInputMenuType.SetBitTrue(ChStd::EnumCast(ActionType::Decision));
 	afterInputMenuType.SetBitTrue(ChStd::EnumCast(ActionType::Cancel));
-
-	controller = _controller;
 }
 
 void MenuBase::UpdateFunction()
@@ -41,45 +41,44 @@ void MenuBase::UpdateFunction()
 void MenuBase::UpdateKeyboard()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
-	InputTest(ActionType::Decision,!manager.IsPushKey(VK_SHIFT) && (manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE)));
+	InputTest(ActionType::Decision,!keyInput.IsPushKey(VK_SHIFT) && (keyInput.IsPushKey(VK_RETURN) || keyInput.IsPushKey(VK_SPACE)));
 
-	InputTest(ActionType::Cancel,manager.IsPushKey(VK_SHIFT) && (manager.IsPushKey(VK_RETURN) || manager.IsPushKey(VK_SPACE)));
+	InputTest(ActionType::Cancel, keyInput.IsPushKey(VK_SHIFT) && (keyInput.IsPushKey(VK_RETURN) || keyInput.IsPushKey(VK_SPACE)));
 
-	InputTest(ActionType::Up, manager.IsPushKey(VK_UP) || manager.IsPushKey('W'));
+	InputTest(ActionType::Up, keyInput.IsPushKey(VK_UP) || keyInput.IsPushKey('W'));
 
-	InputTest(ActionType::Down, manager.IsPushKey(VK_DOWN) || manager.IsPushKey('S'));
+	InputTest(ActionType::Down, keyInput.IsPushKey(VK_DOWN) || keyInput.IsPushKey('S'));
 
-	InputTest(ActionType::Left, manager.IsPushKey(VK_LEFT) || manager.IsPushKey('A'));
+	InputTest(ActionType::Left, keyInput.IsPushKey(VK_LEFT) || keyInput.IsPushKey('A'));
 
-	InputTest(ActionType::Right, manager.IsPushKey(VK_RIGHT) || manager.IsPushKey('D'));
+	InputTest(ActionType::Right, keyInput.IsPushKey(VK_RIGHT) || keyInput.IsPushKey('D'));
 }
 
 void MenuBase::UpdateController()
 {
 	isPushControllerFlg = false;
 
-	if (ChPtr::NullCheck(controller))return;
-	controller->Update();
+	auto&& controller = AppIns().GetXInputController();
 
-	InputTest(ActionType::Decision, controller->GetAFlg());
-	isPushControllerFlg = !isPushControllerFlg ? controller->GetAFlg() : isPushControllerFlg;
+	InputTest(ActionType::Decision, controller.GetAFlg());
+	isPushControllerFlg = !isPushControllerFlg ? controller.GetAFlg() : isPushControllerFlg;
 
-	InputTest(ActionType::Cancel, controller->GetBFlg());
-	isPushControllerFlg = !isPushControllerFlg ? controller->GetBFlg() : isPushControllerFlg;
+	InputTest(ActionType::Cancel, controller.GetBFlg());
+	isPushControllerFlg = !isPushControllerFlg ? controller.GetBFlg() : isPushControllerFlg;
 
-	InputTest(ActionType::Up, controller->GetUpFlg() || controller->GetLYStick() > STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller->GetUpFlg() || controller->GetLYStick() > STICK_INPUT_SIZE : isPushControllerFlg;
+	InputTest(ActionType::Up, controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE : isPushControllerFlg;
 	
-	InputTest(ActionType::Down, controller->GetDownFlg() || controller->GetLYStick() < -STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller->GetDownFlg() || controller->GetLYStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
+	InputTest(ActionType::Down, controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
 	
-	InputTest(ActionType::Left, controller->GetLeftFlg() || controller->GetLXStick() < -STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller->GetLeftFlg() || controller->GetLXStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
+	InputTest(ActionType::Left, controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
 	
-	InputTest(ActionType::Right, controller->GetRightFlg() || controller->GetLXStick() > STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller->GetRightFlg() || controller->GetLXStick() > STICK_INPUT_SIZE : isPushControllerFlg;
+	InputTest(ActionType::Right, controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE);
+	isPushControllerFlg = !isPushControllerFlg ? controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE : isPushControllerFlg;
 
 }
 
