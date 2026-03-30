@@ -14,6 +14,8 @@
 #include"Src/BaseMecha/Controller/ControllerBase.h"
 #include "Src/StageSelectFrame/StageData/StageData.h"
 
+#include"Src/Application/Application.h"
+
 
 int WINAPI WinMain(
 	HINSTANCE hInst,
@@ -21,7 +23,7 @@ int WINAPI WinMain(
 	LPSTR lpszCmdParam,
 	int nCmdshow)
 {
-
+#if false
 	auto&& system = *ChSystem::SysManager().Init<ChSystem::WindowsW>();
 
 	ChWin::WindClassObjectW windClass;
@@ -71,6 +73,8 @@ int WINAPI WinMain(
 		ChWin::Mouse().Init(system);
 	}
 
+	ChD3D::WICBitmapCreatorObj().Init();
+
 	ChCpp::FrameList frameList;
 
 	auto testData = ChPtr::Make_S<StageDataStructure>();
@@ -82,8 +86,6 @@ int WINAPI WinMain(
 	auto playerData = ChPtr::Make_S<PlayerData>();
 
 	frameList.SaveData(playerData);
-
-	ChD3D::WICBitmapCreatorObj().Init();
 
 #if USE_TITLE_FRAME_FLG
 	frameList.SetFrame<TitleFrame>();
@@ -134,4 +136,17 @@ int WINAPI WinMain(
 	windClass.Release();
 
 	return (int)system.GetReturnMassage()->wParam;
+
+#else
+
+AppIns().Init(hInst, 1);
+
+int res = AppIns().Update();
+
+AppIns().Release();
+
+return res;
+
+#endif
+
 }
