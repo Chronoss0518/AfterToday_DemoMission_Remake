@@ -32,6 +32,8 @@ public:
 
 	inline ChWin::WinKeyInput& GetKeyInput() { return keyInput; }
 
+	inline ChD3D::XInputController& GetXInputController() { return controller; }
+
 private:
 
 	ChWin::WindObjectW window;
@@ -43,8 +45,11 @@ private:
 	ChD3D::XAudioList audioList;
 
 	ChWin::WinKeyInput keyInput;
+	ChD3D::XInputController controller;
 
 	ChCpp::FPSController fpsController;
+
+	bool inUpdateFlg = false;
 
 public:
 

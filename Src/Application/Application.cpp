@@ -23,6 +23,7 @@
 void Application::Init(HINSTANCE hInst, int nCmdshow)
 {
 	if (IsInit())return;
+	if (inUpdateFlg)return;
 
 	ChWin::WindClassObjectW windClass;
 	windClass.RegistClass(L"ChGame-MX-64");
@@ -65,6 +66,8 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 		audioList.Init();
 
 		ChWin::Mouse().Init(window);
+
+		controller.Init();
 	}
 
 	/*
@@ -116,13 +119,17 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 int Application::Update()
 {
-	if (!IsInit())return;
+	if (!IsInit())return 0;
+	if (inUpdateFlg)return 0;
+
+	inUpdateFlg = true;
 
 	while (window.Update())
 	{
 		keyInput.Update();
 		audioList.Update();
 		if (!fpsController.Update(timeGetTime()))continue;
+		controller.Update();
 
 		if (keyInput.IsPushKeyNoHold(VK_ESCAPE))
 		{
@@ -133,6 +140,7 @@ int Application::Update()
 		frameList.Update();
 		keyInput.SetAllFlgDown();
 	}
+	inUpdateFlg = false;
 
 	return (int)window.GetReturnMassage()->wParam;
 }
@@ -140,10 +148,12 @@ int Application::Update()
 void Application::Release()
 {
 	if (!IsInit())return;
+	if (inUpdateFlg)return;
 
 	frameList.Release();
 	audioList.Release();
-	
+	controller.Release();
+
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();
 
