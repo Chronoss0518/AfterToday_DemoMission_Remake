@@ -25,7 +25,6 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 	if (IsInit())return;
 	if (inUpdateFlg)return;
 
-	ChWin::WindClassObjectW windClass;
 	windClass.RegistClass(L"ChGame-MX-64");
 
 	auto s_screen = ChWin::GetScreenSize();
@@ -69,14 +68,6 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 		controller.Init();
 	}
-
-	/*
-	PlayerData testData;
-
-	testData.stageName = "stage1.chs";
-
-	frameList.SaveData(&testData);
-	*/
 
 	ChD3D::WICBitmapCreatorObj().Init();
 
