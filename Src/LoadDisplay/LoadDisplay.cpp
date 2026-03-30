@@ -170,14 +170,14 @@ private:
 
 };
 
-void LoadDisplay::Init(ID3D11Device* _device)
+void LoadDisplay::Init()
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 	MenuBase::InitMenu();
 
-	device = _device;
 	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_SPRITE_WIDTH), static_cast<unsigned long>(GAME_SPRITE_HEIGHT));
 
-	meshDrawer.Init(_device);
+	meshDrawer.Init(device);
 	meshDrawer.SetCullMode(D3D11_CULL_MODE::D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(false);
 
@@ -485,6 +485,8 @@ void LoadDisplay::Load()
 
 bool LoadDisplay::LoadFile(size_t _openNumber)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	if (dc == nullptr)return false;
 	if (loadFileList == nullptr)return false;
 	if (loadFileList->GetCount() <= _openNumber)

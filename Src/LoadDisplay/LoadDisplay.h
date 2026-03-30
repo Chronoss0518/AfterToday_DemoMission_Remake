@@ -11,7 +11,7 @@ class LoadDisplay :public MenuBase
 {
 public:
 
-	void Init(ID3D11Device* _device);
+	void Init();
 
 	void Release();
 
@@ -91,7 +91,6 @@ private:
 	unsigned long selectBottomButton = ChStd::EnumCast(BottomButtonType::None);
 
 	ChVec4 backColor = ChVec4::FromColor(0.2f, 0.2f, 0.5f, 1.0f);
-	ID3D11Device* device = nullptr;
 	ChD3D11::DepthStencilTexture11 dsTex;
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
