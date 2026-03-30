@@ -3,6 +3,8 @@
 
 #include"TitleFrame.h"
 
+#include"../Application/Application.h"
+
 #define TITLE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Title/") current_path
 #define TITLE_MESH_DIRECTORY(current_path) MESH_DIRECTORY(L"Title/") current_path
 
@@ -82,7 +84,7 @@ void TitleFrame::UpdateFunction()
 
 void TitleFrame::Draw3D()
 {
-	auto&& deviceContext = ChD3D11::D3D11DC();
+	auto&& deviceContext = AppIns().GetDirect3D11().GetDC();
 
 	meshDrawer.DrawStart(deviceContext);
 
