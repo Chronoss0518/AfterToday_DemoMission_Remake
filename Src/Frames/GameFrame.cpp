@@ -1,7 +1,5 @@
 #include"../BaseIncluder.h"
 
-#include"../Application/Application.h"
-
 #include"../Shader/EffectObject/EffectObjectShader.h"
 #include"../Shader/EffectSprite/EffectSpriteShader.h"
 
@@ -25,6 +23,8 @@
 #include"../BaseMecha/CPU/CPULooker.h"
 
 #include"../GameInMessageBox/GameInMessageBox.h"
+
+#include"../Application/Application.h"
 
 //想定するメカオブジェクトの最大数//
 #define MAX_MECHA_OBJECT_COUNT 10
@@ -89,35 +89,37 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	script = ChPtr::Make_S<GameScript>();
 	InitScriptFunction();
-	ChSystem::SysManager().SetFPS(BASE_FPS);
+	AppIns().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
 	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER / BASE_FPS);
 	PhysicsMachine::SetAirRegist(0.0001f);
 	PhysicsMachine::SetGroundRegist(0.2f);
 
-	auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
+	auto&& windows = AppIns().GetWindow();
 
 #if DISPLAY_FPS_FLG | DISPLAY_NOW_BULLET_NUM_FLG
-	box.Create(L"Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows->GetWindObject());
+	box.Create(L"Text", ChINTPOINT(100, 0), ChINTPOINT(1000, 100), windows.GetWindObject());
 	box.SetEnableFlg(false);
 #endif
 
-	meshDrawer.Init(ChD3D11::D3D11Device());
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	meshDrawer.Init(device);
 	meshDrawer.SetCullMode(D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(true);
 
-	lightBloomeDrawer.Init(ChD3D11::D3D11Device());
+	lightBloomeDrawer.Init(device);
 	lightBloomeDrawer.SetBlurPower(5);
 	lightBloomeDrawer.SetBoostPower(5.0f);
 	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH * 0.5f, GAME_WINDOW_HEIGHT * 0.5f));
 	lightBloomeDrawer.SetLiteBlurFlg(false);
 
-	shotTargetDrawer.Init(ChD3D11::D3D11Device());
+	shotTargetDrawer.Init(device);
 	shotTargetDrawer.SetCullMode(D3D11_CULL_BACK);
 	shotTargetDrawer.SetAlphaBlendFlg(true);
 	
-	shotTargetBorad.Init(ChD3D11::D3D11Device());
+	shotTargetBorad.Init(device);
 	shotTargetBorad.SetInitSquare();
 
 	ChVec4 rect = ChVec4::FromRect((GAME_SPRITE_WIDTH - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_HEIGHT - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_WIDTH + SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_HEIGHT + SHOT_TARGET_MARKER_SIZE) * 0.5f);
@@ -130,28 +132,28 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		shotTargetBorad.SetPos(i, pos);
 	}
 
-	shotTargetMarkerTex.CreateTexture(TEXTURE_DIRECTORY(L"ATKCurrsol.png"), ChD3D11::D3D11Device());
+	shotTargetMarkerTex.CreateTexture(TEXTURE_DIRECTORY(L"ATKCurrsol.png"), device);
 
 
 	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
-	waterSplashEffectShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
+	waterSplashEffectShader->Init(device, MAX_MECHA_OBJECT_COUNT * 4);
 
 	fireShader = ChPtr::Make_S<EffectObjectShader>();
-	fireShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 4);
+	fireShader->Init(device, MAX_MECHA_OBJECT_COUNT * 4);
 	fireShader->SetEffectTexture(TEXTURE_DIRECTORY(L""), 1, 1);
 
 	shotEffectList = ChPtr::Make_S<ShotEffectList>();
-	shotEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 10);
+	shotEffectList->Init(device, MAX_MECHA_OBJECT_COUNT * 10);
 
 	smokeEffectList = ChPtr::Make_S<SmokeEffectList>();
-	smokeEffectList->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	smokeEffectList->Init(device, MAX_MECHA_OBJECT_COUNT * 100, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	smokeEffectList->SetMaxColorPower(0.5f);
 	smokeEffectList->SetMinColorPower(0.3f);
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
 	smokeEffectList->SetInitialDispersalPower(1.0f);
 
 	enemyMarkerShader = ChPtr::Make_S<EffectSpriteShader>();
-	enemyMarkerShader->Init(ChD3D11::D3D11Device(), MAX_MECHA_OBJECT_COUNT);
+	enemyMarkerShader->Init(device, MAX_MECHA_OBJECT_COUNT);
 	enemyMarkerShader->SetEffectTexture(TEXTURE_DIRECTORY(L"Ts.png"),1,1);
 	enemyMarkerShader->SetObjectSize(ChVec2(ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_WIDTH, ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_HEIGHT));
 	for (unsigned long i = 0; i < MAX_MECHA_OBJECT_COUNT; i++)
@@ -159,7 +161,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		enemyMarkerShader->SetEffectColor(ChVec4(1.0f), i);
 	}
 
-	light.Init(ChD3D11::D3D11Device());
+	light.Init(device);
 	light.SetUseLightFlg(true);
 	light.SetDirectionLightData(true, ChVec3(1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 
@@ -167,10 +169,10 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Damage.png"));
 	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Enelgy.png"));
 
-	gageDrawer.Init(ChD3D11::D3D11Device());
+	gageDrawer.Init(device);
 
 	gageDrawer.SetStartDrawDir(ChVec2(0.0f, -1.0f));
-	uiDrawer.Init(ChD3D11::D3D11Device());
+	uiDrawer.Init(device);
 	uiDrawer.SetAlphaBlendFlg(true);
 
 	centerUISprite.SetInitPosition();
@@ -185,7 +187,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	hitIcon.sprite.Init();
 	hitIcon.sprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(HIT_ICON_LEFT, HIT_ICON_TOP, HIT_ICON_RIGHT, HIT_ICON_BOTTOM)));
-	hitIcon.image.CreateTexture(TEXTURE_DIRECTORY(L"HitIcon.png"), ChD3D11::D3D11Device());
+	hitIcon.image.CreateTexture(TEXTURE_DIRECTORY(L"HitIcon.png"), device);
 
 	{
 		ChMat_11 proMat;
@@ -203,16 +205,16 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 
 	messageBox = ChPtr::Make_S<GameInMessageBox>();
-	messageBox->Init(ChD3D11::D3D11Device());
+	messageBox->Init(device);
 
 	weaponDataDrawer = ChPtr::Make_S<WeaponDataDrawUI>();
-	weaponDataDrawer->Init(ChD3D11::D3D11Device());
+	weaponDataDrawer->Init(device);
 	
-	rt2D.CreateRenderTarget(ChD3D11::D3D11Device(),GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	rt3D.CreateRenderTarget(ChD3D11::D3D11Device(), GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	rtHighLightMap.CreateRenderTarget(ChD3D11::D3D11Device(), GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	dsTex.CreateDepthBuffer(ChD3D11::D3D11Device(), GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	fadeOutTexture.CreateColorTexture(ChD3D11::D3D11Device(), ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f), 1, 1);
+	rt2D.CreateRenderTarget(device,GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rt3D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rtHighLightMap.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	dsTex.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	fadeOutTexture.CreateColorTexture(device, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f), 1, 1);
 
 	uiSprite.Init(); 
 	uiSprite.SetInitPosition();
@@ -672,13 +674,15 @@ void GameFrame::UpdatePlayerLostKeys()
 	if (playerCount > 0)return;
 	if (!isUseChangeCameraFlg)return;
 
+	auto&& keyInput = AppIns().GetKeyInput();
+
 	SelectMechaType type = SelectMechaType::None;
 
-	if (ChSystem::SysManager().IsPushKey(VK_UP))
+	if (keyInput.IsPushKeyNoHold(VK_UP))
 		type = SelectMechaType::Up;
 	
 
-	if (ChSystem::SysManager().IsPushKey(VK_DOWN))
+	if (keyInput.IsPushKeyNoHold(VK_DOWN))
 		type = SelectMechaType::Down;
 
 	if (type == SelectMechaType::None)
@@ -698,6 +702,8 @@ void GameFrame::UpdatePlayerLostKeys()
 void GameFrame::DrawFunction()
 {
 
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
+
 #if USE_THREAD
 	if (!shotEffectList->IsUpdateFlg()) {}
 	if (!smokeEffectList->IsUpdateFlg()) {}
@@ -708,30 +714,30 @@ void GameFrame::DrawFunction()
 
 	mechaList.ObjectDrawBegin();
 
-	rt3D.SetBackColor(ChD3D11::D3D11DC(), ChVec4::FromColor(0.0f, 0.0f, 1.0f, 1.0f));
-	rtHighLightMap.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
-	rt2D.SetBackColor(ChD3D11::D3D11DC(), ChVec4(0.0f));
-	dsTex.ClearDepthBuffer(ChD3D11::D3D11DC());
+	rt3D.SetBackColor(dc, ChVec4::FromColor(0.0f, 0.0f, 1.0f, 1.0f));
+	rtHighLightMap.SetBackColor(dc, ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	rt2D.SetBackColor(dc, ChVec4(0.0f));
+	dsTex.ClearDepthBuffer(dc);
 
 	uiDrawer.SetAlphaBlendFlg(true);
 	ChD3D11::Shader11().DrawStart();
 
 	Render3D();
 	ID3D11RenderTargetView* renderTargetView = rt2D.GetRTView();
-	ChD3D11::D3D11DC()->OMSetRenderTargets(1, &renderTargetView,nullptr);
+	dc->OMSetRenderTargets(1, &renderTargetView,nullptr);
 
-	enemyMarkerShader->DrawStart(ChD3D11::D3D11DC());
+	enemyMarkerShader->DrawStart(dc);
 
-	enemyMarkerShader->Draw(ChD3D11::D3D11DC());
+	enemyMarkerShader->Draw(dc);
 
 	enemyMarkerShader->DrawEnd();
 
 	Render2D();
 
 	renderTargetView = rt3D.GetRTView();
-	ChD3D11::D3D11DC()->OMSetRenderTargets(1, &renderTargetView, nullptr);
+	dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
-	uiDrawer.DrawStart(ChD3D11::D3D11DC());
+	uiDrawer.DrawStart(dc);
 
 	uiDrawer.Draw(rt2D, uiSprite);
 
@@ -818,13 +824,15 @@ void GameFrame::DrawFunctionBegin()
 
 void GameFrame::Render3D()
 {
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
+
 	light.SetUseLightFlg(true);
-	light.SetPSDrawData(ChD3D11::D3D11DC());
+	light.SetPSDrawData(dc);
 
 	ID3D11RenderTargetView* meshRT[] = { rt3D.GetRTView() , rtHighLightMap.GetRTView() };
-	ChD3D11::D3D11DC()->OMSetRenderTargets(2, meshRT, dsTex.GetDSView());
+	dc->OMSetRenderTargets(2, meshRT, dsTex.GetDSView());
 
-	meshDrawer.DrawStart(ChD3D11::D3D11DC());
+	meshDrawer.DrawStart(dc);
 
 	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
 	{
@@ -838,19 +846,19 @@ void GameFrame::Render3D()
 
 	meshDrawer.DrawEnd();
 
-	shotEffectList->Draw(ChD3D11::D3D11DC());
+	shotEffectList->Draw(dc);
 
-	smokeEffectList->Draw(ChD3D11::D3D11DC());
+	smokeEffectList->Draw(dc);
 
-	ChD3D11::D3D11DC()->OMSetRenderTargets(1, meshRT, nullptr);
+	dc->OMSetRenderTargets(1, meshRT, nullptr);
 
-	lightBloomeDrawer.DrawStart(ChD3D11::D3D11DC());
+	lightBloomeDrawer.DrawStart(dc);
 	lightBloomeDrawer.Draw(rtHighLightMap, uiSprite);
 	lightBloomeDrawer.DrawEnd();
 
 	light.SetUseLightFlg(false);
 
-	shotTargetDrawer.DrawStart(ChD3D11::D3D11DC());
+	shotTargetDrawer.DrawStart(dc);
 	
 	shotTargetDrawer.Draw(shotTargetMarkerTex, shotTargetBorad, (ChMat_11)shotTargetdrawBaseMatrix);
 
@@ -859,6 +867,8 @@ void GameFrame::Render3D()
 
 void GameFrame::Render2D(void)
 {
+
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 	if (drawMecha != nullptr)
 	{
@@ -872,7 +882,7 @@ void GameFrame::Render2D(void)
 		{
 			gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
 
-			gageDrawer.DrawStart(ChD3D11::D3D11DC());
+			gageDrawer.DrawStart(dc);
 
 			gageDrawer.Draw(enelgyUITexture, centerUISprite);
 
@@ -880,7 +890,7 @@ void GameFrame::Render2D(void)
 
 			gageDrawer.SetDrawValue(damageParcec * -0.5f);
 
-			gageDrawer.DrawStart(ChD3D11::D3D11DC());
+			gageDrawer.DrawStart(dc);
 
 			gageDrawer.Draw(receveDamageUITexture, centerUISprite);
 
@@ -890,7 +900,7 @@ void GameFrame::Render2D(void)
 
 	}
 
-	uiDrawer.DrawStart(ChD3D11::D3D11DC());
+	uiDrawer.DrawStart(dc);
 
 	messageBox->Draw(uiDrawer);
 
@@ -918,6 +928,8 @@ void GameFrame::Render2D(void)
 
 void GameFrame::AddMecha(const std::wstring& _text)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
 	auto&& mecha = mechaList.SetObject<BaseMecha>();
@@ -1049,7 +1061,7 @@ void GameFrame::AddMecha(const std::wstring& _text)
 	mecha->SetPosition(position);
 	mecha->SetRotation(rotation);
 
-	mecha->Load(ChD3D11::D3D11Device(), loadFile);
+	mecha->Load(device, loadFile);
 
 	if (playerFlg)
 	{	
@@ -1089,10 +1101,12 @@ void GameFrame::AddMecha(const std::wstring& _text)
 
 void GameFrame::AddField(const std::wstring& _text)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
 	auto mainMap = ChPtr::Make_S<MapObject>();
-	mainMap->model->Init(ChD3D11::D3D11Device());
+	mainMap->model->Init(device);
 	size_t pos = argment[0].find_last_of(L".");
 
 	if (argment[0].substr(pos) == L".x") {
@@ -1158,10 +1172,12 @@ void GameFrame::AddField(const std::wstring& _text)
 
 void GameFrame::AddSkyObject(const std::wstring& _text)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
 	skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-	skySphere->Init(ChD3D11::D3D11Device());
+	skySphere->Init(device);
 	size_t pos = argment[0].find_last_of(L".");
 	if (argment[0].substr(pos) == L".x") {
 		ChCpp::ModelController::XFile<wchar_t> loader;

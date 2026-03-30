@@ -163,6 +163,8 @@ private:
 
 	ChMat_11 viewMat;
 	ChMat_11 proMat;
+	ChLMat projectionMat;
+
 
 	enum class DrawEffect:unsigned short
 	{
@@ -211,8 +213,6 @@ private:
 
 
 	bool gameEndFlg = false;
-
-	ChLMat projectionMat;
 
 	ChPtr::Shared<ShotEffectList> shotEffectList = nullptr;
 	ChPtr::Shared<SmokeEffectList> smokeEffectList = nullptr;
