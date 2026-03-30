@@ -5,6 +5,8 @@
 
 #include"SmokeEffectList.h"
 
+#include"../../Application/Application.h"
+
 #define USE_RENDER_TARGET 0
 
 #define OBJECT_SIZE 1.0f
@@ -19,7 +21,7 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	gameEndFlg = false;
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
-	effectShader->Init(ChD3D11::D3D11Device(), _maxCount);
+	effectShader->Init(AppIns().GetDirect3D11().GetDevice(), _maxCount);
 	effectMoveDataList.resize(_maxCount);
 
 	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"SircleTexture.png"), 1, 1);
