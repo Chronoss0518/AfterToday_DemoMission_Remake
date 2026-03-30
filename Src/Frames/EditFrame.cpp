@@ -596,7 +596,6 @@ void EditFrame::DrawEndLoading()
 		if (ChStd::EnumCast(selectType) == i)
 			spriteShader.Draw(*partsList->GetSelectImage(), selectButton[i].sprite);
 	}
-
 }
 
 ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTitleTexture(const std::wstring& _str)
