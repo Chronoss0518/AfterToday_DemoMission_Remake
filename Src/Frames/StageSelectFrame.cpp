@@ -9,7 +9,7 @@
 #include"../StageSelectFrame/StageSelectFrameDisplay/StageSelectDisplay.h"
 #include"../StageSelectFrame/StageSelectFrameDisplay/StageDetailedDisplay.h"
 
-#include"../LoadDisplay/LoadDisplay.h"
+#include"../Application/Application.h"
 
 #define PANEL_TEXT_SIDE_PADDING 5.0f
 #define PANEL_TEXT_WIDTH STAGE_SELECT_DESCRIPTION_WIDTH - (PANEL_TEXT_SIDE_PADDING * 2)
@@ -21,21 +21,17 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
-	controller.Init();
-	MenuBase::InitMenu(&controller);
+	MenuBase::InitMenu();
 
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 	spriteShader.Init(device);
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
-	loadDisplay->Init(device, &controller);
+	loadDisplay->Init(device);
 
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Select)] = ChPtr::Make_S<StageSelectDisplay>();
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Detailed)] = ChPtr::Make_S<StageDetailedDisplay>();
 	
-	controller.Init();
-	controller.Update();
-
 	notImageTexture.CreateColorTexture(device, ChVec4::FromColor(0.7f, 0.7f, 0.7f, 1.0f), 1, 1);
 
 	InitStageDataList();
@@ -63,7 +59,7 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 void StageSelectFrame::InitStageDataList()
 {
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();;
 
 	ChD3D::DirectFontFromWICBitmap stagePanelTextDrawer;
 
@@ -186,13 +182,12 @@ void StageSelectFrame::Release()
 		stageSelectFrameDisplay[i] = nullptr;
 	}
 
-	controller.Release();
 }
 
 void StageSelectFrame::DrawFunction()
 {
 	
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 	ChD3D11::Shader11().DrawStart();
 
 	dc->OMGetRenderTargets(1, &rtView, nullptr);
@@ -282,7 +277,7 @@ void StageSelectFrame::Cancel()
 
 void StageSelectFrame::OpenLoadDisplay()
 {
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 	auto&& playerData = ChPtr::SharedSafeCast<PlayerData>(GetData());
 	loadDisplay->Open(dc);
 }
