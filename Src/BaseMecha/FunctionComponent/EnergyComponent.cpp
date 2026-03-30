@@ -5,9 +5,11 @@
 
 #include"EnergyComponent.h"
 
+#include"../../Application/Application.h"
+
 void EnergyComponent::Update()
 {
-	unsigned long fps = ChSystem::SysManager().GetFPS();
+	unsigned long fps = AppIns().GetFPS();
 
 	nowEnergy += (chargeEnergy * (120 / fps));
 

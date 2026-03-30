@@ -8,6 +8,8 @@
 #include"../MechaPartsData/WalkData.h"
 #include"../MechaPartsData/CaterpillarData.h"
 
+#define ADD_ROTATE_MAGNIFICATION 3.0f
+
 void MoveComponent::RemoveMoveObject(MoveDataBase* _moveObject)
 {
 	if (_moveObject == nullptr)return;
@@ -99,8 +101,8 @@ void WalkMoveObject::Update()
 	MoveUpdate(data->GetMovePower(), InputName::Right, ChVec3(1.0f, 0.0f, 0.0f), tmp);
 	MoveUpdate(data->GetJumpPower(), InputName::Up, ChVec3(0.0f, 1.0f, 0.0f), tmp);
 
-	RotateUpdate(data->GetRotatePower(), InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
-	RotateUpdate(data->GetRotatePower(), InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
+	RotateUpdate(data->GetRotatePower() * ADD_ROTATE_MAGNIFICATION, InputName::RightRotation, ChVec3(0.0f, -1.0f, 0.0f));
+	RotateUpdate(data->GetRotatePower() * ADD_ROTATE_MAGNIFICATION, InputName::LeftRotation, ChVec3(0.0f, 1.0f, 0.0f));
 
 }
 
