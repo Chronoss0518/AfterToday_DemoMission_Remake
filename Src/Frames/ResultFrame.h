@@ -100,8 +100,6 @@ private:
 	ChPtr::Shared<ResultStructure> resultData = nullptr;
 	long finalIncome = 0;
 
-	ChD3D::XInputController controller;
-
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
 	ImageSprite resultTitle;

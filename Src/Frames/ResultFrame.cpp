@@ -6,6 +6,8 @@
 #include"../BaseMecha/MechaPartsObject.h"
 #include"StageDataStructure.h"
 
+#include"../Application/Application.h"
+
 #define RESULT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Result/") current_path
 
 #define RESULT_TITLE_TOP 42.0f
@@ -50,7 +52,7 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	resultData = ChPtr::SharedSafeCast<ResultStructure>(_sendData);
 
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	resultTitle.image.CreateTexture(RESULT_TEXTURE_DIRECTORY(L"Result_Title_JP.png"));
 	SPRITE_INIT(resultTitle.sprite, RectToGameWindow(ChVec4::FromRect(RESULT_TITLE_LEFT,RESULT_TITLE_TOP, RESULT_TITLE_RIGHT, RESULT_TITLE_BOTTOM)));
@@ -102,14 +104,12 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	spriteShader.Init(device);
 
-	controller.Init();
-
-	MenuBase::InitMenu(&controller);
+	MenuBase::InitMenu();
 }
 
 void ResultFrame::Release()
 {
-	controller.Release();
+
 }
 
 void ResultFrame::Update()
@@ -148,7 +148,7 @@ void ResultFrame::UpdateAction(ActionType _type)
 
 void ResultFrame::DrawFunction()
 {
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 	ChD3D11::Shader11().DrawStart();
 
