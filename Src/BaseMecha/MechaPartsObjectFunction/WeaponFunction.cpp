@@ -11,6 +11,8 @@
 
 #include"WeaponFunction.h"
 
+#include"../../Application/Application.h"
+
 #include<math.h>
 
 #define SE_VOLUME_SIZE 0.1f
@@ -132,7 +134,9 @@ void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11
 
 	attackData = Attack::CreateAttackDataFromBullet(_drawer, _device, gunData->GetUseBulletFile());
 
-	ChD3D::XAudioManager().LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
+	auto&& mgr = AppIns().GetAudioManager();
+
+	mgr.LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
 
 	se.SetVolume(SE_VOLUME_SIZE);
 }

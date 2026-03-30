@@ -6,6 +6,7 @@
 
 #include"PlayerController.h"
 
+#include"../../Application/Application.h"
 
 #define MIN_CURSOL_LEN_PARCEC 0.01f
 #define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
@@ -94,9 +95,11 @@ void PlayerController::UpdateBegin()
 
 	if (!controllerPushFlg)
 	{
+		auto&& keyInput = AppIns().GetKeyInput();
+
 		for (auto&& key : keyTypes)
 		{
-			if (!ChSystem::SysManager().IsPushKey(key.first))continue;
+			if (!keyInput.IsPushKey(key.first))continue;
 			targetMecha->SetPushFlg(key.second);
 		}
 
