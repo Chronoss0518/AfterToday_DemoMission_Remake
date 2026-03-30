@@ -329,8 +329,8 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 
 void EditFrame::InitNowLoadingRect()
 {
-	animationMoveSpeed = 1.0f / (NOW_LOADING_ANIMATION_MOVE_SPEED * static_cast<float>(ChSystem::SysManager().GetFPS()));
-	animationWaitTime = 1.0f / (NOW_LOADING_ANIMATION_WAIT_TIME * static_cast<float>(ChSystem::SysManager().GetFPS()));
+	animationMoveSpeed = 1.0f / (NOW_LOADING_ANIMATION_MOVE_SPEED * static_cast<float>(AppIns().GetFPS()));
+	animationWaitTime = 1.0f / (NOW_LOADING_ANIMATION_WAIT_TIME * static_cast<float>(AppIns().GetFPS()));
 	nowLoadingPosRect = ChVec4::FromRect(-1.0f, 1.0f, -1.0f, -1.0f);
 	nowLoadingUVRect = ChVec4::FromRect(0.0f, 0.0f, 0.0f, 1.0f);
 	nowAnimationWaitTime = 1.0f;
