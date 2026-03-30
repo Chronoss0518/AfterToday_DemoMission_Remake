@@ -50,7 +50,7 @@ private:
 
 	bool controllerPushFlg = false;
 
-	std::map<unsigned long, InputName> keyTypes;
+	std::map<unsigned char, InputName> keyTypes;
 	std::map<XInputTypeNames, InputName>controllerTypes;
 	ChD3D::XInputController controller;
 
