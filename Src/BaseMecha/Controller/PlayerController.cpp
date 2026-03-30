@@ -13,9 +13,9 @@
 
 void PlayerController::Init()
 {
-	auto&& windows = *ChSystem::SysManager().GetSystem<ChSystem::WindowsW>();
-	windSize.h = static_cast<float>(windows.GetWindHeight());
-	windSize.w = static_cast<float>(windows.GetWindWidth());
+	auto&& windows = AppIns().GetWindow();
+	windSize.h = static_cast<float>(windows.GetWindSize().h);
+	windSize.w = static_cast<float>(windows.GetWindSize().w);
 
 	keyTypes[VK_SPACE] = InputName::Up;
 	keyTypes[VK_SHIFT] = InputName::Avo;
