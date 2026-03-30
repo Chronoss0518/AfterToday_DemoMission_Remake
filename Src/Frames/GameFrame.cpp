@@ -165,9 +165,9 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	light.SetUseLightFlg(true);
 	light.SetDirectionLightData(true, ChVec3(1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
 
-	centerUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBarFrame.png"));
-	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Damage.png"));
-	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Enelgy.png"));
+	centerUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBarFrame.png"),device);
+	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Damage.png"), device);
+	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Enelgy.png"), device);
 
 	gageDrawer.Init(device);
 
@@ -477,6 +477,7 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 
 void GameFrame::LoadStage(std::wstring& _stageScriptName)
 {
+	auto&& mgr = AppIns().GetAudioManager();
 
 	auto playerData = ChPtr::SharedSafeCast<PlayerData>(BaseFrame::GetData());
 
@@ -500,14 +501,14 @@ void GameFrame::LoadStage(std::wstring& _stageScriptName)
 
 	script->CreateAllScript(stageScript);
 
-	ChD3D::XAudioManager().LoadStart();
+	mgr.LoadStart();
 
 	while (!initFlg)
 	{
 		script->UpdateScript();
 	}
 
-	ChD3D::XAudioManager().LoadEnd();
+	mgr.LoadEnd();
 }
 
 void GameFrame::LoadScript(const std::wstring& _text)
@@ -564,8 +565,8 @@ void GameFrame::Update()
 
 	if (endDrawKeyFlg)
 	{
-		auto&& windows = ChSystem::SysManager().GetSystem<ChSystem::WindowsW>();
-		if (windows->IsPushKey(VK_LBUTTON))
+		auto&& keyInput = AppIns().GetKeyInput();
+		if (keyInput.IsPushKey(VK_LBUTTON))
 		{
 			messageBox->EndSetDrawMessage();
 		}
