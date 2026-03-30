@@ -3,6 +3,8 @@
 
 #include"SelectFrame.h"
 
+#include"../Application/Application.h"
+
 #define SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Select/") current_path
 #define SELECT_MESH_DIRECTORY(current_path) MESH_DIRECTORY(L"Select/") current_path
 
@@ -19,12 +21,10 @@
 void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
-	
-	controller.Init();
 
-	MenuBase::InitMenu(&controller);
+	MenuBase::InitMenu();
 
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	spriteShader.Init(device);
 
@@ -75,12 +75,12 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 void SelectFrame::Release()
 {
-	controller.Release();
+
 }
 
 void SelectFrame::DrawFunction()
 {
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 	ChD3D11::Shader11().DrawStart();
 
@@ -132,9 +132,9 @@ void SelectFrame::Update()
 void SelectFrame::UpdateMouse()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
-	MenuBase::InputTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	MenuBase::InputTest(ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
