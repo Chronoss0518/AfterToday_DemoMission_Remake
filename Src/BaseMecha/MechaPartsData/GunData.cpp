@@ -10,6 +10,7 @@
 
 #include"../MechaPartsObjectFunction/WeaponFunction.h"
 
+#include"../../Application/Application.h"
 
 unsigned long GunData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
@@ -54,7 +55,7 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 
 	function->SetFrame(_frame);
 
-	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
+	function->Init(thisParts.GetMeshDrawer(), AppIns().GetDirect3D11().GetDevice());
 
 	_parts.AddWeaponFunction(function);
 

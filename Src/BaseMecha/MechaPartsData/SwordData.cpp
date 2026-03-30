@@ -10,6 +10,8 @@
 
 #include"../MechaPartsObjectFunction/WeaponFunction.h"
 
+#include"../../Application/Application.h"
+
 unsigned long SwordData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
 	unsigned long textPos = WeaponDataBase::Deserialize(_text, _textPos);
@@ -41,7 +43,7 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 
 	function->SetBaseData(this);
 
-	function->Init(thisParts.GetMeshDrawer(), ChD3D11::D3D11Device());
+	function->Init(thisParts.GetMeshDrawer(), AppIns().GetDirect3D11().GetDevice());
 
 	_parts.AddWeaponFunction(function);
 
