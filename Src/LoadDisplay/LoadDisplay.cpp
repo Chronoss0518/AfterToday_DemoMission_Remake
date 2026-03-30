@@ -10,6 +10,8 @@
 #include"LoadDisplay.h"
 #include"../SelectList/SelectList.h"
 
+#include"../Application/Application.h"
+
 #ifndef LOAD_IMAGE_DIRECTORY
 #define LOAD_IMAGE_DIRECTORY(current_path) TEXTURE_DIRECTORY("LoadDisplay/" current_path)
 #endif
@@ -168,9 +170,9 @@ private:
 
 };
 
-void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controller)
+void LoadDisplay::Init(ID3D11Device* _device)
 {
-	MenuBase::InitMenu(_controller);
+	MenuBase::InitMenu();
 
 	device = _device;
 	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_SPRITE_WIDTH), static_cast<unsigned long>(GAME_SPRITE_HEIGHT));
@@ -359,9 +361,9 @@ void LoadDisplay::UpdateAction(ActionType _type)
 void LoadDisplay::UpdateMouse()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
-	InputTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	InputTest(ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();

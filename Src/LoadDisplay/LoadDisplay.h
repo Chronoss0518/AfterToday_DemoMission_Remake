@@ -11,7 +11,7 @@ class LoadDisplay :public MenuBase
 {
 public:
 
-	void Init(ID3D11Device* _device, ChD3D::XInputController* _controller);
+	void Init(ID3D11Device* _device);
 
 	void Release();
 
