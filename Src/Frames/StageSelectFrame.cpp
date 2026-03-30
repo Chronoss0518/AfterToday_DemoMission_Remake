@@ -27,7 +27,7 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	spriteShader.Init(device);
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
-	loadDisplay->Init(device);
+	loadDisplay->Init();
 
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Select)] = ChPtr::Make_S<StageSelectDisplay>();
 	stageSelectFrameDisplay[ChStd::EnumCast(DisplayType::Detailed)] = ChPtr::Make_S<StageDetailedDisplay>();
