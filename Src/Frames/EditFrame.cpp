@@ -207,14 +207,15 @@ public:
 
 void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
 	MenuBase::InitMenu();
 
-	auto&& device = AppIns().GetDirect3D11().GetDevice();
 	spriteShader.Init(device);
-	rtView.CreateRenderTarget(GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	dsView.CreateDepthBuffer(GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rtView.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	dsView.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 	backgroundSprite.Init();
 	backgroundSprite.SetInitPosition();
@@ -248,7 +249,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
-	loadDisplay->Init(device);
+	loadDisplay->Init();
 
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
@@ -391,6 +392,7 @@ void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shar
 
 void EditFrame::UpdateAction(ActionType _type)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	parameterList->Update(_type);
 
@@ -416,7 +418,7 @@ void EditFrame::UpdateAction(ActionType _type)
 		selectParts = selectStack[selectStack.size() - 1];
 		selectStack.pop_back();
 
-		parameterList->SetBaseParts(ChD3D11::D3D11Device(),selectParts);
+		parameterList->SetBaseParts(device,selectParts);
 
 		partsList->ClearItem();
 		SetPartsList(*selectParts);
@@ -452,7 +454,7 @@ void EditFrame::UpdateAction(ActionType _type)
 		selectParts = nullptr;
 		selectParts = partsPanel->targetParts;
 
-		parameterList->SetBaseParts(ChD3D11::D3D11Device(), selectParts);
+		parameterList->SetBaseParts(device, selectParts);
 
 		partsList->ClearItem();
 		SetPartsList(*selectParts);
@@ -545,7 +547,7 @@ void EditFrame::DrawFunction()
 
 	DrawEndLoading();
 
-	DrawNowLoading(dc);
+	DrawNowLoading();
 
 	loadDisplay->Draw(spriteShader);
 
@@ -554,7 +556,7 @@ void EditFrame::DrawFunction()
 	ChD3D11::Shader11().DrawEnd(rtView);
 }
 
-void EditFrame::DrawNowLoading(ID3D11DeviceContext* _dc)
+void EditFrame::DrawNowLoading()
 {
 	if (loadEndFlg)return;
 
@@ -623,7 +625,7 @@ ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTexture(const std::wstrin
 
 	auto&& res = ChPtr::Make_S<ChD3D11::Texture11>();
 
-	res->CreateColorTexture(ChD3D11::D3D11Device(), _drawer.bitmap.GetBitmap());
+	res->CreateColorTexture(AppIns().GetDirect3D11().GetDevice(), _drawer.bitmap.GetBitmap());
 
 	return res;
 }
@@ -650,11 +652,13 @@ void EditFrame::Load()
 
 bool EditFrame::LoadPart()
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	for (unsigned long i = 0; i < LOAD_PARTS_COUNT; i++)
 	{
 		if (pathList.size() <= loadCount)return true;
 
-		auto&& parts = MechaParts::LoadParts(*editMecha, ChD3D11::D3D11Device(), &meshDrawer, nullptr, pathList[loadCount]);
+		auto&& parts = MechaParts::LoadParts(*editMecha, device, &meshDrawer, nullptr, pathList[loadCount]);
 
 		parts->GetBaseObject()->SetParameters();
 
@@ -665,11 +669,11 @@ bool EditFrame::LoadPart()
 		if (pathList.size() > loadCount)continue;
 
 		editMecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, nullptr);
-		editMecha->Load(ChD3D11::D3D11Device(), PLAYER_USE_MECHA_PATH);
+		editMecha->Load(device, PLAYER_USE_MECHA_PATH);
 
 		selectParts = editMecha->GetCoreParts();
 
-		parameterList->Init(ChD3D11::D3D11Device(), editMecha);
+		parameterList->Init(device, editMecha);
 
 		SetPartsList(*selectParts);
 

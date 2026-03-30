@@ -55,7 +55,7 @@ private:
 
 	void DrawFunction();
 
-	void DrawNowLoading(ID3D11DeviceContext* _dc);
+	void DrawNowLoading();
 
 	void DrawEndLoading();
 
