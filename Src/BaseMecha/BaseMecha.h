@@ -11,6 +11,8 @@ class WeaponComponent;
 class ControllerBase;
 
 class PhysicsMachine;
+struct PartsParameters;
+
 
 class BaseMecha :public ChCpp::BaseObject<wchar_t>
 {
@@ -148,6 +150,12 @@ public://Get Function//
 	size_t GetAnchorRegistNum();
 
 	ChPtr::Shared<MechaPartsObject> GetCoreParts() { return core; }
+
+	ChPtr::Shared<PartsParameters> GetAllParameters();
+
+private:
+
+	void AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _nowParts);
 
 public:
 

@@ -8,11 +8,16 @@
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
 #include"../Frames/GameFrame.h"
+
+#include"MechaPartsData/NextPosData.h"
+
 #include"FunctionComponent/WeaponComponent.h"
 #include"FunctionComponent/BoostComponent.h"
 #include"FunctionComponent/EnergyComponent.h"
 #include"FunctionComponent/MoveComponent.h"
 #include"FunctionComponent/CameraComponent.h"
+
+#include"../EditFrame/PartsParameters.h"
 
 #include"MechaPartsObjectFunction/WeaponFunction.h"
 #include"../Attack/AttackObject.h"
@@ -80,8 +85,7 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 	GetComponentObject<EnergyComponent>();
 	GetComponentObject<MoveComponent>();
 	GetComponentObject<CameraComponent>();
-	//GetComponentObject<RightWeaponComponent>();
-	//GetComponentObject<LeftWeaponComponent>();
+	GetComponentObject<WeaponComponent>();
 
 	LoadPartsList(_device, jsonObject);
 }
@@ -341,6 +345,34 @@ size_t BaseMecha::GetAnchorRegistNum()
 	if (anchor == nullptr)return 0;
 
 	return anchor->GetPositionListCount();
+}
+
+ChPtr::Shared<PartsParameters> BaseMecha::GetAllParameters()
+{
+	auto res = ChPtr::Make_S<PartsParameters>();
+
+	AddChildParameters(*res, core);
+
+	return res;
+}
+
+void BaseMecha::AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _nowParts)
+{
+	if (_nowParts == nullptr)return;
+	auto&& baseParts = _nowParts->GetBaseObject();
+	if (ChPtr::NullCheck(baseParts))return;
+	baseParts->SetParameters();
+	auto&& parameter = baseParts->GetPartsParameters();
+	if (parameter == nullptr)return;
+	_parameter += (*parameter);
+
+	auto&& nextPosList = baseParts->GetComponents<NextPosData>();
+
+	for (auto&& nextPos : nextPosList)
+	{
+		std::wstring nextPosName = nextPos->GetConnectionName();
+		AddChildParameters(_parameter, _nowParts->GetChildParts(nextPosName));
+	}
 }
 
 void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)
