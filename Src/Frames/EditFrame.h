@@ -109,7 +109,6 @@ private:
 	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
 	//変更後のパーツ//
 	ChPtr::Shared<MechaPartsObject>changeTargetParts = nullptr;
-	ChPtr::Shared<ParameterList> changeTargetParameterList = nullptr;
 
 	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;

@@ -254,7 +254,10 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
 	parameterList = ChPtr::Make_S<ParameterList>();
-	changeTargetParameterList = ChPtr::Make_S<ParameterList>();
+	AddSpecialKey('Z');
+	AddSpecialKey('X');
+
+
 
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->SetDrawCount(PANEL_COUNT);
@@ -279,7 +282,6 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
 	
 	Load();
-
 
 	sendData = ChPtr::SharedSafeCast<FromStageSelectFrameData>(_sendData);
 }
@@ -370,7 +372,7 @@ void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<Me
 	if (_parts != nullptr)return;
 	auto&& res = ChPtr::Make_S<EditListItem>();
 
-	res->positionNameTexture = CreatePanelTitleTexture(_positionName);
+	res->positionNameTexture = CreatePanelTitleTexture(L"+ " + _positionName);
 
 	_res = res;
 }

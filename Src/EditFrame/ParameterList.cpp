@@ -293,7 +293,6 @@ void ParameterList::AddParameterData(PartsParameters& _parameter, ChPtr::Shared<
 
 void ParameterList::AddAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
-	return;
 	if (_partsObject == nullptr)return;
 
 	auto&& coreBaseObj = _partsObject->GetBaseObject();
@@ -350,6 +349,12 @@ bool ParameterList::Update(MenuBase::ActionType _type)
 	if (_type == MenuBase::ActionType::Left)
 	{
 		displays[ChStd::EnumCast(displayType)]->Down();
+		return true;
+	}
+
+	if (_type == MenuBase::ActionType::Special)
+	{
+		displayType = static_cast<DisplayType>((ChStd::EnumCast(displayType) + 1) % DISPLAY_TYPE_COUNT);
 		return true;
 	}
 
