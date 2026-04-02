@@ -35,6 +35,7 @@ protected:
 
 	virtual void Init(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer) = 0;
 
+
 public:
 
 	virtual void Update(ID3D11Device* _device,TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer) = 0;
@@ -78,6 +79,15 @@ protected:
 
 	ChPtr::Shared<PartsParameters>baseParameter = nullptr;
 	ChPtr::Shared<PartsParameters>nextParameter = nullptr;
+
+protected:
+
+
+	std::vector<ChPtr::Weak<ParameterTitlePanel>>countPanels;
+	size_t countPanelsBeforNum = 0;
+	std::vector<ChPtr::Shared<ParameterTitlePanel>>panels;
+	size_t baseParameterCount = 0;
+	ChPtr::Shared<ParameterTitlePanel> emptyPanel = nullptr;
 };
 
 class ParameterList
@@ -106,11 +116,7 @@ public:
 
 	void AddParameterData(PartsParameters& _parameter,ChPtr::Shared<MechaPartsObject> _partsObject);
 
-	void AddAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject);
-
 	void SubParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject);
-
-	void SubAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject);
 
 public:
 

@@ -22,6 +22,9 @@
 #define PARAMETER_PANEL_VALUE_WIDTH (PARAMETER_PANEL_WIDTH - PARAMETER_PANEL_TITLE_WIDTH)
 
 
+#define NO_CHANGE_PARAMETER_COLOR ChVec4::FromColor(0.0f,0.0f,0.0f,1.0f)
+
+
 ChPtr::Shared<ParameterTitlePanel> ParameterTitlePanel::CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title)
 {
 	auto&& res = ChPtr::Make_S<ParameterTitlePanel>();
@@ -82,8 +85,8 @@ void ParameterTitlePanel::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const
 	tmp.right -= PANEL_TEXT_SIDE_ALIGH;
 
 	sprite.SetPosRect(RectToGameWindow(tmp));
-
-	_drawer.Draw(*title, sprite);
+	
+	_drawer.Draw(*title, sprite,ChVec4::FromColor(0.0f,0.0f,0.0f,1.0f));
 }
 
 void ParameterTitlePanel::DrawBackGround(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec2& _leftTop)
@@ -101,7 +104,7 @@ void ParameterTitlePanel::DrawBackGround(ChD3D11::Shader::BaseDrawSprite11& _dra
 
 void ParameterTitlePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _text, const ChVec2& _size)
 {
-	_textDrawer.brush.SetColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	_textDrawer.brush.SetColor(ChVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	_textDrawer.drawer.DrawStart();
 	_textDrawer.drawer.DrawToScreen(_text, _textDrawer.format, _textDrawer.brush, ChVec4::FromRect(0.0f, 0.0f, _size.w, _size.h));
@@ -111,7 +114,7 @@ void ParameterTitlePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDra
 
 void ParameterValuePanel::CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _text, const ChVec2& _size)
 {
-	_textDrawer.brush.SetColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	_textDrawer.brush.SetColor(ChVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	_textDrawer.drawer.DrawStart();
 	_textDrawer.drawer.DrawToScreen(_text, _textDrawer.format, _textDrawer.brush, ChVec4::FromRect(0.0f, 0.0f, _size.w, _size.h));
@@ -139,7 +142,7 @@ void ParameterValuePanel::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const
 
 		sprite.SetPosRect(RectToGameWindow(tmp));
 
-		_drawer.Draw(*title, sprite);
+		_drawer.Draw(*title, sprite, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	if (value != nullptr)
@@ -152,7 +155,7 @@ void ParameterValuePanel::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const
 
 		sprite.SetPosRect(RectToGameWindow(tmp));
 
-		_drawer.Draw(*value, sprite);
+		_drawer.Draw(*value, sprite, NO_CHANGE_PARAMETER_COLOR);
 	}
 
 
@@ -245,15 +248,21 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 	baseAllParameter = ChPtr::Make_S<PartsParameters>();
 	nextAllParameter = ChPtr::Make_S<PartsParameters>();
 
+	*nextAllParameter = *baseAllParameter = *_baseMecha->GetAllParameters();
+
+#if true
+
 	nextParameter = baseParameter = _baseMecha->GetCoreParts();
 
 	auto&& coreBaseObj = baseParameter->GetBaseObject();
 
-	*nextPartsParameter = *basePartsParameter = *coreBaseObj->GetComponent<PartsParameters>();
+	*nextPartsParameter = *basePartsParameter = *coreBaseObj->GetPartsParameters();
 
-	AddAllParameterData(*basePartsParameter,baseParameter);
+#else
 
-	*nextAllParameter = *baseAllParameter;
+	AddAllParameterData(*baseAllParameter, baseParameter);
+
+#endif
 
 	displays[ChStd::EnumCast(DisplayType::Partial)]->Init(titleBGTexture, valueBGTexture, basePartsParameter, nextPartsParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
 	displays[ChStd::EnumCast(DisplayType::Entire)]->Init(titleBGTexture, valueBGTexture, baseAllParameter, nextAllParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
@@ -263,9 +272,7 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 void ParameterList::SetBaseParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
 	SubParameterData(*basePartsParameter,baseParameter);
-	SubAllParameterData(*baseAllParameter,baseParameter);
 	AddParameterData(*basePartsParameter,_partsObject);
-	AddAllParameterData(*baseAllParameter,_partsObject);
 	*nextPartsParameter = *basePartsParameter;
 	*nextAllParameter = *baseAllParameter;
 	baseParameter = nullptr;
@@ -288,25 +295,7 @@ void ParameterList::AddParameterData(PartsParameters& _parameter, ChPtr::Shared<
 
 	auto&& coreBaseObj = _partsObject->GetBaseObject();
 
-	_parameter += *coreBaseObj->GetComponent<PartsParameters>();
-}
-
-void ParameterList::AddAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
-{
-	if (_partsObject == nullptr)return;
-
-	auto&& coreBaseObj = _partsObject->GetBaseObject();
-
-	_parameter += *coreBaseObj->GetComponent<PartsParameters>();
-
-	auto&& nextPosList = coreBaseObj->GetComponents<NextPosData>();
-
-	for (auto&& nextPos : nextPosList)
-	{
-		std::wstring nexPosName = nextPos->GetObjectName();
-		AddAllParameterData(_parameter,_partsObject->GetChildParts(nexPosName));
-	}
-
+	_parameter += *coreBaseObj->GetPartsParameters();
 }
 
 void ParameterList::SubParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
@@ -315,26 +304,7 @@ void ParameterList::SubParameterData(PartsParameters& _parameter, ChPtr::Shared<
 
 	auto&& coreBaseObj = _partsObject->GetBaseObject();
 
-	_parameter -= *coreBaseObj->GetComponent<PartsParameters>();
-
-}
-
-void ParameterList::SubAllParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
-{
-	return;
-	if (_partsObject == nullptr)return;
-
-	auto&& coreBaseObj = _partsObject->GetBaseObject();
-
-	_parameter -= *coreBaseObj->GetComponent<PartsParameters>();
-
-	auto&& nextPosList = coreBaseObj->GetComponents<NextPosData>();
-
-	for (auto&& nextPos : nextPosList)
-	{
-		std::wstring nexPosName = nextPos->GetObjectName();
-		SubAllParameterData(_parameter,_partsObject->GetChildParts(nexPosName));
-	}
+	_parameter -= *coreBaseObj->GetPartsParameters();
 
 }
 
@@ -381,7 +351,7 @@ void ParameterList::CreateTextDrawer(TextDrawerWICBitmap& _textDrawer,unsigned l
 	_textDrawer.drawer.SetClearDisplayColor(ChVec4::FromColor(0.0f,0.0f,0.0f,0.0f));
 	_textDrawer.format = _textDrawer.drawer.CreateTextFormat(L"ÉÅÉCÉäÉI", nullptr, DWRITE_FONT_WEIGHT_ULTRA_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, _fontSize);
 	_textDrawer.format.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-	_textDrawer.brush = _textDrawer.drawer.CreateBrush(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
+	_textDrawer.brush = _textDrawer.drawer.CreateBrush(ChVec4::FromColor(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ParameterList::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
