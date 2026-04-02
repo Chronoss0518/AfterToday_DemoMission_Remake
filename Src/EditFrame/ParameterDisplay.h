@@ -31,9 +31,9 @@ protected:
 	void AddBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 
 	void AddBoostBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
-	
+
 	void AddHighExplosiveBulletParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
-	
+
 	void AddMissileParameters(ChPtr::Shared<PartsParameterStruct::AttackBase>& _parameterList, const std::wstring& _title, ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer);
 
 	void AddParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title);
@@ -102,6 +102,4 @@ public:
 
 private:
 
-	ChD3D11::Texture11 panelTitle;
-	ChD3D11::Sprite11 drawSprite;
 };
