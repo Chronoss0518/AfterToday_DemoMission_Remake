@@ -28,7 +28,7 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 	effectShader->SetBlendFlg(false);
-	effectShader->SetLightFlg(true);
+	effectShader->SetLightFlg(false);
 	effectShader->SetUseDepthStencilTestFlg(USE_RENDER_TARGET);
 	effectShader->SetAlphaBlendTestFlg(!USE_RENDER_TARGET);
 	effectShader->SetAlphaTestNum(0.01f);
