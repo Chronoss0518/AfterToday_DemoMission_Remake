@@ -254,6 +254,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
 	parameterList = ChPtr::Make_S<ParameterList>();
+	changeTargetParameterList = ChPtr::Make_S<ParameterList>();
 
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->SetDrawCount(PANEL_COUNT);

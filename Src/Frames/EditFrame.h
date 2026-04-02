@@ -99,16 +99,17 @@ private:
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
-	ChPtr::Shared<ParameterList> parameterList = nullptr;
 
 	ImageSprite selectButton[ChStd::EnumCast(SelectButtonType::None)];
 	SelectButtonType selectType = SelectButtonType::None;
 
 	ChPtr::Shared<EditList>partsList = nullptr;
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
+	ChPtr::Shared<ParameterList> parameterList = nullptr;
 	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
 	//変更後のパーツ//
 	ChPtr::Shared<MechaPartsObject>changeTargetParts = nullptr;
+	ChPtr::Shared<ParameterList> changeTargetParameterList = nullptr;
 
 	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;
