@@ -40,7 +40,7 @@
 #define FIELD_DIRECTORY(current_path) MESH_DIRECTORY(L"Field/" current_path)
 #endif
 
-#define INIT_SMOKE_DISPERSAL_POWER 5.0f
+#define INIT_SMOKE_DISPERSAL_POWER 0.5f
 #define INIT_SMOKE_ALPHA_POWER 0.5f
 
 #define DISPLAY_FPS_FLG false
@@ -150,7 +150,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	smokeEffectList->SetMaxColorPower(0.5f);
 	smokeEffectList->SetMinColorPower(0.3f);
 	smokeEffectList->SetDownSpeedOnAlphaValue(0.01f);
-	smokeEffectList->SetInitialDispersalPower(1.0f);
+	smokeEffectList->SetInitialDispersalPower(INIT_SMOKE_DISPERSAL_POWER);
 
 	enemyMarkerShader = ChPtr::Make_S<EffectSpriteShader>();
 	enemyMarkerShader->Init(device, MAX_MECHA_OBJECT_COUNT);
@@ -640,6 +640,7 @@ void GameFrame::UpdateFunction()
 	for (auto&& mecha : mechaList.GetObjectList<BaseMecha>())
 	{
 		auto&& mObj = mecha.lock();
+		if (mObj->IsBreak())continue;
 		for (auto&& bullet : bulletList.GetObjectList<AttackObject>())
 		{
 			auto&& bObj = bullet.lock();
@@ -1341,8 +1342,6 @@ void GameFrame::BreakMecha(BaseMecha* _mecha)
 {
 	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
 }
-
-//////////////////////////////////////////////////////////////////////////////////
 
 void GameFrame::CamUpdate(void)
 {
