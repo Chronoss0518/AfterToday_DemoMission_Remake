@@ -91,9 +91,13 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 	if (_jsonObject == nullptr) return;
 	SetComponent<LookAnchor>();
 
-	mechaName = *_jsonObject->GetJsonString(JSON_MECHA_NAME);
+	auto&& jsonName = _jsonObject->GetJsonString(JSON_MECHA_NAME);
+	if (jsonName != nullptr)
+		mechaName = jsonName->GetString();
 
 	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
+
+	if (coreObject == nullptr)return;
 
 	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
 
