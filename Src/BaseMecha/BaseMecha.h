@@ -219,6 +219,7 @@ protected:
 	long hitEffectDrawFrame = -1;
 
 	bool breakFlg = false;
+	unsigned long nowObjectDestroyCount = 0;
 
 	bool isSelfViewHorizontalFlg = true;
 };

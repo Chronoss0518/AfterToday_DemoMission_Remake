@@ -20,10 +20,13 @@
 
 #include"CPU/CPULooker.h"
 
+#include"../Application/Application.h"
+
 #define CENTER_LEN 5.0f
 
 #define HIT_EFFECT_DRAW_FRAME static_cast<long>(BASE_FPS * 2.0f)
 
+#define OBJECT_DESTROY_COUNT 2 * AppIns().GetFPS()
 
 #define JSON_MECHA_NAME L"Name"
 #define JSON_CORE L"Core"
@@ -138,13 +141,24 @@ void BaseMecha::Release()
 
 void BaseMecha::Update()
 {
+	if (breakFlg)
+	{
+		nowObjectDestroyCount++;
+		if (nowObjectDestroyCount < OBJECT_DESTROY_COUNT)return;
+
+		Destroy();
+		return;
+	}
+
 	if (core == nullptr)return;
 	core->UpdateFunction();
 }
 
 void BaseMecha::UpdateEnd()
 {
+	if (breakFlg)return;
 	if (core == nullptr)return;
+
 	core->UpdateEndFunction();
 
 	physics->Update();
@@ -157,6 +171,7 @@ void BaseMecha::UpdateEnd()
 
 void BaseMecha::Move()
 {
+	if (breakFlg)return;
 	if (core == nullptr)return;
 	core->MoveFunction();
 
@@ -208,21 +223,9 @@ void BaseMecha::BaseMove()
 
 	float tmp = normal.GetLen();
 
-	normal.val.SetLen(tmp * 0.15f);
-	centerPos += normal;
-	return;
+	float tmpDis = tmp > CENTER_LEN ? CENTER_LEN - tmp : 0.0f;
 
-	float tmpLen = normal.GetLen() - CENTER_LEN;
-
-	normal.Normalize();
-
-	if (tmp <= 0.0f)
-	{
-		normal.val.SetLen(tmpLen * 0.8f);
-		centerPos += normal;
-		return;
-	}
-	normal.val.SetLen(tmpLen);
+	normal.val.SetLen(tmp * 0.15f - tmpDis * 0.8f);
 	centerPos += normal;
 }
 
@@ -413,13 +416,13 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 	if (nowDurable > 0)return;
 
 	Break();
-	
-	Destroy();
 
-	breakFlg = true;
 }
 
 void BaseMecha::Break()
 {
 	frame->BreakMecha(this);
+	breakFlg = true;
+
+	DestroyComponent();
 }
