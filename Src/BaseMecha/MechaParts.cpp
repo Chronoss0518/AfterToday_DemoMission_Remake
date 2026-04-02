@@ -195,7 +195,7 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 	_partsObject->SetHitSize();
 }
 
-ChPtr::Shared<MechaPartsObject>  MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
+ChPtr::Shared<MechaPartsObject> MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 
 	auto&& parts = SetPartsParameter(_base);
@@ -229,31 +229,19 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
 
 void MechaParts::SetParameters()
 {
-	if (GetComponent<PartsParameters>() != nullptr)return;
+	if (partsParameter != nullptr)return;
 
-	auto&& parts = SetPartsParameter();
+	partsParameter = ChPtr::Make_S<PartsParameters>();
+
+	partsParameter->mainData.mass = mass;
+
+	partsParameter->mainData.hardness = hardness;
+
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		com->SetPartsParameter(*parts);
+		com->SetPartsParameter(*partsParameter);
 	}
 }
-
-ChPtr::Shared<PartsParameters>  MechaParts::SetPartsParameter()
-{
-	auto partsObject = GetComponent<PartsParameters>();
-
-	if (partsObject == nullptr)
-	{
-		partsObject = SetComponent<PartsParameters>();
-	}
-
-	partsObject->mainData.mass = mass;
-
-	partsObject->mainData.hardness = hardness;
-
-	return partsObject;
-}
-
 
 std::wstring MechaParts::Save(const std::wstring& _fileName)
 {

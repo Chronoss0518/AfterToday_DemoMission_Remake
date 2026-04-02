@@ -115,8 +115,6 @@ public://Set Functions//
 
 	void SetParameters();
 
-	virtual ChPtr::Shared<PartsParameters>  SetPartsParameter();
-
 	void SetHardness(const unsigned long _hardness) { hardness = _hardness; }
 
 	void SetMass(const float _mass) { mass = _mass; }
@@ -144,6 +142,8 @@ public://Get Function//
 	inline ChD3D11::Shader::BaseDrawMesh11<wchar_t>* GetMeshDrawer() { return drawer; }
 
 	inline std::map<std::wstring, ChPtr::Shared<MartsPositionData>>& GetPositionList() { return positions; }
+
+	inline ChPtr::Shared<PartsParameters>GetPartsParameters() { return partsParameter; }
 
 public:
 
@@ -200,8 +200,9 @@ private:
 
 	std::map<std::wstring, ChPtr::Shared<MartsPositionData>> positions;
 
-
 	std::vector<ChPtr::Weak<PostureController>> postureList;
+
+	ChPtr::Shared<PartsParameters>partsParameter = nullptr;
 };
 
 class PartsDataBase :public ChCpp::BaseComponent

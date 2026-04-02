@@ -112,7 +112,7 @@ namespace PartsParameterStruct
 
 }
 
-struct PartsParameters:public ChCpp::BaseComponent
+struct PartsParameters
 {
 	PartsParameters& operator = (const PartsParameters& _parts);
 
