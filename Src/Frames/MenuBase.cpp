@@ -23,7 +23,7 @@ void MenuBase::UpdateFunction()
 		UpdateMouse();
 	}
 
-	for (unsigned char i = 0; i < ACTION_TYPE_COUNT; i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(ActionType::None); i++)
 	{
 		if (loopBreakFlg)break;
 		if (!inputMenuType.GetBitFlg(i))continue;
@@ -42,6 +42,18 @@ void MenuBase::UpdateKeyboard()
 {
 
 	auto&& keyInput = AppIns().GetKeyInput();
+
+	pushSpecialKey.clear();
+
+	for (size_t i = 0; i < specialKeyType.size(); i++)
+	{
+		bool flg = keyInput.IsPushKey(specialKeyType[i]);
+		InputTest(ActionType::Special, flg);
+		if (flg)
+			pushSpecialKey.push_back(specialKeyType[i]);
+	}
+
+	if (!pushSpecialKey.empty())return;
 
 	InputTest(ActionType::Decision,!keyInput.IsPushKey(VK_SHIFT) && (keyInput.IsPushKey(VK_RETURN) || keyInput.IsPushKey(VK_SPACE)));
 
@@ -85,6 +97,40 @@ void MenuBase::UpdateController()
 void MenuBase::AddActionType(ActionType _action)
 {
 	inputMenuType.SetBitTrue(ChStd::EnumCast(_action));
+}
+
+void MenuBase::AddSpecialKey(unsigned char _key)
+{
+	for (size_t i = 0; i < specialKeyType.size(); i++)
+	{
+		if (specialKeyType[i] == _key)
+			return;
+	}
+
+	specialKeyType.push_back(_key);
+}
+
+void MenuBase::SubSpecialKey(unsigned char _key)
+{
+	for (size_t i = 0; i < specialKeyType.size(); i++)
+	{
+		if (specialKeyType[i] != _key)
+			continue;
+
+		specialKeyType.erase(specialKeyType.begin() + i);
+		return;
+	}
+}
+
+bool MenuBase::IsPushSpecialKey(unsigned char _key)
+{
+	for (size_t i = 0; i < pushSpecialKey.size(); i++)
+	{
+		if (specialKeyType[i] == _key)
+			return true;
+	}
+
+	return false;
 }
 
 void MenuBase::InputTest(ActionType _action, bool _inputFlg)
