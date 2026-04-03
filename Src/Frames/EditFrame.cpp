@@ -307,6 +307,12 @@ void EditFrame::Update()
 		rotate += ChVec3(0.0f, MECHA_ROTATION_SPEED, 0.0f);
 
 		editMecha->SetRotation(rotate);
+
+		auto&& keyInput = AppIns().GetKeyInput();
+		if (keyInput.IsPushKeyNoHold('C'))
+		{
+			editMecha->RemoveCore();
+		}
 	}
 
 	UpdateNowLoadingRect();
@@ -663,7 +669,7 @@ bool EditFrame::LoadPart()
 
 		auto&& parts = MechaParts::LoadParts(*editMecha, device, &meshDrawer, nullptr, pathList[loadCount]);
 
-		parts->GetBaseObject()->SetParameters();
+		parts->GetBaseObject()->SetParameters(*parts);
 
 		loadCount++;
 

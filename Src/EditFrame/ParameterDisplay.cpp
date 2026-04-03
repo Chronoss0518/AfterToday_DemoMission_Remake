@@ -33,6 +33,8 @@
 #define UP_BOOST_DATA(_str) L"ã•û" _str
 #define DOWN_BOOST_DATA(_str) L"‰º•û" _str
 
+#define LEFT_WEAPON_PALETTE_TITLE L"Registed\nLeft Weapon Palette"
+#define RIGHT_WEAPON_PALETTE_TITLE L"Registed\nRight Weapon Palette"
 
 #define WEAPON_DATA_WAIT_TIME L"UŒ‚Œã‚Ì‘Ò‹@ŽžŠÔ"
 
@@ -114,12 +116,21 @@ void ParameterDisplay::AddMoveParameters(ID3D11Device* _device, TextDrawerWICBit
 
 void ParameterDisplay::AddWeaponParameters(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, TextDrawerWICBitmap& _titleDrawer, TextDrawerWICBitmap& _valueDrawer, bool _cutFlg, bool _drawPartsName)
 {
+
+
 	for (auto&& weapon : nextParameter->weaponData)
 	{
 		if(_drawPartsName)
 			AddParameters(_device, _textDrawer, weapon->partsName);
 
 		AddParameters(_device, _textDrawer, weapon->weaponName);
+
+		if (weapon->leftWeaponPaletteNo != NOT_WEAPON_REGIST_NUM)
+			AddParameters(_device, _titleDrawer, LEFT_WEAPON_PALETTE_TITLE + std::to_wstring(weapon->leftWeaponPaletteNo));
+
+		if (weapon->rightWeaponPaletteNo != NOT_WEAPON_REGIST_NUM)
+			AddParameters(_device, _titleDrawer, RIGHT_WEAPON_PALETTE_TITLE + std::to_wstring(weapon->rightWeaponPaletteNo));
+
 		AddParameters(_device, _textDrawer, weapon->weaponName, _titleDrawer, WEAPON_DATA_WAIT_TIME, _valueDrawer, &weapon->waitTime, &weapon->waitTime, true);
 
 		AddSwordParameters(weapon, _device, _textDrawer, _titleDrawer, _valueDrawer);
@@ -432,7 +443,7 @@ void ParameterEntireDisplay::Init(ID3D11Device* _device, TextDrawerWICBitmap& _t
 	AddParameters(_device, _textDrawer, L"Energy Tank Data", _titleDrawer, ENERGY_TANK_DATA_MAX_ENERGY, _valueDrawer, &baseParameter->energyTankData.chargeEnergy, &nextParameter->energyTankData.chargeEnergy, false);
 	AddParameters(_device, _textDrawer, L"Energy Tank Data", _titleDrawer, ENERGY_TANK_DATA_CHARGE_ENERGY, _valueDrawer, &baseParameter->energyTankData.maxEnergy, &nextParameter->energyTankData.maxEnergy, false);
 
-	UpdateCountPanels(_device, _textDrawer);
+	//UpdateCountPanels(_device, _textDrawer);
 
 	AddParameters(_device, _textDrawer, L"Boost Data");
 	AddParameters(_device, _textDrawer, L"Boost Data", _titleDrawer, FRONT_BOOST_DATA(BOOST_DATA_BOOST_USE_ENERGY), _valueDrawer, &baseParameter->frontBoostData.boostPower, &nextParameter->frontBoostData.boostPower, false);

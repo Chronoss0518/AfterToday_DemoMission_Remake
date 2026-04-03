@@ -9,6 +9,8 @@
 #include"ParameterPanel.h"
 #include"ParameterDisplay.h"
 
+#include"../BaseMecha/FunctionComponent/WeaponComponent.h"
+
 #define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
 
 #define FLOATING_TEST_VALUE 0.0001f
@@ -248,21 +250,13 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 	baseAllParameter = ChPtr::Make_S<PartsParameters>();
 	nextAllParameter = ChPtr::Make_S<PartsParameters>();
 
-	*nextAllParameter = *baseAllParameter = *_baseMecha->GetAllParameters();
+	auto&& weaponComponent = _baseMecha->GetComponentObject<WeaponComponent>();
 
-#if true
+	*nextAllParameter = *baseAllParameter = *_baseMecha->GetAllParameters();
 
 	nextParameter = baseParameter = _baseMecha->GetCoreParts();
 
-	auto&& coreBaseObj = baseParameter->GetBaseObject();
-
-	*nextPartsParameter = *basePartsParameter = *coreBaseObj->GetPartsParameters();
-
-#else
-
-	AddAllParameterData(*baseAllParameter, baseParameter);
-
-#endif
+	*nextPartsParameter = *basePartsParameter = *baseParameter->GetPartsParameters();
 
 	displays[ChStd::EnumCast(DisplayType::Partial)]->Init(titleBGTexture, valueBGTexture, basePartsParameter, nextPartsParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
 	displays[ChStd::EnumCast(DisplayType::Entire)]->Init(titleBGTexture, valueBGTexture, baseAllParameter, nextAllParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
@@ -293,19 +287,14 @@ void ParameterList::AddParameterData(PartsParameters& _parameter, ChPtr::Shared<
 {
 	if (_partsObject == nullptr)return;
 
-	auto&& coreBaseObj = _partsObject->GetBaseObject();
-
-	_parameter += *coreBaseObj->GetPartsParameters();
+	_parameter += *_partsObject->GetPartsParameters();
 }
 
 void ParameterList::SubParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
 	if (_partsObject == nullptr)return;
 
-	auto&& coreBaseObj = _partsObject->GetBaseObject();
-
-	_parameter -= *coreBaseObj->GetPartsParameters();
-
+	_parameter -= *_partsObject->GetPartsParameters();
 }
 
 bool ParameterList::Update(MenuBase::ActionType _type)
