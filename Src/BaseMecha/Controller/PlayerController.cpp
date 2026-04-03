@@ -49,12 +49,16 @@ void PlayerController::Init()
 	keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
 	//keyTypes[VK_SCROLL] = InputName::ScopeMagnificationUp;
 
-	controller.Init();
-
 	controllerTypes[XInputTypeNames::A] = InputName::Up;
 	controllerTypes[XInputTypeNames::B] = InputName::Boost;
 	controllerTypes[XInputTypeNames::X] = InputName::Avo;
 	controllerTypes[XInputTypeNames::Y] = InputName::MapOnOff;
+
+	controllerTypes[XInputTypeNames::Up] = InputName::None;
+	controllerTypes[XInputTypeNames::Down] = InputName::None;
+	controllerTypes[XInputTypeNames::Left] = InputName::None;
+	controllerTypes[XInputTypeNames::Right] = InputName::None;
+
 	controllerTypes[XInputTypeNames::LTop] = InputName::Front;
 	controllerTypes[XInputTypeNames::LLeft] = InputName::Left;
 	controllerTypes[XInputTypeNames::LDown] = InputName::Back;
@@ -111,7 +115,7 @@ void PlayerController::UpdateBegin()
 void PlayerController::XInputUpdate()
 {
 	controllerPushFlg = false;
-	controller.Update();
+	auto&& controller = AppIns().GetXInputController();
 
 	if (controller.GetAFlg())SetXInputFlg(XInputTypeNames::A);
 
@@ -227,6 +231,7 @@ void PlayerController::CursolFunction(float& _value, float _removeSize, const Ax
 
 void PlayerController::SetXInputFlg(const XInputTypeNames _xinputType)
 {
+	if (controllerTypes.find(_xinputType) == controllerTypes.end())return;
 	auto targetMecha = GetBaseMecha();
 	controllerPushFlg = true;
 	targetMecha->SetPushFlg(controllerTypes[_xinputType]);

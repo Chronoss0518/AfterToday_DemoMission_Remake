@@ -52,7 +52,6 @@ private:
 
 	std::map<unsigned char, InputName> keyTypes;
 	std::map<XInputTypeNames, InputName>controllerTypes;
-	ChD3D::XInputController controller;
 
 	InputName cursolInput[ChStd::EnumCast(AxisTypeName::None)] = { InputName::None,InputName::None,InputName::None,InputName::None };
 	InputName wheelInput[ChStd::EnumCast(AxisTypeName::None)]{ InputName::None,InputName::None,InputName::None,InputName::None };
