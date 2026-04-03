@@ -77,6 +77,14 @@ public:
 
 	void SetHitSize();
 
+	inline void SetPartsParameters(ChPtr::Shared<PartsParameters> _param)
+	{
+		if (partsParameter != nullptr)return;
+		if (_param == nullptr)return;
+
+		partsParameter = _param;
+	}
+
 public:
 
 	inline ChPtr::Shared<MechaPartsObject>GetChildParts(const std::wstring& _nextPosName)
@@ -118,6 +126,23 @@ public:
 
 	std::wstring GetPartsName();
 
+	inline ChPtr::Shared<PartsParameters>GetPartsParameters() { return partsParameter; }
+
+	inline char GetWeaponPaletteCounter(size_t _num, WeaponHandType _type)
+	{
+		if (_num >= weaponPaletteCounter[ChStd::EnumCast(_type)].size())
+			return NOT_WEAPON_REGIST_NUM;
+
+		return weaponPaletteCounter[ChStd::EnumCast(_type)][_num];
+	}
+
+public:
+
+	inline void AddWeaponPaletteCounter(char _num, WeaponHandType _type)
+	{
+		weaponPaletteCounter[ChStd::EnumCast(_type)].push_back(_num);
+	}
+
 public:
 
 	void Update()override;
@@ -144,6 +169,7 @@ private:
 	bool isInitRunFlg = false;
 
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
+	std::vector<char>weaponPaletteCounter[DRAW_TYPE_COUNT];
 
 	std::map<std::wstring,ChPtr::Shared<MechaPartsObject>> positions;
 
@@ -159,4 +185,6 @@ private:
 	size_t lookAnchorNo = -1;
 
 	BaseMecha* mecha = nullptr;
+
+	ChPtr::Shared<PartsParameters>partsParameter = nullptr;
 };
