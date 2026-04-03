@@ -507,12 +507,16 @@ ChVec2 ParameterEntireDisplay::GetDrawPanelSize()
 
 void ParameterEntireDisplay::Up()
 {
-	drawPosition = (drawPosition + countPanelCreateCount) % virtualCountPanelCount;
+	size_t tmpVirtualCountPanel = virtualCountPanelCount + (countPanelCreateCount - (virtualCountPanelCount % countPanelCreateCount));
+
+	drawPosition = (drawPosition + countPanelCreateCount) % tmpVirtualCountPanel;
 }
 
 void ParameterEntireDisplay::Down()
 {
-	drawPosition = (drawPosition + virtualCountPanelCount - countPanelCreateCount) % virtualCountPanelCount;
+	size_t tmpVirtualCountPanel = virtualCountPanelCount + (countPanelCreateCount - (virtualCountPanelCount % countPanelCreateCount));
+
+	drawPosition = ((drawPosition + tmpVirtualCountPanel) - countPanelCreateCount) % tmpVirtualCountPanel;
 }
 
 void ParameterEntireDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
