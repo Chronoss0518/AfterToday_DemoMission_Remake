@@ -8,8 +8,6 @@
 #include"../MechaPartsObjectFunction/WeaponFunction.h"
 #include"../MechaPartsObject.h"
 
-#define	NOT_REGIST_NUM -1
-
 void WeaponComponent::Update()
 {
 	for (int i = 0; i < PALETTE_COUNT; i++)
@@ -46,7 +44,7 @@ void WeaponComponent::Update()
 
 int WeaponComponent::GetWeaponCount(ChPtr::Shared<WeaponFunction>& _func, WeaponHandType _type)
 {
-	if (_func == nullptr)return NOT_REGIST_NUM;
+	if (_func == nullptr)return NOT_WEAPON_REGIST_NUM;
 
 	for (int i = 0; i < PALETTE_COUNT; i++)
 	{
@@ -56,7 +54,7 @@ int WeaponComponent::GetWeaponCount(ChPtr::Shared<WeaponFunction>& _func, Weapon
 		return i;
 	}
 
-	return NOT_REGIST_NUM;
+	return NOT_WEAPON_REGIST_NUM;
 }
 
 ChPtr::Shared<WeaponFunction> WeaponComponent::GetWeaponFunction(WeaponHandType _type, unsigned char _num)

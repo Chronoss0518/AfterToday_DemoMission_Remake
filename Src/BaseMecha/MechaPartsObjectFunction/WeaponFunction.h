@@ -3,7 +3,6 @@
 #include"../MechaPartsObject.h"
 #include"../MechaPartsData/WeaponDataBase.h"
 
-
 class WeaponData;
 class SwordData;
 class GunData;
@@ -87,7 +86,6 @@ protected:
 	GameFrame* frame = nullptr;
 	WeaponDataBase* data = nullptr;
 	MechaPartsObject* parts = nullptr;
-
 
 	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>attackPos = nullptr;
 

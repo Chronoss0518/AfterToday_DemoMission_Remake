@@ -5,6 +5,7 @@
 #include"../WeaponHandType.h"
 
 class WeaponFunction;
+class WeaponDataBase;
 
 class WeaponComponent:public FunctionComponent
 {
