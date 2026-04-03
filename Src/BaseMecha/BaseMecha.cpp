@@ -361,8 +361,8 @@ void BaseMecha::AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<Me
 	if (_nowParts == nullptr)return;
 	auto&& baseParts = _nowParts->GetBaseObject();
 	if (ChPtr::NullCheck(baseParts))return;
-	baseParts->SetParameters();
-	auto&& parameter = baseParts->GetPartsParameters();
+	baseParts->SetParameters(*_nowParts);
+	auto&& parameter = _nowParts->GetPartsParameters();
 	if (parameter == nullptr)return;
 	_parameter += (*parameter);
 
@@ -373,6 +373,13 @@ void BaseMecha::AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<Me
 		std::wstring nextPosName = nextPos->GetConnectionName();
 		AddChildParameters(_parameter, _nowParts->GetChildParts(nextPosName));
 	}
+}
+
+void BaseMecha::RemoveCore()
+{
+	if (core == nullptr)return;
+	core->Destroy();
+	core = nullptr;
 }
 
 void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)

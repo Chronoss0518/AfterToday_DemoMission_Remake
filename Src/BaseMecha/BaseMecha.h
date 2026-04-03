@@ -159,6 +159,10 @@ private:
 
 public:
 
+	void RemoveCore();
+
+public:
+
 	inline bool IsBreak() { return breakFlg; }
 
 public:
