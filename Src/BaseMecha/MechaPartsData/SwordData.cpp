@@ -50,10 +50,10 @@ void SwordData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Ga
 	NextPosBase::SetPartsParameter(_base, _parts, _frame);
 }
 
-void SwordData::SetPartsParameter(PartsParameters& _base)
+void SwordData::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)
 {
 	auto&& weap = ChPtr::Make_S<PartsParameterStruct::SwordData>();
-	SetWeaponData(*weap);
+	SetWeaponData(*weap, _base, _parts);
 	weap->attackTime = attackTime;
 	weap->damageParSpeed = damageParSpeed;
 	_base.weaponData.push_back(weap);

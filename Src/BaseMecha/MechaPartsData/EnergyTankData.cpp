@@ -41,7 +41,7 @@ void EnergyTankData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _part
 	energy->AddChargeEnergy(chargeEnergy);
 }
 
-void EnergyTankData::SetPartsParameter(PartsParameters& _base)
+void EnergyTankData::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)
 {
 	_base.energyTankData.maxEnergy += maxEnergy;
 	_base.energyTankData.chargeEnergy += chargeEnergy;

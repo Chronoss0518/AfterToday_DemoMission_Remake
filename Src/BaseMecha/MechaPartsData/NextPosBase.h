@@ -27,7 +27,7 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
-	void SetPartsParameter(PartsParameters& _base) override {};
+	void SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts) override {};
 
 	virtual void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject) = 0;
 

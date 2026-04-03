@@ -45,7 +45,7 @@ void WalkData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Gam
 	move->AddMoveObject(moveObject);
 }
 
-void WalkData::SetPartsParameter(PartsParameters& _base)
+void WalkData::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)
 {
 	auto&& move = ChPtr::Make_S<PartsParameterStruct::MoveData>();
 

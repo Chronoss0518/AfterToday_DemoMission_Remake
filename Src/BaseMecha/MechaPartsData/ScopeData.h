@@ -15,7 +15,7 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
-	void SetPartsParameter(PartsParameters& _base)override {};
+	void SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)override {};
 
 	void SetMinFovy(const float _minFovy) { minFovy = _minFovy; }
 

@@ -48,7 +48,7 @@ void CaterpillarData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _par
 	move->AddMoveObject(moveObject);
 }
 
-void CaterpillarData::SetPartsParameter(PartsParameters& _base)
+void CaterpillarData::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)
 {
 	auto&& move = ChPtr::Make_S<PartsParameterStruct::MoveData>();
 	move->movePower = movePow;

@@ -20,7 +20,7 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
-	void SetPartsParameter(PartsParameters& _base)override;
+	void SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)override;
 
 	void SetMaxEnergy(const unsigned long _maxEnergy) { maxEnergy = _maxEnergy; }
 

@@ -72,7 +72,7 @@ void BoostBrust::SetBoostData(Direction _direction, PartsParameterStruct::BoostD
 	_boost.avoidWait = avoidWait;
 }
 
-void BoostBrust::SetPartsParameter(PartsParameters& _base)
+void BoostBrust::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)
 {
 	SetBoostData(Direction::Up, _base.upBoostData);
 	SetBoostData(Direction::Down, _base.downBoostData);

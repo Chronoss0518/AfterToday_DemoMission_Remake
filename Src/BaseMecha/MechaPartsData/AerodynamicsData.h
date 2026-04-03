@@ -14,7 +14,7 @@ public://Set Functions//
 
 	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
 
-	void SetPartsParameter(PartsParameters& _base)override {};
+	void SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)override {};
 
 	void SetUpPowerParSpeed(const float _upPowerParSpeed) { upPowerParSpeed = _upPowerParSpeed; }
 

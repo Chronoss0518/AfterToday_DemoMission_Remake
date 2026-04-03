@@ -63,15 +63,16 @@ void GunData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, Game
 
 }
 
-void GunData::SetPartsParameter(PartsParameters& _base)
+void GunData::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)
 {
 	auto&& weap = ChPtr::Make_S<PartsParameterStruct::GunData>();
-	SetWeaponData(*weap);
+	SetWeaponData(*weap, _base, _parts);
 	weap->fireNum = fireNum;
 	weap->bulletNum = bulletNum;
 	weap->magazineNum = magazineNum;
 	weap->reloadTime = reloadTime;
 	weap->range = range;
+
 
 	auto&& attackData = Attack::CreateAttackData(nullptr, ChD3D11::D3D11Device(), bulletFile);
 	attackData->SetPartameter(*weap);
