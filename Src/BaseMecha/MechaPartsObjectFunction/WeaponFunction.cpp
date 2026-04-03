@@ -67,16 +67,13 @@ void GunFunction::AttackFunction()
 	if (reloadFlg)return;
 	if (nowBulletNum <= 0)return;
 
-	ChLMat tmpMat = attackPos->GetDrawLHandMatrix() * parts->GetDrawLHandMatrix();;
+	ChLMat tmpMat = attackPos->GetDrawLHandMatrix() * parts->GetDrawLHandMatrix();
 
-#if false
-	//auto&& defaultMat = obj->GetParent()->GetBaseObject()->GetDefaultFrameMat();
-	tmpMat = lastShotPos * obj->GetPositionLastDrawMat() * obj->GetLastDrawMat();
+	ChVec3 tmpPos = tmpMat.Transform(ChVec3());
 
-	//tmpMat = lastShotPos * defaultMat * tmpMat;
-	
-	tmpMat = tmpMat;
-#endif
+	tmpMat = parts->GetDrawLHandMatrix();
+	tmpMat.SetPosition(tmpPos);
+
 	frame->AddShotEffectObject(tmpMat.GetPosition());
 
 	se.Stop();
