@@ -227,11 +227,9 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
 	return partsObject;
 }
 
-void MechaParts::SetParameters()
+void MechaParts::SetParameters(MechaPartsObject& _parts)
 {
-	if (partsParameter != nullptr)return;
-
-	partsParameter = ChPtr::Make_S<PartsParameters>();
+	auto partsParameter = ChPtr::Make_S<PartsParameters>();
 
 	partsParameter->mainData.mass = mass;
 
@@ -239,8 +237,10 @@ void MechaParts::SetParameters()
 
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
-		com->SetPartsParameter(*partsParameter);
+		com->SetPartsParameter(*partsParameter, _parts);
 	}
+
+	_parts.SetPartsParameters(partsParameter);
 }
 
 std::wstring MechaParts::Save(const std::wstring& _fileName)
@@ -300,6 +300,7 @@ void MechaParts::SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject,
 		auto&& jsonNum = jsonArray->GetJsonNumber(i);
 		if (jsonNum == nullptr)continue;
 		auto&& num = static_cast<char>(jsonNum->GetIntValue());
+		_partsObject->AddWeaponPaletteCounter(num, _type);
 		if (PALETTE_COUNT <= num || num < 0)continue;
 		com->SetWeapon(_type, num, weaponFunctions[i]);
 	}

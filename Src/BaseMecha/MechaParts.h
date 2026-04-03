@@ -113,7 +113,7 @@ public://Set Functions//
 
 	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
 
-	void SetParameters();
+	void SetParameters(MechaPartsObject& _parts);
 
 	void SetHardness(const unsigned long _hardness) { hardness = _hardness; }
 
@@ -143,8 +143,6 @@ public://Get Function//
 
 	inline std::map<std::wstring, ChPtr::Shared<MartsPositionData>>& GetPositionList() { return positions; }
 
-	inline ChPtr::Shared<PartsParameters>GetPartsParameters() { return partsParameter; }
-
 public:
 
 	inline void AddPosition(
@@ -172,7 +170,6 @@ private:
 	void SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _jsonPropertyName, WeaponHandType _type);
 
 	void AddWeaponData(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
-
 
 public:
 
@@ -202,7 +199,6 @@ private:
 
 	std::vector<ChPtr::Weak<PostureController>> postureList;
 
-	ChPtr::Shared<PartsParameters>partsParameter = nullptr;
 };
 
 class PartsDataBase :public ChCpp::BaseComponent
@@ -221,7 +217,7 @@ public://Set Functions//
 
 	virtual void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame) = 0;
 
-	virtual void SetPartsParameter(PartsParameters& _base) = 0;
+	virtual void SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts) = 0;
 
 public://Get Functions//
 
