@@ -1,5 +1,8 @@
 #pragma once
 
+class WeaponDataBase;
+class MechaPartsObject;
+
 namespace PartsParameterStruct
 {
 	struct MainData
@@ -92,6 +95,9 @@ namespace PartsParameterStruct
 
 		unsigned long waitTime = 0;
 		std::vector<ChPtr::Shared<AttackData>>attackData;
+
+		int leftWeaponPaletteNo = -1;
+		int rightWeaponPaletteNo = -1;
 	};
 
 	struct SwordData : public WeaponData
