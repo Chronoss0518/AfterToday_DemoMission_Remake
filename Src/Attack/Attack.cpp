@@ -273,7 +273,7 @@ void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet
 {
 	ChLMat mat = _startMat;
 
-	ChVec3 dir = mat.GetYAxisDirection();
+	ChVec3 dir = mat.GetZAxisDirection();
 
 	dir.Normalize();
 
