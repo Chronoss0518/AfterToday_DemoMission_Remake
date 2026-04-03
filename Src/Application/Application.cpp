@@ -66,7 +66,6 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 		ChWin::Mouse().Init(window);
 
-		controller.Init();
 	}
 
 	ChD3D::WICBitmapCreatorObj().Init();
@@ -117,9 +116,11 @@ int Application::Update()
 
 	while (window.Update())
 	{
+
 		keyInput.Update();
 		audioList.Update();
 		if (!fpsController.Update(timeGetTime()))continue;
+		controller.Init();
 		controller.Update();
 
 		if (keyInput.IsPushKeyNoHold(VK_ESCAPE))
@@ -130,6 +131,7 @@ int Application::Update()
 
 		frameList.Update();
 		keyInput.SetAllFlgDown();
+		controller.Release();
 	}
 	inUpdateFlg = false;
 
