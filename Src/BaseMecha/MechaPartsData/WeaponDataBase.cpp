@@ -35,14 +35,17 @@ void WeaponDataBase::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, Ch
 	_parts.GetWeaponFunctions()[_parts.GetWeaponFunctions().size() - 1]->SetAttackPos(_targetObject);
 }
 
-void WeaponDataBase::SetWeaponData(PartsParameterStruct::WeaponData& _base)
+void WeaponDataBase::SetWeaponData( PartsParameterStruct::WeaponData& _data, PartsParameters& _base, MechaPartsObject& _parts)
 {
 	auto&& look = LookObj<MechaParts>();
 	if (look != nullptr)
 	{
-		_base.partsName = look->GetThisFileName();
+		_data.partsName = look->GetThisFileName();
 	}
 
-	_base.weaponName = weaponName;
-	_base.waitTime = waitTime;
+	_data.weaponName = weaponName;
+	_data.waitTime = waitTime;
+
+	_data.leftWeaponPaletteNo = _parts.GetWeaponPaletteCounter(_base.weaponData.size(), WeaponHandType::Left);
+	_data.rightWeaponPaletteNo = _parts.GetWeaponPaletteCounter(_base.weaponData.size(), WeaponHandType::Right);
 }

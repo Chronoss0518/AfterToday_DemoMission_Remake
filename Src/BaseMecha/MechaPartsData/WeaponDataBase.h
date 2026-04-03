@@ -22,7 +22,7 @@ public:
 
 	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)override;
 
-	void SetWeaponData(PartsParameterStruct::WeaponData& _base);
+	void SetWeaponData(PartsParameterStruct::WeaponData& _data, PartsParameters& _base, MechaPartsObject& _parts);
 
 public:
 
