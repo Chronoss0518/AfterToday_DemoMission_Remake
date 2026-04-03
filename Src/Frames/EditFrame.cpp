@@ -256,8 +256,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	parameterList = ChPtr::Make_S<ParameterList>();
 	AddSpecialKey('Z');
 	AddSpecialKey('X');
-
-
+	AddSpecialKeyMask(XINPUT_GAMEPAD_X | XINPUT_GAMEPAD_Y);
 
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->SetDrawCount(PANEL_COUNT);
@@ -311,7 +310,8 @@ void EditFrame::Update()
 		auto&& keyInput = AppIns().GetKeyInput();
 		if (keyInput.IsPushKeyNoHold('C'))
 		{
-			editMecha->RemoveCore();
+			//editMecha->RemoveCore();
+
 		}
 	}
 

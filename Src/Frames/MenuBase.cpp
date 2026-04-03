@@ -74,6 +74,14 @@ void MenuBase::UpdateController()
 
 	auto&& controller = AppIns().GetXInputController();
 
+	if (specialKeyMask > 0)
+	{
+		bool flg = controller.GetFlgs(specialKeyMask);
+		InputTest(ActionType::Special, flg);
+		if (flg)
+			return;
+	}
+
 	InputTest(ActionType::Decision, controller.GetAFlg());
 	isPushControllerFlg = !isPushControllerFlg ? controller.GetAFlg() : isPushControllerFlg;
 
