@@ -36,6 +36,8 @@
 #define JSON_MECHA_NAME L"Name"
 #define JSON_CORE L"Core"
 
+#define CREATE_SMOKE_EFFECT_TIME 3
+
 static const std::wstring partsTypeName[]
 {
 	L"Body",L"Head",L"Foot",L"RightArm",L"LeftArm",L"Boost",L"Weapon",L"Extra"
@@ -246,7 +248,6 @@ void BaseMecha::Draw3D()
 
 	core->SetOutSideTransform(drawMat);
 	core->Draw3DFunction();
-
 }
 
 void BaseMecha::Draw2D()
@@ -257,7 +258,7 @@ void BaseMecha::Draw2D()
 
 void BaseMecha::DrawEnd()
 {
-	if (core == nullptr)return;
+	CreateDamageSmoke();
 }
 
 void BaseMecha::Deserialize(const std::wstring& _fileName)
@@ -388,6 +389,96 @@ void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)
 	if (anchor == nullptr)return;
 
 	anchor->UpdateLookAnchorPosition(_no, _drawMat);
+}
+
+
+void BaseMecha::AddSmokeCreatePos(ChPtr::Shared<ChCpp::TransformObject<wchar_t>> _pos, MechaPartsObject* _parts)
+{
+	auto pos = ChPtr::Make_S<DamageSmokePosData>();
+	pos->pos = _pos;
+	pos->haveParts = _parts;
+	damageSmokeCreatePos.push_back(pos);
+}
+
+void BaseMecha::SubSmokeCreatePos(MechaPartsObject* _parts)
+{
+	for (size_t i = 0; i < damageSmokeCreatePos.size(); i)
+	{
+		if (damageSmokeCreatePos[i]->haveParts == _parts)
+		{
+			damageSmokeCreatePos.erase(damageSmokeCreatePos.begin() + i);
+			continue;
+		}
+		i++;
+	}
+}
+
+void BaseMecha::CreateDamageSmoke()
+{
+	if (ChPtr::NullCheck(frame))return;
+
+	if (nowDurable < 25.0f &&
+		(damageSmokePosNum.size() <= 1 &&
+		damageSmokePosNum.size() < damageSmokeCreatePos.size()))
+	{
+		for (size_t i = 0; damageSmokePosNum.size() < damageSmokeCreatePos.size() && i < 2; i++)
+		{
+			AddSmokePosNum();
+		}
+	}
+
+	if (nowDurable < 50.0f &&
+		(damageSmokePosNum.size() <= 0))
+	{
+		AddSmokePosNum();
+	}
+
+	if (damageSmokePosNum.size() <= 0)return;
+
+	createDamageSmokeTime++;
+
+	if (createDamageSmokeTime <= (CREATE_SMOKE_EFFECT_TIME))return;
+	createDamageSmokeTime = 0;
+
+	for (size_t i = 0; i < damageSmokePosNum.size(); i++)
+	{
+		ChVec3 pos;
+
+		ChLMat tmpMat
+			= damageSmokeCreatePos[damageSmokePosNum[i]]->pos->GetDrawLHandMatrix()
+			* damageSmokeCreatePos[damageSmokePosNum[i]]->haveParts->GetDrawLHandMatrix();
+
+		pos = tmpMat.Transform(ChVec3());
+
+		frame->AddSmokeEffectObject(pos, ChVec3(0.0f, 1.0f, 0.0f));
+
+	}
+}
+void BaseMecha::AddSmokePosNum()
+{
+	bool addFlg = false;
+	bool continueFlg = false;
+	do
+	{
+		continueFlg = false;
+		int num = rand() % damageSmokeCreatePos.size();
+		for (size_t i = 0; i < damageSmokePosNum.size(); i++)
+		{
+			if (damageSmokePosNum[i] == num)
+			{
+				continueFlg = true;
+				break;
+			}
+		}
+
+		if (continueFlg)continue;
+
+
+		damageSmokePosNum.push_back(num);
+		addFlg = true;
+
+	} while (!addFlg);
+
 }
 
 void BaseMecha::SetTestHitSize(const ChVec3& _hitSize)

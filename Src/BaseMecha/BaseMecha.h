@@ -16,6 +16,15 @@ struct PartsParameters;
 
 class BaseMecha :public ChCpp::BaseObject<wchar_t>
 {
+public:
+
+	struct DamageSmokePosData
+	{
+		ChPtr::Shared<ChCpp::TransformObject<wchar_t>> pos;
+		MechaPartsObject* haveParts = nullptr;
+
+	};
+
 public://Inner Struct Class Enum//
 
 	friend FunctionComponent;
@@ -171,6 +180,18 @@ public:
 
 public:
 
+	void AddSmokeCreatePos(ChPtr::Shared<ChCpp::TransformObject<wchar_t>> _pos, MechaPartsObject* _parts);
+
+	void SubSmokeCreatePos(MechaPartsObject* _parts);
+
+private:
+
+	void CreateDamageSmoke();
+
+	void AddSmokePosNum();
+
+public:
+
 	void SetTestHitSize(const ChVec3& _hitSize);
 
 	void TestBulletHit(AttackObject& _obj);
@@ -210,7 +231,13 @@ protected:
 	float durable = 100.0f;
 	float nowDurable = 100.0f;
 
+	std::vector<ChPtr::Shared<DamageSmokePosData>>damageSmokeCreatePos;
+	std::vector<unsigned char>damageSmokePosNum;
+	unsigned long createDamageSmokeTime = 0;
+
+
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
+
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
