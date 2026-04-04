@@ -7,6 +7,9 @@
 
 #define CREATE_SMOKE_MAX_COUNT 2
 
+#define ATTACK_OBJECT_DEBUG_FLG true
+#define ATTACK_OBJECT_DEBUG_SIZE 100.0f
+
 void AttackObject::Init(const ChLMat& _startMat)
 {
 	data->InitBulletObject(_startMat ,*this);
@@ -46,9 +49,9 @@ void AttackObject::Move()
 
 	ChQua rot;
 
-	rot.SetRotationYAxis(physics->GetRotation().y);
-	rot.AddRotationXAxis(physics->GetRotation().x);
-	rot.AddRotationZAxis(physics->GetRotation().z);
+	rot.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	rot.AddRotationXAxis(ChMath::ToRadian(physics->GetRotation().x));
+	rot.AddRotationZAxis(ChMath::ToRadian(physics->GetRotation().z));
 
 	collider.SetPosition(physics->GetPosition());
 	collider.SetRotation(rot);
@@ -59,8 +62,18 @@ void AttackObject::Draw3D()
 	ChLMat tmp = ChLMat();
 	ChQua qua;
 
-	tmp.SetRotationYPR(physics->GetRotation());
-	tmp.SetScalling(ChVec3(100.0f));
+	ChQua rot;
+
+	rot.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	rot.AddRotationXAxis(ChMath::ToRadian(physics->GetRotation().x));
+	rot.AddRotationZAxis(ChMath::ToRadian(physics->GetRotation().z));
+
+	tmp.SetRotation(rot);
+
+#if ATTACK_OBJECT_DEBUG_FLG
+	tmp.SetScalling(ChVec3(ATTACK_OBJECT_DEBUG_SIZE));
+#endif
+
 	tmp.SetPosition(physics->GetPosition());
 	ChMat_11 draw;
 	draw = tmp;
