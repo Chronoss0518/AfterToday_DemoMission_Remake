@@ -3,23 +3,28 @@
 
 #include"TitleFrame.h"
 
-#define TITLE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Title/") current_path
-#define TITLE_MESH_DIRECTORY(current_path) MESH_DIRECTORY("Title/") current_path
+#include"../Application/Application.h"
+
+#define TITLE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Title/") current_path
+#define TITLE_MESH_DIRECTORY(current_path) MESH_DIRECTORY(L"Title/") current_path
 
 void TitleFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
-	ChCpp::ModelLoader::XFile xfileLoader;
+	ChCpp::ModelController::XFile<wchar_t> xfileLoader;
 
 	xfileLoader.SetMaxBoneNum(100);
 	auto&& device = ChD3D11::D3D11Device();
 	msd->Init(device);
-	xfileLoader.CreateModel(msd,TITLE_MESH_DIRECTORY("MSD.x"));
+	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"MSD.x"));
+	xfileLoader.CreateModel(msd);
 	
 	desk->Init(device);
-	xfileLoader.CreateModel(desk,TITLE_MESH_DIRECTORY("Desk.x"));
+	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"Desk.x"));
+	xfileLoader.CreateModel(desk);
 
 	room->Init(device);
-	xfileLoader.CreateModel(room,TITLE_MESH_DIRECTORY("Room.x"));
+	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"Room.x"));
+	xfileLoader.CreateModel(room);
 
 	meshDrawer.Init(device);
 
@@ -79,7 +84,7 @@ void TitleFrame::UpdateFunction()
 
 void TitleFrame::Draw3D()
 {
-	auto&& deviceContext = ChD3D11::D3D11DC();
+	auto&& deviceContext = AppIns().GetDirect3D11().GetDC();
 
 	meshDrawer.DrawStart(deviceContext);
 

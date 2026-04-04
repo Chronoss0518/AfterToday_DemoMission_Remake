@@ -10,6 +10,21 @@
 #include"CPU/CPULooker.h"
 
 #include"MechaPartsObjectFunction/WeaponFunction.h"
+#include"FunctionComponent/WeaponComponent.h"
+
+void MechaPartsObject::CreateEnd()
+{
+	auto&& baseMecha = GetBaseMecha();
+	auto&& baseParts = GetBaseObject();
+
+	auto&& positions = baseParts->GetPositionList();
+	
+	for (auto&& pos : positions)
+	{
+		baseMecha->AddSmokeCreatePos(pos.second->positionObject, this);
+	}
+
+}
 
 void MechaPartsObject::CreateAnchor()
 {
@@ -18,44 +33,67 @@ void MechaPartsObject::CreateAnchor()
 	mecha->AddAnchorData(GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
 }
 
-void MechaPartsObject::CreateFramePosture(ChCpp::FrameObject* _frameObject)
-{
-	if (_frameObject == nullptr)return;
-
-}
-
 void MechaPartsObject::Release()
 {
-	for (auto&& function : externalFunctions)
-	{
-		if (function == nullptr)continue;
-		function->Release();
-	}
+	TransformObject<wchar_t>::Release();
 
-	for (auto&& function : weaponFunctions)
-	{
-		if (function == nullptr)continue;
-		function->Release();
-	}
+	auto&& baseMecha = GetBaseMecha();
+	baseMecha->SubSmokeCreatePos(this);
 
-	for (auto&& partsObject : positions)
-	{
-		partsObject.second->Release();
-	}
 	positions.clear();
 }
 
-ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
+void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _childObject)
 {
-	auto&& res = ChPtr::Make_S< ChCpp::JsonObject>();
-	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString::CreateObject(baseParts->GetThisFilePath()));
+	ChCpp::TransformObject<wchar_t>::Update();
 
-	if (GetRWeapon())
-		res->Set(JSON_PROPEATY_RIGHT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+	if (_childObject == nullptr)return;
 
-	if (GetLWeapon())
-		res->Set(JSON_PROPEATY_LEFT_WEAPON, ChCpp::JsonBoolean::CreateObject(true));
+	auto&& position = baseParts->GetPositionList()[_objectType];
 
+	SetChild(_childObject);
+	_childObject->ChCpp::TransformObject<wchar_t>::Update();
+
+	ChVec3 pos = ChVec3();
+	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
+	lmat = position->connectionRotate * lmat;
+
+	pos = lmat.Transform(pos);
+
+	lmat.Identity();
+	lmat.SetPosition(pos);
+
+	_childObject->SetFrameTransform(lmat);
+
+	auto&& tmpObject = positions.find(_objectType);
+	if (tmpObject == positions.end())
+	{
+		positions[_objectType] = _childObject;
+
+		return;
+	}
+
+	if (tmpObject->second != nullptr)
+	{
+		positions.erase(tmpObject);
+		positions[_objectType] = _childObject;
+
+		return;
+	}
+
+	tmpObject->second = _childObject;
+
+}
+
+
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
+{
+	auto&& res = ChPtr::Make_S< ChCpp::JsonObject<wchar_t>>();
+	res->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(baseParts->GetThisFilePath()));
+
+	SerializeWeapon(res, JSON_PROPEATY_RIGHT_WEAPON, WeaponHandType::Right);
+
+	SerializeWeapon(res, JSON_PROPEATY_LEFT_WEAPON, WeaponHandType::Left);
 
 	for (auto&& partsObject : positions)
 	{
@@ -64,56 +102,46 @@ ChPtr::Shared<ChCpp::JsonObject> MechaPartsObject::Serialize()
 	return res;
 }
 
+void MechaPartsObject::SerializeWeapon(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _obj, const std::wstring& _jsonParameterText, WeaponHandType _type)
+{
+	auto&& weaponCom = mecha->GetComponentObject<WeaponComponent>();
+
+	auto weaponNumbers = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
+
+	bool isRegist = false;
+
+	for (size_t i = 0; i < weaponFunctions.size(); i++)
+	{
+		int val = weaponCom->GetWeaponCount(weaponFunctions[i], _type);
+		if (val >= 0)isRegist = true;
+		auto num = ChPtr::Make_S<ChCpp::JsonNumber<wchar_t>>();
+		num->SetValue(val);
+		num->SetOutputDecimalPointFlg(false);
+		weaponNumbers->Add(num);
+	}
+
+	if (!isRegist)return;
+	if (weaponNumbers->GetCount() <= 0)return;
+
+	_obj->Set(_jsonParameterText, weaponNumbers);
+}
+
 void MechaPartsObject::SetHitSize()
 {
-
 	ChVector3 tmpHitSize = GetColliderSize();
-	auto positionObject = GetPositionObject();
 
-	if (positionObject != nullptr)tmpHitSize += positionObject->GetDrawLHandMatrix().GetPosition();
+	tmpHitSize += GetDrawLHandMatrix().GetPosition();
 
 	mecha->SetTestHitSize(tmpHitSize);
-
-
-}
-
-void MechaPartsObject::SetPositionObjectRotationYAxis(float _rot)
-{
-
-}
-
-void MechaPartsObject::SetPositionObjectRotationXAxis(float _rot)
-{
-
-}
-
-void MechaPartsObject::SetPositionObjectRotationZAxis(float _rot)
-{
-
-}
-
-void MechaPartsObject::SetParentRotationYAxis(unsigned long _no, float _rot)
-{
-
-}
-
-void MechaPartsObject::SetParentRotationXAxis(unsigned long _no, float _rot)
-{
-
-}
-
-void MechaPartsObject::SetParentRotationZAxis(unsigned long _no, float _rot)
-{
-
 }
 
 std::wstring MechaPartsObject::GetPartsName()
 {
-	std::wstring result = ChStr::UTF8ToWString(baseParts->GetThisFileName());
-	unsigned long extensionStringPos = result.find_last_of('.');
-	unsigned long fileNameLength = result.length();
+	std::wstring result = baseParts->GetThisFileName();
+	size_t extensionStringPos = result.find_last_of(L'.');
+	size_t fileNameLength = result.length();
 
-	for (unsigned long i = extensionStringPos; i < fileNameLength; i++)
+	for (size_t i = extensionStringPos; i < fileNameLength; i++)
 	{
 		result.pop_back();
 	}
@@ -121,135 +149,36 @@ std::wstring MechaPartsObject::GetPartsName()
 	return result;
 }
 
-std::wstring MechaPartsObject::GetWeaponName()
-{
-	std::wstring result = L"";
-	if (!weaponFunctions.empty())
-		if (weaponFunctions.size() > useAttackType)
-			result = weaponFunctions[useAttackType]->GetWeaponName();
-
-	return result;
-}
-
-std::wstring MechaPartsObject::GetNowBulletNum()
-{
-	if (weaponFunctions.empty())return WeaponFunction::GetDefaultBulletNum();
-	if (weaponFunctions.size() <= useAttackType)return WeaponFunction::GetDefaultBulletNum();
-
-	return weaponFunctions[useAttackType]->GetBulletNum();
-}
-
-std::wstring MechaPartsObject::GetReloadCount()
-{
-	if (weaponFunctions.empty())return WeaponFunction::GetDefaultReloadCount();
-	if (weaponFunctions.size() <= useAttackType)return WeaponFunction::GetDefaultReloadCount();
-
-	return weaponFunctions[useAttackType]->GetReloadCount();
-}
-
 void MechaPartsObject::Update()
 {
-	for (auto&& func : externalFunctions)
-	{
-		func->Update();
-	}
-
-	for (auto&& func : weaponFunctions)
-	{
-		func->Update();
-	}
-
-	for (auto&& partsObject : positions)
-	{
-		partsObject.second->Update();
-	}
-}
-
-void MechaPartsObject::UpdateFramePosture(ChCpp::FrameObject* _frameObject)
-{
-	if (_frameObject == nullptr)return;
+	TransformObject<wchar_t>::Update();
 
 }
 
-void MechaPartsObject::Draw(const ChLMat& _drawMat)
+void  MechaPartsObject::DrawBegin()
 {
-	auto&& mesh = baseParts->GetMesh();
+	TransformObject<wchar_t>::DrawBegin();
 
-	//UpdateFramePosture(&mesh);
+}
 
-	ChLMat tmp;
+void MechaPartsObject::Draw3D()
+{
+	DrawBeginFunction();
 
-	if (positionObject != nullptr)
-	{
-		tmp = positionObject->GetDrawLHandMatrix();
-	}
-	else
-	{
-		tmp = baseParts->GetDefaultFrameMat();
-	}
+	TransformObject<wchar_t>::Draw3D();
 
-	mesh.SetFrameTransform(tmp);
+	baseParts->Draw((ChMat_11)(GetDrawLHandMatrix()));
 
-	ChQua qua;
-	qua.SetRotationYAxis(ChMath::ToRadian(baseRot.y));
-	qua.AddRotationXAxis(ChMath::ToRadian(baseRot.x));
-	qua.AddRotationZAxis(ChMath::ToRadian(baseRot.z));
+	collider.SetMatrix(GetDrawLHandMatrix());
 
-	tmp.Identity();
-	tmp.SetRotation(qua);
+	mecha->UpdateAnchor(GetLookAnchorNo(), GetDrawLHandMatrix());
 
-	ChMat_11 drawMat;
-	drawMat = lastDrawMat  = tmp * _drawMat;
-
-	baseParts->Draw(drawMat);
-
-	collider.SetMatrix(lastDrawMat);
-
-	mecha->UpdateAnchor(GetLookAnchorNo(), lastDrawMat);
-
-	FunctionDrawEnd();
-
-	for (auto&& partsObject : positions)
-	{
-		if (partsObject.second == nullptr)continue;
-		partsObject.second->Draw(_drawMat);
-	}
-
+	DrawEndFunction();
 }
 
 void  MechaPartsObject::DrawEnd()
 {
-	for (auto&& child : positions)
-	{
-		child.second->DrawEnd();
-	}
-}
-
-void MechaPartsObject::FunctionDrawBegin()
-{
-	for (auto func : externalFunctions)
-	{
-		func->DrawBegin();
-	}
-
-	for (auto func : weaponFunctions)
-	{
-		func->DrawBegin();
-	}
-
-}
-
-void MechaPartsObject::FunctionDrawEnd()
-{
-	for (auto func : externalFunctions)
-	{
-		func->DrawEnd();
-	}
-
-	for (auto func : weaponFunctions)
-	{
-		func->DrawEnd();
-	}
+	TransformObject<wchar_t>::DrawEnd();
 
 }
 
@@ -300,14 +229,4 @@ float MechaPartsObject::GetDamage(ChCpp::BoxCollider& _collider)
 	if (!collider.IsHit(&_collider))return 0.0f;
 
 	return 0.0f;
-}
-
-void MechaPartsObject::AttackUpdate()
-{
-	weaponFunctions[useAttackType]->AttackUpdate();
-}
-
-void MechaPartsObject::StartWeaponSubFunction()
-{
-	weaponFunctions[useAttackType]->StartSubFunction();
 }

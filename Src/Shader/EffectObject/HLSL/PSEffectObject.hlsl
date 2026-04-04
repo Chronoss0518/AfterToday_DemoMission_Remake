@@ -3,7 +3,7 @@
 #define _SM5_0_
 
 #include"EffectObjectShader.hlsli"
-#include"../../../External/ChCppLibrary/ChCppLibrary/ShaderHeaderFiles/HLSL/5.0/Light.hlsli"
+#include"../../../External/ChCppDirect3DLibrary/ShaderHeaderFiles/Light.hlsli"
 
 
 struct OutColor

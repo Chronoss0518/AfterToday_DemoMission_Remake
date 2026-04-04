@@ -4,6 +4,7 @@
 #include"StageDetailedDisplay.h"
 #include"../StageData/StageData.h"
 
+#include"../../Application/Application.h"
 
 #define STAGE_NAME_LEFT 285.0f
 #define STAGE_NAME_TOP 43.0f
@@ -39,7 +40,7 @@
 void StageDetailedDisplay::Init()
 {
 
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	SPRITE_INIT(stageImage, RectToGameWindow(ChVec4::FromRect(+STAGE_IMAGE_LEFT, +STAGE_IMAGE_TOP, STAGE_IMAGE_WIDTH + STAGE_IMAGE_LEFT, STAGE_IMAGE_HEIGHT + STAGE_IMAGE_TOP)));
 
@@ -49,18 +50,18 @@ void StageDetailedDisplay::Init()
 	
 	SPRITE_INIT(strategyOverview.sprite, RectToGameWindow(ChVec4::FromRect(STAGE_STRATEGY_OVERVIEW_LEFT, STAGE_STRATEGY_OVERVIEW_TOP, STAGE_STRATEGY_OVERVIEW_RIGHT, STAGE_STRATEGY_OVERVIEW_BOTTOM)));
 	
-	strategyOverview.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("StrategyOverview.png"), device);
+	strategyOverview.image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"StrategyOverview.png"), device);
 	SPRITE_INIT(strategyOverviewText.sprite, RectToGameWindow(ChVec4::FromRect(STAGE_STRATEGY_OVERVIEW_LEFT, STAGE_STRATEGY_OVERVIEW_TEXT_TOP, STAGE_STRATEGY_OVERVIEW_RIGHT, STAGE_STRATEGY_OVERVIEW_TEXT_BOTTOM)));
 
 
-	button[ChStd::EnumCast(MenuButtonType::Start)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Start.png"), device);
-	button[ChStd::EnumCast(MenuButtonType::Edit)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Edit.png"), device);
-	button[ChStd::EnumCast(MenuButtonType::Load)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Load.png"), device);
-	button[ChStd::EnumCast(MenuButtonType::Cancel)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Cancel.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Start)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Start.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Edit)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Edit.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Load)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Load.png"), device);
+	button[ChStd::EnumCast(MenuButtonType::Cancel)].image.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Cancel.png"), device);
 
-	buttonSelect.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("MenuSelect.png"), device);
-	comingSoonImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("Coming Soon.png"), device);
-	unUsedMethodImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY("UnUsedText.png"), device);
+	buttonSelect.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"MenuSelect.png"), device);
+	comingSoonImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"Coming Soon.png"), device);
+	unUsedMethodImage.CreateTexture(STAGE_SELECT_TEXTURE_DIRECTORY(L"UnUsedText.png"), device);
 
 	float top = MENU_PANEL_TOP;
 	float bottom = top + MENU_PANEL_HEIGHT;
@@ -86,7 +87,6 @@ void StageDetailedDisplay::Update()
 
 void StageDetailedDisplay::UpdateAction(MenuBase::ActionType _type)
 {
-
 	if (_type == MenuBase::ActionType::Decision)
 	{
 		if (nowSelect == ChStd::EnumCast(MenuButtonType::Start))
@@ -103,23 +103,18 @@ void StageDetailedDisplay::UpdateAction(MenuBase::ActionType _type)
 	}
 
 	if (_type == MenuBase::ActionType::Up)
-	{
 		nowSelect = (nowSelect + MENU_BUTTON_TYPE - 1) % MENU_BUTTON_TYPE;
-	}
 
 	if (_type == MenuBase::ActionType::Down)
-	{
 		nowSelect = (nowSelect + 1) % MENU_BUTTON_TYPE;
-	}
-
 }
 
 void StageDetailedDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
-
 	auto&& selectStageData = GetNowSelectStageData();
 
 	ChD3D11::TextureBase11* testImage = &selectStageData.stageImage;
+
 	if (!testImage->IsTex())testImage = &GetNonImage();
 
 	_drawer.Draw(*testImage, stageImage);
@@ -136,8 +131,6 @@ void StageDetailedDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 
 	for (unsigned char i = 0; i < MENU_BUTTON_TYPE; i++)
 	{
-		//if (i == ChStd::EnumCast(MenuButtonType::Edit))_drawer.Draw(comingSoonImage, button[i].sprite);
-
 		if ((i == ChStd::EnumCast(MenuButtonType::Edit) ||
 			i == ChStd::EnumCast(MenuButtonType::Load)) && 
 			!selectStageData.stageDatas->selectModelFlg)
@@ -170,11 +163,11 @@ void StageDetailedDisplay::OnDisplay()
 
 void StageDetailedDisplay::UpdateMouse()
 {
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
-	AddAction(StageSelectFrame::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	AddAction(StageSelectFrame::ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
-	AddAction(StageSelectFrame::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
+	AddAction(StageSelectFrame::ActionType::Cancel, keyInput.IsPushKeyNoHold(VK_RBUTTON));
 
 
 	auto&& mouce = ChWin::Mouse();
@@ -213,11 +206,11 @@ void StageDetailedDisplay::CreateStageNameTextImage(StageData& _stageData)
 
 	textDrawer.DrawStart();
 
-	textDrawer.DrawToScreen(ChStr::UTF8ToWString(_stageData.stageDatas->stageName), format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
+	textDrawer.DrawToScreen(_stageData.stageDatas->stageName, format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
 
 	textDrawer.DrawEnd();
 
-	stageName.image.CreateColorTexture(bitmap.GetBitmap());
+	stageName.image.CreateColorTexture(AppIns().GetDirect3D11().GetDevice(), bitmap.GetBitmap());
 
 	textDrawer.Release();
 
@@ -263,7 +256,7 @@ void StageDetailedDisplay::CreateStageDescriptionTextImage(StageData& _stageData
 
 	textDrawer.DrawEnd();
 
-	stageDescription.image.CreateColorTexture(bitmap.GetBitmap());
+	stageDescription.image.CreateColorTexture(AppIns().GetDirect3D11().GetDevice(),bitmap.GetBitmap());
 
 	textDrawer.Release();
 
@@ -289,11 +282,11 @@ void StageDetailedDisplay::CreateStageStrategyOverviewTextImage(StageData& _stag
 
 	textDrawer.DrawStart();
 
-	textDrawer.DrawToScreen(ChStr::UTF8ToWString(_stageData.stageDatas->stageStrategyOverview), format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
+	textDrawer.DrawToScreen(_stageData.stageDatas->stageStrategyOverview, format, brush, ChVec4::FromRect(0.0f, 0.0f, STAGE_NAME_WIDTH, STAGE_NAME_HEIGHT));
 
 	textDrawer.DrawEnd();
 
-	strategyOverviewText.image.CreateColorTexture(bitmap.GetBitmap());
+	strategyOverviewText.image.CreateColorTexture(AppIns().GetDirect3D11().GetDevice(),bitmap.GetBitmap());
 
 	textDrawer.Release();
 

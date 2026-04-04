@@ -16,10 +16,9 @@ enum class AttackType :unsigned char
 	Sword,//åï//
 	Bullet,//í èÌíe//
 	BoostBullet,//ÉuÅ[ÉXÉgïtÇ´íe//
-	HighExplosive,//îöî≠íe//
+	Explosive,//îöî≠//
 	Missile,//í«îˆíe//
 	BirthBullet,//ì‡ëüíe//
-	Explosive,//îöî≠//
 };
 
 //çUåÇëSî //
@@ -32,9 +31,9 @@ public:
 	{
 	public:
 
-		virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack,const ChCpp::TextObject& _text,const unsigned long _nowPos = 0) = 0;
+		virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack,const ChCpp::TextObject<wchar_t>& _text,const unsigned long _nowPos = 0) = 0;
 
-		virtual std::string Serialize() = 0;
+		virtual std::wstring Serialize() = 0;
 
 		virtual void SetPartameter(PartsParameterStruct::AttackData& _parameter) = 0;
 
@@ -44,27 +43,27 @@ public:
 
 	};
 
-	static ChPtr::Shared<Attack> CreateAttackDataFromSword(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateAttackDataFromSword(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName);
 
-	static ChPtr::Shared<Attack> CreateAttackDataFromExplosive(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateAttackDataFromExplosive(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName);
 
-	static ChPtr::Shared<Attack> CreateAttackDataFromBullet(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateAttackDataFromBullet(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName);
 
-	static ChPtr::Shared<Attack> CreateAttackData(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device, const std::string& _fileName);
+	static ChPtr::Shared<Attack> CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device, const std::wstring& _fileName);
 
 	static void AllRelease();
 
 public://Serialize Deserialize\\
 
-	virtual void Deserialize(ID3D11Device* _device, const std::string& _text);
+	virtual void Deserialize(ID3D11Device* _device, const std::wstring& _text);
 
-	virtual std::string Serialize();
+	virtual std::wstring Serialize();
 
 	virtual void SetPartameter(PartsParameterStruct::WeaponData& _partsParameter);
 
 public: 
 
-	inline void SetMeshDrawer(ChD3D11::Shader::BaseDrawMesh11* _drawer) { drawer = _drawer; }
+	inline void SetMeshDrawer(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer) { drawer = _drawer; }
 
 public:
 
@@ -86,16 +85,16 @@ public:
 
 public:
 
-	static std::map<std::string,ChPtr::Shared<Attack>>& LoadAttackList()
+	static std::map<std::wstring,ChPtr::Shared<Attack>>& LoadAttackList()
 	{
-		static std::map<std::string,ChPtr::Shared<Attack>> ins;
+		static std::map<std::wstring,ChPtr::Shared<Attack>> ins;
 		return ins;
 	}
 
 protected:
 
-	std::string useFileName = "";
-	std::string objectName = "";
+	std::wstring useFileName = L"";
+	std::wstring objectName = L"";
 
 	//à–óÕ//
 	unsigned long penetration = 0;
@@ -106,11 +105,12 @@ protected:
 	AttackType attackType = AttackType::Sword;
 
 	//íeÇÃÉÇÉfÉã//
-	ChPtr::Shared<ChD3D11::Mesh11> bullet = ChPtr::Make_S<ChD3D11::Mesh11>();
+	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> bullet = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	ChLMat defaultMat;
 
 	std::vector<ChPtr::Shared<AttackBase>> externulFunctions;
 
-	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t>* drawer = nullptr;
 
 private:
 
@@ -121,9 +121,9 @@ class BulletData :public Attack::AttackBase
 {
 public:
 
-	unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
+	unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
-	std::string Serialize()override;
+	std::wstring Serialize()override;
 
 	void SetPartameter(PartsParameterStruct::AttackData& _parameter)override;
 
@@ -147,9 +147,9 @@ class BoostBulletData :public Attack::AttackBase
 {
 public:
 
-	virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
+	virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
-	virtual std::string Serialize()override;
+	virtual std::wstring Serialize()override;
 
 	void SetPartameter(PartsParameterStruct::AttackData& _parameter)override;
 
@@ -171,13 +171,13 @@ protected:
 
 
 //îöî≠íeëSî //
-class HighExplosiveBulletData :public Attack::AttackBase
+class ExplosiveBulletData :public Attack::AttackBase
 {
 public:
 
-	virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
+	virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
-	virtual std::string Serialize()override;
+	virtual std::wstring Serialize()override;
 
 	void SetPartameter(PartsParameterStruct::AttackData& _parameter)override;
 
@@ -197,9 +197,9 @@ class  MissileData :public Attack::AttackBase
 {
 public://Serialize Deserialize\\
 		
-	unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject& _text, const unsigned long _nowPos = 0)override;
+	unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
-	std::string Serialize()override;
+	std::wstring Serialize()override;
 
 	void SetPartameter(PartsParameterStruct::AttackData& _parameter)override;
 

@@ -3,16 +3,28 @@
 
 class GameFrame;
 class MechaPartsObject;
-class CameraObject;
 class WeaponObject;
 class FunctionComponent;
 class AttackObject;
 class WeaponComponent;
 
-class PhysicsMachine;
+class ControllerBase;
 
-class BaseMecha :public ChCpp::BaseObject
+class PhysicsMachine;
+struct PartsParameters;
+
+
+class BaseMecha :public ChCpp::BaseObject<wchar_t>
 {
+public:
+
+	struct DamageSmokePosData
+	{
+		ChPtr::Shared<ChCpp::TransformObject<wchar_t>> pos;
+		MechaPartsObject* haveParts = nullptr;
+
+	};
+
 public://Inner Struct Class Enum//
 
 	friend FunctionComponent;
@@ -24,19 +36,19 @@ public://Inner Struct Class Enum//
 	enum class InputName : unsigned char
 	{
 		Front, Back, Right, Left, Up, Down,
+		FrontRight,FrontLeft,BackRight,BackLeft,
 		UpRotation, DownRotation, RightRotation, LeftRotation,
 		CameraUpRotation, CameraDownRotation, CameraRightRotation, CameraLeftRotation,
 		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, RightBoost, LeftBoost, UpBoost, DownBoost,
 		Attack, RAttack, LAttack,
-		AttackTypeUpChange, RATUChange, LATUChange,
-		AttackTypeDownChange, RATDChange, LATDChange,
 		Reload, RReload, LReload,
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
-		MagnificationUp, MagnificationDown,
+		MoveUpChange, MoveDownChange,
+		ScopeMagnificationUp, ScopeMagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
-		MapOnOff, None
+		MapOnOff, UseTargetLooker, None
 	};
 
 public://Override Functions//
@@ -63,23 +75,25 @@ private:
 
 public://SerializeDeserialize//
 
-	void Deserialize(const std::string& _fileName);
+	void Deserialize(const std::wstring& _fileName);
 
-	std::string Serialize();
+	std::wstring Serialize();
 
 public://Create Function//
 
-	void Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11& _drawer, GameFrame* _frame);
+	void Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer, GameFrame* _frame);
 
 public:
 
-	void Load(ID3D11Device* _device, const std::string& _fileName);
+	void Load(ID3D11Device* _device, const std::wstring& _fileName);
 
-	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject);
+	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
-	void Save(const std::string& _fileName);
+	void LoadEnd();
 
-	ChPtr::Shared<ChCpp::JsonObject> SavePartsList();
+	void Save(const std::wstring& _fileName);
+
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> SavePartsList();
 
 public:
 
@@ -87,34 +101,13 @@ public:
 
 	void AddRotateVector(const ChVec3& _rotateVecAdd);
 
-	inline void AddCamera(ChPtr::Shared<CameraObject> _camera)
-	{
-		cameraList.push_back(_camera);
-	}
-
-	inline void AddViewVertical(const float& _x) { viewVertical = std::abs(viewVertical + _x) < maxViewVertical ? viewVertical + _x : viewVertical; }
-
-	inline void AddViewHorizontal(const float& _y) { viewHorizontal = std::abs(viewHorizontal + _y) < maxViewHorizontal ? viewHorizontal + _y : viewHorizontal; }
-
 	void AddMass(const float _mass) { mass += _mass; }
 
-	void AddMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy += _maxEnelgy; }
-
-	void AddChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy += _chargeEnelgy; }
-
 	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
-
-	void AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
-
-	void AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject);
 
 public:
 
 	void SubMass(const float _mass) { mass -= _mass; }
-
-	void SubMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy -= _maxEnelgy; }
-
-	void SubChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy -= _chargeEnelgy; }
 
 public://Set Function//
 
@@ -124,11 +117,9 @@ public://Set Function//
 
 	void SetRotation(const ChVec3& _rot);
 
+	inline void  SetSelfViewHorizontalFlg(const bool& _flg) { isSelfViewHorizontalFlg = _flg; }
+
 	void SetMass(const float _mass) { mass = _mass; }
-
-	void SetMaxEnelgy(const unsigned long _maxEnelgy) { maxEnelgy = _maxEnelgy; }
-
-	void SetChargeEnelgy(const unsigned long _chargeEnelgy) { chargeEnelgy = _chargeEnelgy; }
 
 	inline void SetPushFlg(const InputName _inputFlgName)
 	{
@@ -145,23 +136,15 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
-	ChLMat GetViewMat() { return viewMat; }
-
-	ChVec3 GetViewPos();
-	
-	ChVec3 GetViewLookPos();
+	ChLMat GetViewMat();
 
 	ChVec3 GetDamageDir() { return damageDir; }
 
 	inline float GetMass() { return mass; }
 
-	inline unsigned long GetNowEnelgy() { return nowEnelgy; }
+	inline size_t GetMechaNo() { return mechasNo; }
 
-	inline unsigned long GetMaxEnelgy() { return maxEnelgy; }
-
-	inline unsigned long GetMechaNo() { return mechasNo; }
-
-	unsigned long GetTeamNo();
+	size_t GetTeamNo();
 
 	inline float GetMaxDamageGage() { return durable; }
 
@@ -171,11 +154,21 @@ public://Get Function//
 
 	long GetHitEffectDrawStartFrame();
 
-	inline std::string GetMechaName() { return mechaName; }
+	inline std::wstring GetMechaName() { return mechaName; }
 
-	unsigned long GetAnchorRegistNum();
+	size_t GetAnchorRegistNum();
 
 	ChPtr::Shared<MechaPartsObject> GetCoreParts() { return core; }
+
+	ChPtr::Shared<PartsParameters> GetAllParameters();
+
+private:
+
+	void AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _nowParts);
+
+public:
+
+	void RemoveCore();
 
 public:
 
@@ -183,7 +176,19 @@ public:
 
 public:
 
-	void UpdateAnchor(unsigned long _no, const ChLMat& _drawMat);
+	void UpdateAnchor(size_t _no, const ChLMat& _drawMat);
+
+public:
+
+	void AddSmokeCreatePos(ChPtr::Shared<ChCpp::TransformObject<wchar_t>> _pos, MechaPartsObject* _parts);
+
+	void SubSmokeCreatePos(MechaPartsObject* _parts);
+
+private:
+
+	void CreateDamageSmoke();
+
+	void AddSmokePosNum();
 
 public:
 
@@ -195,15 +200,15 @@ public:
 
 	void Break();
 
-private:
+public:
 
 	template<class T>
 	ChPtr::Shared<T> GetComponentObject()
 	{
-		auto&& ComList = GetComponents<T>();
-		if (!ComList.empty())
+		auto&& com = GetComponent<T>();
+		if (com != nullptr)
 		{
-			return ComList[0];
+			return com;
 		}
 
 		return SetComponent<T>();
@@ -211,31 +216,30 @@ private:
 
 protected:
 
-	ChLMat viewMat;
-
 	ChVec2 viewSize;
+
+	ChPtr::Shared<ControllerBase>controller = nullptr;
 
 	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
 
 	float mass = 1.0f;
 
-	unsigned long mechasNo = 0;
-
-	unsigned long maxEnelgy = 0;
-	unsigned long chargeEnelgy = 0;
-	unsigned long nowEnelgy = 0;
+	size_t mechasNo = 0;
 
 	float groundDistance = 0.0f;
 
 	float durable = 100.0f;
 	float nowDurable = 100.0f;
 
-	ChCpp::BitBool inputFlgs = ChCpp::BitBool(6);
+	std::vector<ChPtr::Shared<DamageSmokePosData>>damageSmokeCreatePos;
+	std::vector<unsigned char>damageSmokePosNum;
+	unsigned long createDamageSmokeTime = 0;
+
+
+	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
+
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
-
-	unsigned long useCameraNo = 0;
-	std::vector<ChPtr::Shared<CameraObject>>cameraList;
 
 	ChVec3 damageDir = ChVec3();
 
@@ -244,21 +248,19 @@ protected:
 	ChCpp::SphereCollider testCollider;
 	ChCpp::SphereCollider testAttackCollider;
 
-	std::string mechaName = "";
+	std::wstring mechaName = L"";
 
-	ChD3D11::Shader::BaseDrawMesh11* drawer = nullptr;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t>* drawer = nullptr;
 	GameFrame* frame = nullptr;
 
 	ChVec3 centerPos;
-	float viewVertical = 0.0f;
-	float maxViewVertical = 85.0f;
-
-	float viewHorizontal = 0.0f;
-	float maxViewHorizontal = 85.0f;
 
 	long hitEffectDrawFrame = -1;
 
 	bool breakFlg = false;
+	unsigned long nowObjectDestroyCount = 0;
+
+	bool isSelfViewHorizontalFlg = true;
 };
 
 #endif

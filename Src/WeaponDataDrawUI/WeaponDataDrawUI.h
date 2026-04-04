@@ -1,17 +1,12 @@
 #pragma once
 
+#include"../BaseMecha/WeaponHandType.h"
+
+class BaseMecha;
+class WeaponComponent;
 
 class WeaponDataDrawUI
 {
-public:
-
-	static constexpr unsigned long DRAW_TYPE_COUNT = 2;
-
-	enum class DRAW_TYPE
-	{
-		Left, Right
-	};
-
 private:
 
 	struct DrawData
@@ -41,19 +36,21 @@ public:
 
 	void CreateTextImage(ChD3D11::Texture11& _outImage, TextDrawerWICBitmap& _drawer, const std::wstring& _text, float _w, float _h);
 
-public:
+private:
 
-	void SetNowBulletNum(const std::wstring& _num, DRAW_TYPE _type);
+	void SetWeaponDatas(WeaponComponent& _com, WeaponHandType _type);
+
+	void SetNowBulletNum(const std::wstring& _num, WeaponHandType _type);
 	
-	void SetReloadCount(const std::wstring& _count, DRAW_TYPE _type);
+	void SetReloadCount(const std::wstring& _count, WeaponHandType _type);
 
-	void SetWeaponName(const std::wstring& _name, DRAW_TYPE _type);
+	void SetWeaponName(const std::wstring& _name, WeaponHandType _type);
 
-	void SetPartsName(const std::wstring& _name, DRAW_TYPE _type);
+	void SetPartsName(const std::wstring& _name, WeaponHandType _type);
 
 public:
 
-	void Update();
+	void Update(BaseMecha* _drawMecha);
 
 public:
 

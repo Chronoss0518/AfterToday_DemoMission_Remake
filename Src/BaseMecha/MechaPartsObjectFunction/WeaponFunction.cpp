@@ -5,9 +5,15 @@
 #include"../../Attack/Attack.h"
 #include"../../Attack/AttackObject.h"
 #include"../MechaPartsObject.h"
-#include"../MechaParts.h"
+
+#include"../MechaPartsData/SwordData.h"
+#include"../MechaPartsData/GunData.h"
 
 #include"WeaponFunction.h"
+
+#include"../../Application/Application.h"
+
+#include<math.h>
 
 #define SE_VOLUME_SIZE 0.1f
 
@@ -21,7 +27,7 @@ void WeaponFunction::Release()
 
 void WeaponFunction::AttackUpdate()
 {
-	if (nowWaitTime < data->GetWaitTime())return;;
+	if (nowWaitTime < data->GetWaitTime())return;
 
 	AttackFunction();
 
@@ -38,10 +44,10 @@ void WeaponFunction::Update()
 std::wstring WeaponFunction::GetWeaponName()
 {
 	if (ChPtr::NullCheck(data))return L"";
-	return ChStr::UTF8ToWString(data->GetWeaponName());
+	return data->GetWeaponName();
 }
 
-void SwordFunction::SetData(WeaponData* _data)
+void SwordFunction::SetData(WeaponDataBase* _data)
 {
 	swordData = ChPtr::SafeCast<SwordData>(_data);
 }
@@ -51,11 +57,9 @@ void SwordFunction::AttackFunction()
 
 }
 
-void SwordFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)
+void SwordFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)
 {
-
 	//attackData = Attack::CreateAttackData(_drawer, _device, swordData->GetObjectName());
-
 }
 
 void GunFunction::AttackFunction()
@@ -63,10 +67,12 @@ void GunFunction::AttackFunction()
 	if (reloadFlg)return;
 	if (nowBulletNum <= 0)return;
 
-	ChLMat tmpMat;
-	tmpMat = obj->GetLastDrawMat();
+	ChLMat tmpMat = attackPos->GetDrawLHandMatrix() * parts->GetDrawLHandMatrix();
 
-	tmpMat = lastShotPos * tmpMat;
+	ChVec3 tmpPos = tmpMat.Transform(ChVec3());
+
+	tmpMat = parts->GetDrawLHandMatrix();
+	tmpMat.SetPosition(tmpPos);
 
 	frame->AddShotEffectObject(tmpMat.GetPosition());
 
@@ -77,6 +83,7 @@ void GunFunction::AttackFunction()
 
 	for (unsigned long i = 0; i < gunData->GetFireNum(); i++)
 	{
+		ChLMat useMat = tmpMat;
 
 		{
 			ChQua tmp;
@@ -87,7 +94,7 @@ void GunFunction::AttackFunction()
 			ChLMat rangeMat;
 			rangeMat.SetRotation(tmp);
 
-			tmpMat = rangeMat * tmpMat;
+			useMat = rangeMat * useMat;
 		}
 
 		auto attackObject = ChPtr::Make_S<AttackObject>();
@@ -97,7 +104,7 @@ void GunFunction::AttackFunction()
 		
 		attackObject->SetBaseMechaNo(mecha->GetMechaNo());
 		attackObject->SetTeamNo(mecha->GetTeamNo());
-		attackObject->Init(tmpMat);
+		attackObject->Init(useMat);
 		frame->AddBullet(attackObject);
 
 		ChVec3 nockback = attackObject->GetMovePower() * 0.01f / -mecha->GetMass();
@@ -113,8 +120,9 @@ void GunFunction::AttackFunction()
 	StartSubFunction();
 }
 
-void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)
+void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)
 {
+
 	nowBulletNum = gunData->GetBulletNum();
 
 	nowMagazineNum = gunData->GetMagazineNum();
@@ -123,7 +131,9 @@ void GunFunction::Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _
 
 	attackData = Attack::CreateAttackDataFromBullet(_drawer, _device, gunData->GetUseBulletFile());
 
-	ChD3D::XAudioManager().LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
+	auto&& mgr = AppIns().GetAudioManager();
+
+	mgr.LoadSound(se, SOUND_DIRECTORY(+gunData->GetSEFileName()));
 
 	se.SetVolume(SE_VOLUME_SIZE);
 }
@@ -138,17 +148,13 @@ void GunFunction::StartSubFunction()
 	reloadFlg = true;
 }
 
-void GunFunction::SetData(WeaponData* _data)
+void GunFunction::SetData(WeaponDataBase* _data)
 {
 	gunData = ChPtr::SafeCast<GunData>(_data);
 }
 
 void GunFunction::UpdateFunction()
 {
-	ChLMat tmpMat;
-	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
-	obj->GetParent()->GetPositionObject()->SetOutSizdTransform(tmpMat);
-
 	if (!reloadFlg)return;
 
 	nowReloadTime++;
@@ -160,33 +166,14 @@ void GunFunction::UpdateFunction()
 	nowMagazineNum--;
 
 	reloadFlg = false;
-
-
-}
-
-void GunFunction::DrawBegin()
-{
-	ChLMat tmpMat;
-	tmpMat.SetRotationXAxis(ChMath::ToRadian(-90));
-	obj->GetParent()->GetPositionObject()->SetOutSizdTransform(tmpMat);
-}
-
-void GunFunction::DrawEnd()
-{
-	if (shotPos != nullptr)
-	{
-		lastShotPos = shotPos->GetDrawLHandMatrix();
-	}
-
-	//obj->GetParent()->GetPositionObject()->SetOutSizdTransform(ChLMat());
 }
 
 std::wstring GunFunction::GetBulletNum()
 {
 	std::wstring res = std::to_wstring(nowBulletNum);
 
-	unsigned long len = res.length();
-	for (unsigned long i = len; i < NOW_BULLET_NUM_TEXT_COUNT; i++)
+	size_t len = res.length();
+	for (size_t i = len; i < NOW_BULLET_NUM_TEXT_COUNT; i++)
 	{
 		res = L'0' + res;
 	}
@@ -198,8 +185,8 @@ std::wstring GunFunction::GetReloadCount()
 {
 	std::wstring res = std::to_wstring(nowMagazineNum);
 
-	unsigned long len = res.length();
-	for (unsigned long i = len; i < NOW_MAGAZINE_TEXT_COUNT; i++)
+	size_t len = res.length();
+	for (size_t i = len; i < NOW_MAGAZINE_TEXT_COUNT; i++)
 	{
 		res = L'0' + res;
 	}

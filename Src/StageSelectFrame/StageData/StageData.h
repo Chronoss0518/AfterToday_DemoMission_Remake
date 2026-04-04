@@ -6,11 +6,11 @@ class StageData
 {
 public:
 
-	void LoadData(const std::string& _stageFilePath);
+	void LoadData(const std::wstring& _stageFilePath);
 
 public:
 
-	void SaveData(const std::string& _stageFilePath);
+	void SaveData(const std::wstring& _stageFilePath);
 
 public:
 

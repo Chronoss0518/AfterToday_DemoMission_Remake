@@ -3,309 +3,141 @@
 
 #include"../../AllStruct.h"
 
+#include"../MechaPartsData/BoostBrustData.h"
+
 #include"BoostComponent.h"
-
-
-BoostComponent::BoostComponent()
-{
-	data[ChStd::EnumCast(BoostDirection::Front)].direction = ChVec3(0.0f, 0.0f, 1.0f);
-	data[ChStd::EnumCast(BoostDirection::Front)].boost.name = InputName::FrontBoost;
-	data[ChStd::EnumCast(BoostDirection::Front)].avoid.name = InputName::FrontAvo;
-
-	data[ChStd::EnumCast(BoostDirection::Back)].direction = ChVec3(0.0f, 0.0f, -1.0f);
-	data[ChStd::EnumCast(BoostDirection::Back)].boost.name = InputName::BackBoost;
-	data[ChStd::EnumCast(BoostDirection::Back)].avoid.name = InputName::BackAvo;
-
-	data[ChStd::EnumCast(BoostDirection::Right)].direction = ChVec3(1.0f, 0.0f, 0.0f);
-	data[ChStd::EnumCast(BoostDirection::Right)].boost.name = InputName::RightBoost;
-	data[ChStd::EnumCast(BoostDirection::Right)].avoid.name = InputName::RightAvo;
-
-	data[ChStd::EnumCast(BoostDirection::Left)].direction = ChVec3(-1.0f, 0.0f, 0.0f);
-	data[ChStd::EnumCast(BoostDirection::Left)].boost.name = InputName::LeftBoost;
-	data[ChStd::EnumCast(BoostDirection::Left)].avoid.name = InputName::LeftAvo;
-
-	data[ChStd::EnumCast(BoostDirection::Up)].direction = ChVec3(0.0f, 1.0f, 0.0f);
-	data[ChStd::EnumCast(BoostDirection::Up)].boost.name = InputName::UpBoost;
-	data[ChStd::EnumCast(BoostDirection::Up)].avoid.name = InputName::UpAvo;
-
-	data[ChStd::EnumCast(BoostDirection::Down)].direction = ChVec3(0.0f, -1.0f, 1.0f);
-	data[ChStd::EnumCast(BoostDirection::Down)].boost.name = InputName::DownBoost;
-	data[ChStd::EnumCast(BoostDirection::Down)].avoid.name = InputName::DownAvo;
-}
-
-void BoostComponent::ClearBoostAvoidWait(InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].avoid.wait = 0;
-}
+#include"EnergyComponent.h"
+#include"../MechaPartsObjectFunction/BoostFunction.h"
 
 void BoostComponent::Update()
 {
-	unsigned long useEnelgy = 0;
-
-	for (unsigned char i = 0; i < 6; i++)
+	for (size_t i = 0; i < boostBrustList.size(); i++)
 	{
-		useEnelgy += GetUseEnelgy(data[i].avoid);
-		useEnelgy += GetUseEnelgy(data[i].boost, data[i].avoid.testUseFlg);
+		boostBrustList[i]->nowAvoidWait++;
+		if (boostBrustList[i]->nowAvoidWait > boostBrustList[i]->data->GetAvoidWait())
+			boostBrustList[i]->nowAvoidWait = boostBrustList[i]->data->GetAvoidWait() + 1;
 	}
 
-	unsigned long nowEnelgy = GetNowEnelgy();
-
-	for (unsigned char i = 0; i < 6; i++)
+	for (int i = 0; i < DIRECTION_MAX_COUNT; i++)
 	{
-		data[i].boost.testUseFlg = (nowEnelgy > useEnelgy) && data[i].boost.testUseFlg;
-		data[i].avoid.testUseFlg = (nowEnelgy > useEnelgy) && data[i].avoid.testUseFlg;
-
-		UpdateInputFunction(data[i]);
-		UpdateModelFunction(data[i]);
+		useAvoidFlg[i] = false;
 	}
-
-	boostRotation += 5;
-	boostRotation = boostRotation < 360.0f ? boostRotation : boostRotation - 360.0f;
-
-}
-
-void BoostComponent::BoostDrawBegin()
-{
 
 	ChLMat tmp;
-	tmp.SetRotationYAxis(boostRotation);
-
-	for (unsigned char i = 0; i < 6; i++)
-	{
-		auto&& boostData = data[i];
-		for (auto&& boostObject : boostData.boostObject)
-		{
-			float testScl = boostObject->GetOutSizdTransformLMat().GetScalling().x;
-			testScl = testScl >= boostData.nowBoostPow ? testScl : boostData.nowBoostPow;
-			tmp.SetScalling(ChVec3(testScl));
-			boostObject->SetOutSizdTransform(tmp);
-
-			auto texture = boostObject->GetComponent<ChD3D11::FrameComponent11>()->GetPrimitives()[0]->textures[Ch3D::TextureType::Diffuse];
-		}
-	}
-
-
-}
-
-void BoostComponent::BoostDrawEnd()
-{
-
-	ChLMat tmp;
-	tmp.SetScalling(ChVec3(0.001f));
-
-	for (unsigned char i = 0; i < 6; i++)
-	{
-		auto&& boostData = data[i];
-		for (auto&& boostObject : boostData.boostObject)
-		{
-			boostObject->SetOutSizdTransform(tmp);
-		}
-	}
-
-}
-
-void BoostComponent::UpdateInputFunction(Data& _data)
-{
-	ChLMat tmp;
-
 	tmp.SetRotationYAxis(ChMath::ToRadian(GetRotation().y));
 
-	UpdateAvoid(_data, tmp);
+	ChVec3 front = tmp.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+	ChVec3 back = tmp.TransformCoord(ChVec3(0.0f, 0.0f, -1.0f));
+	ChVec3 left = tmp.TransformCoord(ChVec3(-1.0f, 0.0f, 0.0f));
+	ChVec3 right = tmp.TransformCoord(ChVec3(1.0f, 0.0f, 0.0f));
+	ChVec3 up = ChVec3(0.0f, 1.0f, 0.0f);
+	ChVec3 down = ChVec3(0.0f, -1.0f, 0.0f);
 
-	UpdateBoost(_data, tmp);
+	UpdateAvoid(InputName::FrontAvo, Direction::Front, front);
+	UpdateAvoid(InputName::BackAvo, Direction::Back, back);
+	UpdateAvoid(InputName::RightAvo, Direction::Right, right);
+	UpdateAvoid(InputName::LeftAvo, Direction::Left, left);
+	UpdateAvoid(InputName::UpAvo, Direction::Up, up);
+	UpdateAvoid(InputName::DownAvo, Direction::Down, down);
 
-}
-void BoostComponent::UpdateModelFunction(Data& _data)
-{
-	float regist = _data.nowBoostPow * GetBoostUpPowerRegister();
-	_data.nowBoostPow -= regist;
-
-	_data.nowBoostPow = _data.nowBoostPow < 0.0f ? 0.0f : _data.nowBoostPow;
-}
-
-void BoostComponent::BoostComponent::UpdateBoost(Data& _data, const ChLMat& _nowTargetPoster)
-{
-	if (!_data.boost.testUseFlg)return;
-
-	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.boost.pow);
-
-	SubNowEnelgy(_data.boost.useEnelgy);
-
-	_data.nowBoostPow += 1.5f;
+	UpdateBoost(InputName::FrontBoost, Direction::Front, front);
+	UpdateBoost(InputName::BackBoost, Direction::Back, back);
+	UpdateBoost(InputName::RightBoost, Direction::Right, right);
+	UpdateBoost(InputName::LeftBoost, Direction::Left, left);
+	UpdateBoost(InputName::UpBoost, Direction::Up, up);
+	UpdateBoost(InputName::DownBoost, Direction::Down, down);
 }
 
-
-void BoostComponent::UpdateAvoid(Data& _data, const ChLMat& _nowTargetPoster)
+void BoostComponent::UpdateAvoid(InputName _avoidInput, Direction _direction, const ChVec3& _moveDirection)
 {
-	if (_data.avoid.wait >= _data.avoid.nowWaitTime)
+	if (!IsPushFlg(_avoidInput))return;
+
+	std::vector<ChPtr::Shared<UseBoostData>>useBoost;
+	unsigned long useEnergy = 0;
+
+	for (int i = 0; i < boostBrustList.size(); i++)
 	{
-		_data.avoid.nowWaitTime++;
+		if (!boostBrustList[i]->data->GetBoostDirectionFlg(_direction))continue;
+		if (boostBrustList[i]->data->GetAvoidWait() > boostBrustList[i]->nowAvoidWait)continue;
+		useBoost.push_back(boostBrustList[i]);
+		useEnergy += boostBrustList[i]->data->GetAvoidUseEnergy();
 	}
 
-	if (!_data.avoid.testUseFlg)
+	if (useBoost.empty())return;
+
+	auto&& energy = GetComponent<EnergyComponent>();
+	
+	if (energy->GetNowEnergy() < useEnergy)return;
+
+	energy->SubNowEnergy(useEnergy);
+	useAvoidFlg[ChStd::EnumCast(_direction)] = true;
+
+	float avoidPower = 0.0f;
+
+	for (int i = 0; i < useBoost.size(); i++)
 	{
-		_data.avoid.useFlg = false;
-		return;
+		useBoost[i]->func->SetAvoidScaling();
+		avoidPower += useBoost[i]->data->GetAvoidPower();
+		useBoost[i]->nowAvoidWait = 0;
 	}
 
-	if (_data.avoid.nowWaitTime < _data.avoid.wait)return;
-	if (_data.avoid.useFlg)return;
+	AddMoveVector(_moveDirection * avoidPower);
 
-	_data.avoid.nowWaitTime = 0;
-
-	_data.avoid.useFlg = true;
-
-	AddMoveVector(_nowTargetPoster.TransformCoord(_data.direction) * _data.avoid.pow);
-
-	SubNowEnelgy(_data.avoid.useEnelgy);
-
-	_data.nowBoostPow = 10.0f;
 }
 
-void BoostComponent::SetBoostAvoidWait(const unsigned long _avoidWait, InputName _avoidType)
+void BoostComponent::UpdateBoost(InputName _avoidInput, Direction _direction, const ChVec3& _moveDirection)
 {
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
+	if (!IsPushFlg(_avoidInput))return;
+	if (useAvoidFlg[ChStd::EnumCast(_direction)])return;
 
-	if (num < 0 || num >= 6)return;
+	std::vector<ChPtr::Shared<UseBoostData>>useBoost;
+	unsigned long useEnergy = 0;
 
-	data[num].avoid.wait = data[num].avoid.wait < _avoidWait ? _avoidWait : data[num].avoid.wait;
+	for (int i = 0; i < boostBrustList.size(); i++)
+	{
+		if (!boostBrustList[i]->data->GetBoostDirectionFlg(_direction))continue;
+		useBoost.push_back(boostBrustList[i]);
+		useEnergy += boostBrustList[i]->data->GetBoostUseEnergy();
+	}
+
+	if (useBoost.empty())return;
+
+	auto&& energy = GetComponent<EnergyComponent>();
+
+	if (energy->GetNowEnergy() < useEnergy)return;
+
+	energy->SubNowEnergy(useEnergy);
+
+	float boostPower = 0.0f;
+
+	for (int i = 0; i < useBoost.size(); i++)
+	{
+		useBoost[i]->func->SetBoostScaling();
+		boostPower += useBoost[i]->data->GetBoostPower();
+	}
+
+	AddMoveVector(_moveDirection * boostPower);
 }
 
-unsigned long BoostComponent::GetUseEnelgy(AvoidData& _data)
+void BoostComponent::AddBoostData(BoostBrust* _data,BoostFunction* _func)
 {
-	_data.testUseFlg = false;
+	auto&& newData = ChPtr::Make_S<UseBoostData>();
 
-	if (!IsPushFlg(_data.name))return 0;
+	newData->data = _data;
+	newData->func = _func;
 
-	if (_data.nowWaitTime < _data.wait)return 0;
-	if (_data.useFlg)return 0;
+	boostBrustList.push_back(newData);
 
-	_data.testUseFlg = true;
-
-	return _data.useEnelgy;
 }
 
-unsigned long BoostComponent::GetUseEnelgy(BoostData& _data, bool _avoidFlg)
+void BoostComponent::SubBoostData(BoostBrust* _data)
 {
-	_data.testUseFlg = false;
-	if (_avoidFlg)return 0;
-	if (!IsPushFlg(_data.name))return 0;
+	for (int i = 0; i < boostBrustList.size(); i++)
+	{
+		if (boostBrustList[i]->data != _data)continue;
 
-	_data.testUseFlg = true;
+		boostBrustList.erase(boostBrustList.begin() + i);
+		i = 0;
+	}
 
-	return _data.useEnelgy;
-}
-
-void BoostComponent::AddBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].boostObject.push_back(_boost);
-}
-
-void BoostComponent::AddBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType)
-{
-	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].boostObject.push_back(_boost);
-}
-
-void BoostComponent::AddBoostPow(const float _boostPow, InputName _boostType)
-{
-	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].boost.pow += _boostPow;
-}
-
-void BoostComponent::AddBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType)
-{
-	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].boost.useEnelgy += _boostUseEnelgy;
-}
-
-void BoostComponent::AddBoostAvoidPow(const float _avoidPow, InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].avoid.pow += _avoidPow;
-}
-
-void BoostComponent::AddBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].avoid.useEnelgy += _avoidUseEnelgy;
-}
-
-void BoostComponent::SubBoostWhereAvoidName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	auto&& it = std::find(data[num].boostObject.begin(), data[num].boostObject.end(),_boost);
-	data[num].boostObject.erase(it);
-}
-
-void BoostComponent::SubBoostWhereBoostName(ChPtr::Shared<ChCpp::FrameObject> _boost, InputName _boostType)
-{
-	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
-
-	if (num < 0 || num >= 6)return;
-
-	auto&& it = std::find(data[num].boostObject.begin(), data[num].boostObject.end(), _boost);
-	data[num].boostObject.erase(it);
-}
-
-void BoostComponent::SubBoostPow(const float _boostPow, InputName _boostType)
-{
-	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].boost.pow -= _boostPow;
-}
-
-void BoostComponent::SubBoostUseEnelgy(const unsigned long _boostUseEnelgy, InputName _boostType)
-{
-	long num = ChStd::EnumCast(_boostType) - ChStd::EnumCast(InputName::FrontBoost);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].boost.useEnelgy -= _boostUseEnelgy;
-}
-
-void BoostComponent::SubBoostAvoidPow(const float _avoidPow, InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].avoid.pow -= _avoidPow;
-}
-
-void BoostComponent::SubBoostAvoidUseEnelgy(const unsigned long _avoidUseEnelgy, InputName _avoidType)
-{
-	long num = ChStd::EnumCast(_avoidType) - ChStd::EnumCast(InputName::FrontAvo);
-
-	if (num < 0 || num >= 6)return;
-
-	data[num].avoid.useEnelgy -= _avoidUseEnelgy;
 }

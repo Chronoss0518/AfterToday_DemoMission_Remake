@@ -33,7 +33,7 @@ public:
 
 public:
 
-	void Draw(ChD3D11::Shader::BaseDrawMesh11& _drawer);
+	void Draw(ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer);
 
 private:
 

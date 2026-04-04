@@ -1,14 +1,14 @@
 #pragma once
 
-#include"../ControllerBase.h"
+#include"../CPUController.h"
 
 class CPUActionBase
 {
 public:
 
-	virtual ChPtr::Shared<ChCpp::JsonObject> Serialize();
+	virtual ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
 
-	virtual void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
+	virtual void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject);
 
 	inline void SetActiveFlg(const bool _flg) { activeFlg = _flg; }
 
@@ -59,8 +59,8 @@ private:
 	bool activeFlg = true;
 
 	CPUObjectLooker::MemberType memberType = CPUObjectLooker::MemberType::Enemy;
-	CPUObjectLooker::DistanceType distanceType = CPUObjectLooker::DistanceType::None;
-	CPUObjectLooker::DamageSizeType damageType = CPUObjectLooker::DamageSizeType::None;
+	CPUObjectLooker::DistanceType distanceType = CPUObjectLooker::DistanceType::Far;
+	CPUObjectLooker::DamageSizeType damageType = CPUObjectLooker::DamageSizeType::Many;
 
 };
 

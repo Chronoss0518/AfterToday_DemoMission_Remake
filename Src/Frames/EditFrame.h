@@ -10,6 +10,9 @@ class LoadDisplay;
 class EditList;
 class EditListItem;
 
+class EditControlListItem;
+class EditControlList;
+
 class ParameterList;
 
 
@@ -40,9 +43,9 @@ private:
 
 	void SetPartsList(MechaPartsObject& _parts);
 
-	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
+	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
-	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName);
+	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
 	void UpdateAction(ActionType _type)override;
 
@@ -52,7 +55,7 @@ private:
 
 	void DrawFunction();
 
-	void DrawNowLoading(ID3D11DeviceContext* _dc);
+	void DrawNowLoading();
 
 	void DrawEndLoading();
 
@@ -76,8 +79,6 @@ private:
 
 private:
 
-	ChD3D::XInputController controller;
-
 	ChPtr::Shared<LoadDisplay>loadDisplay = nullptr;
 
 	ChD3D11::RenderTarget11 rtView;
@@ -96,18 +97,20 @@ private:
 	float nowAnimationWaitTime = 1.0f;
 	bool upFlg = true;
 
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
-	ChPtr::Shared<ParameterList> parameterList = nullptr;
 
 	ImageSprite selectButton[ChStd::EnumCast(SelectButtonType::None)];
 	SelectButtonType selectType = SelectButtonType::None;
 
 	ChPtr::Shared<EditList>partsList = nullptr;
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
+	ChPtr::Shared<ParameterList> parameterList = nullptr;
 	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
+	//変更後のパーツ//
+	ChPtr::Shared<MechaPartsObject>changeTargetParts = nullptr;
 
-	std::vector<std::string> pathList;
+	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;
 	bool loadEndFlg = false;
 
@@ -115,7 +118,7 @@ private:
 	TextDrawerWICBitmap panelPosTitleDrawer;//パーツネームが確認できた際にPosition名を描画する
 	TextDrawerWICBitmap panelPosPartsDrawer;//パーツ名を描画する
 
-	std::vector<std::string>coreList;
+	std::vector<std::wstring>coreList;
 
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
 	bool selectFlg = false;

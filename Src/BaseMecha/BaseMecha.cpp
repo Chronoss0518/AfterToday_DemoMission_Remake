@@ -8,31 +8,44 @@
 #include"MechaPartsObject.h"
 #include"BaseMecha.h"
 #include"../Frames/GameFrame.h"
-#include"FunctionComponent/WeaponComponents.h"
+
+#include"MechaPartsData/NextPosData.h"
+
+#include"FunctionComponent/WeaponComponent.h"
 #include"FunctionComponent/BoostComponent.h"
+#include"FunctionComponent/EnergyComponent.h"
+#include"FunctionComponent/MoveComponent.h"
+#include"FunctionComponent/CameraComponent.h"
+
+#include"../EditFrame/PartsParameters.h"
+
+#include"MechaPartsObjectFunction/WeaponFunction.h"
 #include"../Attack/AttackObject.h"
 #include"Controller/ControllerBase.h"
 
 #include"CPU/CPULooker.h"
 
-#define CAMERA_Y_POS 4.0f
+#include"../Application/Application.h"
 
 #define CENTER_LEN 5.0f
 
 #define HIT_EFFECT_DRAW_FRAME static_cast<long>(BASE_FPS * 2.0f)
 
+#define OBJECT_DESTROY_COUNT 2 * AppIns().GetFPS()
 
-#define JSON_MECHA_NAME "Name"
-#define JSON_CORE "Core"
+#define JSON_MECHA_NAME L"Name"
+#define JSON_CORE L"Core"
 
-static const std::string partsTypeName[]
+#define CREATE_SMOKE_EFFECT_TIME 3
+
+static const std::wstring partsTypeName[]
 {
-	"Body","Head","Foot","RightArm","LeftArm","Boost","Weapon","Extra"
+	L"Body",L"Head",L"Foot",L"RightArm",L"LeftArm",L"Boost",L"Weapon",L"Extra"
 };
 
-static const std::string weaponTypeName[]
+static const std::wstring weaponTypeName[]
 {
-	"R*","L*"
+	L"R*",L"L*"
 };
 
 BaseMecha::BaseMecha()
@@ -46,7 +59,7 @@ BaseMecha::~BaseMecha()
 
 }
 
-void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11& _drawer, GameFrame* _frame)
+void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer, GameFrame* _frame)
 {
 	viewSize = _viewSize;
 	drawer = &_drawer;
@@ -56,61 +69,75 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11&
 	mechasNo = frame->GetMechas().size();
 }
 
-void BaseMecha::Load(ID3D11Device* _device, const std::string& _fileName)
+void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 {
 
-	std::string text = "";
+	std::wstring text = L"";
 
 	ChCpp::CharFile file;
-	file.FileOpen(_fileName);
-	text = file.FileReadText();
+	file.FileOpen(_fileName, false);
+	text = ChStr::GetUTF16FromUTF8(file.FileRead());
 	file.FileClose();
 
-	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject>(ChCpp::JsonBaseType::GetParameter(text));
+	auto&& json = ChCpp::JsonBaseType<wchar_t>::GetParameter(text);
+	auto&& jsonObject = ChPtr::SharedSafeCast<ChCpp::JsonObject<wchar_t>>(json);
+
+	if (jsonObject == nullptr)return;
+
+	GetComponentObject<EnergyComponent>();
+	GetComponentObject<MoveComponent>();
+	GetComponentObject<CameraComponent>();
+	GetComponentObject<WeaponComponent>();
 
 	LoadPartsList(_device, jsonObject);
 }
 
-void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject> _jsonObject)
+void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	if (_jsonObject == nullptr) return;
 	SetComponent<LookAnchor>();
 
-	mechaName = *_jsonObject->GetJsonString(JSON_MECHA_NAME);
+	auto&& jsonName = _jsonObject->GetJsonString(JSON_MECHA_NAME);
+	if (jsonName != nullptr)
+		mechaName = jsonName->GetString();
 
 	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
+
+	if (coreObject == nullptr)return;
 
 	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
 
 	testCollider.SetScalling(baseHitSize);
 
-	nowEnelgy = maxEnelgy;
 	nowDurable = durable;
 	physics->SetMass(mass);
 
-
-	auto boostComponent = GetComponent<BoostComponent>();
-
-	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
-
 }
 
-void BaseMecha::Save(const std::string& _fileName)
+void BaseMecha::LoadEnd()
+{
+	auto&& com = GetComponentObject<CameraComponent>();
+	com->SetViewVerticial(true, physics->GetRotation().y);
+}
+
+void BaseMecha::Save(const std::wstring& _fileName)
 {
 
-	ChPtr::Shared<ChCpp::JsonObject> res = SavePartsList();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> res = SavePartsList();
 
 	ChCpp::CharFile file;
-	file.FileOpen(_fileName);
-	file.FileWriteText(ChCpp::JsonBaseType::FormatDocument(res->GetRawData()));
+	file.FileOpen(_fileName, true);
+	std::wstring testFromJson = ChCpp::JsonBaseType<wchar_t>::FormatDocument(res->GetRawData());
+	std::string textFromComverter = ChStr::GetUTF8FromUTF16(testFromJson);
+	file.FileWrite(textFromComverter);
 	file.FileClose();
 
 }
 
-ChPtr::Shared<ChCpp::JsonObject> BaseMecha::SavePartsList()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> BaseMecha::SavePartsList()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
-	res->Set(JSON_MECHA_NAME, ChCpp::JsonString::CreateObject(mechaName));
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	res->Set(JSON_MECHA_NAME, ChCpp::JsonString<wchar_t>::CreateObject(mechaName));
 	res->Set(JSON_CORE, core->Serialize());
 
 	return res;
@@ -118,26 +145,35 @@ ChPtr::Shared<ChCpp::JsonObject> BaseMecha::SavePartsList()
 
 void BaseMecha::Release()
 {
+	if (core == nullptr)return;
 	core->Release();
 }
 
 void BaseMecha::Update()
 {
-	core->Update();
+	if (breakFlg)
+	{
+		nowObjectDestroyCount++;
+		if (nowObjectDestroyCount < OBJECT_DESTROY_COUNT)return;
+
+		Destroy();
+		return;
+	}
+
+	if (core == nullptr)return;
+	core->UpdateFunction();
 }
 
 void BaseMecha::UpdateEnd()
 {
-	unsigned long fps = ChSystem::SysManager().GetFPS();
+	if (breakFlg)return;
+	if (core == nullptr)return;
 
-	nowEnelgy += (chargeEnelgy * (120 / fps));
-
-	nowEnelgy = nowEnelgy > maxEnelgy ? maxEnelgy : nowEnelgy;
-
+	core->UpdateEndFunction();
 
 	physics->Update();
 
-	float moveSize = physics->GetAddMovePowerVector().Len();
+	float moveSize = physics->GetAddMovePowerVector().GetLen();
 
 	testCollider.SetScalling(moveSize + baseHitSize);
 
@@ -145,32 +181,30 @@ void BaseMecha::UpdateEnd()
 
 void BaseMecha::Move()
 {
+	if (breakFlg)return;
+	if (core == nullptr)return;
+	core->MoveFunction();
+
 	BaseMove();
 
 	inputFlgs.SetAllDownFlg();
-
 }
 
 void BaseMecha::MoveEnd()
 {
-
 	damageDir = ChVec3();
 
-	viewHorizontal = physics->GetRotation().y;
+	auto&& camera = GetComponentObject<CameraComponent>();
+	camera->SetViewVerticial(!isSelfViewHorizontalFlg, physics->GetRotation().y);
+	camera->SetCenterPos(centerPos);
 
-	auto viewPos = GetViewPos();
-	auto viewLookPos = GetViewLookPos();
-
-	ChMat_11 tmpMat;
-	tmpMat.CreateViewMatLookTarget(viewPos, viewLookPos, ChVec3(0.0f, 1.0f, 0.0f));
-
-	viewMat = tmpMat;
+	camera->UpdateCamera();
 
 	auto&& objectLooker = GetComponent<CPUObjectLooker>();
 
 	if (objectLooker == nullptr)return;
 
-	objectLooker->SetViewMatrix(viewMat);
+	objectLooker->SetViewMatrix(camera->GetViewMat());
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
@@ -183,107 +217,58 @@ void BaseMecha::AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat)
 	anchor->AddLookAnchorPosition(_size, _drawMat);
 }
 
-void BaseMecha::AddLeftWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
-{
-	if (_partsObject == nullptr)return;
-	auto&& weap = GetComponentObject<LeftWeaponComponent>();
-
-	weap->AddWeapon(_partsObject);
-	_partsObject->SetLWeapon(true);
-}
-
-void BaseMecha::AddRightWeaponData(ChPtr::Shared<MechaPartsObject>_partsObject)
-{
-	if (_partsObject == nullptr)return;
-	auto&& weap = GetComponentObject<RightWeaponComponent>();
-
-	weap->AddWeapon(_partsObject);
-	_partsObject->SetRWeapon(true);
-}
-
-ChVec3 BaseMecha::GetViewPos()
-{
-
-	ChLMat camYMat, camXMat;
-
-	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
-	camYMat = camXMat * camYMat;
-	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
-
-	return camYMat.Transform(ChVec3(0.0f, 0.0f, -15.0f));
-}
-
-ChVec3 BaseMecha::GetViewLookPos()
-{
-
-	ChLMat camYMat, camXMat;
-
-	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
-	camYMat = camXMat * camYMat;
-	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS - 2.0f, 0.0f));
-
-	return camYMat.Transform(ChVec3(0.0f, 0.0f, 5.0f));
-}
-
 void BaseMecha::BaseMove()
 {
 	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
 	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
 
+	physics->SetAddRotatePowerVector(0.0f);
+
 	ChVec3 pos = physics->GetPosition();
 	ChVec3 normal = (pos - centerPos);
 	normal.y = 0.0f;
-	centerPos.y = pos.y + CAMERA_Y_POS;
+	centerPos.y = pos.y + CameraComponent::CAMERA_Y_POS;
 
 	testCollider.SetPosition(pos);
 
-	float tmp = normal.Len() - CENTER_LEN;
-	if (tmp < 0)return;
-	normal.Normalize();
-	normal.val.SetLen(tmp);
+	float tmp = normal.GetLen();
+
+	float tmpDis = tmp > CENTER_LEN ? CENTER_LEN - tmp : 0.0f;
+
+	normal.val.SetLen(tmp * 0.15f - tmpDis * 0.8f);
 	centerPos += normal;
 }
 
 void BaseMecha::Draw3D()
 {
+	if (core == nullptr)return;
 	ChLMat drawMat;
 	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	drawMat.SetPosition(physics->GetPosition());
 
-	auto boostComponent = GetComponent<BoostComponent>();
-
-	if (boostComponent != nullptr)boostComponent->BoostDrawBegin();
-
-	core->Draw(drawMat);
-
-	if (boostComponent != nullptr)boostComponent->BoostDrawEnd();
-
+	core->SetOutSideTransform(drawMat);
+	core->Draw3DFunction();
 }
 
 void BaseMecha::Draw2D()
 {
-	if (ChPtr::NullCheck(frame))return;
-
-	
-
-
+	if (core == nullptr)return;
+	core->Draw2DFunction();
 }
 
 void BaseMecha::DrawEnd()
 {
-	core->DrawEnd();
+	CreateDamageSmoke();
 }
 
-void BaseMecha::Deserialize(const std::string& _fileName)
+void BaseMecha::Deserialize(const std::wstring& _fileName)
 {
 
 }
 
-std::string BaseMecha::Serialize()
+std::wstring BaseMecha::Serialize()
 {
-	return "";
+	return L"";
 }
 
 void BaseMecha::SetTeamNo(const unsigned long _team)
@@ -337,10 +322,16 @@ ChVec3 BaseMecha::GetRotation()
 	return physics->GetRotation();
 }
 
-unsigned long BaseMecha::GetTeamNo()
+ChLMat BaseMecha::GetViewMat()
+{
+	auto&& camera = GetComponentObject<CameraComponent>();
+	return camera->GetViewMat();
+}
+
+size_t BaseMecha::GetTeamNo()
 {
 	auto controller = GetComponent<ControllerBase>();
-	if (controller == nullptr)return 0;
+	if (controller == nullptr)return ControllerBase::EMPTY_TEAM_NO;
 	return controller->GetTeamNo();
 }
 
@@ -349,7 +340,7 @@ long BaseMecha::GetHitEffectDrawStartFrame()
 	return HIT_EFFECT_DRAW_FRAME;
 }
 
-unsigned long BaseMecha::GetAnchorRegistNum()
+size_t BaseMecha::GetAnchorRegistNum()
 {
 	auto&& anchor = GetComponent<LookAnchor>();
 	if (anchor == nullptr)return 0;
@@ -357,12 +348,137 @@ unsigned long BaseMecha::GetAnchorRegistNum()
 	return anchor->GetPositionListCount();
 }
 
-void BaseMecha::UpdateAnchor(unsigned long _no, const ChLMat& _drawMat)
+ChPtr::Shared<PartsParameters> BaseMecha::GetAllParameters()
+{
+	auto res = ChPtr::Make_S<PartsParameters>();
+
+	AddChildParameters(*res, core);
+
+	return res;
+}
+
+void BaseMecha::AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _nowParts)
+{
+	if (_nowParts == nullptr)return;
+	auto&& baseParts = _nowParts->GetBaseObject();
+	if (ChPtr::NullCheck(baseParts))return;
+	baseParts->SetParameters(*_nowParts);
+	auto&& parameter = _nowParts->GetPartsParameters();
+	if (parameter == nullptr)return;
+	_parameter += (*parameter);
+
+	auto&& nextPosList = baseParts->GetComponents<NextPosData>();
+
+	for (auto&& nextPos : nextPosList)
+	{
+		std::wstring nextPosName = nextPos->GetConnectionName();
+		AddChildParameters(_parameter, _nowParts->GetChildParts(nextPosName));
+	}
+}
+
+void BaseMecha::RemoveCore()
+{
+	if (core == nullptr)return;
+	core->Destroy();
+	core = nullptr;
+}
+
+void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)
 {
 	auto&& anchor = GetComponent<LookAnchor>();
 	if (anchor == nullptr)return;
 
 	anchor->UpdateLookAnchorPosition(_no, _drawMat);
+}
+
+
+void BaseMecha::AddSmokeCreatePos(ChPtr::Shared<ChCpp::TransformObject<wchar_t>> _pos, MechaPartsObject* _parts)
+{
+	auto pos = ChPtr::Make_S<DamageSmokePosData>();
+	pos->pos = _pos;
+	pos->haveParts = _parts;
+	damageSmokeCreatePos.push_back(pos);
+}
+
+void BaseMecha::SubSmokeCreatePos(MechaPartsObject* _parts)
+{
+	for (size_t i = 0; i < damageSmokeCreatePos.size(); i)
+	{
+		if (damageSmokeCreatePos[i]->haveParts == _parts)
+		{
+			damageSmokeCreatePos.erase(damageSmokeCreatePos.begin() + i);
+			continue;
+		}
+		i++;
+	}
+}
+
+void BaseMecha::CreateDamageSmoke()
+{
+	if (ChPtr::NullCheck(frame))return;
+
+	if (nowDurable < 25.0f &&
+		(damageSmokePosNum.size() <= 1 &&
+		damageSmokePosNum.size() < damageSmokeCreatePos.size()))
+	{
+		for (size_t i = 0; damageSmokePosNum.size() < damageSmokeCreatePos.size() && i < 2; i++)
+		{
+			AddSmokePosNum();
+		}
+	}
+
+	if (nowDurable < 50.0f &&
+		(damageSmokePosNum.size() <= 0))
+	{
+		AddSmokePosNum();
+	}
+
+	if (damageSmokePosNum.size() <= 0)return;
+
+	createDamageSmokeTime++;
+
+	if (createDamageSmokeTime <= (CREATE_SMOKE_EFFECT_TIME))return;
+	createDamageSmokeTime = 0;
+
+	for (size_t i = 0; i < damageSmokePosNum.size(); i++)
+	{
+		ChVec3 pos;
+
+		ChLMat tmpMat
+			= damageSmokeCreatePos[damageSmokePosNum[i]]->pos->GetDrawLHandMatrix()
+			* damageSmokeCreatePos[damageSmokePosNum[i]]->haveParts->GetDrawLHandMatrix();
+
+		pos = tmpMat.Transform(ChVec3());
+
+		frame->AddSmokeEffectObject(pos, ChVec3(0.0f, 1.0f, 0.0f));
+
+	}
+}
+void BaseMecha::AddSmokePosNum()
+{
+	bool addFlg = false;
+	bool continueFlg = false;
+	do
+	{
+		continueFlg = false;
+		int num = rand() % damageSmokeCreatePos.size();
+		for (size_t i = 0; i < damageSmokePosNum.size(); i++)
+		{
+			if (damageSmokePosNum[i] == num)
+			{
+				continueFlg = true;
+				break;
+			}
+		}
+
+		if (continueFlg)continue;
+
+
+		damageSmokePosNum.push_back(num);
+		addFlg = true;
+
+	} while (!addFlg);
+
 }
 
 void BaseMecha::SetTestHitSize(const ChVec3& _hitSize)
@@ -377,6 +493,7 @@ void BaseMecha::SetTestHitSize(const ChVec3& _hitSize)
 
 void BaseMecha::TestBulletHit(AttackObject& _obj)
 {
+	if (core == nullptr)return;
 	if (_obj.IsUseMechaTest(mechasNo))return;
 	if (_obj.IsHit())return;
 	if (_obj.IsUseMechaTeamTest(GetTeamNo()))
@@ -387,7 +504,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	ChVec3 dir = _obj.GetMovePower();
 
-	float moveLen = dir.Len();
+	float moveLen = dir.GetLen();
 
 	float hitSize = _obj.GetHitSize();
 
@@ -433,13 +550,13 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 	if (nowDurable > 0)return;
 
 	Break();
-	
-	Destroy();
 
-	breakFlg = true;
 }
 
 void BaseMecha::Break()
 {
 	frame->BreakMecha(this);
+	breakFlg = true;
+
+	DestroyComponent();
 }

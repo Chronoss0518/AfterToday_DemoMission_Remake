@@ -1,6 +1,9 @@
 #include"../BaseIncluder.h"
 #include"WeaponDataDrawUI.h"
 
+#include"../BaseMecha/BaseMecha.h"
+#include"../BaseMecha/FunctionComponent/WeaponComponent.h"
+
 #define PANEL_TOP 475.0f
 #define PANEL_BOTTOM PANEL_TOP + 70.0f
 #define PANEL_WIDTH 134.0f
@@ -40,7 +43,7 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 {
 	device = _device;
 
-	backGround.CreateTexture(TEXTURE_DIRECTORY("WeaponData.png"), device);
+	backGround.CreateTexture(TEXTURE_DIRECTORY(L"WeaponData.png"), device);
 	
 	CreateTextDrawer(bulletDrawer, static_cast<unsigned long>(NOW_BULLET_NUM_WIDTH), static_cast<unsigned long>(NOW_BULLET_NUM_HEIGHT), NOW_BULLET_NUM_TEXT_SIZE);
 	bulletDrawer.format.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
@@ -61,54 +64,54 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Left)].drawPosition,
+		brawData[ChStd::EnumCast(WeaponHandType::Left)].drawPosition,
 		RectToGameWindow(ChVec4::FromRect(LEFT_PANEL_LEFT,PANEL_TOP, LEFT_PANEL_RIGHT, PANEL_BOTTOM))
 	);
 
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Left)].bulletNumIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Left)].bulletNumIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(NOW_BULLET_NUM_LEFT + LEFT_PANEL_LEFT, NOW_BULLET_NUM_TOP + PANEL_TOP, NOW_BULLET_NUM_LEFT + LEFT_PANEL_LEFT + NOW_BULLET_NUM_WIDTH, NOW_BULLET_NUM_TOP + PANEL_TOP + NOW_BULLET_NUM_HEIGHT))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Left)].reloadIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Left)].reloadIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(RELOAD_COUNT_LEFT + LEFT_PANEL_LEFT, RELOAD_COUNT_TOP + PANEL_TOP, RELOAD_COUNT_LEFT + LEFT_PANEL_LEFT + RELOAD_COUNT_WIDTH, RELOAD_COUNT_TOP + PANEL_TOP + RELOAD_COUNT_HEIGHT))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Left)].weaponIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Left)].weaponIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + LEFT_PANEL_LEFT, WEAPON_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + LEFT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_NAME_TOP + PANEL_TOP + WEAPON_NAME_HEIGHT))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Left)].partsIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Left)].partsIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + LEFT_PANEL_LEFT, WEAPON_PARTS_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + LEFT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_PARTS_NAME_TOP + PANEL_TOP + WEAPON_PARTS_NAME_HEIGHT))
 	);
 
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].drawPosition,
+		brawData[ChStd::EnumCast(WeaponHandType::Right)].drawPosition,
 		RectToGameWindow(ChVec4::FromRect(RIGHT_PANEL_LEFT, PANEL_TOP, RIGHT_PANEL_RIGHT, PANEL_BOTTOM))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].bulletNumIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Right)].bulletNumIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(NOW_BULLET_NUM_LEFT + RIGHT_PANEL_LEFT, NOW_BULLET_NUM_TOP + PANEL_TOP, NOW_BULLET_NUM_LEFT + RIGHT_PANEL_LEFT + NOW_BULLET_NUM_WIDTH, NOW_BULLET_NUM_TOP + PANEL_TOP + NOW_BULLET_NUM_HEIGHT))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].reloadIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Right)].reloadIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(RELOAD_COUNT_LEFT + RIGHT_PANEL_LEFT, RELOAD_COUNT_TOP + PANEL_TOP, RELOAD_COUNT_LEFT + RIGHT_PANEL_LEFT + RELOAD_COUNT_WIDTH, RELOAD_COUNT_TOP + PANEL_TOP + RELOAD_COUNT_HEIGHT))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].weaponIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Right)].weaponIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT, WEAPON_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_NAME_TOP + PANEL_TOP + WEAPON_NAME_HEIGHT))
 	);
 
 	SPRITE_INIT(
-		brawData[ChStd::EnumCast(DRAW_TYPE::Right)].partsIS.sprite,
+		brawData[ChStd::EnumCast(WeaponHandType::Right)].partsIS.sprite,
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT, WEAPON_PARTS_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_PARTS_NAME_TOP + PANEL_TOP + WEAPON_PARTS_NAME_HEIGHT))
 	);
 
@@ -150,36 +153,52 @@ void WeaponDataDrawUI::CreateTextImage(ChD3D11::Texture11& _outImage, TextDrawer
 	_outImage.CreateColorTexture(device,_drawer.bitmap.GetBitmap());
 }
 
-void WeaponDataDrawUI::SetNowBulletNum(const std::wstring& _num, DRAW_TYPE _type)
+void WeaponDataDrawUI::SetWeaponDatas(WeaponComponent& _com, WeaponHandType _type)
+{
+	SetPartsName(_com.GetPartsName(_type), _type);
+	SetWeaponName(_com.GetWeaponName(_type), _type);
+	SetNowBulletNum(_com.GetNowBulletNum(_type), _type);
+	SetReloadCount(_com.GetReloadCount(_type), _type);
+}
+
+void WeaponDataDrawUI::SetNowBulletNum(const std::wstring& _num, WeaponHandType _type)
 {
 	if (brawData[ChStd::EnumCast(_type)].nowBulletNum == _num)return;
 	brawData[ChStd::EnumCast(_type)].nowBulletNum = _num;
 	brawData[ChStd::EnumCast(_type)].isUpdateBulletNum = true;
 }
 
-void WeaponDataDrawUI::SetReloadCount(const std::wstring& _count, DRAW_TYPE _type)
+void WeaponDataDrawUI::SetReloadCount(const std::wstring& _count, WeaponHandType _type)
 {
 	if (brawData[ChStd::EnumCast(_type)].reloadCount == _count)return;
 	brawData[ChStd::EnumCast(_type)].reloadCount = _count;
 	brawData[ChStd::EnumCast(_type)].isUpdateReloadCount = true;
 }
 
-void WeaponDataDrawUI::SetWeaponName(const std::wstring& _name, DRAW_TYPE _type)
+void WeaponDataDrawUI::SetWeaponName(const std::wstring& _name, WeaponHandType _type)
 {
 	if (brawData[ChStd::EnumCast(_type)].weaponName == _name)return;
 	brawData[ChStd::EnumCast(_type)].weaponName = _name;
 	brawData[ChStd::EnumCast(_type)].isUpdateWeaponName = true;
 }
 
-void WeaponDataDrawUI::SetPartsName(const std::wstring& _name, DRAW_TYPE _type)
+void WeaponDataDrawUI::SetPartsName(const std::wstring& _name, WeaponHandType _type)
 {
 	if (brawData[ChStd::EnumCast(_type)].partsName == _name)return;
 	brawData[ChStd::EnumCast(_type)].partsName = _name;
 	brawData[ChStd::EnumCast(_type)].isUpdatePartsName = true;
 }
 
-void WeaponDataDrawUI::Update()
+void WeaponDataDrawUI::Update(BaseMecha* _drawMecha)
 {
+	if (ChPtr::NotNullCheck(_drawMecha))
+	{
+		auto&& weaponComponent = _drawMecha->GetComponentObject<WeaponComponent>();
+
+		SetWeaponDatas(*weaponComponent, WeaponHandType::Right);
+		SetWeaponDatas(*weaponComponent, WeaponHandType::Left);
+	}
+
 	for (unsigned char i = 0; i < DRAW_TYPE_COUNT; i++)
 	{
 		auto&& draw = brawData[i];

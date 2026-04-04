@@ -1,6 +1,8 @@
 #pragma once
 
-#include"../ControllerBase.h"
+#include"../CPUController.h"
+
+#include"../../WeaponHandType.h"
 
 class CPUWeaponSelector;
 class CPUWeaponSelect;
@@ -10,21 +12,11 @@ class CPUAttack
 {
 public:
 
-	enum class PriorityWeaponType
-	{
-		Right,
-		Left
-	};
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
 
-public:
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject);
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize();
-
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject);
-
-	void SetRightWeapons(const ChPtr::Shared<RightWeaponComponent>& _weapons);
-
-	void SetLeftWeapons(const ChPtr::Shared<LeftWeaponComponent>& _weapons);
+	void SetWeapons(const ChPtr::Shared<WeaponComponent>& _weapons);
 
 	inline void SetCenterLength(const float _len) {if(_len > 0.0f) centerLength = _len; }
 
@@ -34,9 +26,9 @@ public:
 
 	inline unsigned long GetAttackCount() { return attackCount; }
 
-	inline void SetHaveWeaponType(PriorityWeaponType _type) { priorityWeaponType = _type; }
+	inline void SetHaveWeaponType(WeaponHandType _type) { priorityWeaponType = _type; }
 
-	inline PriorityWeaponType GetHaveWeaponType() { return priorityWeaponType; }
+	inline WeaponHandType GetHaveWeaponType() { return priorityWeaponType; }
 
 	inline void SetAttackType(const ChCpp::BitBool& _type) { attackType = _type; }
 
@@ -66,18 +58,16 @@ private:
 	void FindLeftPriorityAttack();
 
 	void FindAttackFunction(
-		WeaponComponent& _weaponFunction,
+		WeaponHandType _type,
 		std::vector<ControllerBase::InputName>& _commandList,
 		ControllerBase::InputName _attack,
 		ControllerBase::InputName _weaponUpChange,
-		ControllerBase::InputName _weaponDownChange,
-		ControllerBase::InputName _typeUpChange,
-		ControllerBase::InputName _typeDownChange);
+		ControllerBase::InputName _weaponDownChange);
 
 	void CreateAttackCommand(
-		unsigned long maxSize,
-		unsigned long nowSelectCount,
-		unsigned long targetSelectCount,
+		size_t maxSize,
+		size_t nowSelectCount,
+		size_t targetSelectCount,
 		std::vector<ControllerBase::InputName>& _commandList,
 		ControllerBase::InputName _upChange,
 		ControllerBase::InputName _downChange);
@@ -85,9 +75,7 @@ private:
 	void AttackFunction(CPUController& _controller,
 		std::vector<ControllerBase::InputName>& _commandList);
 
-	ChPtr::Shared<RightWeaponComponent>rightWeaponFunctions;
-
-	ChPtr::Shared<LeftWeaponComponent>leftWeaponFunctions;
+	ChPtr::Shared<WeaponComponent>weaponFunctions;
 
 	ChCpp::BitBool attackType;
 	ChPtr::Shared<CPUWeaponSelect> selectWeapon = nullptr;
@@ -96,7 +84,7 @@ private:
 
 	std::vector<ControllerBase::InputName>rightCommandList;
 
-	PriorityWeaponType priorityWeaponType = PriorityWeaponType::Right;
+	WeaponHandType priorityWeaponType = WeaponHandType::Right;
 
 	float centerLength = 1.0f;
 

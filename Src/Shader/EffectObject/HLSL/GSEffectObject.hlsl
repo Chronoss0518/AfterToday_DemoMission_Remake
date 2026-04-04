@@ -10,12 +10,7 @@ void main(
 	inout TriangleStream<In_Pixel> res
 )
 {
-	if (input[0].displayFlg < 1) 
-	{
-		return;
-	}
-
-	if (input[0].color.a <= alphaTestNum)
+    if (input[0].displayFlg < 1 || input[0].color.a <= alphaTestNum) 
 	{
 		return;
 	}

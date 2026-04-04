@@ -31,6 +31,7 @@
     <ClInclude Include="Src\Attack\AttackObject.h" />
     <ClInclude Include="Src\BaseIncluder.h" />
     <ClInclude Include="Src\BaseMecha\BaseMecha.h" />
+    <ClInclude Include="Src\BaseMecha\Direction.h" />
     <ClInclude Include="Src\BaseMecha\Controller\ControllerBase.h" />
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUActionBase.h" />
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUAttack.h" />
@@ -38,18 +39,36 @@
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUMovePositionSelector.h" />
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUWeaponSelector.h" />
     <ClInclude Include="Src\BaseMecha\Controller\CPUAction\CPUTargetSelector.h" />
+    <ClInclude Include="Src\BaseMecha\Controller\CPUController.h" />
+    <ClInclude Include="Src\BaseMecha\Controller\PlayerController.h" />
     <ClInclude Include="Src\BaseMecha\CPU\CPULooker.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\BoostComponent.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\CameraComponent.h" />
+    <ClInclude Include="Src\BaseMecha\FunctionComponent\EnergyComponent.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\FunctionComponent.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\MoveComponent.h" />
     <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponent.h" />
-    <ClInclude Include="Src\BaseMecha\FunctionComponent\WeaponComponents.h" />
     <ClInclude Include="Src\BaseMecha\MechaEditor.h" />
     <ClInclude Include="Src\BaseMecha\MechaParts.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\AerodynamicsData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\BoostBrustData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\CameraData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\CaterpillarData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\EnergyTankData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\GunData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\MoveDataBase.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosBase.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\PostureData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\ScopeData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\SwordData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\WalkData.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsData\WeaponDataBase.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObject.h" />
+    <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.h" />
+    <ClInclude Include="Src\BaseMecha\WeaponHandType.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h" />
     <ClInclude Include="Src\EditFrameDrawObject\PanelObject\PanelObject.h" />
     <ClInclude Include="Src\EditFrame\ParameterDisplay.h" />
@@ -80,6 +99,7 @@
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h" />
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h" />
     <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h" />
+    <ClInclude Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\PhysicsMachineTest\PhysicsMachine.cpp" />
@@ -99,15 +119,32 @@
     <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUMovePositionSelector.cpp" />
     <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUWeaponSelector.cpp" />
     <ClCompile Include="Src\BaseMecha\Controller\CPUAction\CPUTargetSelector.cpp" />
+    <ClCompile Include="Src\BaseMecha\Controller\CPUController.cpp" />
+    <ClCompile Include="Src\BaseMecha\Controller\PlayerController.cpp" />
     <ClCompile Include="Src\BaseMecha\CPU\CPULooker.cpp" />
     <ClCompile Include="Src\BaseMecha\FunctionComponent\BoostComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\FunctionComponent\CameraComponent.cpp" />
+    <ClCompile Include="Src\BaseMecha\FunctionComponent\EnergyComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\FunctionComponent\FunctionComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\FunctionComponent\MoveComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\FunctionComponent\WeaponComponent.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaEditor.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaParts.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\AerodynamicsData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\BoostBrustData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\CameraData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\CaterpillarData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\EnergyTankData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\GunData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosBase.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\PostureData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\ScopeData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\SwordData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\WalkData.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsData\WeaponDataBase.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObject.cpp" />
+    <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\PostureFunction.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\WeaponFunction.cpp" />
     <ClCompile Include="Src\EditFrameDrawObject\PanelList\PanelList.cpp" />
@@ -138,6 +175,7 @@
     <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.cpp" />
     <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.cpp" />
     <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp" />
+    <ClCompile Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\GSEffectObject.hlsl">
@@ -146,9 +184,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">main</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -157,6 +195,11 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ObjectFileOutput>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\PSEffectObject.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -173,6 +216,13 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -189,6 +239,13 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)..\Src\Shader\EffectObject\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectSprite\HLSL\GSEffectSprite.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -203,6 +260,15 @@
       </ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ObjectFileOutput>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectSprite\HLSL\PSEffectSprite.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -217,6 +283,15 @@
       </ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Src\Shader\EffectSprite\HLSL\VSEffectSprite.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -231,6 +306,15 @@
       </ObjectFileOutput>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)..\Src\Shader\EffectSprite\%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,9 +326,11 @@
     <None Include="Resource\RobotParts\CA_01.mpd" />
     <None Include="Resource\RobotParts\CG_01.mpd" />
     <None Include="Resource\RobotParts\core_parts_list.lst" />
+    <None Include="Resource\RobotParts\CST_01.mpd" />
     <None Include="Resource\RobotParts\CT.mpd" />
     <None Include="Resource\RobotParts\FA_01.mpd" />
     <None Include="Resource\RobotParts\FG_01.mpd" />
+    <None Include="Resource\RobotParts\FST_01.mpd" />
     <None Include="Resource\RobotParts\FT.mpd" />
     <None Include="Resource\RobotParts\HA_01.mpd" />
     <None Include="Resource\RobotParts\HG_01.mpd" />
@@ -262,12 +348,14 @@
     <None Include="Resource\StageData\Test_Stage2.json" />
     <None Include="Resource\StageData\Test_Stage3.json" />
     <None Include="Resource\StageData\Test_Stage4.json" />
+    <None Include="Resource\StageData\Test_Stage_NoCPU.json" />
     <None Include="Resource\StageData\Test_Stage_Wave.json" />
     <None Include="Resource\StageScript\CPU\AirRobot.amf" />
     <None Include="Resource\StageScript\CPU\GuardianRobot.amf" />
     <None Include="Resource\StageScript\CPU\NormalRobot.amf" />
     <None Include="Resource\StageScript\stage1.chs" />
     <None Include="Resource\StageScript\stage2.chs" />
+    <None Include="Resource\StageScript\stage_no_cpu.chs" />
     <None Include="Resource\StageScript\test_stage.chs" />
     <None Include="Src\Shader\EffectObject\HLSL\EffectObjectShader.hlsli" />
     <None Include="Src\Shader\EffectSprite\HLSL\EffectSpriteShader.hlsli" />
@@ -283,20 +371,22 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -324,20 +414,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)StaticLibrary\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)StaticLibrary\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)StaticLibrary\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary;C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Src\External\ChCppLibrary\ChCppLibrary\StaticLibrary;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)StaticLibrary\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -351,7 +441,8 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <EntryPointSymbol>
@@ -366,12 +457,14 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -382,6 +475,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -391,13 +485,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_WINDOWS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

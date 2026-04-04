@@ -2,35 +2,24 @@
 
 #include"MechaParts.h"
 
+#include"WeaponHandType.h"
+
 class GameFrame;
 class ExternalFunction;
 class WeaponFunction;
+class MechaPartsObject;
 
 class Attack;
 class AttackObject;
 
-enum class PostureDirection : unsigned char
+enum class StartRotatePosture
 {
-	X,
-	Y,
-	Z
+	XY,
+	YX,
+	None
 };
 
-enum class PostrueType : unsigned char
-{
-	//垂直//
-	Vertical,
-	//水平//
-	Horizontal
-};
-
-struct FramePosture
-{
-	PostureDirection direction;
-	PostrueType type;
-};
-
-class MechaPartsObject
+class MechaPartsObject:public ChCpp::TransformObject<wchar_t>
 {
 public:
 
@@ -38,9 +27,9 @@ public:
 
 public:
 
-	void CreateAnchor();
+	void CreateEnd();
 
-	void CreateFramePosture(ChCpp::FrameObject* _frameObejct);
+	void CreateAnchor();
 
 public:
 
@@ -48,7 +37,9 @@ public:
 
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize();
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize();
+
+	void SerializeWeapon(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _obj, const std::wstring& _jsonParameterText, WeaponHandType _type);
 
 public:
 
@@ -57,34 +48,11 @@ public:
 		weaponFunctions.push_back(_weapon);
 	}
 
-	void AddExternalFunction(ChPtr::Shared<ExternalFunction> _function)
-	{
-		externalFunctions.push_back(_function);
-	}
-
-	inline void AddChildObject(const std::string& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject)
-	{
-		if (_partsObject == nullptr)return;
-
-		auto&& tmpObject = positions.find(_objectType);
-		if (tmpObject == positions.end())
-		{
-			positions[_objectType] = _partsObject;
-			return;
-		}
-
-		if (tmpObject->second != nullptr)
-		{
-			tmpObject->second->Release();
-			tmpObject->second = nullptr;
-		}
-
-		tmpObject->second = _partsObject;
-	}
+	void AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _partsObject);
 
 public:
 
-	inline void RemoveChildObject(const std::string& _objectType)
+	inline void RemoveChildObject(const std::wstring& _objectType)
 	{
 		auto findObject = positions.find(_objectType);
 		if (findObject == positions.end())return;
@@ -101,48 +69,36 @@ public:
 
 public:
 
-	void SetPositoinObject(MechaPartsObject* _parent, ChPtr::Shared<ChCpp::FrameObject>_positionObject) { positionObject = _positionObject; parentObject = _parent; }
-
-	void SetPartsPosData(unsigned char _names, unsigned long _no) { partsPosName = _names; partsPosNo = _no; }
-
-	void SetRotation(const ChVec3& _rot) { baseRot = _rot; }
-
-	void SetRWeapon(const bool _flg) { weaponType.SetBitFlg(0,_flg); }
-
-	void SetLWeapon(const bool _flg) { weaponType.SetBitFlg(1, _flg); }
+	void SetPartsPosData(unsigned char _names, size_t _no) { partsPosName = _names; partsPosNo = _no; }
 
 	void SetFrame(GameFrame* _frame) { frame = _frame; }
 
 	void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
 
-	void SetLookAnchorNo(const unsigned long _no) { lookAnchorNo = _no; }
+	void SetLookAnchorNo(const size_t _no) { lookAnchorNo = _no; }
 
 	void SetHitSize();
 
-	void SetPositionObjectRotationYAxis(float _rot);
-	
-	void SetPositionObjectRotationXAxis(float _rot);
+	inline void SetPartsParameters(ChPtr::Shared<PartsParameters> _param)
+	{
+		if (partsParameter != nullptr)return;
+		if (_param == nullptr)return;
 
-	void SetPositionObjectRotationZAxis(float _rot);
-
-	void SetParentRotationYAxis(unsigned long _no,float _rot);
-
-	void SetParentRotationXAxis(unsigned long _no, float _rot);
-
-	void SetParentRotationZAxis(unsigned long _no, float _rot);
+		partsParameter = _param;
+	}
 
 public:
+
+	inline ChPtr::Shared<MechaPartsObject>GetChildParts(const std::wstring& _nextPosName)
+	{
+		auto pos = positions.find(_nextPosName);
+		if (pos == positions.end())return nullptr;
+		return pos->second;
+	}
 
 	MechaParts* GetBaseObject() { return baseParts; }
 
 	BaseMecha* GetBaseMecha() { return mecha; }
-
-	ChPtr::Shared<ChCpp::FrameObject> GetPositionObject() { return positionObject; }
-
-	std::vector<ChPtr::Shared<ExternalFunction>>& GetExternalFunctions()
-	{
-		return externalFunctions;
-	}
 
 	std::vector<ChPtr::Shared<WeaponFunction>> GetWeaponFunctions()
 	{
@@ -154,17 +110,11 @@ public:
 		return &collider;
 	}
 
-	inline ChLMat GetLastDrawMat() { return lastDrawMat; }
-
 	float GetDurableValue() { return durableValue; }
 
 	unsigned char GetPartsPosName() { return partsPosName; }
 
-	unsigned long GetPartsPosNo() { return partsPosNo; }
-
-	bool GetRWeapon() { return weaponType.GetBitFlg(0); }
-
-	bool GetLWeapon() { return weaponType.GetBitFlg(1); }
+	size_t GetPartsPosNo() { return partsPosNo; }
 
 	float GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet);
 
@@ -172,90 +122,58 @@ public:
 
 	float GetDamage(AttackObject& _bullet);
 
-	ChVec3 GetBaseRotation() { return baseRot; }
-
 	ChVec3 GetColliderSize() { return collider.GetScl(); }
 
-	unsigned long GetLookAnchorNo() { return lookAnchorNo; }
-
-	unsigned long GetUseAttackType() { return useAttackType; }
+	size_t GetLookAnchorNo() { return lookAnchorNo; }
 
 	std::wstring GetPartsName();
 
-	std::wstring GetWeaponName();
+	inline ChPtr::Shared<PartsParameters>GetPartsParameters() { return partsParameter; }
 
-	std::wstring GetNowBulletNum();
-
-	std::wstring GetReloadCount();
-
-	ChPtr::Shared<MechaPartsObject> GetChildParts(const std::string& _childPosition)
+	inline char GetWeaponPaletteCounter(size_t _num, WeaponHandType _type)
 	{
-		auto findObject = positions.find(_childPosition);
-		if (findObject == positions.end())return nullptr;
+		if (_num >= weaponPaletteCounter[ChStd::EnumCast(_type)].size())
+			return NOT_WEAPON_REGIST_NUM;
 
-		return (*findObject).second;
+		return weaponPaletteCounter[ChStd::EnumCast(_type)][_num];
 	}
-
-	MechaPartsObject* GetParent() { return parentObject; }
 
 public:
 
-	void Update();
-
-	void UpdateFramePosture(ChCpp::FrameObject* _frameObject);
+	inline void AddWeaponPaletteCounter(char _num, WeaponHandType _type)
+	{
+		weaponPaletteCounter[ChStd::EnumCast(_type)].push_back(_num);
+	}
 
 public:
 
-	virtual void Draw(const ChLMat& _drawMat);
-
-	void  DrawEnd();
-
-private:
-
-	void FunctionDrawBegin();
-
-	void FunctionDrawEnd();
+	void Update()override;
 
 public:
 
-	void AttackUpdate();
+	void DrawBegin()override;
 
-	void StartWeaponSubFunction();
+	void Draw3D()override;
 
-	void UpUseAttackType()
-	{
-		useAttackType = (useAttackType + 1) % weaponFunctions.size();
-	}
-
-	void DownUseAttackType()
-	{
-		useAttackType = (useAttackType + weaponFunctions.size() - 1) % weaponFunctions.size();
-	}
+	void DrawEnd();
 
 protected:
 
 	ChCpp::SphereCollider collider;
 	MechaParts* baseParts;
-	ChLMat lastDrawMat;
+	ChLMat positionLastDrawMat;
 
 private:
 
 	GameFrame* frame = nullptr;
 
-	//Autoで敵を追尾すると時用に修正//
-	std::map<ChCpp::FrameObject*, ChPtr::Shared<FramePosture>> framePostures;
+	StartRotatePosture startRotatePosture = StartRotatePosture::None;
+	bool isInitRunFlg = false;
 
-	std::vector<ChPtr::Shared<ExternalFunction>>externalFunctions;
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;
+	std::vector<char>weaponPaletteCounter[DRAW_TYPE_COUNT];
 
-	std::map<std::string,ChPtr::Shared<MechaPartsObject>> positions;
-
-	unsigned long useAttackType = 0;
-
-	ChPtr::Shared<ChCpp::FrameObject>positionObject = nullptr;
-	MechaPartsObject* parentObject = nullptr;
-
-	ChVec3 baseRot = ChVec3();
+	std::map<std::wstring,ChPtr::Shared<MechaPartsObject>> positions;
 
 	//パーツの解除フラグ//
 	bool releaseFlg = false;
@@ -264,48 +182,11 @@ private:
 	float durableValue = 100.0f;
 
 	unsigned char partsPosName = -1;
-	unsigned long partsPosNo = 0;
-	ChCpp::BitBool weaponType;
+	size_t partsPosNo = 0;
 
-	unsigned long lookAnchorNo = 0xffffffff;
-
-	BaseMecha* mecha = nullptr;
-};
-
-class ExternalFunction
-{
-
-public:
-
-	virtual void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device) {};
-
-	virtual void Release() {};
-
-	inline void SetFrmae(GameFrame* _frame) { frame = _frame; }
-
-	inline void SetBaseMecha(BaseMecha* _mecha) { mecha = _mecha; }
-
-	virtual void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _targetObject) = 0;
-
-	virtual void Update() = 0;
-
-	virtual void DrawBegin() {};
-
-	virtual void DrawEnd() {};
-
-	inline void SetPartsObject(MechaPartsObject* _obj)
-	{
-		if (_obj == nullptr)return;
-
-		obj = _obj;
-	}
-
-protected:
-
-	GameFrame* frame = nullptr;
+	size_t lookAnchorNo = -1;
 
 	BaseMecha* mecha = nullptr;
 
-	MechaPartsObject* obj = nullptr;
-
+	ChPtr::Shared<PartsParameters>partsParameter = nullptr;
 };

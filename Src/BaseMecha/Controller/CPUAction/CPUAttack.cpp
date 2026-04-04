@@ -4,7 +4,7 @@
 
 #include"../../BaseMecha.h"
 
-#include"../../FunctionComponent/WeaponComponents.h"
+#include"../../FunctionComponent/WeaponComponent.h"
 
 #include"../../../Frames/GameFrame.h"
 #include"../../MechaPartsObjectFunction/WeaponFunction.h"
@@ -16,55 +16,42 @@
 #include"CPUTargetSelector.h"
 
 
-ChPtr::Shared<ChCpp::JsonObject> CPUAttack::Serialize()
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>> CPUAttack::Serialize()
 {
-	auto&& res = ChPtr::Make_S<ChCpp::JsonObject>();
+	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 
-	res->Set("CenterLength", ChCpp::JsonNumber::CreateObject(centerLength));
+	res->Set(L"CenterLength", ChCpp::JsonNumber<wchar_t>::CreateObject(centerLength));
 	
-	res->Set("PriorityWeaponType", ChCpp::JsonNumber::CreateObject(ChStd::EnumCast(priorityWeaponType)));
+	res->Set(L"PriorityWeaponType", ChCpp::JsonNumber<wchar_t>::CreateObject(ChStd::EnumCast(priorityWeaponType)));
 	
-	res->Set("AttackCount", ChCpp::JsonNumber::CreateObject(attackCount));
+	res->Set(L"AttackCount", ChCpp::JsonNumber<wchar_t>::CreateObject(attackCount));
 
-	res->Set("AttackType", ChCpp::JsonNumber::CreateObject(attackType.GetValue()));
+	res->Set(L"AttackType", ChCpp::JsonNumber<wchar_t>::CreateObject(attackType.GetValue()));
 
 	return res;
 }
 
-void CPUAttack::Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)
+void CPUAttack::Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)
 {
 	if (_jsonObject == nullptr)return;
 
-	auto&& centerLengthObject = _jsonObject->GetJsonNumber("CenterLength");
+	auto&& centerLengthObject = _jsonObject->GetJsonNumber(L"CenterLength");
 	if (centerLengthObject != nullptr)centerLength = *centerLengthObject;
 	
-	auto&& priorityWeaponTypeObject = _jsonObject->GetJsonNumber("PriorityWeaponType");
-	if (priorityWeaponTypeObject != nullptr)priorityWeaponType = static_cast<PriorityWeaponType>((unsigned char)*priorityWeaponTypeObject);
+	auto&& priorityWeaponTypeObject = _jsonObject->GetJsonNumber(L"PriorityWeaponType");
+	if (priorityWeaponTypeObject != nullptr)priorityWeaponType = static_cast<WeaponHandType>((unsigned char)*priorityWeaponTypeObject);
 
-	auto&& attackCountObject = _jsonObject->GetJsonNumber("AttackCount");
+	auto&& attackCountObject = _jsonObject->GetJsonNumber(L"AttackCount");
 	if (attackCountObject != nullptr)attackCount = *attackCountObject;
 
-	auto&& attackTypeObject = _jsonObject->GetJsonNumber("AttackType");
+	auto&& attackTypeObject = _jsonObject->GetJsonNumber(L"AttackType");
 	if (attackTypeObject != nullptr)attackType.SetValue(*attackTypeObject);
 
 }
 
-void CPUAttack::SetRightWeapons(const ChPtr::Shared<RightWeaponComponent>& _weapons)
+void CPUAttack::SetWeapons(const ChPtr::Shared<WeaponComponent>& _weapons)
 {
-	rightWeaponFunctions = _weapons;
-
-	if (rightWeaponFunctions == nullptr)return;
-
-	SetAttackTypeFlgs(*rightWeaponFunctions);
-}
-
-void CPUAttack::SetLeftWeapons(const ChPtr::Shared<LeftWeaponComponent>& _weapons)
-{
-	leftWeaponFunctions = _weapons;
-
-	if (leftWeaponFunctions == nullptr)return;
-
-	SetAttackTypeFlgs(*leftWeaponFunctions);
+	weaponFunctions = _weapons;
 }
 
 void CPUAttack::Update(
@@ -79,7 +66,7 @@ void CPUAttack::Update(
 
 	if (selectWeapon == nullptr)return;
 
-	//OutputDebugString("CPUAttack Update Start\n");
+	//OutputDebugStringW(L"CPUAttack Update Start\n");
 
 	FindRightPriorityAttack();
 
@@ -89,152 +76,105 @@ void CPUAttack::Update(
 
 	AttackFunction(_controller, rightCommandList);
 
-	//OutputDebugString("CPUAttack Update End\n");
+	//OutputDebugStringW(L"CPUAttack Update End\n");
 }
 
-void CPUAttack::SetAttackTypeFlgs(WeaponComponent& _weaponFunction)
-{
-
-	for (auto&& weapon : _weaponFunction.GetRegistWeaponList())
-	{
-		auto&& function = weapon.lock();
-
-		auto&& attackData = function->GetAttackData();
-
-		unsigned char attackTypeValue = attackData->GetAttackType();
-
-		attackTypeValue |= attackType.GetValue();
-
-		attackType.SetValue(attackTypeValue);
-
-		if (attackTypeValue == 31)break;
-	}
-}
 
 void CPUAttack::FindRightPriorityAttack()
 {
 	if (!leftCommandList.empty())return;
 	if (!rightCommandList.empty())return;
-	if (priorityWeaponType != PriorityWeaponType::Right)return;
+	if (priorityWeaponType != WeaponHandType::Right)return;
 
 	FindAttackFunction(
-		*rightWeaponFunctions,
+		WeaponHandType::Right,
 		rightCommandList,
 		ControllerBase::InputName::RAttack,
 		ControllerBase::InputName::RWUChange,
-		ControllerBase::InputName::RWDChange,
-		ControllerBase::InputName::RATUChange,
-		ControllerBase::InputName::RATDChange);
+		ControllerBase::InputName::RWDChange);
 
 	FindAttackFunction(
-		*leftWeaponFunctions,
+		WeaponHandType::Left,
 		leftCommandList,
 		ControllerBase::InputName::LAttack,
 		ControllerBase::InputName::LWUChange,
-		ControllerBase::InputName::LWDChange,
-		ControllerBase::InputName::LATUChange,
-		ControllerBase::InputName::LATDChange);
+		ControllerBase::InputName::LWDChange);
 }
 
 void CPUAttack::FindLeftPriorityAttack()
 {
 	if (!leftCommandList.empty())return;
 	if (!rightCommandList.empty())return;
-	if (priorityWeaponType != PriorityWeaponType::Left)return;
+	if (priorityWeaponType != WeaponHandType::Left)return;
 
 	FindAttackFunction(
-		*leftWeaponFunctions,
+		WeaponHandType::Left,
 		leftCommandList,
 		ControllerBase::InputName::LAttack,
 		ControllerBase::InputName::LWUChange,
-		ControllerBase::InputName::LWDChange,
-		ControllerBase::InputName::LATUChange,
-		ControllerBase::InputName::LATDChange);
+		ControllerBase::InputName::LWDChange);
 
 	FindAttackFunction(
-		*rightWeaponFunctions,
+		WeaponHandType::Right,
 		rightCommandList,
 		ControllerBase::InputName::RAttack,
 		ControllerBase::InputName::RWUChange,
-		ControllerBase::InputName::RWDChange,
-		ControllerBase::InputName::RATUChange,
-		ControllerBase::InputName::RATDChange);
+		ControllerBase::InputName::RWDChange);
 
 }
 
 void CPUAttack::FindAttackFunction(
-	WeaponComponent& _weaponFunction,
+	WeaponHandType _type,
 	std::vector<ControllerBase::InputName>& _commandList,
 	ControllerBase::InputName _attack,
 	ControllerBase::InputName _weaponUpChange,
-	ControllerBase::InputName _weaponDownChange,
-	ControllerBase::InputName _typeUpChange,
-	ControllerBase::InputName _typeDownChange)
+	ControllerBase::InputName _weaponDownChange)
 {
-	if (ChPtr::NullCheck(&_weaponFunction))return;
 	if (!_commandList.empty())return;
+	if (weaponFunctions == nullptr)return;
 
-	unsigned long nowSelectWeapon = _weaponFunction.GetUseWeaponNo();
-	unsigned long nowSelectAttack = -1;
+	size_t nowSelectWeapon = weaponFunctions->GetUseWeaponNo(_type);
+	size_t nowSelectAttack = -1;
 
-	unsigned long targetWeapon = -1;
-	unsigned long targetAttackType = -1;
+	size_t targetWeapon = -1;
 
-	auto&& registWeaponList = _weaponFunction.GetWeaponMechaPartsList();
-
-	unsigned long maxWeaponSize = registWeaponList.size();
-	unsigned long maxAttackSize = 0;
-	ChPtr::Shared<MechaPartsObject> weapon = nullptr;
-
-	for (unsigned long i = 0; i < maxWeaponSize; i++)
+	ChPtr::Shared<WeaponFunction> weapon = nullptr;
+	for (unsigned char i = 0; i < PALETTE_COUNT; i++)
 	{
-		weapon = registWeaponList[i].lock();
+		weapon = weaponFunctions->GetWeaponFunction(_type, i);
 		if (weapon == nullptr)continue;
 
-		auto&& weaponFunctions = weapon->GetWeaponFunctions();
-		maxAttackSize = weaponFunctions.size();
-		for (unsigned long j = 0; j < maxAttackSize; j++)
-		{
-			ChCpp::BitBool attackTypes = weaponFunctions[j]->GetAttackData()->GetAttackType();
-			if (!attackType.GetBitFlg(ChStd::EnumCast(selectWeapon->GetAttackType())))continue;
-			nowSelectAttack = weapon->GetUseAttackType();
-			targetWeapon = i;
-			targetAttackType = j;
-			break;
-		}
-
-		if (targetWeapon > maxWeaponSize || targetAttackType > maxAttackSize)continue;
+		ChCpp::BitBool attackTypes = weapon->GetAttackData()->GetAttackType();
+		if (!attackType.GetBitFlg(ChStd::EnumCast(selectWeapon->GetAttackType())))continue;
+		targetWeapon = i;
 
 		break;
-
 	}
 
-	if (targetWeapon > maxWeaponSize || targetAttackType > maxAttackSize)return;
+	if (targetWeapon > PALETTE_COUNT)return;
 
-	for (unsigned long i = 0; i < attackCount; i++)
+	for (size_t i = 0; i < attackCount; i++)
 	{
 		_commandList.push_back(_attack);
 	}
 
-	CreateAttackCommand(maxAttackSize, nowSelectAttack, targetAttackType, _commandList, _typeUpChange, _typeDownChange);
-
-	CreateAttackCommand(maxWeaponSize, nowSelectWeapon, targetWeapon, _commandList, _weaponUpChange, _weaponDownChange);
+	CreateAttackCommand(PALETTE_COUNT, nowSelectWeapon, targetWeapon, _commandList, _weaponUpChange, _weaponDownChange);
 
 }
 
 void CPUAttack::CreateAttackCommand(
-	unsigned long maxSize,
-	unsigned long nowSelectCount,
-	unsigned long targetSelectCount,
+	size_t maxSize,
+	size_t nowSelectCount,
+	size_t targetSelectCount,
 	std::vector<ControllerBase::InputName>& _commandList,
 	ControllerBase::InputName _upChange,
 	ControllerBase::InputName _downChange)
 {
 
 	bool upFlg = true;
-	unsigned long moveCount = (maxSize + nowSelectCount - targetSelectCount) % maxSize;
+	size_t moveCount = (maxSize + nowSelectCount - targetSelectCount) % maxSize;
 
-	unsigned long testMoveCount = ((maxSize * 2) - nowSelectCount - targetSelectCount) % maxSize;
+	size_t testMoveCount = ((maxSize * 2) - nowSelectCount - targetSelectCount) % maxSize;
 
 	if (moveCount > testMoveCount)
 	{
@@ -242,7 +182,7 @@ void CPUAttack::CreateAttackCommand(
 		upFlg = false;
 	}
 
-	for (unsigned long i = 0; i < moveCount; i++)
+	for (size_t i = 0; i < moveCount; i++)
 	{
 		_commandList.push_back(upFlg ? _upChange : _downChange);
 	}

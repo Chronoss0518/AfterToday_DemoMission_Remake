@@ -6,9 +6,9 @@ class CPUTargetSelect :public CPUActionBase
 {
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize()override;
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)override;
 
 	unsigned long Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller);
 
@@ -18,9 +18,9 @@ class CPUTargetSelector : public FunctionsBase<CPUTargetSelect>
 {
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize()override;
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)override;
 
 	void Update(CPUObjectLooker& _looker, GameFrame& _frame, CPUController& _controller);
 

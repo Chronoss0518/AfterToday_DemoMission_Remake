@@ -14,15 +14,15 @@ public:
 
 public:
 
-	static ChPtr::Shared<ParameterTitlePanel> CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::string& _title);
+	static ChPtr::Shared<ParameterTitlePanel> CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _textDrawer, const std::wstring& _title);
 
 public:
 
-	void CreateTitle(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title);
+	void CreateTitle(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _title);
 
 protected:
 
-	virtual void CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title);
+	virtual void CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _title);
 
 public:
 
@@ -41,7 +41,7 @@ protected:
 
 protected:
 
-	virtual void CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _text, const ChVec2& _size);
+	virtual void CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _text, const ChVec2& _size);
 
 protected:
 
@@ -61,9 +61,9 @@ class ParameterValuePanel : public ParameterTitlePanel
 {
 public:
 
-	static ChPtr::Shared<ParameterValuePanel> CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::string& _title, TextDrawerWICBitmap& _valueDrawer, unsigned long* _baseValue, unsigned long* _nextValue, bool _inversOperatorFlg);
+	static ChPtr::Shared<ParameterValuePanel> CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::wstring& _title, TextDrawerWICBitmap& _valueDrawer, unsigned long* _baseValue, unsigned long* _nextValue, bool _inversOperatorFlg);
 
-	static ChPtr::Shared<ParameterValuePanel> CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::string& _title, TextDrawerWICBitmap& _valueDrawer, float* _baseValue , float* _nextValue, bool _inversOperatorFlg);
+	static ChPtr::Shared<ParameterValuePanel> CreatePanel(ID3D11Device* _device, TextDrawerWICBitmap& _titleDrawer, const std::wstring& _title, TextDrawerWICBitmap& _valueDrawer, float* _baseValue , float* _nextValue, bool _inversOperatorFlg);
 
 public:
 
@@ -75,9 +75,9 @@ protected:
 	
 public:
 
-	void CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _title)override;
+	void CreateTitleImage(TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _title)override;
 
-	void CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::string& _text, const ChVec2& _size)override;
+	void CreateTexture(ChD3D11::Texture11& _outTexture, TextDrawerWICBitmap& _textDrawer, ID3D11Device* _device, const std::wstring& _text, const ChVec2& _size)override;
 
 public:
 

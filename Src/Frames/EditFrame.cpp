@@ -12,7 +12,9 @@
 
 #include"../SelectList/SelectList.h"
 
-#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Edit/") current_path
+#include"../Application/Application.h"
+
+#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
 
 #define MECHA_ROTATION_SPEED 1.0f
 
@@ -98,6 +100,7 @@ public:
 	ChPtr::Shared<MechaPartsObject> targetParts = nullptr;
 };
 
+
 class EditList :public SelectListBase
 {
 public:
@@ -109,13 +112,13 @@ public:
 
 public:
 
-	void CreateSelectImage(const std::string& _fileName, ID3D11Device* _device)
+	void CreateSelectImage(const std::wstring& _fileName, ID3D11Device* _device)
 	{
 		if (_fileName.empty())return;
 		selectImage.CreateTexture(_fileName, _device);
 	}
 
-	void CreatePanelBackGround(const std::string& _fileName,ID3D11Device* _device)
+	void CreatePanelBackGround(const std::wstring& _fileName,ID3D11Device* _device)
 	{
 		if (_fileName.empty())return;
 		background.CreateTexture(_fileName, _device);
@@ -127,7 +130,7 @@ public:
 
 public:
 
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<EditListItem>(_drawItem);
 		if (item == nullptr)return;
@@ -155,18 +158,64 @@ private:
 	ChD3D11::Sprite11 sprite;
 };
 
+class EditControlListItem : public SelectListItemBase
+{
+public:
+
+	inline virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)
+	{
+		ChVec4 rect = _rect;
+		rect.left += TEXT_ALIGN;
+		rect.right -= TEXT_ALIGN;
+
+		rect.top = _rect.top + PANEL_TITLE_Y;
+		rect.bottom = rect.top + PANEL_TITLE_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+	}
+
+	ChPtr::Shared<ChD3D11::Texture11> positionNameTexture = nullptr;
+};
+
+class EditControlList : public EditListItem
+{
+public:
+
+	inline void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)override
+	{
+		ChVec4 rect = _rect;
+		rect.left += TEXT_ALIGN;
+		rect.right -= TEXT_ALIGN;
+
+		rect.top = _rect.top + PANEL_POS_TITLE_Y;
+		rect.bottom = rect.top + PANEL_POS_TITLE_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*positionNameTexture, _sprite);
+
+		rect.top = _rect.top + PANEL_POS_PARTS_Y;
+		rect.bottom = rect.top + PANEL_POS_PARTS_HEIGHT;
+
+		_sprite.SetPosRect(RectToGameWindow(rect));
+		_drawer.Draw(*partsNameTexture, _sprite);
+	}
+
+	ChPtr::Shared<ChD3D11::Texture11>  partsNameTexture = nullptr;
+	ChPtr::Shared<MechaPartsObject> targetParts = nullptr;
+};
+
 void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
-	controller.Init();
+	MenuBase::InitMenu();
 
-	MenuBase::InitMenu(&controller);
-
-	auto&& device = ChD3D11::D3D11Device();
 	spriteShader.Init(device);
-	rtView.CreateRenderTarget(GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
-	dsView.CreateDepthBuffer(GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rtView.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	dsView.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 	backgroundSprite.Init();
 	backgroundSprite.SetInitPosition();
@@ -183,7 +232,7 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	nowLoadingSprite.Init();
 	nowLoadingSprite.SetInitPosition();
-	nowLoading.CreateTexture(TEXTURE_DIRECTORY("NowLoading.png"), device);
+	nowLoading.CreateTexture(TEXTURE_DIRECTORY(L"NowLoading.png"), device);
 	InitNowLoadingRect();
 
 
@@ -200,11 +249,14 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
-	loadDisplay->Init(device, &controller);
+	loadDisplay->Init();
 
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
 	parameterList = ChPtr::Make_S<ParameterList>();
+	AddSpecialKey('Z');
+	AddSpecialKey('X');
+	AddSpecialKeyMask(XINPUT_GAMEPAD_X | XINPUT_GAMEPAD_Y);
 
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->SetDrawCount(PANEL_COUNT);
@@ -212,24 +264,23 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	partsList->SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
 	partsList->SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
 	partsList->SetAlighSize(0.0f, PANEL_SIZE_H);
-	partsList->CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY("PartsPanel.png"), device);
-	partsList->CreateSelectImage(EDIT_TEXTURE_DIRECTORY("PartsPanelSelect.png"), device);
+	partsList->CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
+	partsList->CreateSelectImage(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
 
-	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY("UPButton.png"), device);
+	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
 		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, UP_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, UP_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 
-	selectButton[ChStd::EnumCast(SelectButtonType::Down)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY("DownButton.png"), device);
+	selectButton[ChStd::EnumCast(SelectButtonType::Down)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"DownButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Down)].sprite,
 		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, DOWN_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, DOWN_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 
 	selectFlg = false;
 
-	rightPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY("PanelList.png"), device);
-	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY("PanelList.png"), device);
+	rightPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
+	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
 	
 	Load();
-
 
 	sendData = ChPtr::SharedSafeCast<FromStageSelectFrameData>(_sendData);
 }
@@ -255,6 +306,13 @@ void EditFrame::Update()
 		rotate += ChVec3(0.0f, MECHA_ROTATION_SPEED, 0.0f);
 
 		editMecha->SetRotation(rotate);
+
+		auto&& keyInput = AppIns().GetKeyInput();
+		if (keyInput.IsPushKeyNoHold('C'))
+		{
+			//editMecha->RemoveCore();
+
+		}
 	}
 
 	UpdateNowLoadingRect();
@@ -280,8 +338,8 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 
 void EditFrame::InitNowLoadingRect()
 {
-	animationMoveSpeed = 1.0f / (NOW_LOADING_ANIMATION_MOVE_SPEED * static_cast<float>(ChSystem::SysManager().GetFPS()));
-	animationWaitTime = 1.0f / (NOW_LOADING_ANIMATION_WAIT_TIME * static_cast<float>(ChSystem::SysManager().GetFPS()));
+	animationMoveSpeed = 1.0f / (NOW_LOADING_ANIMATION_MOVE_SPEED * static_cast<float>(AppIns().GetFPS()));
+	animationWaitTime = 1.0f / (NOW_LOADING_ANIMATION_WAIT_TIME * static_cast<float>(AppIns().GetFPS()));
 	nowLoadingPosRect = ChVec4::FromRect(-1.0f, 1.0f, -1.0f, -1.0f);
 	nowLoadingUVRect = ChVec4::FromRect(0.0f, 0.0f, 0.0f, 1.0f);
 	nowAnimationWaitTime = 1.0f;
@@ -296,7 +354,7 @@ void EditFrame::SetPartsList(MechaPartsObject& _parts)
 
 	selectPartsPanel->positionNameTexture = CreatePanelPosTitleTexture(L"Select Parts");
 
-	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(ChStr::UTF8ToWString(base->GetMyName()));
+	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 
 	partsList->AddItem(selectPartsPanel);
 
@@ -315,26 +373,26 @@ void EditFrame::SetPartsList(MechaPartsObject& _parts)
 
 }
 
-void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName)
+void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName)
 {
 	if (_parts != nullptr)return;
 	auto&& res = ChPtr::Make_S<EditListItem>();
 
-	res->positionNameTexture = CreatePanelTitleTexture(ChStr::UTF8ToWString(_positionName));
+	res->positionNameTexture = CreatePanelTitleTexture(L"+ " + _positionName);
 
 	_res = res;
 }
 
-void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::string& _positionName)
+void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName)
 {
 	if (_parts == nullptr)return;
 	auto&& res = ChPtr::Make_S<EditListPartsItem>();
 
-	res->positionNameTexture = CreatePanelPosTitleTexture(ChStr::UTF8ToWString(_positionName));
+	res->positionNameTexture = CreatePanelPosTitleTexture(_positionName);
 
 	auto&& base = _parts->GetBaseObject();
 
-	res->partsNameTexture = CreatePanelPosPartsTexture(ChStr::UTF8ToWString(base->GetMyName()));
+	res->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 
 	res->targetParts = _parts;
 
@@ -343,6 +401,7 @@ void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shar
 
 void EditFrame::UpdateAction(ActionType _type)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	parameterList->Update(_type);
 
@@ -368,7 +427,7 @@ void EditFrame::UpdateAction(ActionType _type)
 		selectParts = selectStack[selectStack.size() - 1];
 		selectStack.pop_back();
 
-		parameterList->SetBaseParts(ChD3D11::D3D11Device(),selectParts);
+		parameterList->SetBaseParts(device,selectParts);
 
 		partsList->ClearItem();
 		SetPartsList(*selectParts);
@@ -404,7 +463,7 @@ void EditFrame::UpdateAction(ActionType _type)
 		selectParts = nullptr;
 		selectParts = partsPanel->targetParts;
 
-		parameterList->SetBaseParts(ChD3D11::D3D11Device(), selectParts);
+		parameterList->SetBaseParts(device, selectParts);
 
 		partsList->ClearItem();
 		SetPartsList(*selectParts);
@@ -416,12 +475,12 @@ void EditFrame::UpdateAction(ActionType _type)
 void EditFrame::UpdateMouse()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
 
-	InputTest(MenuBase::ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	InputTest(MenuBase::ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
-	InputTest(MenuBase::ActionType::Cancel, manager.IsPushKeyNoHold(VK_RBUTTON));
+	InputTest(MenuBase::ActionType::Cancel, keyInput.IsPushKeyNoHold(VK_RBUTTON));
 
 	auto&& mouse = ChWin::Mouse();
 	mouse.Update();
@@ -469,7 +528,7 @@ void EditFrame::UpdateNowLoadingRect()
 
 void EditFrame::DrawFunction()
 {
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 	rtView.SetBackColor(dc, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 0.0f));
 	dsView.ClearDepthBuffer(dc);
@@ -497,7 +556,7 @@ void EditFrame::DrawFunction()
 
 	DrawEndLoading();
 
-	DrawNowLoading(dc);
+	DrawNowLoading();
 
 	loadDisplay->Draw(spriteShader);
 
@@ -506,7 +565,7 @@ void EditFrame::DrawFunction()
 	ChD3D11::Shader11().DrawEnd(rtView);
 }
 
-void EditFrame::DrawNowLoading(ID3D11DeviceContext* _dc)
+void EditFrame::DrawNowLoading()
 {
 	if (loadEndFlg)return;
 
@@ -548,7 +607,6 @@ void EditFrame::DrawEndLoading()
 		if (ChStd::EnumCast(selectType) == i)
 			spriteShader.Draw(*partsList->GetSelectImage(), selectButton[i].sprite);
 	}
-
 }
 
 ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTitleTexture(const std::wstring& _str)
@@ -576,7 +634,7 @@ ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTexture(const std::wstrin
 
 	auto&& res = ChPtr::Make_S<ChD3D11::Texture11>();
 
-	res->CreateColorTexture(ChD3D11::D3D11Device(), _drawer.bitmap.GetBitmap());
+	res->CreateColorTexture(AppIns().GetDirect3D11().GetDevice(), _drawer.bitmap.GetBitmap());
 
 	return res;
 }
@@ -584,11 +642,11 @@ ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTexture(const std::wstrin
 void EditFrame::Load()
 {
 
-	for (auto&& file : std::filesystem::directory_iterator(PARTS_DIRECTORY("")))
+	for (auto&& file : std::filesystem::directory_iterator(PARTS_DIRECTORY(L"")))
 	{
 		std::wstring path = file.path().c_str();
 
-		unsigned long len = path.rfind(L".");
+		size_t len = path.rfind(L".");
 
 		if (len == std::wstring::npos)continue;
 
@@ -596,20 +654,22 @@ void EditFrame::Load()
 
 		if (extensionName == L".lst")continue;
 
- 		pathList.push_back(ChStr::UTF8ToString(path));
+ 		pathList.push_back(path);
 	}
 
 }
 
 bool EditFrame::LoadPart()
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	for (unsigned long i = 0; i < LOAD_PARTS_COUNT; i++)
 	{
 		if (pathList.size() <= loadCount)return true;
 
-		auto&& parts = MechaParts::LoadParts(*editMecha, ChD3D11::D3D11Device(), &meshDrawer, nullptr, pathList[loadCount]);
+		auto&& parts = MechaParts::LoadParts(*editMecha, device, &meshDrawer, nullptr, pathList[loadCount]);
 
-		parts->GetBaseObject()->SetParameters();
+		parts->GetBaseObject()->SetParameters(*parts);
 
 		loadCount++;
 
@@ -618,11 +678,11 @@ bool EditFrame::LoadPart()
 		if (pathList.size() > loadCount)continue;
 
 		editMecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, nullptr);
-		editMecha->Load(ChD3D11::D3D11Device(), PLAYER_USE_MECHA_PATH);
+		editMecha->Load(device, PLAYER_USE_MECHA_PATH);
 
 		selectParts = editMecha->GetCoreParts();
 
-		parameterList->Init(ChD3D11::D3D11Device(), editMecha);
+		parameterList->Init(device, editMecha);
 
 		SetPartsList(*selectParts);
 

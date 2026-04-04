@@ -5,6 +5,8 @@
 
 #include"ShotEffectList.h"
 
+#include"../../Application/Application.h"
+
 #define OBJECT_SIZE 5.0f
 #define ANIMATION_COUNT 5
 
@@ -16,9 +18,9 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 	gameEndFlg = false;
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
-	effectShader->Init(ChD3D11::D3D11Device(), _maxCount);
+	effectShader->Init(_device, _maxCount);
 
-	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("ShotEffectTexture.png"), ANIMATION_COUNT, 1);
+	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"ShotEffectTexture.png"), ANIMATION_COUNT, 1);
 
 	effectShader->SetAlphaBlendTestFlg(true);
 

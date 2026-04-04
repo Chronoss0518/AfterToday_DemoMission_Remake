@@ -3,11 +3,11 @@
 #include"../MechaPartsObject.h"
 
 
-class PostureFunction :public ExternalFunction
+class PostureFunction
 {
 public:
 
-	void Update()override;
+	void Update();
 
 private:
 

@@ -28,6 +28,8 @@ public:
 
 public:
 
+	inline void SetIsControl(bool _isControl) { isControlFlg = _isControl; }
+
 	inline void SetLoopFlg(bool _flg) { loopFlg = _flg; }
 
 	void SetStartPosition(float _x, float _y);
@@ -46,24 +48,28 @@ public:
 
 	inline void SetMoveDiraction(MoveDiraction _dir) { moveDirection = _dir; }
 
-	inline void SetDrawCount(unsigned long _drawCount) { drawCount = _drawCount; }
+	inline void SetDrawCount(size_t _drawCount) { drawCount = _drawCount; }
 
-	inline void SetDrawPosition(unsigned long _drawPosition) { drawPos = _drawPosition; }
+	inline void SetDrawPosition(size_t _drawPosition) { drawPos = _drawPosition; }
 
 public:
 
-	unsigned long GetNowSelect() { return nowSelectPanel; }
+	size_t GetNowSelect() { return nowSelectPanel; }
 
-	inline ChPtr::Shared<SelectListItemBase> GetSelectItem(unsigned long _num)
+	inline ChPtr::Shared<SelectListItemBase> GetSelectItem(size_t _num)
 	{
 		if (itemList.size() <= _num)return nullptr;
 		return itemList[_num];
 	}
 
-	inline unsigned long GetCount()
+	inline size_t GetCount()
 	{
 		return itemList.size();
 	}
+
+public:
+
+	inline bool IsControl() { return isControlFlg; }
 
 public:
 
@@ -81,7 +87,7 @@ public:
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer);
 
-	virtual void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo , bool _isSelectPanel) = 0;
+	virtual void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo , bool _isSelectPanel) = 0;
 
 public:
 
@@ -89,11 +95,11 @@ public:
 
 	void RemoveItem(ChPtr::Shared<SelectListItemBase> _item);
 
-	void RemoveItem(unsigned long _num);
+	void RemoveItem(size_t _num);
 
 	void ClearItem();
 
-	inline unsigned long ItemCount() { return itemList.size(); }
+	inline size_t ItemCount() { return itemList.size(); }
 
 private:
 
@@ -111,9 +117,9 @@ private:
 
 private:
 
-	unsigned long drawCount = 0;
-	unsigned long drawPos = 0;
-	unsigned long nowSelectPanel = 0;
+	size_t drawCount = 0;
+	size_t drawPos = 0;
+	size_t nowSelectPanel = 0;
 
 	bool loopFlg = true;
 
@@ -124,4 +130,6 @@ private:
 	MoveDiraction moveDirection = MoveDiraction::Vertical;
 
 	std::vector<ChPtr::Shared<SelectListItemBase>>itemList;
+
+	bool isControlFlg = true;
 };

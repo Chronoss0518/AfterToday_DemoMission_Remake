@@ -6,29 +6,36 @@ class GameScript
 {
 public:
 
-	void CreateAllScript(const std::string& _text);
+	GameScript()
+	{
+		scripts.SetCutChar(L"\n");
+	}
+
+public:
+
+	void CreateAllScript(const std::wstring& _text);
 
 	void ResetNowScriptCount() { nowScriptCount = 0; }
 
-	void SetScript(const std::string& _text);
+	void SetScript(const std::wstring& _text);
 
-	void SetScript(const std::string& _type,const std::string& _text);
+	void SetScript(const std::wstring& _type,const std::wstring& _text);
 
-	void SetFunction(const std::string& _type,const std::function<void(const std::string&)>& _function);
+	void SetFunction(const std::wstring& _type,const std::function<void(const std::wstring&)>& _function);
 
-	void SetSkipCount(unsigned long _skipCount) { skipCount = _skipCount; }
+	void SetSkipCount(size_t _skipCount) { skipCount = _skipCount; }
 
-	void SetNowScriptCount(unsigned long _scriptCount) { nowScriptCount = _scriptCount; }
+	void SetNowScriptCount(size_t _scriptCount) { nowScriptCount = _scriptCount; }
 
-	void SetLoopPos(const std::string& _name) { loopPosList[_name] = nowScriptCount; }
+	void SetLoopPos(const std::wstring& _name) { loopPosList[_name] = nowScriptCount; }
 
-	void SetPosToLoopStart(const std::string& _name);
+	void SetPosToLoopStart(const std::wstring& _name);
 
 	static void SetDecimalPoint(const unsigned char _size) { if(_size < 37)DecimalPoint() = _size; }
 
-	ChCpp::TextObject GetScripts() { return scripts; }
+	ChCpp::TextObject<wchar_t> GetScripts() { return scripts; }
 
-	unsigned long GetScriptCount() { return nowScriptCount; }
+	size_t GetScriptCount() { return nowScriptCount; }
 
 	static long GetRand(long _min = 1, long _max = 0xffffffff);
 
@@ -49,11 +56,11 @@ private:
 		return ins;
 	}
 
-	unsigned long nowScriptCount = 0;
-	unsigned long skipCount = 0;
-	std::map<std::string, unsigned long>loopPosList;
+	size_t nowScriptCount = 0;
+	size_t skipCount = 0;
+	std::map<std::wstring, size_t>loopPosList;
 
-	ChCpp::TextObject scripts;
+	ChCpp::TextObject<wchar_t> scripts;
 
-	std::map<std::string, std::function<void(const std::string&)>>scriptFunctions;
+	std::map<std::wstring, std::function<void(const std::wstring&)>>scriptFunctions;
 };

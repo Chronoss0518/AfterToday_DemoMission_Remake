@@ -1,5 +1,8 @@
 #pragma once
 
+class WeaponDataBase;
+class MechaPartsObject;
+
 namespace PartsParameterStruct
 {
 	struct MainData
@@ -8,25 +11,27 @@ namespace PartsParameterStruct
 		float mass = 0.0f;
 	};
 
-	struct EnelgyTankData
+	struct EnergyTankData
 	{
-		unsigned long maxEnelgy = 0;
-		unsigned long chargeEnelgy = 0;
+		unsigned long maxEnergy = 0;
+		unsigned long chargeEnergy = 0;
 	};
 
-	struct WalkData
+	struct MoveData
 	{
+		float cameraRotatePower = 0.0f;
 		float movePower = 0.0f;
 		float rotatePower = 0.0f;
+		float verticalRotatePower = 0.0f;
 		float jumpPower = 0.0f;
 	};
 
 	struct BoostData
 	{
 		float boostPower = 0.0f;
-		unsigned long boostUseEnelgy = 0;
+		unsigned long boostUseEnergy = 0;
 		float avoidPower = 0.0f;
-		unsigned long avoidUseEnelgy = 0;
+		unsigned long avoidUseEnergy = 0;
 		unsigned long avoidWait = 0;
 	};
 
@@ -70,7 +75,7 @@ namespace PartsParameterStruct
 
 	struct AttackData
 	{
-		std::string objectName = "";
+		std::wstring objectName = L"";
 
 		//ˆÐ—Í//
 		unsigned long penetration = 0;
@@ -85,11 +90,14 @@ namespace PartsParameterStruct
 	{
 		virtual ~WeaponData(){}
 
-		std::string partsName = "";
-		std::string weaponName = "";
+		std::wstring partsName = L"";
+		std::wstring weaponName = L"";
 
 		unsigned long waitTime = 0;
 		std::vector<ChPtr::Shared<AttackData>>attackData;
+
+		int leftWeaponPaletteNo = -1;
+		int rightWeaponPaletteNo = -1;
 	};
 
 	struct SwordData : public WeaponData
@@ -110,7 +118,7 @@ namespace PartsParameterStruct
 
 }
 
-struct PartsParameters:public ChCpp::BaseComponent
+struct PartsParameters
 {
 	PartsParameters& operator = (const PartsParameters& _parts);
 
@@ -121,9 +129,7 @@ struct PartsParameters:public ChCpp::BaseComponent
 
 	PartsParameterStruct::MainData mainData;
 
-	PartsParameterStruct::EnelgyTankData enelgyTankData;
-
-	PartsParameterStruct::WalkData walkData;
+	PartsParameterStruct::EnergyTankData energyTankData;
 
 	PartsParameterStruct::BoostData frontBoostData;
 
@@ -136,6 +142,8 @@ struct PartsParameters:public ChCpp::BaseComponent
 	PartsParameterStruct::BoostData upBoostData;
 
 	PartsParameterStruct::BoostData downBoostData;
+
+	std::vector<ChPtr::Shared<PartsParameterStruct::MoveData>>moveData;
 
 	std::vector<ChPtr::Shared<PartsParameterStruct::WeaponData>>weaponData;
 };

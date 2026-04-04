@@ -1,24 +1,27 @@
 #pragma once
 
-
 #include"../MechaPartsObject.h"
-
+#include"../MechaPartsData/WeaponDataBase.h"
 
 class WeaponData;
 class SwordData;
 class GunData;
 
-class WeaponFunction :public ExternalFunction
+class WeaponFunction
 {
 public:
 
-	virtual void Release()override;
+	virtual void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device){}
 
 	virtual void AttackUpdate();
 
-	virtual void Update()override;
+	virtual void Update();
 
-	inline void SetBaseData(WeaponData* _data)
+	void Release();
+
+public:
+
+	inline void SetBaseData(WeaponDataBase* _data)
 	{
 		if (_data == nullptr)return;
 
@@ -26,6 +29,19 @@ public:
 
 		SetData(_data);
 	}
+
+	inline void SetAttackPos(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _attackPos)
+	{
+		attackPos = _attackPos;
+	}
+
+	inline void SetFrame(GameFrame* _frame) { if (_frame != nullptr)frame = _frame; }
+
+	inline void SetParts(MechaPartsObject* _parts) { if (_parts != nullptr)parts = _parts; }
+
+	inline void SetBaseMecha(BaseMecha* _mecha) { if (_mecha != nullptr)mecha = _mecha; }
+
+public:
 
 	inline ChPtr::Shared<Attack> GetAttackData()
 	{
@@ -40,9 +56,13 @@ public:
 
 	virtual void UpdateFunction() {};
 
-	virtual void SetData(WeaponData* _data) = 0;
+	virtual void SetData(WeaponDataBase* _data) = 0;
 
 public:
+
+	static constexpr const wchar_t* const GetDefaultWeaponName() { return L"-"; }
+
+	static constexpr const wchar_t* const GetDefaultPartsName() { return L"-"; }
 
 	static constexpr const wchar_t* const GetDefaultBulletNum() { return L"-"; }
 
@@ -50,13 +70,24 @@ public:
 
 	std::wstring GetWeaponName();
 
+	std::wstring GetPartsName()
+	{
+		if (parts == nullptr)return GetDefaultPartsName();
+		return parts->GetPartsName();
+	}
+
 	virtual std::wstring GetBulletNum() = 0;
 
 	virtual std::wstring GetReloadCount() = 0;
 
 protected:
 
-	WeaponData* data = nullptr;
+	BaseMecha* mecha = nullptr;
+	GameFrame* frame = nullptr;
+	WeaponDataBase* data = nullptr;
+	MechaPartsObject* parts = nullptr;
+
+	ChPtr::Shared<ChCpp::FrameObject<wchar_t>>attackPos = nullptr;
 
 	ChD3D::X3DAudioObject se;
 
@@ -73,16 +104,13 @@ class SwordFunction : public WeaponFunction
 {
 public:
 
-	void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)override;
+	void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 
 	void UpdateFunction()override {};
 
-	//持ち手部分と刀身の区切り部分//
-	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _hitStart) { hitObjectStart = _hitStart; }
-
-	void SetData(WeaponData* _data)override;
+	void SetData(WeaponDataBase* _data)override;
 
 public:
 
@@ -94,8 +122,6 @@ private:
 
 	SwordData* swordData = nullptr;
 
-	ChPtr::Shared<ChCpp::FrameObject>hitObjectStart = nullptr;
-
 	//攻撃開始から現在までの時間//
 	unsigned long nowAttackTime = 0;
 
@@ -106,7 +132,7 @@ class GunFunction : public WeaponFunction
 {
 public:
 
-	void Init(ChD3D11::Shader::BaseDrawMesh11* _drawer, ID3D11Device* _device)override;
+	void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device)override;
 
 	void AttackFunction()override;
 
@@ -114,14 +140,9 @@ public:
 
 	void UpdateFunction()override;
 
-	void DrawBegin()override;
+public:
 
-	void DrawEnd()override;
-
-	//弾が出てくる場所//
-	inline void SetObjectPos(ChPtr::Shared<ChCpp::FrameObject> _shotPos) { shotPos = _shotPos; }
-
-	void SetData(WeaponData* _data)override;
+	void SetData(WeaponDataBase* _data)override;
 
 public:
 
@@ -133,9 +154,7 @@ private:
 
 	GunData* gunData = nullptr;
 
-	ChPtr::Shared<ChCpp::FrameObject>shotPos = nullptr;
-
-	ChLMat lastShotPos;
+	ChLMat tmpMat;
 
 	bool reloadFlg = false;
 

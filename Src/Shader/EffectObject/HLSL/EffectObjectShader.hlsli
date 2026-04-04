@@ -1,7 +1,7 @@
 #ifndef Effect_Object_Shader
 #define Effect_Object_Shader
 
-#include"../../../External/ChCppLibrary/ChCppLibrary/ShaderHeaderFiles/HLSL/ShaderPublicInclude.hlsli"
+#include"../../../External/ChCppDirect3DLibrary/ShaderHeaderFiles/ShaderPublicInclude.hlsli"
 
 #ifdef __SHADER__
 

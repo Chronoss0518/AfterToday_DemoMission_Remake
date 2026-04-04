@@ -5,11 +5,11 @@
 #include"MenuBase.h"
 
 #ifndef STAGE_IMAGE_TEXTURE_DIRECTORY
-#define STAGE_IMAGE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageImage/") current_path
+#define STAGE_IMAGE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"StageImage/") current_path
 #endif
 
 #ifndef STAGE_SELECT_TEXTURE_DIRECTORY
-#define STAGE_SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("StageSelect/") current_path
+#define STAGE_SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"StageSelect/") current_path
 #endif
 
 #ifndef STAGE_SELECT_PANEL_WIDTH
@@ -89,7 +89,7 @@ public:
 			frame->type = _type;
 		}
 
-		inline void SetNowStageSelect(unsigned long _nowSelectStage)
+		inline void SetNowStageSelect(size_t _nowSelectStage)
 		{
 			frame->nowSelectStage = _nowSelectStage;
 		}
@@ -118,7 +118,7 @@ public:
 
 	protected:
 
-		inline unsigned long GetNowSelectCount()
+		inline size_t GetNowSelectCount()
 		{
 			return frame->nowSelectStage;
 		}
@@ -217,12 +217,10 @@ private:
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 
-	unsigned long nowSelectStage = 0;
+	size_t nowSelectStage = 0;
 
 	ChD3D11::Texture11 notImageTexture;
 
 	ChPtr::Shared<StageSelectFrameDisplay>stageSelectFrameDisplay[2];
-
-	ChD3D::XInputController controller;
 
 };

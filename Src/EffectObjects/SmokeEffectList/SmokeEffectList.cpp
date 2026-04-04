@@ -5,7 +5,7 @@
 
 #include"SmokeEffectList.h"
 
-#define USE_RENDER_TARGET 0
+#include"../../Application/Application.h"
 
 #define OBJECT_SIZE 1.0f
 #define RANDOM_ALPHA_POWER_SIZE 1000
@@ -19,19 +19,19 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	gameEndFlg = false;
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
-	effectShader->Init(ChD3D11::D3D11Device(), _maxCount);
+	effectShader->Init(_device, _maxCount);
 	effectMoveDataList.resize(_maxCount);
 
-	effectShader->SetEffectTexture(TEXTURE_DIRECTORY("SircleTexture.png"), 1, 1);
+	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"SircleTexture.png"), 1, 1);
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 	effectShader->SetBlendFlg(false);
-	effectShader->SetLightFlg(true);
-	effectShader->SetUseDepthStencilTestFlg(USE_RENDER_TARGET);
-	effectShader->SetAlphaBlendTestFlg(!USE_RENDER_TARGET);
+	effectShader->SetLightFlg(false);
+	effectShader->SetUseDepthStencilTestFlg(SMOKE_EFFECT_USE_RENDER_TARGET);
+	effectShader->SetAlphaBlendTestFlg(!SMOKE_EFFECT_USE_RENDER_TARGET);
 	effectShader->SetAlphaTestNum(0.01f);
 
-#if USE_RENDER_TARGET
+#if SMOKE_EFFECT_USE_RENDER_TARGET
 
 	renderTarget.CreateRenderTarget(_device, _width, _height);
 	sprite.Init(_device);
@@ -193,7 +193,7 @@ void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 {
 	if (effectShader == nullptr)return;
 
-#if USE_RENDER_TARGET
+#if SMOKE_EFFECT_USE_RENDER_TARGET
 
 	ID3D11RenderTargetView* tmpRTView = nullptr;
 	ID3D11DepthStencilView* tmpDSView = nullptr;
@@ -212,7 +212,7 @@ void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 
 	effectShader->DrawEnd();
 
-#if USE_RENDER_TARGET
+#if SMOKE_EFFECT_USE_RENDER_TARGET
 	_dc->OMSetRenderTargets(1, &tmpRTView, nullptr);
 
 	spriteShader.DrawStart(_dc);

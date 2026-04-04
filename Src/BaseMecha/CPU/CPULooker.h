@@ -7,7 +7,7 @@ struct LookSquareValue
 {
 	ChCpp::MathSquare square = ChCpp::MathSquare();
 	float distance = (10e+37f) * -1.0f;
-	std::string objectName = "";
+	std::wstring objectName = L"";
 };
 
 class LookAnchor : public ChCpp::BaseComponent
@@ -16,11 +16,11 @@ public:
 
 	void AddLookAnchorPosition(const ChVec3& _size, const ChLMat& _drawMat);
 
-	void RemoveLookAnchorPosition(unsigned long _num);
+	void RemoveLookAnchorPosition(size_t _num);
 
-	void UpdateLookAnchorPosition(unsigned long _num, const ChLMat& _drawMat);
+	void UpdateLookAnchorPosition(size_t _num, const ChLMat& _drawMat);
 
-	inline unsigned long GetPositionListCount() { return positionList.size(); }
+	inline size_t GetPositionListCount() { return positionList.size(); }
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetMapSquares(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
 
@@ -60,7 +60,7 @@ public:
 	{
 		std::vector<ChPtr::Shared<MapLookAnchorPosition>> anchors;
 		ChLMat drawMatrix = ChLMat();
-		std::string objectName = "";
+		std::wstring objectName = L"";
 	};
 
 
@@ -70,7 +70,7 @@ public:
 		CutCount() = _cutCount;
 	}
 
-	void SetPositionList(ChCpp::FrameObject& _model, const ChLMat& _drawMat);
+	void SetPositionList(ChCpp::FrameObject<wchar_t>& _model, const ChLMat& _drawMat);
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetMapSquares(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
 
@@ -78,7 +78,7 @@ public:
 
 private:
 
-	void CreateFramePosition(ChCpp::FrameObject& _frame, const ChLMat& _drawMat);
+	void CreateFramePosition(ChCpp::FrameObject<wchar_t>& _frame, const ChLMat& _drawMat);
 
 	std::vector<ChPtr::Shared<MapLookAnchorObject>> positionList;
 
@@ -92,6 +92,10 @@ private:
 
 class CPUObjectLooker:public ChCpp::BaseComponent
 {
+public:
+
+	virtual ~CPUObjectLooker() { Release(); }
+
 public:
 
 	struct UseSquareValues
@@ -113,20 +117,18 @@ public:
 	enum class DistanceType : unsigned char
 	{
 		Near,
-		Far,
-		None
+		Far
 	};
 
-	static const unsigned char DISTANCE_TYPE_COUNT = 3;
+	static const unsigned char DISTANCE_TYPE_COUNT = 2;
 
 	enum class DamageSizeType : unsigned char
 	{
 		Many,
-		Few,
-		None
+		Few
 	};
 
-	static const unsigned char DAMAGE_SIZE_TYPE_COUNT = 3;
+	static const unsigned char DAMAGE_SIZE_TYPE_COUNT = 2;
 
 public:
 

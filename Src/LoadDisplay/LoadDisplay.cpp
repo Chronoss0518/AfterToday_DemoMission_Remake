@@ -1,6 +1,6 @@
-#include"../../../BaseIncluder.h"
+#include"../../BaseIncluder.h"
 
-#include"../../../AllStruct.h"
+#include"../../AllStruct.h"
 
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
@@ -9,6 +9,8 @@
 
 #include"LoadDisplay.h"
 #include"../SelectList/SelectList.h"
+
+#include"../Application/Application.h"
 
 #ifndef LOAD_IMAGE_DIRECTORY
 #define LOAD_IMAGE_DIRECTORY(current_path) TEXTURE_DIRECTORY("LoadDisplay/" current_path)
@@ -124,7 +126,7 @@ public:
 
 public:
 
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, unsigned long _itemNo, bool _isSelectPanel)override
+	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo, bool _isSelectPanel)override
 	{
 		auto&& item = ChPtr::SharedSafeCast<LoadItem>(_drawItem);
 		if (item == nullptr)return;
@@ -168,14 +170,14 @@ private:
 
 };
 
-void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controller)
+void LoadDisplay::Init()
 {
-	MenuBase::InitMenu(_controller);
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+	MenuBase::InitMenu();
 
-	device = _device;
 	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_SPRITE_WIDTH), static_cast<unsigned long>(GAME_SPRITE_HEIGHT));
 
-	meshDrawer.Init(_device);
+	meshDrawer.Init(device);
 	meshDrawer.SetCullMode(D3D11_CULL_MODE::D3D11_CULL_BACK);
 	meshDrawer.SetAlphaBlendFlg(false);
 
@@ -229,10 +231,10 @@ void LoadDisplay::Init(ID3D11Device* _device, ChD3D::XInputController* _controll
 
 	//SPRITE_INIT(progressCircleTexturePosition, RectToGameWindow(ChVec4::FromRect(PROGRESS_CIRCLE_LEFT, PROGRESS_CIRCLE_TOP, PROGRESS_CIRCLE_RIGHT, PROGRESS_CIRCLE_BOTTOM)));
 	SPRITE_INIT(progressCircleTexturePosition, ChVec4::FromRect(-0.5f, 0.5f, 0.5f, -0.5f));
-	progressCircleTexture.CreateTexture(TEXTURE_DIRECTORY("ProgressCircleMask.png"));
+	progressCircleTexture.CreateTexture(TEXTURE_DIRECTORY("ProgressCircleMask.png"), device);
 
 	{
-		auto&& color = ColorTextToColorVector3("66","F6","FF");
+		auto&& color = ColorTextToColorVector3(L"66",L"F6",L"FF");
 
 		progressCircleColor = ChVec4::FromColor(
 			color.r,
@@ -359,9 +361,9 @@ void LoadDisplay::UpdateAction(ActionType _type)
 void LoadDisplay::UpdateMouse()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
-	InputTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	InputTest(ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();
@@ -424,19 +426,19 @@ void LoadDisplay::DrawBase(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 	_spriteShader.Draw(window.image, window.sprite);
 	_spriteShader.Draw(mainWindow.image, mainWindow.sprite);
 
-	for (unsigned long i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
 		_spriteShader.Draw(panelSelectButton[i].image, panelSelectButton[i].sprite);
 	}
 
-	for (unsigned long i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
 		_spriteShader.Draw(panelSelectButton[i].image, panelSelectButton[i].sprite);
 		if (ChStd::EnumCast(selectButton) != i)continue;
 		_spriteShader.Draw(selectPanelSelectButtonImage, panelSelectButton[i].sprite);
 	}
 
-	for (unsigned long i = 0; i < ChStd::EnumCast(BottomButtonType::None); i++)
+	for (unsigned char i = 0; i < ChStd::EnumCast(BottomButtonType::None); i++)
 	{
 		_spriteShader.Draw(bottomButton[i].image, bottomButton[i].sprite);
 		if (selectBottomButton != i)continue;
@@ -454,11 +456,11 @@ void LoadDisplay::Open(ID3D11DeviceContext* _dc)
 	dc = _dc;
 
 	ChCpp::CharFile file;
-	file.FileOpen(PLAYER_MECHA_PATH);
-	std::string fileText = file.FileReadText();
+	file.FileOpen(PLAYER_MECHA_PATH, false);
+	std::wstring fileText = ChStr::GetUTF16FromUTF8(file.FileRead());
 	file.FileClose();
 
-	loadFileList = ChPtr::Make_S<ChCpp::JsonArray>();
+	loadFileList = ChPtr::Make_S<ChCpp::JsonArray<wchar_t>>();
 
 	loadFileList->SetRawData(fileText);
 }
@@ -481,8 +483,10 @@ void LoadDisplay::Load()
 	mecha->mecha->Save(PLAYER_USE_MECHA_PATH);
 }
 
-bool LoadDisplay::LoadFile(unsigned long _openNumber)
+bool LoadDisplay::LoadFile(size_t _openNumber)
 {
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	if (dc == nullptr)return false;
 	if (loadFileList == nullptr)return false;
 	if (loadFileList->GetCount() <= _openNumber)
@@ -524,7 +528,7 @@ bool LoadDisplay::LoadFile(unsigned long _openNumber)
 	textDrawer.drawer.DrawStart();
 
 	textDrawer.drawer.DrawToScreen(
-		ChStr::UTF8ToWString(loadMecha->mecha->GetMechaName()),
+		loadMecha->mecha->GetMechaName(),
 		textDrawer.format,
 		textDrawer.brush,
 		ChVec4::FromRect(0.0f, 0.0f, MECHA_NAME_TEXT_WIDTH, MECHA_NAME_TEXT_HEIGHT)

@@ -10,9 +10,9 @@ public:
 
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize()override;
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)override;
 
 	inline void SetAttackType(AttackType _type) { attackType = _type; }
 
@@ -36,9 +36,9 @@ class CPUWeaponSelector : public FunctionsBase<CPUWeaponSelect>
 {
 public:
 
-	ChPtr::Shared<ChCpp::JsonObject> Serialize()override;
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> Serialize()override;
 
-	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject>& _jsonObject)override;
+	void Deserialize(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _jsonObject)override;
 
 	inline ChPtr::Shared<CPUWeaponSelect> GetSelectWeapon()
 	{

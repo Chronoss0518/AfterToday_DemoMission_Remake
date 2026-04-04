@@ -11,7 +11,7 @@ class LoadDisplay :public MenuBase
 {
 public:
 
-	void Init(ID3D11Device* _device, ChD3D::XInputController* _controller);
+	void Init();
 
 	void Release();
 
@@ -43,25 +43,25 @@ private:
 
 	void Load();
 
-	bool LoadFile(unsigned long _openNumber);
+	bool LoadFile(size_t _openNumber);
 
 private:
 
-	enum class SelectSpriteType
+	enum class SelectSpriteType:unsigned char
 	{
 		LeftButton,
 		RightButton,
 		LoadPanel
 	};
 
-	enum class BottomButtonType
+	enum class BottomButtonType :unsigned char
 	{
 		Decision,
 		Cancel,
 		None,
 	};
 
-	enum class SelectButtonType
+	enum class SelectButtonType :unsigned char
 	{
 		Left, Right, None
 	};
@@ -91,15 +91,14 @@ private:
 	unsigned long selectBottomButton = ChStd::EnumCast(BottomButtonType::None);
 
 	ChVec4 backColor = ChVec4::FromColor(0.2f, 0.2f, 0.5f, 1.0f);
-	ID3D11Device* device = nullptr;
 	ChD3D11::DepthStencilTexture11 dsTex;
 
-	ChD3D11::Shader::BaseDrawMesh11 meshDrawer;
+	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
 
 	ChPtr::Shared<LoadPanelList> selectList = nullptr;
 
-	ChPtr::Shared<ChCpp::JsonArray> loadFileList;
+	ChPtr::Shared<ChCpp::JsonArray<wchar_t>> loadFileList;
 	ChD3D11::Texture11 progressCircleTexture;
 	ChD3D11::Sprite11 progressCircleTexturePosition;
 	ChVec4 progressCircleColor = ChVec4();

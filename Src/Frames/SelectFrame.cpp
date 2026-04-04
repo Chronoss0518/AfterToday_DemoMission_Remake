@@ -3,8 +3,10 @@
 
 #include"SelectFrame.h"
 
-#define SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY("Select/") current_path
-#define SELECT_MESH_DIRECTORY(current_path) MESH_DIRECTORY("Select/") current_path
+#include"../Application/Application.h"
+
+#define SELECT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Select/") current_path
+#define SELECT_MESH_DIRECTORY(current_path) MESH_DIRECTORY(L"Select/") current_path
 
 #define BUTTON_X_POSITION 340.0f
 
@@ -19,29 +21,27 @@
 void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
-	
-	controller.Init();
 
-	MenuBase::InitMenu(&controller);
+	MenuBase::InitMenu();
 
-	auto&& device = ChD3D11::D3D11Device();
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	spriteShader.Init(device);
 
 	SPRITE_INIT(descriptionWindowSprite, RectToGameWindow(ChVec4(0.0f, 544.0f, GAME_SPRITE_WIDTH, 544.0f + 176.0f)));
 
 
-	selectEdge.CreateTexture(SELECT_TEXTURE_DIRECTORY("SelectButtonEdge.png"), device);
-	comingSoonTexture.CreateTexture(SELECT_TEXTURE_DIRECTORY("Coming Soon.png"), device);
+	selectEdge.CreateTexture(SELECT_TEXTURE_DIRECTORY(L"SelectButtonEdge.png"), device);
+	comingSoonTexture.CreateTexture(SELECT_TEXTURE_DIRECTORY(L"Coming Soon.png"), device);
 
-	toButton[ChStd::EnumCast(NextButtonType::Battle)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButton.png"), device);
-	description[ChStd::EnumCast(NextButtonType::Battle)].CreateTexture(SELECT_TEXTURE_DIRECTORY("BattleButtonDescription_jp.png"), device);
+	toButton[ChStd::EnumCast(NextButtonType::Battle)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY(L"BattleButton.png"), device);
+	description[ChStd::EnumCast(NextButtonType::Battle)].CreateTexture(SELECT_TEXTURE_DIRECTORY(L"BattleButtonDescription_jp.png"), device);
 
-	toButton[ChStd::EnumCast(NextButtonType::Edit)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("EditButton.png"), device);
-	description[ChStd::EnumCast(NextButtonType::Edit)].CreateTexture(SELECT_TEXTURE_DIRECTORY("EditButtonDescription_jp.png"), device);
+	toButton[ChStd::EnumCast(NextButtonType::Edit)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY(L"EditButton.png"), device);
+	description[ChStd::EnumCast(NextButtonType::Edit)].CreateTexture(SELECT_TEXTURE_DIRECTORY(L"EditButtonDescription_jp.png"), device);
 
-	toButton[ChStd::EnumCast(NextButtonType::Setting)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButton.png"), device);
-	description[ChStd::EnumCast(NextButtonType::Setting)].CreateTexture(SELECT_TEXTURE_DIRECTORY("OptionButtonDescription_jp.png"), device);
+	toButton[ChStd::EnumCast(NextButtonType::Setting)].image.CreateTexture(SELECT_TEXTURE_DIRECTORY(L"OptionButton.png"), device);
+	description[ChStd::EnumCast(NextButtonType::Setting)].CreateTexture(SELECT_TEXTURE_DIRECTORY(L"OptionButtonDescription_jp.png"), device);
 
 	SPRITE_INIT(toButton[ChStd::EnumCast(NextButtonType::Battle)].sprite, RectToGameWindow(ChVec4(BUTTON_X_POSITION, GAME_BUTTON_Y_POSITION, BUTTON_WIDTH, BUTTON_HEIGHT(GAME_BUTTON_Y_POSITION))));
 
@@ -75,12 +75,12 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 void SelectFrame::Release()
 {
-	controller.Release();
+
 }
 
 void SelectFrame::DrawFunction()
 {
-	auto&& dc = ChD3D11::D3D11DC();
+	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 	ChD3D11::Shader11().DrawStart();
 
@@ -132,9 +132,9 @@ void SelectFrame::Update()
 void SelectFrame::UpdateMouse()
 {
 
-	auto&& manager = ChSystem::SysManager();
+	auto&& keyInput = AppIns().GetKeyInput();
 
-	MenuBase::InputTest(ActionType::Decision, manager.IsPushKeyNoHold(VK_LBUTTON));
+	MenuBase::InputTest(ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
 	auto&& mouce = ChWin::Mouse();
 	mouce.Update();

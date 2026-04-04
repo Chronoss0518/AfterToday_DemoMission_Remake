@@ -21,48 +21,47 @@
 #endif
 
 #ifndef TARGET_DIRECTORY 
-//#define	TARGET_DIRECTORY(current_path) "../é¿çs/data/" current_path
-#define	TARGET_DIRECTORY(current_path) "Resource/" current_path
+#define	TARGET_DIRECTORY(current_path) L"Resource/" current_path
 #endif
 
 #ifndef SAVE_DIRECTORY
-#define SAVE_DIRECTORY(current_path) TARGET_DIRECTORY("Save/" current_path) 
+#define SAVE_DIRECTORY(current_path) TARGET_DIRECTORY(L"Save/" current_path) 
 #endif
 
 #ifndef PLAYER_USE_MECHA_PATH
-#define PLAYER_USE_MECHA_PATH SAVE_DIRECTORY("Player.amf") 
+#define PLAYER_USE_MECHA_PATH SAVE_DIRECTORY(L"Player.amf") 
 #endif
 
 #ifndef PLAYER_MECHA_PATH
-#define PLAYER_MECHA_PATH SAVE_DIRECTORY("AssemMechaFrameList.json")
+#define PLAYER_MECHA_PATH SAVE_DIRECTORY(L"AssemMechaFrameList.json")
 #endif
 
 #ifndef SOUND_DIRECTORY
-#define SOUND_DIRECTORY(current_path) TARGET_DIRECTORY("Sound/" current_path) 
+#define SOUND_DIRECTORY(current_path) TARGET_DIRECTORY(L"Sound/" current_path) 
 #endif
 
 #ifndef TEXTURE_DIRECTORY
-#define TEXTURE_DIRECTORY(current_path) TARGET_DIRECTORY("Texture/" current_path) 
+#define TEXTURE_DIRECTORY(current_path) TARGET_DIRECTORY(L"Texture/" current_path) 
 #endif
 
 #ifndef MESH_DIRECTORY
-#define MESH_DIRECTORY(current_path) TARGET_DIRECTORY("XFile/" current_path) 
+#define MESH_DIRECTORY(current_path) TARGET_DIRECTORY(L"XFile/" current_path) 
 #endif
 
 #ifndef STAGE_DIRECTORY
-#define STAGE_DIRECTORY(current_path) TARGET_DIRECTORY("StageScript/" current_path) 
+#define STAGE_DIRECTORY(current_path) TARGET_DIRECTORY(L"StageScript/" current_path) 
 #endif
 
 #ifndef STAGE_DATA_DIRECTORY
-#define STAGE_DATA_DIRECTORY(current_path) TARGET_DIRECTORY("StageData/" current_path) 
+#define STAGE_DATA_DIRECTORY(current_path) TARGET_DIRECTORY(L"StageData/" current_path) 
 #endif
 
 #ifndef CPU_DIRECTORY
-#define CPU_DIRECTORY(current_path) TARGET_DIRECTORY("CPUCharactor/" current_path) 
+#define CPU_DIRECTORY(current_path) TARGET_DIRECTORY(L"CPUCharactor/" current_path) 
 #endif
 
 #ifndef CPU_MECHA_PATH
-#define CPU_MECHA_PATH(_fileName) TARGET_DIRECTORY("StageScript/CPU/" _fileName)
+#define CPU_MECHA_PATH(_fileName) TARGET_DIRECTORY(L"StageScript/CPU/" _fileName)
 #endif
 
 #ifndef GAME_SPRITE_WIDTH
@@ -139,7 +138,7 @@ _SPRITE.SetPosRect(_RECT)
 #endif
 
 #ifndef TEXT_TO_COLOR_NUMBER
-#define TEXT_TO_COLOR_NUMBER(_text)  static_cast<float>(ChStd::BaseNumberToDecimalNumber(_text, ChStd::HEXA_DECIMAL())) / 255.0f
+#define TEXT_TO_COLOR_NUMBER(_text)  static_cast<float>(ChStd::BaseNumberToDecimalNumber<wchar_t>(_text, ChStd::HEXA_DECIMAL<wchar_t>())) / 255.0f
 #endif
 
 #ifndef USE_TITLE_FRAME_FLG
@@ -172,7 +171,7 @@ _SPRITE.SetPosRect(_RECT)
 
 
 
-enum class FrameNo :unsigned long
+enum class FrameNo :unsigned char
 {
 #if USE_TITLE_FRAME_FLG
 	Title,
@@ -215,7 +214,7 @@ struct TextDrawerWICBitmap{
 	ChD3D::WICBitmapObject bitmap;
 };
 
-static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11>& _meshObject)
+static inline void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>>& _meshObject)
 {
 	if (_meshObject == nullptr)return;
 	_meshObject->Release();
@@ -246,18 +245,14 @@ static inline ChVec4 RectToGameWindow(const ChVec4 _rect)
 }
 
 static inline ChVec3 ColorTextToColorVector3(
-	const std::string& _r,
-	const std::string& _g, 
-	const std::string& _b)
+	const std::wstring& _r,
+	const std::wstring& _g, 
+	const std::wstring& _b)
 {
-	std::vector<char> r = { _r[0],_r[1] };
-	std::vector<char> g = { _g[0],_g[1] };
-	std::vector<char> b = { _b[0],_b[1] };
-
 	return ChVec3::FromColor(
-		TEXT_TO_COLOR_NUMBER(r),
-		TEXT_TO_COLOR_NUMBER(g),
-		TEXT_TO_COLOR_NUMBER(b)
+		TEXT_TO_COLOR_NUMBER(_r),
+		TEXT_TO_COLOR_NUMBER(_g),
+		TEXT_TO_COLOR_NUMBER(_b)
 		);
 }
 
@@ -300,3 +295,96 @@ static inline std::wstring CreateMoneyText(const std::wstring& _money)
 
 	return result;
 }
+
+#ifndef PALETTE_COUNT 
+#define PALETTE_COUNT 5
+#endif
+
+//X,Y,ZÇÃêî//
+static constexpr unsigned char AXIS_BASE_TYPE_NUM = 3;
+
+//RotateAxisÇ…ìoò^Ç≥ÇÍÇƒÇ¢ÇÈêî//
+static constexpr unsigned char AXIS_TYPE_NUM = 6;
+
+enum class RotateAxis : unsigned char
+{
+	PX,
+	PY,
+	PZ,
+	MX,
+	MY,
+	MZ
+};
+
+class PostureController: public ChCpp::BaseComponent
+{
+public://Set Functions//
+
+
+	void Set(const PostureController& _val)
+	{
+		axis = _val.axis;
+		minRotate = _val.minRotate;
+		maxRotate = _val.maxRotate;
+	}
+
+	inline void SetRotateAxis(const RotateAxis _axis)
+	{
+		axis = _axis;
+	}
+
+	inline void SetMinRotate(const float& _rotate)
+	{
+		minRotate = _rotate;
+	}
+
+	inline void SetMaxRotate(const float& _rotate)
+	{
+		maxRotate = _rotate;
+	}
+
+	inline void SetRotate(float _rotate)
+	{
+		auto&& frame = LookObj<ChCpp::FrameObject<wchar_t>>();
+
+		if (ChPtr::NullCheck(frame))return;
+		if(_rotate == 0.0f)
+		{
+			((ChCpp::TransformObject<wchar_t>*)frame)->SetOutSideTransform(ChLMat());
+			return;
+		}
+		ChLMat tmpMat;
+
+		auto&& direction = ChStd::EnumCast(axis) % AXIS_BASE_TYPE_NUM;
+
+		float rotate = ChStd::EnumCast(axis) > AXIS_BASE_TYPE_NUM ? -_rotate : _rotate;
+
+		if(direction == (ChStd::EnumCast(RotateAxis::PX) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationXAxis(rotate);
+		if(direction == (ChStd::EnumCast(RotateAxis::PY) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationYAxis(rotate);
+		if(direction == (ChStd::EnumCast(RotateAxis::PZ) % AXIS_BASE_TYPE_NUM))tmpMat.SetRotationZAxis(rotate);
+
+		frame->SetOutSideTransform(tmpMat);
+	}
+
+
+public://Get Functions//
+
+	inline RotateAxis GetRotateAxis() { return axis; }
+
+	inline float GetMinRotate() { return minRotate; }
+
+	inline float GetMaxRotate() { return maxRotate; }
+
+	inline ChCpp::BaseObject<wchar_t>* GetLookObject() { return LookObj<ChCpp::BaseObject<wchar_t>>(); }
+
+private:
+
+	//âÒì]é≤//
+	RotateAxis axis = RotateAxis::PX;
+
+	//ç≈í·âÒì]ó //
+	float minRotate = 0.0f;
+
+	//ç≈í·âÒì]ó //
+	float maxRotate = 0.0f;
+};
