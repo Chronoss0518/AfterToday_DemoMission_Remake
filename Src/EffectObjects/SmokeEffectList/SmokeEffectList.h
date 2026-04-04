@@ -3,6 +3,10 @@
 
 class EffectObjectShader;
 
+#ifndef SMOKE_EFFECT_USE_RENDER_TARGET
+#define SMOKE_EFFECT_USE_RENDER_TARGET false
+#endif
+
 class SmokeEffectList
 {
 
@@ -70,7 +74,7 @@ private:
 
 	ChCpp::MultiThread updater;
 
-#if 1
+#if SMOKE_EFFECT_USE_RENDER_TARGET
 
 	ChD3D11::RenderTarget11 renderTarget;
 	ChD3D11::Sprite11 sprite;
