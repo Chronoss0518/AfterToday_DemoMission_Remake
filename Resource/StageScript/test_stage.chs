@@ -33,6 +33,9 @@ End Loop1
 //MainBattle1.wavを再生//
 Play DecisiveBattle.wav
 
+//Playerがロストした際にCameraを切り替えられるようにするフラグを立てる//
+UseChangeMechaCamera
+
 LoadMecha -l AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
 LoadMecha -l AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
 LoadMecha -l AirRobot.amf -u member -p -60.0,700.0,-60.0 -rp min-10.0,0.0,-10.0 max10.0,0.0,10.0 -t 0 -cc mob.cpu
