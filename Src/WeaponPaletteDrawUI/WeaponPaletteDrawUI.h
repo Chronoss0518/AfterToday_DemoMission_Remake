@@ -4,6 +4,8 @@ class WeaponFunction;
 
 #include"../BaseMecha/WeaponHandType.h"
 
+class BaseMecha;
+
 class WeaponPaletteDrawUI
 {
 private:
