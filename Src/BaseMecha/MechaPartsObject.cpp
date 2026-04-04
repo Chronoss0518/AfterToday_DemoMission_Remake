@@ -12,6 +12,20 @@
 #include"MechaPartsObjectFunction/WeaponFunction.h"
 #include"FunctionComponent/WeaponComponent.h"
 
+void MechaPartsObject::CreateEnd()
+{
+	auto&& baseMecha = GetBaseMecha();
+	auto&& baseParts = GetBaseObject();
+
+	auto&& positions = baseParts->GetPositionList();
+	
+	for (auto&& pos : positions)
+	{
+		baseMecha->AddSmokeCreatePos(pos.second->positionObject, this);
+	}
+
+}
+
 void MechaPartsObject::CreateAnchor()
 {
 	SetLookAnchorNo(mecha->GetAnchorRegistNum());
@@ -22,6 +36,9 @@ void MechaPartsObject::CreateAnchor()
 void MechaPartsObject::Release()
 {
 	TransformObject<wchar_t>::Release();
+
+	auto&& baseMecha = GetBaseMecha();
+	baseMecha->SubSmokeCreatePos(this);
 
 	positions.clear();
 }

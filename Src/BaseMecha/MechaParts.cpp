@@ -68,6 +68,8 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 
 		(*it).second->CreateChild(partsObject, _base, _device, _drawer, _frame, _jsonObject);
 
+		partsObject->CreateEnd();
+
 		return partsObject;
 	}
 
@@ -87,6 +89,8 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	}
 
 	mechaParts->CreateChild(partsObject,_base, _device, _drawer, _frame, _jsonObject);
+
+	partsObject->CreateEnd();
 
 	return partsObject;
 }

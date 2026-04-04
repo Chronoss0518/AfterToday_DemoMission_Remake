@@ -27,6 +27,8 @@ public:
 
 public:
 
+	void CreateEnd();
+
 	void CreateAnchor();
 
 public:
