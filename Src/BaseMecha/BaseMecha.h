@@ -136,8 +136,6 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
-	ChLMat GetViewMat();
-
 	ChVec3 GetDamageDir() { return damageDir; }
 
 	inline float GetMass() { return mass; }
@@ -237,7 +235,6 @@ protected:
 
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
-
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 

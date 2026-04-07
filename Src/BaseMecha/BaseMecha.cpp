@@ -71,7 +71,6 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<
 
 void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 {
-
 	std::wstring text = L"";
 
 	ChCpp::CharFile file;
@@ -117,7 +116,7 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 void BaseMecha::LoadEnd()
 {
 	auto&& com = GetComponentObject<CameraComponent>();
-	com->SetViewVerticial(true, physics->GetRotation().y);
+	com->SetViewHorizontal(physics->GetRotation().y);
 }
 
 void BaseMecha::Save(const std::wstring& _fileName)
@@ -195,16 +194,16 @@ void BaseMecha::MoveEnd()
 	damageDir = ChVec3();
 
 	auto&& camera = GetComponentObject<CameraComponent>();
-	camera->SetViewVerticial(!isSelfViewHorizontalFlg, physics->GetRotation().y);
+	if (!isSelfViewHorizontalFlg)
+	{
+		auto&& rotate = physics->GetRotation();
+		rotate.y = camera->GetViewHorizontal();
+		physics->SetRotation(rotate);
+	}
+
 	camera->SetCenterPos(centerPos);
 
 	camera->UpdateCamera();
-
-	auto&& objectLooker = GetComponent<CPUObjectLooker>();
-
-	if (objectLooker == nullptr)return;
-
-	objectLooker->SetViewMatrix(camera->GetViewMat());
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
@@ -320,12 +319,6 @@ ChVec3 BaseMecha::GetPosition()
 ChVec3 BaseMecha::GetRotation()
 {
 	return physics->GetRotation();
-}
-
-ChLMat BaseMecha::GetViewMat()
-{
-	auto&& camera = GetComponentObject<CameraComponent>();
-	return camera->GetViewMat();
 }
 
 size_t BaseMecha::GetTeamNo()
