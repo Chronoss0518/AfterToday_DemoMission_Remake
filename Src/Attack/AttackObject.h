@@ -8,6 +8,14 @@ class MissileData;
 class GameFrame;
 class ControllerBase;
 
+#ifndef ATTACK_OBJECT_DEBUG_FLG
+#define ATTACK_OBJECT_DEBUG_FLG false
+#endif
+
+#ifndef ATTACK_OBJECT_DEBUG_SIZE
+#define ATTACK_OBJECT_DEBUG_SIZE 100.0f
+#endif
+
 class AttackObject :public ChCpp::BaseObject<wchar_t>
 {
 public:
@@ -91,6 +99,6 @@ private:
 	bool hitFlg = false;
 	unsigned long nowCreateSmokeCount = 0;
 
-	float dispersalPower = 0.5f;
+	float dispersalPower = 0.25f;
 	unsigned long createSmokeCount = 0;
 };

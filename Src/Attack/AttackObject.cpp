@@ -5,10 +5,7 @@
 #include"AttackObject.h"
 #include"../BaseMecha/BaseMecha.h"
 
-#define CREATE_SMOKE_MAX_COUNT 2
-
-#define ATTACK_OBJECT_DEBUG_FLG true
-#define ATTACK_OBJECT_DEBUG_SIZE 100.0f
+#define CREATE_SMOKE_MAX_COUNT 10
 
 void AttackObject::Init(const ChLMat& _startMat)
 {
