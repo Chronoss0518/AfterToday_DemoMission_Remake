@@ -4,8 +4,11 @@
 
 #include"../../Frames/GameFrame.h"
 #include"../BaseMecha.h"
+#include"../FunctionComponent/CameraComponent.h"
 #include"../Controller/ControllerBase.h"
 #include"CPULooker.h"
+
+#include"../../Application/Application.h"
 
 #define FEATURE true
 #define MATH_MATRIX true
@@ -538,7 +541,7 @@ void CPUObjectLooker::DrawBegin()
 void CPUObjectLooker::Draw2D()
 {
 
-	auto dc = ChD3D11::D3D11DC();
+	auto dc = AppIns().GetDirect3D11().GetDC();
 
 	unsigned int viewPortNum = 0;
 	D3D11_VIEWPORT viewPort;
@@ -616,6 +619,7 @@ void CPUObjectLooker::Release()
 
 void CPUObjectLooker::FindMecha()
 {
+	if (ChPtr::NullCheck(frame))return;
 
 	auto mecha = LookObj<BaseMecha>();
 
@@ -645,7 +649,9 @@ void CPUObjectLooker::FindMecha()
 
 	ray.SetPosition(LookObj<BaseMecha>()->GetPosition());
 
-	ChLMat vpMat = viewMatrix * projectionMatrix;
+	auto&& camCom = mecha->GetComponentObject<CameraComponent>();
+
+	ChLMat vpMat = camCom->GetViewMat() * camCom->GetProMat();
 
 	for (unsigned long i = 0; i < baseMechaList.size(); i++)
 	{

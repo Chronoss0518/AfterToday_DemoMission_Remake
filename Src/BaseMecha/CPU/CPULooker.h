@@ -146,10 +146,6 @@ public:
 
 	inline void SetGameFrame(GameFrame* _frame) { frame = _frame; }
 
-	inline void SetViewMatrix(const ChLMat& _mat) { viewMatrix = _mat; }
-
-	inline void SetProjectionMatrix(const ChLMat& _mat) { projectionMatrix = _mat; }
-
 	inline void UpdateCount(const unsigned long _updateCount) { updateCount = _updateCount; }
 
 public:
@@ -173,8 +169,6 @@ private:
 	void FewDamageTest(unsigned long& _base, unsigned long _target,std::vector<ChPtr::Weak<BaseMecha>>& _mechas);
 
 	GameFrame* frame = nullptr;
-	ChLMat projectionMatrix;
-	ChLMat viewMatrix;
 
 	ChCpp::HitTestRay ray;
 

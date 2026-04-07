@@ -161,10 +161,8 @@ private:
 
 	bool initFlg = false;
 
-	ChMat_11 viewMat;
-	ChMat_11 proMat;
-	ChLMat projectionMat;
-
+	ChLMat proMat;
+	ChLMat viewMat;
 
 	enum class DrawEffect:unsigned short
 	{

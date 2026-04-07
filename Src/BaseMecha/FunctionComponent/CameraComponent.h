@@ -2,7 +2,7 @@
 
 #include"FunctionComponent.h"
 
-class CmaeraData;
+class CameraData;
 
 class CameraComponent : public FunctionComponent
 {
@@ -18,15 +18,31 @@ public:
 
 	void UpdateCamera();
 
+	void UpdateScope();
+
+public:
+
+	void SetGameFrame(GameFrame* _frame) { frame = _frame; }
+
+	void AddCameraData(CameraData* _data);
+
+	void SubCameraData(CameraData* _data);
+
 private:
 
 	void CamVerticalRotateUpdate(InputName _input, const float _camRot);
 
 	void CamHorizontalRotateUpdate(InputName _input, const float _camRot);
 
-public:
+private:
 
-	inline void SetViewVerticial(bool _updateFlg, float _rotation) { if (_updateFlg)viewHorizontal = _rotation; }
+	void UpdateTargetLooker();
+
+	void SetTarget();
+
+	void SetRotateToTarget();
+
+public:
 
 	inline void SetCenterPos(const ChVec3& _center) { centerPos = _center; }
 
@@ -36,11 +52,25 @@ public:
 
 	inline void AddViewHorizontal(const float& _y) { viewHorizontal += _y; }
 
+	inline void SetViewVertical(const float& _x) { viewVertical = std::abs(_x) < maxViewVertical ? _x : maxViewVertical; }
+
+	inline void SetViewHorizontal(const float& _y) { viewHorizontal = _y; }
+
 public:
 
 	inline ChLMat GetViewMat() { return viewMat; }
 
+	inline ChLMat GetProMat() { return proMat; }
+
 	inline ChVec3 GetViewLookDir() { return lookDir; }
+
+	inline float GetViewVertical() { return viewVertical; }
+
+	inline float GetViewHorizontal() { return viewHorizontal; }
+
+public:
+
+	bool IsLookTarget(BaseMecha* _mecha);
 
 private:
 
@@ -57,7 +87,10 @@ private:
 private:
 
 	size_t useCameraNo = 0;
-	std::vector<CmaeraData*>cameraList;
+	std::vector<CameraData*>cameraList;
+
+	//ÉJÉÅÉâÇÃéãñÏäp//
+	float nowFovy = 30.0f;
 
 	ChVec3 centerPos = ChVec3();
 
@@ -69,6 +102,13 @@ private:
 	float cameraRotatePow = 50.0f;
 
 	ChLMat viewMat = ChLMat();
+	ChLMat proMat = ChLMat();
+
 	ChVec3 lookDir = ChVec3(0.0f, 0.0f, 1.0f);
 
+	GameFrame* frame = nullptr;
+	ChPtr::Weak<BaseMecha>lookTarget;
+	bool isTargetLooker = false;
+
+	bool updateKeyFlg = false;
 };
