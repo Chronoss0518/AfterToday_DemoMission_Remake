@@ -34,10 +34,10 @@ protected:
 	//カメラの視野角//
 	float fovy = 60.0f;
 
-	//3DModelのカメラの位置
-	std::wstring cameraObject = L"";
-
 	//機体内に表示されるカメラの数
 	unsigned long cameraCount = 1;
+	
+	//3DModelのカメラの位置
+	std::wstring cameraObject = L"";
 
 };
