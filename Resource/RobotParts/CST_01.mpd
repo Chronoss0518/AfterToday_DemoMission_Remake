@@ -1,6 +1,11 @@
 Resource/XFile/RobotsParts/Body/simple_tank.gun_barrel.x
 1.000000
 1.000000
+CameraData:{
+60.000000
+1
+Head_Bone_CameraPos
+}
 EnergyTankData:{
 10000
 10
