@@ -75,13 +75,11 @@ void WalkMoveObject::UpdateBegin()
 	if (IsPushFlg(InputName::CameraRightRotation))
 	{
 		SetPushFlg(InputName::RightRotation);
-		RemovePushFlg(InputName::CameraRightRotation);
 	}
 
 	if (IsPushFlg(InputName::CameraLeftRotation))
 	{
 		SetPushFlg(InputName::LeftRotation);
-		RemovePushFlg(InputName::CameraLeftRotation);
 	}
 
 }
