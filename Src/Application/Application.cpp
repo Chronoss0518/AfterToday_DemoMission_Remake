@@ -104,6 +104,10 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 	fpsController.SetFPS(BASE_FPS);
 
+#if APPLICATION_USE_THREAD_FLG
+	threadList.Init();
+#endif
+
 	SetInitFlg(true);
 }
 
@@ -116,7 +120,6 @@ int Application::Update()
 
 	while (window.Update())
 	{
-
 		keyInput.Update();
 		audioList.Update();
 		if (!fpsController.Update(timeGetTime()))continue;
@@ -127,6 +130,12 @@ int Application::Update()
 		{
 			PostQuitMessage(0);
 			continue;
+		}
+
+		if (keyInput.IsPushKey('U'))
+		{
+			int i = 0;
+			i = 1;
 		}
 
 		frameList.Update();
@@ -142,6 +151,10 @@ void Application::Release()
 {
 	if (!IsInit())return;
 	if (inUpdateFlg)return;
+
+#if APPLICATION_USE_THREAD_FLG
+	threadList.Release();
+#endif
 
 	frameList.Release();
 	audioList.Release();
