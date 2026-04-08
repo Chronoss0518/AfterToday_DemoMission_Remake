@@ -73,14 +73,10 @@ void WalkMoveObject::UpdateBegin()
 	SetSelfViewRotateHorizontalFlg(false);
 
 	if (IsPushFlg(InputName::CameraRightRotation))
-	{
 		SetPushFlg(InputName::RightRotation);
-	}
 
 	if (IsPushFlg(InputName::CameraLeftRotation))
-	{
 		SetPushFlg(InputName::LeftRotation);
-	}
 
 }
 
