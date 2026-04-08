@@ -126,7 +126,10 @@ void CameraComponent::SetTarget()
 		ChVec2 testSize = test;
 		ChVec2 posSize = pos;
 
-		if (testSize.GetLen() < pos.GetLen())continue;
+		float testLen = testSize.GetLen();
+		float posLen = posSize.GetLen();
+
+		if (testLen < posLen)continue;
 
 		test = pos;
 		test.z = 0.0f;
