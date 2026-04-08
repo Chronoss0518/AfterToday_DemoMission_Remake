@@ -82,19 +82,19 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::LDown] = InputName::Back;
 	controllerTypes[XInputTypeNames::LRight] = InputName::Right;
 	controllerTypes[XInputTypeNames::RTop] = InputName::CameraDownRotation;
-	controllerTypes[XInputTypeNames::RLeft] = InputName::LeftRotation;
+	controllerTypes[XInputTypeNames::RLeft] = InputName::CameraLeftRotation;
 	//controllerTypes[XInputTypeNames::RLeft] = InputName::CameraLeftRotation;
 
 	controllerTypes[XInputTypeNames::RDown] = InputName::CameraUpRotation;
-	controllerTypes[XInputTypeNames::RRight] = InputName::RightRotation;
+	controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
 	//controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
 
 	controllerTypes[XInputTypeNames::L1] = InputName::LAttack;
-	controllerTypes[XInputTypeNames::L2] = InputName::LWDChange;
-	controllerTypes[XInputTypeNames::L3] = InputName::LReload;
+	controllerTypes[XInputTypeNames::L2] = InputName::LReload;
+	controllerTypes[XInputTypeNames::L3] = InputName::None;
 	controllerTypes[XInputTypeNames::R1] = InputName::RAttack;
-	controllerTypes[XInputTypeNames::R2] = InputName::RWDChange;
-	controllerTypes[XInputTypeNames::R3] = InputName::RReload;
+	controllerTypes[XInputTypeNames::R2] = InputName::RReload;
+	controllerTypes[XInputTypeNames::R3] = InputName::UseTargetLooker;
 
 }
 
