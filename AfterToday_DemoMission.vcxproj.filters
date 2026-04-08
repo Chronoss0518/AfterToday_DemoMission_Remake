@@ -303,9 +303,6 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosData.h">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseMecha\MechaPartsData\PostureData.h">
-      <Filter>GameFrame\MechaPartsData</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseMecha\MechaPartsData\BoostBrustData.h">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClInclude>
@@ -537,9 +534,6 @@
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosData.cpp">
-      <Filter>GameFrame\MechaPartsData</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BaseMecha\MechaPartsData\PostureData.cpp">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClCompile>
     <ClCompile Include="Src\BaseMecha\MechaPartsData\BoostBrustData.cpp">

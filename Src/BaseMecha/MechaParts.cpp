@@ -10,7 +10,6 @@
 #include "MechaPartsData/WalkData.h"
 #include "MechaPartsData/CaterpillarData.h"
 #include "MechaPartsData/NextPosData.h"
-#include "MechaPartsData/PostureData.h"
 #include "MechaPartsData/BoostBrustData.h"
 #include "MechaPartsData/SwordData.h"
 #include "MechaPartsData/GunData.h"
@@ -35,7 +34,6 @@ std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>
 	PARTS_DATA_CREATER(CaterpillarData),
 	PARTS_DATA_CREATER(AerodynamicsData),
 	PARTS_DATA_CREATER(NextPosData),
-	PARTS_DATA_CREATER(PostureData),
 	PARTS_DATA_CREATER(BoostBrust),
 	PARTS_DATA_CREATER(SwordData),
 	PARTS_DATA_CREATER(GunData),

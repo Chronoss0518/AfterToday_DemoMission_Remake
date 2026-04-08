@@ -59,7 +59,6 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\MoveDataBase.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosBase.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosData.h" />
-    <ClInclude Include="Src\BaseMecha\MechaPartsData\PostureData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\ScopeData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\SwordData.h" />
     <ClInclude Include="Src\BaseMecha\MechaPartsData\WalkData.h" />
@@ -139,7 +138,6 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsData\GunData.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosBase.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosData.cpp" />
-    <ClCompile Include="Src\BaseMecha\MechaPartsData\PostureData.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsData\ScopeData.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsData\SwordData.cpp" />
     <ClCompile Include="Src\BaseMecha\MechaPartsData\WalkData.cpp" />
