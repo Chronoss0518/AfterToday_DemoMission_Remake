@@ -309,6 +309,11 @@ void BaseMecha::SetRotation(const ChVec3& _rot)
 	physics->SetRotation(_rot);
 }
 
+void BaseMecha::SetPushFlg(const InputName _inputFlgName)
+{
+	inputFlgs.SetBitTrue(ChStd::EnumCast(_inputFlgName));
+}
+
 ChVec3 BaseMecha::GetPosition()
 {
 	return physics->GetPosition();

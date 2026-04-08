@@ -121,10 +121,7 @@ public://Set Function//
 
 	void SetMass(const float _mass) { mass = _mass; }
 
-	inline void SetPushFlg(const InputName _inputFlgName)
-	{
-		inputFlgs.SetBitTrue(ChStd::EnumCast(_inputFlgName));
-	}
+	void SetPushFlg(const InputName _inputFlgName);
 
 	void SetGroundHeight(const float _height);
 
@@ -232,7 +229,6 @@ protected:
 	std::vector<ChPtr::Shared<DamageSmokePosData>>damageSmokeCreatePos;
 	std::vector<unsigned char>damageSmokePosNum;
 	unsigned long createDamageSmokeTime = 0;
-
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
 
