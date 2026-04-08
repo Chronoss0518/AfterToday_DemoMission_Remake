@@ -185,12 +185,12 @@ void BaseMecha::Move()
 	core->MoveFunction();
 
 	BaseMove();
-
-	inputFlgs.SetAllDownFlg();
 }
 
 void BaseMecha::MoveEnd()
 {
+	inputFlgs.SetAllDownFlg();
+
 	damageDir = ChVec3();
 
 	auto&& camera = GetComponentObject<CameraComponent>();
@@ -202,8 +202,6 @@ void BaseMecha::MoveEnd()
 	}
 
 	camera->SetCenterPos(centerPos);
-
-	camera->UpdateCamera();
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
