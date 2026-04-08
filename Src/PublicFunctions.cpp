@@ -92,13 +92,13 @@ RotationData GetRotationFromDir(ChVec3 _dir)
 
 	auto xzCross = ChVec3::GetCross(_dir, ChVec3(0.0f, 0.0f, 1.0f));
 
-	res.xzRad = xzDir.GetRadian(xzDir, ChVec3(0.0f, 0.0f, 1.0f));
+	res.xzRad = ChVec3::GetRadian(xzDir, ChVec3(0.0f, 0.0f, 1.0f));
 
 	if (xzCross.y < 0)res.xzRad = -res.xzRad;
 
 	auto yCross = ChVec3::GetCross(_dir, xzDir);
 
-	res.yRad = _dir.GetRadian(_dir, xzDir);
+	res.yRad = ChVec3::GetRadian(_dir, xzDir);
 
 	return res;
 }

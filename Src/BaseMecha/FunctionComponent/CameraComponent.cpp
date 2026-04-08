@@ -153,7 +153,7 @@ void CameraComponent::SetRotateToTarget()
 
 	SetViewHorizontal(ChMath::ToDegree(rotate.xzRad));
 
-	SetViewVertical(ChMath::ToDegree(rotate.yRad));
+	SetViewVertical(-ChMath::ToDegree(rotate.yRad));
 
 }
 
