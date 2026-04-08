@@ -12,13 +12,13 @@ public:
 
 public:
 
-	void Update()override;
+	void Move()override;
 
 public:
 
-	void UpdateCamera();
+	void UpdateViewMatrix();
 
-	void UpdateScope();
+	void UpdateProjectionMatrix();
 
 public:
 

@@ -21,7 +21,7 @@
 
 #define VIEW_ROTATE_POW_UPPER 16 / 9
 
-void CameraComponent::Update()
+void CameraComponent::Move()
 {
 
 	updateKeyFlg = false;
@@ -34,9 +34,9 @@ void CameraComponent::Update()
 
 	UpdateTargetLooker();
 
-	UpdateCamera();
+	UpdateViewMatrix();
 
-	UpdateScope();
+	UpdateProjectionMatrix();
 
 }
 
@@ -93,8 +93,6 @@ void CameraComponent::SetTarget()
 		return;
 	}
 
-	if (!updateKeyFlg)return;
-
 	if (ChPtr::NullCheck(frame))return;
 
 	auto&& baseMecha = GetBaseMecha();
@@ -110,6 +108,8 @@ void CameraComponent::SetTarget()
 		auto&& mecha = mechas[i].lock();
 		if (mecha == nullptr)continue;
 		if (mecha.get() == baseMecha)continue;
+		if (mecha->GetTeamNo() == baseMecha->GetTeamNo())continue;
+		if (mecha->IsBreak())continue;
 
 		ChVec4 pos = mecha->GetPosition();
 		pos = viewMat.Transform(pos);
@@ -129,6 +129,7 @@ void CameraComponent::SetTarget()
 		if (testSize.GetLen() < pos.GetLen())continue;
 
 		test = pos;
+		test.z = 0.0f;
 		lookTarget = mechas[i];
 	}
 }
@@ -136,22 +137,21 @@ void CameraComponent::SetTarget()
 void CameraComponent::SetRotateToTarget()
 {
 	if (lookTarget.expired())return;
+	if (updateKeyFlg)return;
 
 	auto&& targetObj = lookTarget.lock();
 
 	auto&& baseMecha = GetBaseMecha();
 
 	ChVec3 dir = targetObj->GetPosition() - (centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
-
 	dir.Normalize();
 
-	ChQua tmpQua;
-	tmpQua.SetRotation(ChVec3(0.0f,0.0f,1.0f), dir);
+	auto rotate = GetRotationFromDir(dir);
 
-	auto&& rotate = tmpQua.GetEulerRotationYXZ();
+	SetViewHorizontal(ChMath::ToDegree(rotate.xzRad));
 
-	SetViewVertical(ChMath::ToDegree(rotate.x));
-	SetViewHorizontal(ChMath::ToDegree(rotate.y));
+	SetViewVertical(ChMath::ToDegree(rotate.yRad));
+
 }
 
 bool CameraComponent::IsLookTarget(BaseMecha* _mecha)
@@ -208,7 +208,7 @@ ChVec3 CameraComponent::GetViewCrossDir(const ChLMat& _mat)
 	return tmp;
 }
 
-void CameraComponent::UpdateCamera()
+void CameraComponent::UpdateViewMatrix()
 {
 	auto&& lMat = CreateViewMatrix();
 
@@ -232,7 +232,7 @@ void CameraComponent::UpdateCamera()
 	viewMat = tmpMat;
 }
 
-void CameraComponent::UpdateScope()
+void CameraComponent::UpdateProjectionMatrix()
 {
 
 	ChMat_11 tmpProMat;
