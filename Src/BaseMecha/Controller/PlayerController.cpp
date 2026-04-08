@@ -151,70 +151,36 @@ void PlayerController::XInputUpdate()
 	controllerPushFlg = false;
 	auto&& controller = AppIns().GetXInputController();
 
-	if (controller.GetAFlg())SetXInputFlg(XInputTypeNames::A);
+	SetXInputFlg(controller.GetAFlg(), XInputTypeNames::A);
+	SetXInputFlg(controller.GetBFlg(), XInputTypeNames::B);
+	SetXInputFlg(controller.GetXFlg(), XInputTypeNames::X);
+	SetXInputFlg(controller.GetYFlg(), XInputTypeNames::Y);
 
-	if (controller.GetBFlg())SetXInputFlg(XInputTypeNames::B);
+	SetXInputFlg(controller.GetUpFlg(), XInputTypeNames::Up);
+	SetXInputFlg(controller.GetDownFlg(), XInputTypeNames::Down);
+	SetXInputFlg(controller.GetLeftFlg(), XInputTypeNames::Left);
+	SetXInputFlg(controller.GetRightFlg(), XInputTypeNames::Right);
 
-	if (controller.GetXFlg())SetXInputFlg(XInputTypeNames::X);
+	SetXInputFlg(controller.GetBackFlg(), XInputTypeNames::Back);
+	SetXInputFlg(controller.GetStartFlg(), XInputTypeNames::Start);
 
-	if (controller.GetYFlg())SetXInputFlg(XInputTypeNames::Y);
+	SetXInputFlg(controller.GetR1Flg(), XInputTypeNames::R1);
+	SetXInputFlg(controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::R2);
+	SetXInputFlg(controller.GetR3Flg(), XInputTypeNames::R3);
 
-	if (controller.GetUpFlg())SetXInputFlg(XInputTypeNames::Up);
-	if (controller.GetDownFlg())SetXInputFlg(XInputTypeNames::Down);
-	if (controller.GetLeftFlg())SetXInputFlg(XInputTypeNames::Left);
-	if (controller.GetRightFlg())SetXInputFlg(XInputTypeNames::Right);
+	SetXInputFlg(controller.GetL1Flg(), XInputTypeNames::L1);
+	SetXInputFlg(controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::L2);
+	SetXInputFlg(controller.GetL3Flg(), XInputTypeNames::L3);
 
-	if (controller.GetBackFlg())SetXInputFlg(XInputTypeNames::Back);
-	if (controller.GetStartFlg())SetXInputFlg(XInputTypeNames::Start);
+	SetXInputFlg(controller.GetLXStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LRight);
+	SetXInputFlg(controller.GetLXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LLeft);
+	SetXInputFlg(controller.GetLYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LDown);
+	SetXInputFlg(controller.GetLYStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LTop);
 
-	if (controller.GetR1Flg())SetXInputFlg(XInputTypeNames::R1);
-	if (controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)SetXInputFlg(XInputTypeNames::R2);
-	if (controller.GetR3Flg())SetXInputFlg(XInputTypeNames::R3);
-
-	if (controller.GetL1Flg())SetXInputFlg(XInputTypeNames::L1);
-	if (controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)SetXInputFlg(XInputTypeNames::L2);
-	if (controller.GetL3Flg())SetXInputFlg(XInputTypeNames::L3);
-
-
-	if (controller.GetLXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LRight);
-	}
-
-	if (controller.GetLXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LLeft);
-	}
-
-	if (controller.GetLYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LDown);
-	}
-
-	if (controller.GetLYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LTop);
-	}
-
-	if (controller.GetRXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RRight);
-	}
-
-	if (controller.GetRXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RLeft);
-	}
-
-	if (controller.GetRYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RDown);
-	}
-
-	if (controller.GetRYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RTop);
-	}
+	SetXInputFlg(controller.GetRXStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RRight);
+	SetXInputFlg(controller.GetRXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RLeft);
+	SetXInputFlg(controller.GetRYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RDown);
+	SetXInputFlg(controller.GetRYStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RTop);
 
 }
 
@@ -263,10 +229,31 @@ void PlayerController::CursolFunction(float& _value, float _removeSize, const Ax
 	}
 }
 
-void PlayerController::SetXInputFlg(const XInputTypeNames _xinputType)
+void PlayerController::SetXInputFlg(bool _flg,const XInputTypeNames _xinputType)
 {
-	if (controllerTypes.find(_xinputType) == controllerTypes.end())return;
+	if (controllerTypes.find(_xinputType) == controllerTypes.end())
+	{
+		controllerHoldKeys.SetBitFalse(ChStd::EnumCast(_xinputType));
+		return;
+	}
+
+	if (!_flg)
+	{
+		controllerHoldKeys.SetBitFalse(ChStd::EnumCast(_xinputType));
+		return;
+	}
+
+	if (controllerHoldKeys.GetBitFlg(ChStd::EnumCast(_xinputType)))
+	{
+		for (size_t i = 0; noHoldInputTypes[i] != InputName::None; i++)
+		{
+			if (controllerTypes[_xinputType] == noHoldInputTypes[i])
+				return;
+		}
+	}
+
 	auto targetMecha = GetBaseMecha();
 	controllerPushFlg = true;
 	targetMecha->SetPushFlg(controllerTypes[_xinputType]);
+	controllerHoldKeys.SetBitTrue(ChStd::EnumCast(_xinputType));
 }
