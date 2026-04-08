@@ -256,7 +256,8 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 
 	nextParameter = baseParameter = _baseMecha->GetCoreParts();
 
-	*nextPartsParameter = *basePartsParameter = *baseParameter->GetPartsParameters();
+	if(baseParameter != nullptr)
+		*nextPartsParameter = *basePartsParameter = *baseParameter->GetPartsParameters();
 
 	displays[ChStd::EnumCast(DisplayType::Partial)]->Init(titleBGTexture, valueBGTexture, basePartsParameter, nextPartsParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
 	displays[ChStd::EnumCast(DisplayType::Entire)]->Init(titleBGTexture, valueBGTexture, baseAllParameter, nextAllParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
