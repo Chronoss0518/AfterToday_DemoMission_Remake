@@ -45,8 +45,10 @@ void PlayerController::Init()
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
 	keyTypes[VK_RBUTTON] = InputName::RAttack;
 
+	keyTypes[VK_MBUTTON] = InputName::UseTargetLooker;
+
 	//keyTypes[VK_CONTROL] = InputName::MSChange;
-	keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
+	//keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
 	//keyTypes[VK_SCROLL] = InputName::ScopeMagnificationUp;
 
 	controllerTypes[XInputTypeNames::A] = InputName::Up;
@@ -103,7 +105,26 @@ void PlayerController::UpdateBegin()
 
 		for (auto&& key : keyTypes)
 		{
-			if (!keyInput.IsPushKey(key.first))continue;
+			if (
+				key.second == InputName::MapOnOff ||
+				key.second == InputName::Release ||
+				key.second == InputName::UseTargetLooker ||
+				key.second == InputName::WeaponUpChange ||
+				key.second == InputName::RWUChange ||
+				key.second == InputName::LWUChange ||
+				key.second == InputName::WeaponDownChange ||
+				key.second == InputName::RWDChange ||
+				key.second == InputName::LWDChange ||
+				key.second == InputName::MoveUpChange ||
+				key.second == InputName::MoveDownChange
+				)
+			{
+				if (!keyInput.IsPushKeyNoHold(key.first))continue;
+			}
+			else
+			{
+				if (!keyInput.IsPushKey(key.first))continue;
+			}
 			targetMecha->SetPushFlg(key.second);
 		}
 
