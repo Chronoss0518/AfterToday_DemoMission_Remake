@@ -11,6 +11,22 @@
 #define MIN_CURSOL_LEN_PARCEC 0.01f
 #define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
 
+BaseMecha::InputName noHoldInputTypes[]
+{
+	BaseMecha::InputName::MapOnOff,
+	BaseMecha::InputName::Release,
+	BaseMecha::InputName::UseTargetLooker,
+	BaseMecha::InputName::WeaponUpChange,
+	BaseMecha::InputName::RWUChange,
+	BaseMecha::InputName::LWUChange,
+	BaseMecha::InputName::WeaponDownChange,
+	BaseMecha::InputName::RWDChange,
+	BaseMecha::InputName::LWDChange,
+	BaseMecha::InputName::MoveUpChange,
+	BaseMecha::InputName::MoveDownChange,
+	BaseMecha::InputName::None,
+};
+
 void PlayerController::Init()
 {
 	auto&& windows = AppIns().GetWindow();
@@ -105,19 +121,16 @@ void PlayerController::UpdateBegin()
 
 		for (auto&& key : keyTypes)
 		{
-			if (
-				key.second == InputName::MapOnOff ||
-				key.second == InputName::Release ||
-				key.second == InputName::UseTargetLooker ||
-				key.second == InputName::WeaponUpChange ||
-				key.second == InputName::RWUChange ||
-				key.second == InputName::LWUChange ||
-				key.second == InputName::WeaponDownChange ||
-				key.second == InputName::RWDChange ||
-				key.second == InputName::LWDChange ||
-				key.second == InputName::MoveUpChange ||
-				key.second == InputName::MoveDownChange
-				)
+			bool isNoHole = false;
+
+			for (size_t i = 0; noHoldInputTypes[i] != InputName::None; i++)
+			{
+				if (key.second != noHoldInputTypes[i])continue;
+				isNoHole = true;
+				break;
+			}
+
+			if (isNoHole)
 			{
 				if (!keyInput.IsPushKeyNoHold(key.first))continue;
 			}
