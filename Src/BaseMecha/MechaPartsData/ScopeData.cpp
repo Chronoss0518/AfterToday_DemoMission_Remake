@@ -4,6 +4,7 @@
 
 #include"../../EditFrame/PartsParameters.h"
 
+#include"../../BaseMecha/FunctionComponent/CameraComponent.h"
 #include "ScopeData.h"
 
 unsigned long ScopeData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
@@ -29,6 +30,7 @@ std::wstring ScopeData::Serialize()
 void ScopeData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	//auto camera = ChPtr::Make_S<CameraObject>();
+	auto camCom = _base.GetComponentObject<CameraComponent>();
 
-	//_base.AddCamera(camera);
+	camCom->AddCameraData(this);
 }

@@ -1,29 +1,33 @@
 {
 	"Core":{
-		"Foot":{
-			"Parts":"Resource/RobotParts/FG_01.mpd"
-		},
 		"Boost":{
-			"Parts":"Resource/RobotParts/BG_01.mpd"
+			"Parts":"Resource/RobotParts/BT.mpd"
+		},
+		"Foot":{
+			"Parts":"Resource/RobotParts/FT.mpd"
 		},
 		"Head":{
-			"Parts":"Resource/RobotParts/HG_01.mpd"
+			"Parts":"Resource/RobotParts/HT.mpd"
 		},
 		"Left Arm":{
-			"Hand": {
-				"Parts": "Resource/RobotParts/MF-TPP1.mpd",
-				"LeftWeapon": [ 0 ]
+			"Hand":{
+				"LeftWeapon":[
+					0
+				],
+				"Parts":"Resource/RobotParts/MF-TPP1.mpd"
 			},
-			"Parts":"Resource/RobotParts/LAG_01.mpd"
+			"Parts":"Resource/RobotParts/LAT.mpd"
 		},
+		"Parts":"Resource/RobotParts/CT.mpd",
 		"Right Arm":{
-			"Parts":"Resource/RobotParts/RAG_01.mpd",
 			"Hand":{
 				"Parts":"Resource/RobotParts/MF-TPP1.mpd",
-				"RightWeapon": [ 0 ]
-			}
-		},
-		"Parts":"Resource/RobotParts/CG_01.mpd"
+				"RightWeapon":[
+					0
+				]
+			},
+			"Parts":"Resource/RobotParts/RAT.mpd"
+		}
 	},
-	"Name":"Guardian"
+	"Name":"Norma"
 }

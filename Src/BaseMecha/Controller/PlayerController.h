@@ -33,7 +33,8 @@ private:
 		L1, L2, L3, R1, R2, R3,
 		Start, Back,
 		LTop, LLeft, LDown, LRight,
-		RTop, RLeft, RDown, RRight
+		RTop, RLeft, RDown, RRight,
+		None
 	};
 
 	enum class AxisTypeName : unsigned char {
@@ -46,12 +47,13 @@ private:
 
 	void CursolFunction(float& _value, float _removeSize,const AxisTypeName _plus, const AxisTypeName _minus);
 
-	void SetXInputFlg(const XInputTypeNames _xinputType);
+	void SetXInputFlg(bool _flg,const XInputTypeNames _xinputType);
 
 	bool controllerPushFlg = false;
 
 	std::map<unsigned char, InputName> keyTypes;
 	std::map<XInputTypeNames, InputName>controllerTypes;
+	ChCpp::BitBool controllerHoldKeys = ChCpp::BitBool((ChStd::EnumCast(XInputTypeNames::None) / 8) + 1);
 
 	InputName cursolInput[ChStd::EnumCast(AxisTypeName::None)] = { InputName::None,InputName::None,InputName::None,InputName::None };
 	InputName wheelInput[ChStd::EnumCast(AxisTypeName::None)]{ InputName::None,InputName::None,InputName::None,InputName::None };

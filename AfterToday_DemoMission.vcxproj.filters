@@ -303,9 +303,6 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsData\NextPosData.h">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseMecha\MechaPartsData\PostureData.h">
-      <Filter>GameFrame\MechaPartsData</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseMecha\MechaPartsData\BoostBrustData.h">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClInclude>
@@ -331,6 +328,9 @@
       <Filter>GameFrame</Filter>
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\WeaponHandType.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PublicFunctions.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -536,9 +536,6 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsData\NextPosData.cpp">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClCompile>
-    <ClCompile Include="Src\BaseMecha\MechaPartsData\PostureData.cpp">
-      <Filter>GameFrame\MechaPartsData</Filter>
-    </ClCompile>
     <ClCompile Include="Src\BaseMecha\MechaPartsData\BoostBrustData.cpp">
       <Filter>GameFrame\MechaPartsData</Filter>
     </ClCompile>
@@ -556,6 +553,9 @@
     </ClCompile>
     <ClCompile Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.cpp">
       <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PublicFunctions.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

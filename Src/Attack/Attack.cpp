@@ -285,14 +285,18 @@ void BulletData::InitBulletObject(const ChLMat& _startMat, AttackObject& _bullet
 	_bullet.SetPosition(_startMat.GetPosition());
 	_bullet.SetRotation(tmpRotate);
 
+#if ATTACK_OBJECT_DEBUG_FLG
+	dir *= firstSpeed * 0.01f;
+#else
 	dir *= firstSpeed;
+#endif
 	_bullet.physics->AddMovePowerVector(dir);
 
 	for (unsigned char i = 0; i < 5; i++)
 	{
-		float pow = static_cast<float>((rand() % 100) * 0.01);
+		float pow = static_cast<float>((rand() % 10) * 0.0001f) + 0.001f;
 		pow = pow - (pow * 0.5f) + _bullet.dispersalPower;
-		float move = static_cast<float>((rand() % 100) * 0.0001) + 0.01f;
+		float move = static_cast<float>((rand() % 100) * 0.0001f) + 0.01f;
 		for (unsigned char j = 0; j < i; j++)
 		{
 			pow *= 0.5f;

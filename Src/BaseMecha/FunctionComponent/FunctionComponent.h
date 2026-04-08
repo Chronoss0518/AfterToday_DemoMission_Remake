@@ -42,6 +42,8 @@ protected:
 
 	ChVec3 GetRotateVector() { return target->physics->GetAddRotatePowerVector(); }
 
+	inline BaseMecha* GetBaseMecha() { return target; }
+
 protected:
 
 	template<class T>

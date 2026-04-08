@@ -43,7 +43,7 @@ protected:
 	//次の攻撃可能時間//
 	unsigned long waitTime = 0;
 
-	//対象を追尾するかのフラグ//
+	//カメラの向きに追尾する機能//
 	bool lookTarget = false;
 
 };

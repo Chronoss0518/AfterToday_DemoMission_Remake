@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef APPLICATION_USE_THREAD_FLG
+#define APPLICATION_USE_THREAD_FLG false
+#endif
+
 class Application : public ChCp::Initializer
 {
 private:
@@ -34,6 +38,10 @@ public:
 
 	inline ChD3D::XInputController& GetXInputController() { return controller; }
 
+#if APPLICATION_USE_THREAD_FLG
+	inline ChCpp::ThreadObjectList& GetThreadList() { return threadList; }
+#endif
+
 private:
 
 	ChWin::WindObjectW window;
@@ -48,6 +56,10 @@ private:
 	ChD3D::XInputController controller;
 
 	ChCpp::FPSController fpsController;
+
+#if APPLICATION_USE_THREAD_FLG
+	ChCpp::ThreadObjectList threadList;
+#endif
 
 	bool inUpdateFlg = false;
 

@@ -4,6 +4,7 @@
 
 #include"../../EditFrame/PartsParameters.h"
 
+#include"../../BaseMecha/FunctionComponent/CameraComponent.h"
 #include "CameraData.h"
 
 unsigned long CameraData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
@@ -27,6 +28,7 @@ std::wstring CameraData::Serialize()
 void CameraData::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
 {
 	//auto camera = ChPtr::Make_S<CameraObject>();
+	auto camCom = _base.GetComponentObject<CameraComponent>();
 
-	//_base.AddCamera(camera);
+	camCom->AddCameraData(this);
 }

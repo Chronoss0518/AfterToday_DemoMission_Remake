@@ -123,8 +123,6 @@ public://Set Functions//
 
 public://Get Function//
 
-	std::vector<ChPtr::Weak<PostureController>>& GetPostureControllerList() { return postureList; };
-
 	inline unsigned long GetHardness()const { return hardness; }
 
 	inline float GetMass()const { return mass; }
@@ -160,11 +158,6 @@ public:
 		positions[_parameter] = data;
 	}
 
-	inline void AddPosture(ChPtr::Weak<PostureController> _posture)
-	{
-		postureList.push_back(_posture);
-	}
-
 private:
 
 	void SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _jsonPropertyName, WeaponHandType _type);
@@ -197,7 +190,6 @@ private:
 
 	std::map<std::wstring, ChPtr::Shared<MartsPositionData>> positions;
 
-	std::vector<ChPtr::Weak<PostureController>> postureList;
 
 };
 

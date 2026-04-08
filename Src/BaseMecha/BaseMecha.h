@@ -121,10 +121,7 @@ public://Set Function//
 
 	void SetMass(const float _mass) { mass = _mass; }
 
-	inline void SetPushFlg(const InputName _inputFlgName)
-	{
-		inputFlgs.SetBitTrue(ChStd::EnumCast(_inputFlgName));
-	}
+	void SetPushFlg(const InputName _inputFlgName);
 
 	void SetGroundHeight(const float _height);
 
@@ -135,8 +132,6 @@ public://Get Function//
 	ChVec3 GetPosition();
 
 	ChVec3 GetRotation();
-
-	ChLMat GetViewMat();
 
 	ChVec3 GetDamageDir() { return damageDir; }
 
@@ -235,9 +230,7 @@ protected:
 	std::vector<unsigned char>damageSmokePosNum;
 	unsigned long createDamageSmokeTime = 0;
 
-
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
-
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 

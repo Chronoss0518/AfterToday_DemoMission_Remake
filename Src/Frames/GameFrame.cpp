@@ -1,18 +1,20 @@
 #include"../BaseIncluder.h"
 
+#include"../AllStruct.h"
+#include"GameFrame.h"
+
 #include"../Shader/EffectObject/EffectObjectShader.h"
 #include"../Shader/EffectSprite/EffectSpriteShader.h"
 
-#include"../AllStruct.h"
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../BaseMecha/MechaParts.h"
 #include"../BaseMecha/FunctionComponent/EnergyComponent.h"
+#include"../BaseMecha/FunctionComponent/CameraComponent.h"
 #include"../Attack/AttackObject.h"
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
 #include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
-#include"GameFrame.h"
 
 #include"../BaseMecha/Controller/PlayerController.h"
 #include"../BaseMecha/Controller/CPUController.h"
@@ -68,6 +70,9 @@
 
 #define ENEMY_TARGET_MARKER_SIZE 112.0f
 #define ENEMY_TARGET_RANGE_COEFFICIENT 0.8f
+
+#define NO_LOOK_TARGET_MARKER_COLOR ChVec4::FromColor(0.0f, 1.0f, 1.0f, 1.0f)
+#define LOOK_TARGET_MARKER_COLOR ChVec4::FromColor(1.0f, 0.0f, 0.0f, 1.0f)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //GameÉÅÉ\ÉbÉh
@@ -158,7 +163,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	enemyMarkerShader->SetObjectSize(ChVec2(ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_WIDTH, ENEMY_TARGET_MARKER_SIZE / GAME_WINDOW_HEIGHT));
 	for (unsigned long i = 0; i < MAX_MECHA_OBJECT_COUNT; i++)
 	{
-		enemyMarkerShader->SetEffectColor(ChVec4(1.0f), i);
+		enemyMarkerShader->SetEffectColor(NO_LOOK_TARGET_MARKER_COLOR, i);
 	}
 
 	light.Init(device);
@@ -192,8 +197,6 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	{
 		ChMat_11 proMat;
 		proMat.CreateProjectionMat(ChMath::ToRadian(60.0f), GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
-
-		projectionMat = proMat;
 
 		meshDrawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
@@ -769,27 +772,38 @@ void GameFrame::DrawFunctionBegin()
 	if (tmpMecha.expired())return;
 	drawMecha = tmpMecha.lock();
 
-	auto viewMat = drawMecha->GetViewMat();
+	if (drawMecha != nullptr)
+	{
+		auto&& cameraCom = drawMecha->GetComponentObject<CameraComponent>();
+		proMat = cameraCom->GetProMat();
+		viewMat = cameraCom->GetViewMat();
+	}
 
+	meshDrawer.SetProjectionMatrix(proMat);
 	meshDrawer.SetViewMatrix(viewMat);
 	
+	shotTargetDrawer.SetProjectionMatrix(proMat);
 	shotTargetDrawer.SetViewMatrix(viewMat);
 
 	shotTargetdrawBaseMatrix.SetRotationYAxis(ChMath::ToRadian(drawMecha->GetRotation().y));
 	shotTargetdrawBaseMatrix.SetPosition(drawMecha->GetPosition());
 	shotTargetdrawBaseMatrix.SetScalling(SHOT_TARGET_MARKER_SIZE);
 
+	shotEffectList->SetProjectionMatrix(proMat);
 	shotEffectList->SetViewMatrix(viewMat);
 
+	smokeEffectList->SetProjectionMatrix(proMat);
 	smokeEffectList->SetViewMatrix(viewMat);
 
 	auto&& objectLooker = drawMecha->GetComponent<CPUObjectLooker>();
 	if (objectLooker != nullptr)
 	{
 
-		ChLMat vpMat = viewMat * projectionMat;
+		ChLMat vpMat = viewMat * proMat;
 
 		auto&& list = objectLooker->GetLookMechaList();
+
+		auto cameraCom = drawMecha->GetComponentObject<CameraComponent>();
 
 
 		for (size_t i = 0; i < list.size(); i++)
@@ -805,18 +819,22 @@ void GameFrame::DrawFunctionBegin()
 			tmp.Abs();
 			if (tmp.y > CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_HEIGHT || tmp.x > (CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_WIDTH))continue;
 
+			ChVec4 color = cameraCom->IsLookTarget(mechaPointer.get()) ? LOOK_TARGET_MARKER_COLOR : NO_LOOK_TARGET_MARKER_COLOR;
+
 			enemyMarkerShader->SetEffectPosition(position, i);
+			enemyMarkerShader->SetEffectColor(color, i);
 			enemyMarkerShader->SetEffectDisplayFlg(true, i);
 
 		}
 
 	}
 
-	viewMat.Inverse();
+	ChLMat tmpViewMat = viewMat;
+	tmpViewMat.Inverse();
 
-	light.SetCamPos(viewMat.GetPosition());
+	light.SetCamPos(tmpViewMat.GetPosition());
 	//ChD3D::XAudioManager().InitMatrix(ChLMat());
-	ChD3D::XAudioManager().InitMatrix(viewMat);
+	ChD3D::XAudioManager().InitMatrix(tmpViewMat);
 
 	ChVec3 dir = ChVec3(0.0f, -1.0f, 0.0f);
 	dir.Normalize();
@@ -1069,9 +1087,6 @@ void GameFrame::AddMecha(const std::wstring& _text)
 	{	
 		auto&& con = mecha->SetComponent<PlayerController>();
 		con->SetGameFrame(this);
-		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
-		cpuObjectLooker->SetGameFrame(this);
-		cpuObjectLooker->SetProjectionMatrix(projectionMat);
 		playerCount++;
 		playerParty = teamNo;
 	}
@@ -1081,10 +1096,13 @@ void GameFrame::AddMecha(const std::wstring& _text)
 		auto cpuController = mecha->SetComponent<CPUController>();
 		cpuController->LoadCPUData(cpuLoadData);
 		cpuController->SetGameFrame(this);
-		auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
-		cpuObjectLooker->SetGameFrame(this);
-		cpuObjectLooker->SetProjectionMatrix(projectionMat);
 	}
+
+	auto cpuObjectLooker = mecha->SetComponent<CPUObjectLooker>();
+	cpuObjectLooker->SetGameFrame(this);
+
+	auto camCom = mecha->GetComponentObject<CameraComponent>();
+	camCom->SetGameFrame(this);
 
 	mecha->SetTeamNo(teamNo);
 

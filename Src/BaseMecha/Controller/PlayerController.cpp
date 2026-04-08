@@ -11,6 +11,22 @@
 #define MIN_CURSOL_LEN_PARCEC 0.01f
 #define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
 
+BaseMecha::InputName noHoldInputTypes[]
+{
+	BaseMecha::InputName::MapOnOff,
+	BaseMecha::InputName::Release,
+	BaseMecha::InputName::UseTargetLooker,
+	BaseMecha::InputName::WeaponUpChange,
+	BaseMecha::InputName::RWUChange,
+	BaseMecha::InputName::LWUChange,
+	BaseMecha::InputName::WeaponDownChange,
+	BaseMecha::InputName::RWDChange,
+	BaseMecha::InputName::LWDChange,
+	BaseMecha::InputName::MoveUpChange,
+	BaseMecha::InputName::MoveDownChange,
+	BaseMecha::InputName::None,
+};
+
 void PlayerController::Init()
 {
 	auto&& windows = AppIns().GetWindow();
@@ -45,8 +61,10 @@ void PlayerController::Init()
 	keyTypes[VK_LBUTTON] = InputName::LAttack;
 	keyTypes[VK_RBUTTON] = InputName::RAttack;
 
+	keyTypes[VK_MBUTTON] = InputName::UseTargetLooker;
+
 	//keyTypes[VK_CONTROL] = InputName::MSChange;
-	keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
+	//keyTypes[VK_MBUTTON] = InputName::WeaponDownChange;
 	//keyTypes[VK_SCROLL] = InputName::ScopeMagnificationUp;
 
 	controllerTypes[XInputTypeNames::A] = InputName::Up;
@@ -64,19 +82,19 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::LDown] = InputName::Back;
 	controllerTypes[XInputTypeNames::LRight] = InputName::Right;
 	controllerTypes[XInputTypeNames::RTop] = InputName::CameraDownRotation;
-	controllerTypes[XInputTypeNames::RLeft] = InputName::LeftRotation;
+	controllerTypes[XInputTypeNames::RLeft] = InputName::CameraLeftRotation;
 	//controllerTypes[XInputTypeNames::RLeft] = InputName::CameraLeftRotation;
 
 	controllerTypes[XInputTypeNames::RDown] = InputName::CameraUpRotation;
-	controllerTypes[XInputTypeNames::RRight] = InputName::RightRotation;
+	controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
 	//controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
 
 	controllerTypes[XInputTypeNames::L1] = InputName::LAttack;
-	controllerTypes[XInputTypeNames::L2] = InputName::LWDChange;
-	controllerTypes[XInputTypeNames::L3] = InputName::LReload;
+	controllerTypes[XInputTypeNames::L2] = InputName::LReload;
+	controllerTypes[XInputTypeNames::L3] = InputName::None;
 	controllerTypes[XInputTypeNames::R1] = InputName::RAttack;
-	controllerTypes[XInputTypeNames::R2] = InputName::RWDChange;
-	controllerTypes[XInputTypeNames::R3] = InputName::RReload;
+	controllerTypes[XInputTypeNames::R2] = InputName::RReload;
+	controllerTypes[XInputTypeNames::R3] = InputName::UseTargetLooker;
 
 }
 
@@ -103,7 +121,23 @@ void PlayerController::UpdateBegin()
 
 		for (auto&& key : keyTypes)
 		{
-			if (!keyInput.IsPushKey(key.first))continue;
+			bool isNoHole = false;
+
+			for (size_t i = 0; noHoldInputTypes[i] != InputName::None; i++)
+			{
+				if (key.second != noHoldInputTypes[i])continue;
+				isNoHole = true;
+				break;
+			}
+
+			if (isNoHole)
+			{
+				if (!keyInput.IsPushKeyNoHold(key.first))continue;
+			}
+			else
+			{
+				if (!keyInput.IsPushKey(key.first))continue;
+			}
 			targetMecha->SetPushFlg(key.second);
 		}
 
@@ -117,70 +151,36 @@ void PlayerController::XInputUpdate()
 	controllerPushFlg = false;
 	auto&& controller = AppIns().GetXInputController();
 
-	if (controller.GetAFlg())SetXInputFlg(XInputTypeNames::A);
+	SetXInputFlg(controller.GetAFlg(), XInputTypeNames::A);
+	SetXInputFlg(controller.GetBFlg(), XInputTypeNames::B);
+	SetXInputFlg(controller.GetXFlg(), XInputTypeNames::X);
+	SetXInputFlg(controller.GetYFlg(), XInputTypeNames::Y);
 
-	if (controller.GetBFlg())SetXInputFlg(XInputTypeNames::B);
+	SetXInputFlg(controller.GetUpFlg(), XInputTypeNames::Up);
+	SetXInputFlg(controller.GetDownFlg(), XInputTypeNames::Down);
+	SetXInputFlg(controller.GetLeftFlg(), XInputTypeNames::Left);
+	SetXInputFlg(controller.GetRightFlg(), XInputTypeNames::Right);
 
-	if (controller.GetXFlg())SetXInputFlg(XInputTypeNames::X);
+	SetXInputFlg(controller.GetBackFlg(), XInputTypeNames::Back);
+	SetXInputFlg(controller.GetStartFlg(), XInputTypeNames::Start);
 
-	if (controller.GetYFlg())SetXInputFlg(XInputTypeNames::Y);
+	SetXInputFlg(controller.GetR1Flg(), XInputTypeNames::R1);
+	SetXInputFlg(controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::R2);
+	SetXInputFlg(controller.GetR3Flg(), XInputTypeNames::R3);
 
-	if (controller.GetUpFlg())SetXInputFlg(XInputTypeNames::Up);
-	if (controller.GetDownFlg())SetXInputFlg(XInputTypeNames::Down);
-	if (controller.GetLeftFlg())SetXInputFlg(XInputTypeNames::Left);
-	if (controller.GetRightFlg())SetXInputFlg(XInputTypeNames::Right);
+	SetXInputFlg(controller.GetL1Flg(), XInputTypeNames::L1);
+	SetXInputFlg(controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::L2);
+	SetXInputFlg(controller.GetL3Flg(), XInputTypeNames::L3);
 
-	if (controller.GetBackFlg())SetXInputFlg(XInputTypeNames::Back);
-	if (controller.GetStartFlg())SetXInputFlg(XInputTypeNames::Start);
+	SetXInputFlg(controller.GetLXStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LRight);
+	SetXInputFlg(controller.GetLXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LLeft);
+	SetXInputFlg(controller.GetLYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LDown);
+	SetXInputFlg(controller.GetLYStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::LTop);
 
-	if (controller.GetR1Flg())SetXInputFlg(XInputTypeNames::R1);
-	if (controller.GetR2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)SetXInputFlg(XInputTypeNames::R2);
-	if (controller.GetR3Flg())SetXInputFlg(XInputTypeNames::R3);
-
-	if (controller.GetL1Flg())SetXInputFlg(XInputTypeNames::L1);
-	if (controller.GetL2Trigger() > DEFAULT_CONTROLLER_MOVE_SIZE)SetXInputFlg(XInputTypeNames::L2);
-	if (controller.GetL3Flg())SetXInputFlg(XInputTypeNames::L3);
-
-
-	if (controller.GetLXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LRight);
-	}
-
-	if (controller.GetLXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LLeft);
-	}
-
-	if (controller.GetLYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LDown);
-	}
-
-	if (controller.GetLYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::LTop);
-	}
-
-	if (controller.GetRXStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RRight);
-	}
-
-	if (controller.GetRXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RLeft);
-	}
-
-	if (controller.GetRYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RDown);
-	}
-
-	if (controller.GetRYStick() > DEFAULT_CONTROLLER_MOVE_SIZE)
-	{
-		SetXInputFlg(XInputTypeNames::RTop);
-	}
+	SetXInputFlg(controller.GetRXStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RRight);
+	SetXInputFlg(controller.GetRXStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RLeft);
+	SetXInputFlg(controller.GetRYStick() < -DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RDown);
+	SetXInputFlg(controller.GetRYStick() > DEFAULT_CONTROLLER_MOVE_SIZE, XInputTypeNames::RTop);
 
 }
 
@@ -229,10 +229,31 @@ void PlayerController::CursolFunction(float& _value, float _removeSize, const Ax
 	}
 }
 
-void PlayerController::SetXInputFlg(const XInputTypeNames _xinputType)
+void PlayerController::SetXInputFlg(bool _flg,const XInputTypeNames _xinputType)
 {
-	if (controllerTypes.find(_xinputType) == controllerTypes.end())return;
+	if (controllerTypes.find(_xinputType) == controllerTypes.end())
+	{
+		controllerHoldKeys.SetBitFalse(ChStd::EnumCast(_xinputType));
+		return;
+	}
+
+	if (!_flg)
+	{
+		controllerHoldKeys.SetBitFalse(ChStd::EnumCast(_xinputType));
+		return;
+	}
+
+	if (controllerHoldKeys.GetBitFlg(ChStd::EnumCast(_xinputType)))
+	{
+		for (size_t i = 0; noHoldInputTypes[i] != InputName::None; i++)
+		{
+			if (controllerTypes[_xinputType] == noHoldInputTypes[i])
+				return;
+		}
+	}
+
 	auto targetMecha = GetBaseMecha();
 	controllerPushFlg = true;
 	targetMecha->SetPushFlg(controllerTypes[_xinputType]);
+	controllerHoldKeys.SetBitTrue(ChStd::EnumCast(_xinputType));
 }
