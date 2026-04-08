@@ -132,7 +132,7 @@ int Application::Update()
 			continue;
 		}
 
-		if (keyInput.IsPushKey('U'))
+		if (keyInput.IsPushKeyNoHold('U'))
 		{
 			int i = 0;
 			i = 1;
