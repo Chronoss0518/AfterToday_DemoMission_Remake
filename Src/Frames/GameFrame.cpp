@@ -829,11 +829,12 @@ void GameFrame::DrawFunctionBegin()
 
 	}
 
-	viewMat.Inverse();
+	ChLMat tmpViewMat = viewMat;
+	tmpViewMat.Inverse();
 
-	light.SetCamPos(viewMat.GetPosition());
+	light.SetCamPos(tmpViewMat.GetPosition());
 	//ChD3D::XAudioManager().InitMatrix(ChLMat());
-	ChD3D::XAudioManager().InitMatrix(viewMat);
+	ChD3D::XAudioManager().InitMatrix(tmpViewMat);
 
 	ChVec3 dir = ChVec3(0.0f, -1.0f, 0.0f);
 	dir.Normalize();
