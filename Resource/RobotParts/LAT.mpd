@@ -4,4 +4,9 @@ Resource/XFile/RobotsParts/LArm/Normal.x
 NextPosData:{
 LeftArm_WeaponPos
 Hand
+0.0,0.0,1.0
+0.0,1.0,0.0
+0
+0.0
+0
 }
