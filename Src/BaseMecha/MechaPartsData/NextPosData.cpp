@@ -6,6 +6,41 @@
 
 #include "NextPosData.h"
 
+unsigned long NextPosData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
+{
+	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
+	connectionName = _text.GetTextLine(textPos);
+
+	connectionRotateNormal.Deserialize(_text.GetTextLine(textPos + 1));
+	connectionRotateUp.Deserialize(_text.GetTextLine(textPos + 2));
+
+	type = (MechaParts::PartsConnectionType)ChStr::GetNumFromText<int>(_text.GetTextLine(textPos + 3));
+
+	maxWeight = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 4));
+	
+	rotateType = static_cast<RotateDirectionType>(ChStr::GetNumFromText<int>(_text.GetTextLine(textPos + 5)));
+
+	return textPos + 6;
+}
+
+std::wstring NextPosData::Serialize()
+{
+
+	std::wstring res = NextPosBase::Serialize();
+	res += connectionName + L"\n";
+
+	res += connectionRotateNormal.Serialize<wchar_t>() + L"\n";
+	res += connectionRotateUp.Serialize<wchar_t>() + L"\n";
+
+	res += ChStr::GetTextFromNum<wchar_t>((int)type) + L"\n";
+
+	res += ChStr::GetTextFromNum<wchar_t>(maxWeight) + L"\n";
+
+	res += ChStr::GetTextFromNum<wchar_t>((int)rotateType) + L"\n";
+
+	return res;
+}
+
 void NextPosData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)
 {
 	auto&& mechaParts = LookObj<MechaParts>();
