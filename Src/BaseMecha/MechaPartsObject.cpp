@@ -64,8 +64,11 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	lmat = position->connectionRotate;
 	lmat.SetPosition(pos);
 
-
 	_childObject->SetFrameTransform(lmat);
+	_childObject->thisRotateType = position->rotateType;
+
+	//Up•ûŒü‚Ì’l‚ð•ÛŽ//
+	_childObject->rotateDirection.val.Set(position->connectionRotate.m[1]);
 
 	auto&& tmpObject = positions.find(_objectType);
 	if (tmpObject == positions.end())
@@ -137,6 +140,30 @@ void MechaPartsObject::SetHitSize()
 	mecha->SetTestHitSize(tmpHitSize);
 }
 
+std::vector<MechaPartsObject*>MechaPartsObject::GetParentTree()
+{
+	std::vector<MechaPartsObject*>res;
+
+	res.push_back(this);
+
+	auto parent = GetParent();
+
+	if (parent == nullptr)return res;
+
+	auto mechaPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(parent);
+
+	if (mechaPartsParent == nullptr)return res;
+
+	auto&& tmpTree = mechaPartsParent->GetParentTree();
+
+	for (size_t i = 0; i < tmpTree.size(); i++)
+	{
+		res.push_back(tmpTree[i]);
+	}
+
+	return res;
+}
+
 std::wstring MechaPartsObject::GetPartsName()
 {
 	std::wstring result = baseParts->GetThisFileName();
@@ -155,15 +182,17 @@ void MechaPartsObject::Update()
 {
 	ChLMat tmp;
 
-#if true
+	float tmpRotate = 0.0f;
 
-	if(baseParts->GetThisFileName().find(L"RA") != std::wstring::npos ||
-		baseParts->GetThisFileName().find(L"LA") != std::wstring::npos)
-		tmp.SetRotationYAxis(ChMath::ToRadian(90.0f));
+	if (thisRotateType == RotateDirectionType::Vertical)
+		tmpRotate = rotateDirection.x * rotate;
+
+	if (thisRotateType == RotateDirectionType::Horizontal)
+		tmpRotate = rotateDirection.y * rotate;
+
+	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
 
 	SetOutSideTransform(tmp);
-
-#endif
 
 	TransformObject<wchar_t>::Update();
 
