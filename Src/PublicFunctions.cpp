@@ -96,8 +96,6 @@ RotationData GetRotationFromDir(ChVec3 _dir)
 
 	if (xzCross.y < 0)res.xzRad = -res.xzRad;
 
-	auto yCross = ChVec3::GetCross(_dir, xzDir);
-
 	res.yRad = ChVec3::GetRadian(_dir, xzDir);
 
 	return res;
