@@ -243,7 +243,7 @@ void BaseMecha::Draw3D()
 	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	drawMat.SetPosition(physics->GetPosition());
 
-	core->SetOutSideTransform(drawMat);
+	core->SetFrameTransform(drawMat);
 	core->Draw3DFunction();
 }
 
