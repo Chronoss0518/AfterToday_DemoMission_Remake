@@ -23,7 +23,6 @@ void MechaPartsObject::CreateEnd()
 	{
 		baseMecha->AddSmokeCreatePos(pos.second->positionObject, this);
 	}
-
 }
 
 void MechaPartsObject::CreateAnchor()
@@ -55,13 +54,16 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	_childObject->ChCpp::TransformObject<wchar_t>::Update();
 
 	ChVec3 pos = ChVec3();
+
 	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
-	lmat = position->connectionRotate * lmat;
+	//lmat = position->connectionRotate * lmat;
 
 	pos = lmat.Transform(pos);
 
 	lmat.Identity();
+	lmat = position->connectionRotate;
 	lmat.SetPosition(pos);
+
 
 	_childObject->SetFrameTransform(lmat);
 
@@ -151,6 +153,18 @@ std::wstring MechaPartsObject::GetPartsName()
 
 void MechaPartsObject::Update()
 {
+	ChLMat tmp;
+
+#if true
+
+	if(baseParts->GetThisFileName().find(L"RA") != std::wstring::npos ||
+		baseParts->GetThisFileName().find(L"LA") != std::wstring::npos)
+		tmp.SetRotationYAxis(ChMath::ToRadian(90.0f));
+
+	SetOutSideTransform(tmp);
+
+#endif
+
 	TransformObject<wchar_t>::Update();
 
 }

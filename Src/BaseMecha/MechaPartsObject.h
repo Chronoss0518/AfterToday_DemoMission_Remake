@@ -149,6 +149,10 @@ public:
 
 	void Update()override;
 
+private:
+
+
+
 public:
 
 	void DrawBegin()override;
@@ -161,7 +165,6 @@ protected:
 
 	ChCpp::SphereCollider collider;
 	MechaParts* baseParts;
-	ChLMat positionLastDrawMat;
 
 private:
 
