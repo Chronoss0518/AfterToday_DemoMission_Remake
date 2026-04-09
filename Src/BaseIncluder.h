@@ -218,4 +218,11 @@ struct TextDrawerWICBitmap{
 #define PALETTE_COUNT 5
 #endif
 
+enum class RotateDirectionType
+{
+	None,
+	Vertical,//‚’¼‰ñ“]//
+	Horizontal,//…•½‰ñ“]//
+};
+
 #include"PublicFunctions.h"
