@@ -5,6 +5,7 @@
 #include"../../Attack/Attack.h"
 #include"../../Attack/AttackObject.h"
 #include"../MechaPartsObject.h"
+#include"../FunctionComponent/CameraComponent.h"
 
 #include"../MechaPartsData/SwordData.h"
 #include"../MechaPartsData/GunData.h"
@@ -166,6 +167,64 @@ void GunFunction::UpdateFunction()
 	nowMagazineNum--;
 
 	reloadFlg = false;
+}
+
+void GunFunction::SelectedUpdate()
+{
+	if (ChPtr::NullCheck(parts))return;
+	if (!gunData->GetLookTargetFlg())return;
+
+	auto tree = parts->GetParentTree();
+
+	auto camCom = mecha->GetComponentObject<CameraComponent>();
+
+	ChLMat tmpDrawMat = parts->GetDrawLHandMatrix();
+
+	ChQua tmpQua;
+
+	auto partsDir = tmpDrawMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+
+	partsDir.Normalize();
+
+	auto cameraDir = camCom->GetViewLookDir();
+
+	cameraDir.Normalize();
+
+	tmpQua.SetRotation(partsDir, cameraDir);
+
+	auto rotate = GetRotationFromDir(tmpQua.GetMul(ChVec3(0.0f, 0.0f, 1.0f)));
+
+	for (size_t i = 0; i < tree.size(); i++)
+	{
+		auto tmpParts = tree[tree.size() - i - 1];
+		
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
+
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical)
+			tmpParts->SetRotate(ChMath::ToDegree(rotate.yRad));
+
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal)
+			tmpParts->SetRotate(ChMath::ToDegree(rotate.xzRad));
+	}
+
+}
+
+void GunFunction::UnSelectedUpdate()
+{
+	if (ChPtr::NullCheck(parts))return;
+	if (!gunData->GetLookTargetFlg())return;
+
+	auto tree = parts->GetParentTree();
+
+	for (size_t i = 0; i < tree.size(); i++)
+	{
+		auto tmpParts = tree[tree.size() - i - 1];
+
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
+
+		tmpParts->SetRotate(0.0f);
+	}
+
 }
 
 std::wstring GunFunction::GetBulletNum()
