@@ -16,16 +16,16 @@ Head
 NextPosData:{
 Armature_RightArmPos
 Right Arm
-0.0,0.0,1.0
-0.0,1.0,0.0
+0.0,-1.0,0.0
+1.0,0.0,0.0
 0,
 0.0
 }
 NextPosData:{
 Armature_LeftArmPos
 Left Arm
-0.0,0.0,1.0
-0.0,1.0,0.0
+0.0,-1.0,0.0
+-1.0,0.0,0.0
 0,
 0.0
 }
