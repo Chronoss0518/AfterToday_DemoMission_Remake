@@ -68,6 +68,8 @@ public:
 
 	inline float GetViewHorizontal() { return viewHorizontal; }
 
+	ChVec3 GetLookPosition();
+
 public:
 
 	bool IsLookTarget(BaseMecha* _mecha);

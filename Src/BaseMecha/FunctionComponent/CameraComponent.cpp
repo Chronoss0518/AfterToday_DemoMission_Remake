@@ -21,6 +21,8 @@
 
 #define VIEW_ROTATE_POW_UPPER 16 / 9
 
+#define UN_TARGET_LOOK_LEN 10.0f
+
 void CameraComponent::Move()
 {
 
@@ -155,6 +157,23 @@ void CameraComponent::SetRotateToTarget()
 
 	SetViewVertical(-ChMath::ToDegree(rotate.yRad));
 
+}
+
+ChVec3 CameraComponent::GetLookPosition()
+{
+	if (!lookTarget.expired())
+	{
+		auto target = lookTarget.lock();
+		return target->GetPosition();
+	}
+
+	auto mat = CreateViewRotateMatrix();
+
+	ChVec3 lookPos = GetViewPos(mat);
+
+	ChVec3 res = lookDir;
+	res.SetLen(UN_TARGET_LOOK_LEN);
+	return res + lookPos;
 }
 
 bool CameraComponent::IsLookTarget(BaseMecha* _mecha)
