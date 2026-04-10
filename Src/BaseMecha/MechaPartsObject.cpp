@@ -185,10 +185,10 @@ void MechaPartsObject::Update()
 	float tmpRotate = 0.0f;
 
 	if (thisRotateType == RotateDirectionType::Vertical)
-		tmpRotate = rotateDirection.x * rotate;
+		tmpRotate = rotateDirection.y * rotate;
 
 	if (thisRotateType == RotateDirectionType::Horizontal)
-		tmpRotate = rotateDirection.y * rotate;
+		tmpRotate = rotateDirection.x * rotate;
 
 	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
 

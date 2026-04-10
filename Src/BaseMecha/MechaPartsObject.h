@@ -84,6 +84,10 @@ public:
 
 public:
 
+
+	inline float GetRotate() { return rotate; }
+
+
 	std::vector<MechaPartsObject*>GetParentTree();
 
 	inline RotateDirectionType GetThisRotateType() { return thisRotateType; }
