@@ -14,20 +14,13 @@ void WeaponComponent::Update()
 	{
 		auto weapon = weapons[ChStd::EnumCast(WeaponHandType::Left)][i];
 		if (weapon != nullptr)
-		{
 			weapon->Update();
-			weapon->UnSelectedUpdate();
-		}
 
 		weapon = weapons[ChStd::EnumCast(WeaponHandType::Right)][i];
 		if (weapon != nullptr)
-		{
 			weapon->Update();
-			weapon->UnSelectedUpdate();
-		}
 
 	}
-
 
 	auto weapon = weapons[ChStd::EnumCast(WeaponHandType::Left)][useWeaponNo[ChStd::EnumCast(WeaponHandType::Left)]];
 	if (weapon != nullptr)

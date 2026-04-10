@@ -19,8 +19,6 @@ public:
 
 	virtual void SelectedUpdate() {}
 
-	virtual void UnSelectedUpdate() {}
-
 	void Release();
 
 public:
@@ -145,8 +143,6 @@ public:
 	void UpdateFunction()override;
 
 	void SelectedUpdate()override;
-
-	void UnSelectedUpdate()override;
 
 public:
 

@@ -7,6 +7,8 @@
 #include"../MechaPartsObject.h"
 #include"../FunctionComponent/CameraComponent.h"
 
+#include"../Controller/ControllerBase.h"
+
 #include"../MechaPartsData/SwordData.h"
 #include"../MechaPartsData/GunData.h"
 
@@ -172,57 +174,63 @@ void GunFunction::UpdateFunction()
 void GunFunction::SelectedUpdate()
 {
 	if (ChPtr::NullCheck(parts))return;
+	if (mecha->GetComponent<ControllerBase>() == nullptr)return;
 	if (!gunData->GetLookTargetFlg())return;
 
 	auto tree = parts->GetParentTree();
 
 	auto camCom = mecha->GetComponentObject<CameraComponent>();
+	
+	ChVec3 lookPos = camCom->GetLookPosition();
 
-	ChLMat tmpDrawMat = parts->GetDrawLHandMatrix();
-
-	ChQua tmpQua;
-
-	auto partsDir = tmpDrawMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
-
-	partsDir.Normalize();
-
-	auto cameraDir = camCom->GetViewLookDir();
-
-	cameraDir.Normalize();
-
-	tmpQua.SetRotation(partsDir, cameraDir);
-
-	auto rotate = GetRotationFromDir(tmpQua.GetMul(ChVec3(0.0f, 0.0f, 1.0f)));
+	bool useVerticalFlg = false;
+	bool useHorizontalFlg = false;
 
 	for (size_t i = 0; i < tree.size(); i++)
 	{
+		if (useVerticalFlg && useHorizontalFlg)break;
+
 		auto tmpParts = tree[tree.size() - i - 1];
 		
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
 
-		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical)
-			tmpParts->SetRotate(ChMath::ToDegree(rotate.yRad));
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical && !useVerticalFlg)
+		{
+			auto tmpMat = tmpParts->GetDrawLHandMatrix();
 
-		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal)
-			tmpParts->SetRotate(ChMath::ToDegree(rotate.xzRad));
-	}
+			ChVec3 pos = tmpMat.Transform(ChVec3());
 
-}
+			ChVec3 dir = lookPos - pos;
 
-void GunFunction::UnSelectedUpdate()
-{
-	if (ChPtr::NullCheck(parts))return;
-	if (!gunData->GetLookTargetFlg())return;
+			dir.Normalize();
 
-	auto tree = parts->GetParentTree();
+			auto rotate = GetRotationFromDir(dir);
 
-	for (size_t i = 0; i < tree.size(); i++)
-	{
-		auto tmpParts = tree[tree.size() - i - 1];
+			float tmpDegree = ChMath::ToDegree(rotate.xzRad);
+			tmpParts->SetRotate(tmpDegree);
+			useVerticalFlg = true;
 
-		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
+			continue;
+		}
 
-		tmpParts->SetRotate(0.0f);
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal && !useHorizontalFlg)
+		{
+			auto tmpMat = tmpParts->GetDrawLHandMatrix();
+
+			ChVec3 pos = tmpMat.Transform(ChVec3());
+
+			ChVec3 dir = lookPos - pos;
+
+			dir.Normalize();
+
+			auto rotate = GetRotationFromDir(dir);
+
+			float tmpDegree = ChMath::ToDegree(rotate.yRad);
+			tmpParts->SetRotate(-tmpDegree);
+			useHorizontalFlg = true;
+
+			continue;
+		}
 	}
 
 }
