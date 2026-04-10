@@ -72,9 +72,9 @@ public:
 
 	bool IsLookTarget(BaseMecha* _mecha);
 
-private:
+public:
 
-	ChLMat CreateViewMatrix();
+	ChLMat CreateViewRotateMatrix();
 
 private:
 

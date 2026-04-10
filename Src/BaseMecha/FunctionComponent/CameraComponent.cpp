@@ -164,7 +164,7 @@ bool CameraComponent::IsLookTarget(BaseMecha* _mecha)
 	return mecha.get() == _mecha;
 }
 
-ChLMat CameraComponent::CreateViewMatrix()
+ChLMat CameraComponent::CreateViewRotateMatrix()
 {
 	ChLMat camYMat, camXMat;
 
@@ -213,7 +213,7 @@ ChVec3 CameraComponent::GetViewCrossDir(const ChLMat& _mat)
 
 void CameraComponent::UpdateViewMatrix()
 {
-	auto&& lMat = CreateViewMatrix();
+	auto&& lMat = CreateViewRotateMatrix();
 
 	auto&& viewPos = GetViewPos(lMat);
 	auto&& viewLookPos = GetViewLookPos(lMat);
