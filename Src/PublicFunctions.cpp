@@ -1,5 +1,7 @@
 #include"BaseIncluder.h"
 
+#include<float.h>
+
 void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>>& _meshObject)
 {
 	if (_meshObject == nullptr)return;
@@ -96,7 +98,11 @@ RotationData GetRotationFromDir(ChVec3 _dir)
 
 	if (xzCross.y < 0)res.xzRad = -res.xzRad;
 
+	if (std::isnan(res.xzRad))res.xzRad = 0.0f;
+
 	res.yRad = ChVec3::GetRadian(_dir, xzDir);
+
+	if (std::isnan(res.yRad))res.yRad = 0.0f;
 
 	return res;
 }
