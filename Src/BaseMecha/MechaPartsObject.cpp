@@ -178,7 +178,7 @@ std::wstring MechaPartsObject::GetPartsName()
 	return result;
 }
 
-void MechaPartsObject::Update()
+void MechaPartsObject::Move()
 {
 	ChLMat tmp;
 
@@ -194,14 +194,12 @@ void MechaPartsObject::Update()
 
 	SetOutSideTransform(tmp);
 
-	TransformObject<wchar_t>::Update();
-
+	rotate = 0.0f;
 }
 
 void  MechaPartsObject::DrawBegin()
 {
 	TransformObject<wchar_t>::DrawBegin();
-
 }
 
 void MechaPartsObject::Draw3D()
@@ -210,11 +208,13 @@ void MechaPartsObject::Draw3D()
 
 	TransformObject<wchar_t>::Draw3D();
 
-	baseParts->Draw((ChMat_11)(GetDrawLHandMatrix()));
+	auto lMat = GetDrawLHandMatrix();
 
-	collider.SetMatrix(GetDrawLHandMatrix());
+	baseParts->Draw((ChMat_11)(lMat));
 
-	mecha->UpdateAnchor(GetLookAnchorNo(), GetDrawLHandMatrix());
+	collider.SetMatrix(lMat);
+
+	mecha->UpdateAnchor(GetLookAnchorNo(), lMat);
 
 	DrawEndFunction();
 }
@@ -222,7 +222,6 @@ void MechaPartsObject::Draw3D()
 void  MechaPartsObject::DrawEnd()
 {
 	TransformObject<wchar_t>::DrawEnd();
-
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)

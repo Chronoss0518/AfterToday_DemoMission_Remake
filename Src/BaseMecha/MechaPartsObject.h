@@ -150,13 +150,7 @@ public:
 
 public:
 
-	void Update()override;
-
-private:
-
-
-
-public:
+	void Move()override;
 
 	void DrawBegin()override;
 
