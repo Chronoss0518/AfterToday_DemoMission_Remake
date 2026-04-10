@@ -297,7 +297,7 @@ void MechaParts::SetWeaponFunction(ChPtr::Shared<MechaPartsObject> _partsObject,
 	auto&& com = _base.GetComponentObject<WeaponComponent>();
 	auto&& weaponFunctions = _partsObject->GetWeaponFunctions();
 
-	for (int i = 0; i < jsonArray->GetCount(); i++)
+	for (size_t i = 0; i < jsonArray->GetCount(); i++)
 	{
 		auto&& jsonNum = jsonArray->GetJsonNumber(i);
 		if (jsonNum == nullptr)continue;
