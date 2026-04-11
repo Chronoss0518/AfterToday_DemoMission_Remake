@@ -12,7 +12,6 @@ Head
 0.0,1.0,0.0
 0
 0.0
-1
 }
 NextPosData:{
 Armature_RightArmPos
@@ -21,7 +20,6 @@ Right Arm
 1.0,0.0,0.0
 0
 0.1
-2
 }
 NextPosData:{
 Armature_LeftArmPos
@@ -30,7 +28,6 @@ Left Arm
 -1.0,0.0,0.0
 0
 0.0
-2
 }
 NextPosData:{
 Armature_BodyPos
@@ -39,7 +36,6 @@ Foot
 0.0,1.0,0.0
 0
 0.0
-0
 }
 NextPosData:{
 Armature_BoostPos
@@ -48,5 +44,4 @@ Boost
 0.0,1.0,0.0
 0
 0.0
-0
 }
