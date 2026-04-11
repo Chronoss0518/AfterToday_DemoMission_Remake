@@ -18,9 +18,7 @@ unsigned long NextPosData::Deserialize(const ChCpp::TextObject<wchar_t>& _text, 
 
 	maxWeight = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 4));
 	
-	rotateType = static_cast<RotateDirectionType>(ChStr::GetNumFromText<int>(_text.GetTextLine(textPos + 5)));
-
-	return textPos + 6;
+	return textPos + 5;
 }
 
 std::wstring NextPosData::Serialize()
@@ -35,9 +33,6 @@ std::wstring NextPosData::Serialize()
 	res += ChStr::GetTextFromNum<wchar_t>((int)type) + L"\n";
 
 	res += ChStr::GetTextFromNum<wchar_t>(maxWeight) + L"\n";
-
-	res += ChStr::GetTextFromNum<wchar_t>((int)rotateType) + L"\n";
-
 	return res;
 }
 
@@ -59,5 +54,5 @@ void NextPosData::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr
 	lmat.m[1].Set(tmpUp.val);
 	lmat.m[2].Set(tmpNormal.val);
 
-	mechaParts->AddPosition(connectionName, _targetObject, lmat, type, maxWeight, rotateType);
+	mechaParts->AddPosition(connectionName, _targetObject, lmat, type, maxWeight);
 }

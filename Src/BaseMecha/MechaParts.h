@@ -57,7 +57,6 @@ public:
 		ChPtr::Shared<ChCpp::FrameObject<wchar_t>>positionObject = nullptr;
 		ChLMat connectionRotate = ChLMat();
 		PartsConnectionType connectType = PartsConnectionType::None;
-		RotateDirectionType rotateType = RotateDirectionType::None;
 		float maxWeight = 0.0f;
 	};
 
@@ -149,15 +148,13 @@ public:
 		ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _frame,
 		const ChLMat& _connectRotate,
 		const PartsConnectionType& _type = PartsConnectionType::None,
-		const float _maxWeight = 0.0f,
-		const RotateDirectionType _rotateType = RotateDirectionType::None)
+		const float _maxWeight = 0.0f)
 	{
 		auto&& data = ChPtr::Make_S<PartsPositionData>();
 		data->positionObject = _frame;
 		data->connectionRotate = _connectRotate;
 		data->connectType = _type;
 		data->maxWeight = _maxWeight;
-		data->rotateType = _rotateType;
 		positions[_parameter] = data;
 	}
 

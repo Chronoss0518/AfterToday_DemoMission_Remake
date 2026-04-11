@@ -38,8 +38,6 @@ protected:
 
 	MechaParts::PartsConnectionType type = MechaParts::PartsConnectionType::None;
 
-	RotateDirectionType rotateType = RotateDirectionType::None;
-
 	//ç≈ëÂèdó //
 	float maxWeight = 0.0f;
 

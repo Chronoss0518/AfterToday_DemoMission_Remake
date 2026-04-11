@@ -51,7 +51,6 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	auto&& position = baseParts->GetPositionList()[_objectType];
 
 	SetChild(_childObject);
-	_childObject->ChCpp::TransformObject<wchar_t>::Update();
 
 	ChVec3 pos = ChVec3();
 
@@ -65,7 +64,14 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	lmat.SetPosition(pos);
 
 	_childObject->SetFrameTransform(lmat);
-	_childObject->thisRotateType = position->rotateType;
+
+	lmat = _childObject->GetDrawLHandMatrix();
+
+	if(static_cast<int>(std::abs(lmat.m[1][0])) > 0)
+		_childObject->thisRotateType = RotateDirectionType::Horizontal;
+
+	if (static_cast<int>(std::abs(lmat.m[1][1])) > 0)
+		_childObject->thisRotateType = RotateDirectionType::Vertical;
 
 	//Up•ûŒü‚Ì’l‚ð•ÛŽ//
 	_childObject->rotateDirection.val.Set(position->connectionRotate.m[1]);
