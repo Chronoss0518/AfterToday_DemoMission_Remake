@@ -199,11 +199,6 @@ private:
 	ChD3D11::Sprite11 uiSprite;
 	ImageSprite hitIcon;
 
-	ChD3D11::Shader::BaseDrawPolygonBoard11 shotTargetDrawer;
-	ChD3D11::PolygonBoard11 shotTargetBorad;
-	ChD3D11::Texture11 shotTargetMarkerTex;
-	ChLMat shotTargetdrawBaseMatrix;
-	
 	ChD3D11::Texture11 centerUITexture;
 	ChD3D11::Texture11 enelgyUITexture;
 	ChD3D11::Texture11 receveDamageUITexture;
