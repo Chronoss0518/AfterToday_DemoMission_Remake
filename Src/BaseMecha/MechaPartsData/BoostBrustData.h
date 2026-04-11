@@ -4,7 +4,7 @@
 
 #include"../Direction.h"
 
-class BoostBrust :public PartsDataBase
+class BoostBrust :public NextPosBase
 {
 public:
 
@@ -18,9 +18,9 @@ public://Serialize Deserialize//
 
 public://Set Functions//
 
-	void SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)override;
-
 	void SetPartsParameter(PartsParameters& _base, MechaPartsObject& _parts)override;
+
+	void SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)override;
 
 	void SetBoostData(Direction _direction, PartsParameterStruct::BoostData& _boost);
 
@@ -57,8 +57,6 @@ public://Get Functions//
 	inline unsigned long GetAvoidWait()const { return avoidWait; }
 
 	inline bool GetBoostDirectionFlg(Direction _direction) { return directionFlgs.GetBitFlg(ChStd::EnumCast(_direction)); }
-
-	ChPtr::Shared<ChCpp::FrameObject<wchar_t>> GetFrame();
 
 	std::wstring GetPartsTypeTag()override { return GET_CLASS_NAME(BoostBrust); }
 
