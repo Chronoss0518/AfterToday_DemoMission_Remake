@@ -96,11 +96,17 @@ RotationData GetRotationFromDir(ChVec3 _dir)
 
 	res.xzRad = ChVec3::GetRadian(xzDir, ChVec3(0.0f, 0.0f, 1.0f));
 
-	if (xzCross.y < 0)res.xzRad = -res.xzRad;
+	if (xzCross.y < 0.0f)res.xzRad = -res.xzRad;
 
 	if (std::isnan(res.xzRad))res.xzRad = 0.0f;
 
 	res.yRad = ChVec3::GetRadian(_dir, xzDir);
+
+#if true
+
+	if (_dir.y > 0.0f)res.yRad = -res.yRad;
+
+#endif
 
 	if (std::isnan(res.yRad))res.yRad = 0.0f;
 

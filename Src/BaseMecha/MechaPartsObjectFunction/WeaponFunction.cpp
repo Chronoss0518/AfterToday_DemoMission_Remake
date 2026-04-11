@@ -177,6 +177,11 @@ void GunFunction::SelectedUpdate()
 	if (mecha->GetComponent<ControllerBase>() == nullptr)return;
 	if (!gunData->GetLookTargetFlg())return;
 
+	auto partsMat = parts->GetDrawLHandMatrix();
+	ChVec3 partsDir = partsMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+	partsDir.Normalize();
+	partsMat.Inverse();
+
 	auto tree = parts->GetParentTree();
 
 	auto camCom = mecha->GetComponentObject<CameraComponent>();
@@ -204,13 +209,19 @@ void GunFunction::SelectedUpdate()
 
 			dir.Normalize();
 
-			auto rotate = GetRotationFromDir(dir);
+			ChQua tmp;
+			tmp.SetRotation(partsDir, dir);
+
+			ChVec3 useDir = tmp.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
+			useDir.Normalize();
+
+			auto rotate = GetRotationFromDir(useDir);
+
 
 			float tmpDegree = ChMath::ToDegree(rotate.xzRad);
 			tmpParts->SetRotate(tmpDegree);
 			useVerticalFlg = true;
 
-			continue;
 		}
 
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal && !useHorizontalFlg)
@@ -223,13 +234,20 @@ void GunFunction::SelectedUpdate()
 
 			dir.Normalize();
 
-			auto rotate = GetRotationFromDir(dir);
+			ChQua tmp;
+			tmp.SetRotation(partsDir, dir);
 
-			float tmpDegree = ChMath::ToDegree(rotate.yRad);
-			tmpParts->SetRotate(-tmpDegree);
+			ChVec3 useDir = tmp.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
+			useDir.Normalize();
+
+			auto rotate = GetRotationFromDir(useDir);
+
+			if (dir.z > 0.0f)rotate.yRad = -rotate.yRad;
+
+			float tmpDegree = -ChMath::ToDegree(rotate.yRad);
+			tmpParts->SetRotate(tmpDegree);
 			useHorizontalFlg = true;
 
-			continue;
 		}
 	}
 
