@@ -97,7 +97,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	AppIns().SetFPS(BASE_FPS);
 
 	PhysicsMachine::SetFPS(BASE_FPS);
-	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER / BASE_FPS);
+	PhysicsMachine::SetGravityAcceleration(GRAVITY_POWER);
 	PhysicsMachine::SetAirRegist(0.0001f);
 	PhysicsMachine::SetGroundRegist(0.2f);
 
