@@ -5,6 +5,9 @@
 #include"../../Attack/Attack.h"
 #include"../../Attack/AttackObject.h"
 #include"../MechaPartsObject.h"
+#include"../FunctionComponent/CameraComponent.h"
+
+#include"../Controller/ControllerBase.h"
 
 #include"../MechaPartsData/SwordData.h"
 #include"../MechaPartsData/GunData.h"
@@ -166,6 +169,88 @@ void GunFunction::UpdateFunction()
 	nowMagazineNum--;
 
 	reloadFlg = false;
+}
+
+void GunFunction::SelectedUpdate()
+{
+	if (ChPtr::NullCheck(parts))return;
+	if (mecha->GetComponent<ControllerBase>() == nullptr)return;
+	if (!gunData->GetLookTargetFlg())return;
+
+	auto partsMat = parts->GetDrawLHandMatrix();
+	ChVec3 partsDir = partsMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+	partsDir.Normalize();
+	partsMat.Inverse();
+
+	auto tree = parts->GetParentTree();
+
+	auto camCom = mecha->GetComponentObject<CameraComponent>();
+	
+	ChVec3 lookPos = camCom->GetLookPosition();
+
+	bool useVerticalFlg = false;
+	bool useHorizontalFlg = false;
+
+	for (size_t i = 0; i < tree.size(); i++)
+	{
+		if (useVerticalFlg && useHorizontalFlg)break;
+
+		auto tmpParts = tree[tree.size() - i - 1];
+		
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
+
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical && !useVerticalFlg)
+		{
+			auto tmpMat = tmpParts->GetDrawLHandMatrix();
+
+			ChVec3 pos = tmpMat.Transform(ChVec3());
+
+			ChVec3 dir = lookPos - pos;
+
+			dir.Normalize();
+
+			ChQua tmp;
+			tmp.SetRotation(partsDir, dir);
+
+			ChVec3 useDir = tmp.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
+			useDir.Normalize();
+
+			auto rotate = GetRotationFromDir(useDir);
+
+
+			float tmpDegree = ChMath::ToDegree(rotate.xzRad);
+			tmpParts->SetRotate(tmpDegree);
+			useVerticalFlg = true;
+
+		}
+
+		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal && !useHorizontalFlg)
+		{
+			auto tmpMat = tmpParts->GetDrawLHandMatrix();
+
+			ChVec3 pos = tmpMat.Transform(ChVec3());
+
+			ChVec3 dir = lookPos - pos;
+
+			dir.Normalize();
+
+			ChQua tmp;
+			tmp.SetRotation(partsDir, dir);
+
+			ChVec3 useDir = tmp.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
+			useDir.Normalize();
+
+			auto rotate = GetRotationFromDir(useDir);
+
+			if (dir.z > 0.0f)rotate.yRad = -rotate.yRad;
+
+			float tmpDegree = -ChMath::ToDegree(rotate.yRad);
+			tmpParts->SetRotate(tmpDegree);
+			useHorizontalFlg = true;
+
+		}
+	}
+
 }
 
 std::wstring GunFunction::GetBulletNum()

@@ -71,6 +71,7 @@ public:
 	}
 
 	ChPtr::Shared<ChD3D11::Texture11> positionNameTexture = nullptr;
+	std::wstring partsPosName = L"";
 };
 
 class EditListPartsItem : public EditListItem
@@ -346,9 +347,29 @@ void EditFrame::InitNowLoadingRect()
 	upFlg = true;
 }
 
-void EditFrame::SetPartsList(MechaPartsObject& _parts)
+void EditFrame::SetPartsList(MechaPartsObject* _parts)
 {
-	auto&& base = _parts.GetBaseObject();
+	{
+		auto&& panel = ChPtr::Make_S<EditListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Back");
+
+		partsList->AddItem(panel);
+	}
+
+	if (ChPtr::NullCheck(_parts))
+	{
+
+		auto&& panel = ChPtr::Make_S<EditListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"+ Core");
+		panel->partsPosName = L"Core";
+
+		partsList->AddItem(panel);
+		return;
+	}
+
+	auto&& base = _parts->GetBaseObject();
 
 	auto&& selectPartsPanel = ChPtr::Make_S<EditListPartsItem>();
 
@@ -360,7 +381,7 @@ void EditFrame::SetPartsList(MechaPartsObject& _parts)
 
 	for (auto&& position : base->GetPositionList())
 	{
-		auto&& child = _parts.GetChildParts(position.first);
+		auto&& child = _parts->GetChildParts(position.first);
 
 		ChPtr::Shared<EditListItem>item = nullptr;
 
@@ -379,6 +400,7 @@ void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<Me
 	auto&& res = ChPtr::Make_S<EditListItem>();
 
 	res->positionNameTexture = CreatePanelTitleTexture(L"+ " + _positionName);
+	res->partsPosName = _positionName;
 
 	_res = res;
 }
@@ -430,7 +452,7 @@ void EditFrame::UpdateAction(ActionType _type)
 		parameterList->SetBaseParts(device,selectParts);
 
 		partsList->ClearItem();
-		SetPartsList(*selectParts);
+		SetPartsList(selectParts.get());
 	}
 
 	if (_type == ActionType::Decision)
@@ -448,12 +470,24 @@ void EditFrame::UpdateAction(ActionType _type)
 		}
 
 		auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+		
+		if (partsPanel == nullptr)
+		{
+			auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+			
+			if (panel->partsPosName == L"")
+			{
+				AddActionType(ActionType::Cancel);
 
-		if (partsPanel == nullptr)return;
+				return;
+			}
+
+			return;
+		}
 
 		if (partsPanel->targetParts == nullptr)
 		{
-			AddActionType(ActionType::Cancel);
+			//AddActionType(ActionType::Cancel);
 
 			return;
 		}
@@ -466,7 +500,7 @@ void EditFrame::UpdateAction(ActionType _type)
 		parameterList->SetBaseParts(device, selectParts);
 
 		partsList->ClearItem();
-		SetPartsList(*selectParts);
+		SetPartsList(selectParts.get());
 
 	}
 
@@ -684,7 +718,7 @@ bool EditFrame::LoadPart()
 
 		parameterList->Init(device, editMecha);
 
-		SetPartsList(*selectParts);
+		SetPartsList(selectParts.get());
 
 		return true;
 	}

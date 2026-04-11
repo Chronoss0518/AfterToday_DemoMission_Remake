@@ -22,6 +22,15 @@ void WeaponComponent::Update()
 
 	}
 
+	auto weapon = weapons[ChStd::EnumCast(WeaponHandType::Left)][useWeaponNo[ChStd::EnumCast(WeaponHandType::Left)]];
+	if (weapon != nullptr)
+		weapon->SelectedUpdate();
+
+	weapon = weapons[ChStd::EnumCast(WeaponHandType::Right)][useWeaponNo[ChStd::EnumCast(WeaponHandType::Right)]];
+	if (weapon != nullptr)
+		weapon->SelectedUpdate();
+
+
 	if (IsPushFlg(InputName::LAttack))
 		Attack(WeaponHandType::Left);
 

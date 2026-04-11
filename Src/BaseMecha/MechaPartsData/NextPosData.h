@@ -6,36 +6,9 @@ class NextPosData : public NextPosBase
 {
 public://Serialize Deserialize//
 
-	inline unsigned long Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos = 0)override
-	{
-		unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
-		connectionName = _text.GetTextLine(textPos);
+	unsigned long Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos = 0)override;
 
-		connectionRotateNormal.Deserialize(_text.GetTextLine(textPos + 1));
-		connectionRotateUp.Deserialize(_text.GetTextLine(textPos + 2));
-
-		type = (MechaParts::PartsConnectionType)ChStr::GetNumFromText<int>(_text.GetTextLine(textPos + 3));
-
-		maxWeight = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 4));
-
-		return textPos + 5;
-	}
-
-	inline std::wstring Serialize()override
-	{
-
-		std::wstring res = NextPosBase::Serialize();
-		res += connectionName + L"\n";
-
-		res += connectionRotateNormal.Serialize<wchar_t>() + L"\n";
-		res += connectionRotateUp.Serialize<wchar_t>() + L"\n";
-
-		res += ChStr::GetTextFromNum<wchar_t>((int)type) + L"\n";
-
-		res += ChStr::GetTextFromNum<wchar_t>(maxWeight) + L"\n";
-
-		return res;
-	}
+	std::wstring Serialize()override;
 
 public://Set Functions//
 
@@ -64,6 +37,8 @@ protected:
 	ChVec3 connectionRotateUp = ChVec3(0.0f, 1.0f, 0.0f);
 
 	MechaParts::PartsConnectionType type = MechaParts::PartsConnectionType::None;
+
+	RotateDirectionType rotateType = RotateDirectionType::None;
 
 	//ç≈ëÂèdó //
 	float maxWeight = 0.0f;

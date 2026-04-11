@@ -12,13 +12,6 @@ class MechaPartsObject;
 class Attack;
 class AttackObject;
 
-enum class StartRotatePosture
-{
-	XY,
-	YX,
-	None
-};
-
 class MechaPartsObject:public ChCpp::TransformObject<wchar_t>
 {
 public:
@@ -87,7 +80,15 @@ public:
 		partsParameter = _param;
 	}
 
+	inline void SetRotate(float _rotate) { rotate = _rotate; }
+
 public:
+
+	inline float GetRotate() { return rotate; }
+
+	std::vector<MechaPartsObject*>GetParentTree();
+
+	inline RotateDirectionType GetThisRotateType() { return thisRotateType; }
 
 	inline ChPtr::Shared<MechaPartsObject>GetChildParts(const std::wstring& _nextPosName)
 	{
@@ -147,9 +148,7 @@ public:
 
 public:
 
-	void Update()override;
-
-public:
+	void Move()override;
 
 	void DrawBegin()override;
 
@@ -161,13 +160,16 @@ protected:
 
 	ChCpp::SphereCollider collider;
 	MechaParts* baseParts;
-	ChLMat positionLastDrawMat;
 
 private:
 
 	GameFrame* frame = nullptr;
 
-	StartRotatePosture startRotatePosture = StartRotatePosture::None;
+	RotateDirectionType thisRotateType = RotateDirectionType::None;
+	float rotate = 0.0f;
+
+	ChVec3 rotateDirection = ChVec3();
+
 	bool isInitRunFlg = false;
 
 	std::vector<ChPtr::Shared<WeaponFunction>>weaponFunctions;

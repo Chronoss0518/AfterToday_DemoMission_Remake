@@ -52,7 +52,7 @@ public:
 
 	inline void AddViewHorizontal(const float& _y) { viewHorizontal += _y; }
 
-	inline void SetViewVertical(const float& _x) { viewVertical = std::abs(_x) < maxViewVertical ? _x : maxViewVertical; }
+	inline void SetViewVertical(const float& _x) { viewVertical = _x <= -maxViewVertical ? -maxViewVertical : _x >= maxViewVertical ? maxViewVertical : _x; }
 
 	inline void SetViewHorizontal(const float& _y) { viewHorizontal = _y; }
 
@@ -68,13 +68,15 @@ public:
 
 	inline float GetViewHorizontal() { return viewHorizontal; }
 
+	ChVec3 GetLookPosition();
+
 public:
 
 	bool IsLookTarget(BaseMecha* _mecha);
 
-private:
+public:
 
-	ChLMat CreateViewMatrix();
+	ChLMat CreateViewRotateMatrix();
 
 private:
 

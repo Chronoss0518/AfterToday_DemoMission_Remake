@@ -4,4 +4,9 @@ Resource/XFile/RobotsParts/RArm/Guardian.x
 NextPosData:{
 RightArm_WeaponPos
 Hand
+0.0,0.0,1.0
+0.0,1.0,0.0
+0
+0.0
+0
 }

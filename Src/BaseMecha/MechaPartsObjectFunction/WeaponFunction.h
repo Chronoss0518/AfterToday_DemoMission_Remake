@@ -13,9 +13,11 @@ public:
 
 	virtual void Init(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, ID3D11Device* _device){}
 
-	virtual void AttackUpdate();
+	void AttackUpdate();
 
-	virtual void Update();
+	void Update();
+
+	virtual void SelectedUpdate() {}
 
 	void Release();
 
@@ -139,6 +141,8 @@ public:
 	void StartSubFunction();
 
 	void UpdateFunction()override;
+
+	void SelectedUpdate()override;
 
 public:
 

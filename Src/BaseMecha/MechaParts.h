@@ -52,11 +52,12 @@ public:
 
 public:
 
-	struct MartsPositionData
+	struct PartsPositionData
 	{
 		ChPtr::Shared<ChCpp::FrameObject<wchar_t>>positionObject = nullptr;
 		ChLMat connectionRotate = ChLMat();
 		PartsConnectionType connectType = PartsConnectionType::None;
+		RotateDirectionType rotateType = RotateDirectionType::None;
 		float maxWeight = 0.0f;
 	};
 
@@ -139,7 +140,7 @@ public://Get Function//
 
 	inline ChD3D11::Shader::BaseDrawMesh11<wchar_t>* GetMeshDrawer() { return drawer; }
 
-	inline std::map<std::wstring, ChPtr::Shared<MartsPositionData>>& GetPositionList() { return positions; }
+	inline std::map<std::wstring, ChPtr::Shared<PartsPositionData>>& GetPositionList() { return positions; }
 
 public:
 
@@ -148,13 +149,15 @@ public:
 		ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _frame,
 		const ChLMat& _connectRotate,
 		const PartsConnectionType& _type = PartsConnectionType::None,
-		const float _maxWeight = 0.0f)
+		const float _maxWeight = 0.0f,
+		const RotateDirectionType _rotateType = RotateDirectionType::None)
 	{
-		auto&& data = ChPtr::Make_S<MartsPositionData>();
+		auto&& data = ChPtr::Make_S<PartsPositionData>();
 		data->positionObject = _frame;
 		data->connectionRotate = _connectRotate;
 		data->connectType = _type;
 		data->maxWeight = _maxWeight;
+		data->rotateType = _rotateType;
 		positions[_parameter] = data;
 	}
 
@@ -188,7 +191,7 @@ private:
 
 	static std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 
-	std::map<std::wstring, ChPtr::Shared<MartsPositionData>> positions;
+	std::map<std::wstring, ChPtr::Shared<PartsPositionData>> positions;
 
 
 };

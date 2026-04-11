@@ -12,10 +12,6 @@
 
 void BoostBrust::RemoveParameter(BaseMecha& _base)
 {
-	auto&& obj = GetFrame();
-
-	if (obj == nullptr)return;
-
 	auto&& com = GetComponent<BoostComponent>(_base);
 
 	com->SubBoostData(this);
@@ -23,22 +19,20 @@ void BoostBrust::RemoveParameter(BaseMecha& _base)
 
 unsigned long BoostBrust::Deserialize(const ChCpp::TextObject<wchar_t>& _text, const unsigned long _textPos)
 {
-	objectName = _text.GetTextLine(_textPos);
-	directionFlgs.SetValue(ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 1).c_str()), 0);
-	useEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 2).c_str());
-	boostPower = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 3).c_str());
-	avoidUseEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 4).c_str());
-	avoidPow = ChStr::GetNumFromText<float>(_text.GetTextLine(_textPos + 5).c_str());
-	avoidWait = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_textPos + 6).c_str());
-	return _textPos + 7;
+	unsigned long textPos = NextPosBase::Deserialize(_text, _textPos);
+	directionFlgs.SetValue(ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos).c_str()), 0);
+	useEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 1).c_str());
+	boostPower = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 2).c_str());
+	avoidUseEnergy = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 3).c_str());
+	avoidPow = ChStr::GetNumFromText<float>(_text.GetTextLine(textPos + 4).c_str());
+	avoidWait = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(textPos + 5).c_str());
+	return textPos + 6;
 }
 
 std::wstring BoostBrust::Serialize()
 {
 
-	std::wstring res = L"";
-
-	res = objectName;
+	std::wstring res = NextPosBase::Serialize();
 	res += std::to_wstring(directionFlgs.GetValue(0)) + L"\n";
 	res += std::to_wstring(useEnergy) + L"\n";
 	res += std::to_wstring(boostPower) + L"\n";
@@ -49,15 +43,13 @@ std::wstring BoostBrust::Serialize()
 	return res;
 }
 
-void BoostBrust::SetPartsParameter(BaseMecha& _base, MechaPartsObject& _parts, GameFrame* _frame)
+void BoostBrust::SetObjectPos(BaseMecha& _base, MechaPartsObject& _parts, ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _targetObject)
 {
-	auto&& obj = GetFrame();
-
-	if (obj == nullptr)return;
+	if (_targetObject == nullptr)return;
 
 	auto&& com = GetComponent<BoostComponent>(_base);
 	auto&& func = _parts.SetComponent<BoostFunction>();
-	func->SetTargetBoostObject(obj);
+	func->SetTargetBoostObject(_targetObject);
 
 	com->AddBoostData(this, func.get());
 }
@@ -80,19 +72,4 @@ void BoostBrust::SetPartsParameter(PartsParameters& _base, MechaPartsObject& _pa
 	SetBoostData(Direction::Right, _base.rightBoostData);
 	SetBoostData(Direction::Front, _base.frontBoostData);
 	SetBoostData(Direction::Back, _base.backBoostData);
-}
-
-ChPtr::Shared<ChCpp::FrameObject<wchar_t>> BoostBrust::GetFrame()
-{
-	auto&& base = *LookObj<MechaParts>();
-	if (ChPtr::NullCheck(&base))return nullptr;
-
-	auto&& mesh = base.GetMesh();
-
-	auto&& boostList = mesh.GetAllChildlenForName<ChCpp::FrameObject<wchar_t>>(objectName);
-
-	if (boostList.empty())return nullptr;
-
-	return boostList[0].lock();
-
 }

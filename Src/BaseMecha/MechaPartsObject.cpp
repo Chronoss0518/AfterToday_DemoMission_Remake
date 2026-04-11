@@ -23,7 +23,6 @@ void MechaPartsObject::CreateEnd()
 	{
 		baseMecha->AddSmokeCreatePos(pos.second->positionObject, this);
 	}
-
 }
 
 void MechaPartsObject::CreateAnchor()
@@ -55,15 +54,21 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	_childObject->ChCpp::TransformObject<wchar_t>::Update();
 
 	ChVec3 pos = ChVec3();
+
 	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
-	lmat = position->connectionRotate * lmat;
+	//lmat = position->connectionRotate * lmat;
 
 	pos = lmat.Transform(pos);
 
 	lmat.Identity();
+	lmat = position->connectionRotate;
 	lmat.SetPosition(pos);
 
 	_childObject->SetFrameTransform(lmat);
+	_childObject->thisRotateType = position->rotateType;
+
+	//Up•ûŒü‚Ì’l‚ð•ÛŽ//
+	_childObject->rotateDirection.val.Set(position->connectionRotate.m[1]);
 
 	auto&& tmpObject = positions.find(_objectType);
 	if (tmpObject == positions.end())
@@ -135,6 +140,30 @@ void MechaPartsObject::SetHitSize()
 	mecha->SetTestHitSize(tmpHitSize);
 }
 
+std::vector<MechaPartsObject*>MechaPartsObject::GetParentTree()
+{
+	std::vector<MechaPartsObject*>res;
+
+	res.push_back(this);
+
+	auto parent = GetParent();
+
+	if (parent == nullptr)return res;
+
+	auto mechaPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(parent);
+
+	if (mechaPartsParent == nullptr)return res;
+
+	auto&& tmpTree = mechaPartsParent->GetParentTree();
+
+	for (size_t i = 0; i < tmpTree.size(); i++)
+	{
+		res.push_back(tmpTree[i]);
+	}
+
+	return res;
+}
+
 std::wstring MechaPartsObject::GetPartsName()
 {
 	std::wstring result = baseParts->GetThisFileName();
@@ -149,16 +178,38 @@ std::wstring MechaPartsObject::GetPartsName()
 	return result;
 }
 
-void MechaPartsObject::Update()
+void MechaPartsObject::Move()
 {
-	TransformObject<wchar_t>::Update();
+	ChLMat tmp;
 
+	float tmpRotate = rotate;
+
+#if true
+
+	if (thisRotateType == RotateDirectionType::Vertical)
+		tmpRotate = rotateDirection.y * rotate;
+
+	if (thisRotateType == RotateDirectionType::Horizontal)
+		tmpRotate = -rotateDirection.x * rotate;
+
+	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
+
+	tmp = tmp * GetOutSideTransformLMat();
+
+#else
+
+	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
+
+#endif
+
+	SetOutSideTransform(tmp);
+
+	rotate = 0.0f;
 }
 
 void  MechaPartsObject::DrawBegin()
 {
 	TransformObject<wchar_t>::DrawBegin();
-
 }
 
 void MechaPartsObject::Draw3D()
@@ -167,11 +218,13 @@ void MechaPartsObject::Draw3D()
 
 	TransformObject<wchar_t>::Draw3D();
 
-	baseParts->Draw((ChMat_11)(GetDrawLHandMatrix()));
+	auto lMat = GetDrawLHandMatrix();
 
-	collider.SetMatrix(GetDrawLHandMatrix());
+	baseParts->Draw((ChMat_11)(lMat));
 
-	mecha->UpdateAnchor(GetLookAnchorNo(), GetDrawLHandMatrix());
+	collider.SetMatrix(lMat);
+
+	mecha->UpdateAnchor(GetLookAnchorNo(), lMat);
 
 	DrawEndFunction();
 }
@@ -179,7 +232,6 @@ void MechaPartsObject::Draw3D()
 void  MechaPartsObject::DrawEnd()
 {
 	TransformObject<wchar_t>::DrawEnd();
-
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)

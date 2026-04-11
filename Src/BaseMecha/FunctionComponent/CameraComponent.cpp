@@ -21,13 +21,15 @@
 
 #define VIEW_ROTATE_POW_UPPER 16 / 9
 
+#define UN_TARGET_LOOK_LEN 100.0f
+
 void CameraComponent::Move()
 {
 
 	updateKeyFlg = false;
 
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, cameraRotatePow);
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -cameraRotatePow);
+	CamVerticalRotateUpdate(InputName::CameraUpRotation, -cameraRotatePow);
+	CamVerticalRotateUpdate(InputName::CameraDownRotation, cameraRotatePow);
 
 	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -cameraRotatePow * VIEW_ROTATE_POW_UPPER);
 	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, cameraRotatePow * VIEW_ROTATE_POW_UPPER);
@@ -153,8 +155,25 @@ void CameraComponent::SetRotateToTarget()
 
 	SetViewHorizontal(ChMath::ToDegree(rotate.xzRad));
 
-	SetViewVertical(ChMath::ToDegree(rotate.yRad));
+	SetViewVertical(-ChMath::ToDegree(rotate.yRad));
 
+}
+
+ChVec3 CameraComponent::GetLookPosition()
+{
+	auto mat = CreateViewRotateMatrix();
+
+	if (!lookTarget.expired())
+	{
+		auto target = lookTarget.lock();
+		return target->GetPosition();
+	}
+
+	ChVec3 lookPos = GetViewPos(mat);
+
+	ChVec3 res = lookDir;
+	res.SetLen(UN_TARGET_LOOK_LEN);
+	return res + lookPos;
 }
 
 bool CameraComponent::IsLookTarget(BaseMecha* _mecha)
@@ -164,12 +183,12 @@ bool CameraComponent::IsLookTarget(BaseMecha* _mecha)
 	return mecha.get() == _mecha;
 }
 
-ChLMat CameraComponent::CreateViewMatrix()
+ChLMat CameraComponent::CreateViewRotateMatrix()
 {
 	ChLMat camYMat, camXMat;
 
 	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
+	camXMat.SetRotationXAxis(ChMath::ToRadian(viewVertical));
 	camYMat = camXMat * camYMat;
 	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
 
@@ -213,7 +232,7 @@ ChVec3 CameraComponent::GetViewCrossDir(const ChLMat& _mat)
 
 void CameraComponent::UpdateViewMatrix()
 {
-	auto&& lMat = CreateViewMatrix();
+	auto&& lMat = CreateViewRotateMatrix();
 
 	auto&& viewPos = GetViewPos(lMat);
 	auto&& viewLookPos = GetViewLookPos(lMat);
