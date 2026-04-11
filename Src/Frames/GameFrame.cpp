@@ -120,25 +120,8 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	lightBloomeDrawer.SetGameWindowSize(ChVec2(GAME_WINDOW_WIDTH * 0.5f, GAME_WINDOW_HEIGHT * 0.5f));
 	lightBloomeDrawer.SetLiteBlurFlg(false);
 
-	shotTargetDrawer.Init(device);
-	shotTargetDrawer.SetCullMode(D3D11_CULL_BACK);
-	shotTargetDrawer.SetAlphaBlendFlg(true);
-	
-	shotTargetBorad.Init(device);
-	shotTargetBorad.SetInitSquare();
-
 	ChVec4 rect = ChVec4::FromRect((GAME_SPRITE_WIDTH - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_HEIGHT - SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_WIDTH + SHOT_TARGET_MARKER_SIZE) * 0.5f, (GAME_SPRITE_HEIGHT + SHOT_TARGET_MARKER_SIZE) * 0.5f);
 	rect = RectToGameWindow(rect);
-
-	for (unsigned char i = 0; i < 4; i++)
-	{
-		ChVec3 pos = shotTargetBorad.GetPos(i);
-		pos.z = SHOT_TARGET_DISTANCE;
-		shotTargetBorad.SetPos(i, pos);
-	}
-
-	shotTargetMarkerTex.CreateTexture(TEXTURE_DIRECTORY(L"ATKCurrsol.png"), device);
-
 
 	waterSplashEffectShader = ChPtr::Make_S<EffectObjectShader>();
 	waterSplashEffectShader->Init(device, MAX_MECHA_OBJECT_COUNT * 4);
@@ -201,7 +184,6 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		meshDrawer.SetProjectionMatrix(proMat);
 		shotEffectList->SetProjectionMatrix(proMat);
 		smokeEffectList->SetProjectionMatrix(proMat);
-		shotTargetDrawer.SetProjectionMatrix(proMat);
 	}
 
 	LoadStage(stageName);
@@ -782,13 +764,6 @@ void GameFrame::DrawFunctionBegin()
 	meshDrawer.SetProjectionMatrix(proMat);
 	meshDrawer.SetViewMatrix(viewMat);
 	
-	shotTargetDrawer.SetProjectionMatrix(proMat);
-	shotTargetDrawer.SetViewMatrix(viewMat);
-
-	shotTargetdrawBaseMatrix.SetRotationYAxis(ChMath::ToRadian(drawMecha->GetRotation().y));
-	shotTargetdrawBaseMatrix.SetPosition(drawMecha->GetPosition());
-	shotTargetdrawBaseMatrix.SetScalling(SHOT_TARGET_MARKER_SIZE);
-
 	shotEffectList->SetProjectionMatrix(proMat);
 	shotEffectList->SetViewMatrix(viewMat);
 
@@ -878,11 +853,6 @@ void GameFrame::Render3D()
 
 	light.SetUseLightFlg(false);
 
-	shotTargetDrawer.DrawStart(dc);
-	
-	shotTargetDrawer.Draw(shotTargetMarkerTex, shotTargetBorad, (ChMat_11)shotTargetdrawBaseMatrix);
-
-	shotTargetDrawer.DrawEnd();
 }
 
 void GameFrame::Render2D(void)
