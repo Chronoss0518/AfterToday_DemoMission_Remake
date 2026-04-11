@@ -182,15 +182,25 @@ void MechaPartsObject::Move()
 {
 	ChLMat tmp;
 
-	float tmpRotate = 0.0f;
+	float tmpRotate = rotate;
+
+#if true
 
 	if (thisRotateType == RotateDirectionType::Vertical)
 		tmpRotate = rotateDirection.y * rotate;
 
 	if (thisRotateType == RotateDirectionType::Horizontal)
-		tmpRotate = rotateDirection.x * rotate;
+		tmpRotate = -rotateDirection.x * rotate;
 
 	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
+
+	tmp = tmp * GetOutSideTransformLMat();
+
+#else
+
+	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
+
+#endif
 
 	SetOutSideTransform(tmp);
 

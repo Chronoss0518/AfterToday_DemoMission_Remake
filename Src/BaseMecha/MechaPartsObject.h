@@ -84,9 +84,7 @@ public:
 
 public:
 
-
 	inline float GetRotate() { return rotate; }
-
 
 	std::vector<MechaPartsObject*>GetParentTree();
 
@@ -169,6 +167,7 @@ private:
 
 	RotateDirectionType thisRotateType = RotateDirectionType::None;
 	float rotate = 0.0f;
+
 	ChVec3 rotateDirection = ChVec3();
 
 	bool isInitRunFlg = false;
