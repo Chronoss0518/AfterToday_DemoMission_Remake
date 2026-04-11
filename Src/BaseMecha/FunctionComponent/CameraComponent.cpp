@@ -21,15 +21,15 @@
 
 #define VIEW_ROTATE_POW_UPPER 16 / 9
 
-#define UN_TARGET_LOOK_LEN 10.0f
+#define UN_TARGET_LOOK_LEN 100.0f
 
 void CameraComponent::Move()
 {
 
 	updateKeyFlg = false;
 
-	CamVerticalRotateUpdate(InputName::CameraUpRotation, cameraRotatePow);
-	CamVerticalRotateUpdate(InputName::CameraDownRotation, -cameraRotatePow);
+	CamVerticalRotateUpdate(InputName::CameraUpRotation, -cameraRotatePow);
+	CamVerticalRotateUpdate(InputName::CameraDownRotation, cameraRotatePow);
 
 	CamHorizontalRotateUpdate(InputName::CameraRightRotation, -cameraRotatePow * VIEW_ROTATE_POW_UPPER);
 	CamHorizontalRotateUpdate(InputName::CameraLeftRotation, cameraRotatePow * VIEW_ROTATE_POW_UPPER);
@@ -161,13 +161,13 @@ void CameraComponent::SetRotateToTarget()
 
 ChVec3 CameraComponent::GetLookPosition()
 {
+	auto mat = CreateViewRotateMatrix();
+
 	if (!lookTarget.expired())
 	{
 		auto target = lookTarget.lock();
 		return target->GetPosition();
 	}
-
-	auto mat = CreateViewRotateMatrix();
 
 	ChVec3 lookPos = GetViewPos(mat);
 
@@ -188,7 +188,7 @@ ChLMat CameraComponent::CreateViewRotateMatrix()
 	ChLMat camYMat, camXMat;
 
 	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
-	camXMat.SetRotationXAxis(-ChMath::ToRadian(viewVertical));
+	camXMat.SetRotationXAxis(ChMath::ToRadian(viewVertical));
 	camYMat = camXMat * camYMat;
 	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
 
