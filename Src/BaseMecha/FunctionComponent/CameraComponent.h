@@ -92,7 +92,7 @@ private:
 	std::vector<CameraData*>cameraList;
 
 	//ƒJƒƒ‰‚Ì‹–ìŠp//
-	float nowFovy = 30.0f;
+	float nowFovy = 90.0f;
 
 	ChVec3 centerPos = ChVec3();
 
