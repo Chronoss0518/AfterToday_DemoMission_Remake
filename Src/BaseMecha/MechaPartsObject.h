@@ -80,15 +80,16 @@ public:
 		partsParameter = _param;
 	}
 
-	inline void SetRotate(float _rotate)
+	inline void SetLookTargetFlg()
 	{
-		rotate = _rotate;
-		setRotationFlg = true;
+		setLookTarget = true;
 	}
 
-public:
+private:
 
-	inline float GetRotate() { return rotate; }
+	void SetRotation(float _rad);
+
+public:
 
 	std::vector<MechaPartsObject*>GetParentTree();
 
@@ -143,6 +144,10 @@ public:
 		return weaponPaletteCounter[ChStd::EnumCast(_type)][_num];
 	}
 
+private:
+
+	ChVec3 GetCameraLookPos();
+
 public:
 
 	inline void AddWeaponPaletteCounter(char _num, WeaponHandType _type)
@@ -160,6 +165,12 @@ public:
 
 	void DrawEnd();
 
+private:
+
+	void UpdateLookTargetDirectionVertical();
+
+	void UpdateLookTargetDirectionHorizontal();
+
 protected:
 
 	ChCpp::SphereCollider collider;
@@ -170,10 +181,8 @@ private:
 	GameFrame* frame = nullptr;
 
 	RotateDirectionType thisRotateType = RotateDirectionType::None;
-	float rotate = 0.0f;
-	bool setRotationFlg = false;
-
-	ChVec3 rotateDirection = ChVec3();
+	bool setLookTarget = false;
+	float rotateInverseValue = 1.0f;
 
 	bool isInitRunFlg = false;
 
