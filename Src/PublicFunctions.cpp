@@ -84,15 +84,15 @@ std::wstring CreateMoneyText(const std::wstring& _money)
 	return result;
 }
 
-RotationData GetRotationFromDir(ChVec3 _dir)
+RotationData GetRotationFromDir(const ChVec3& _dir)
 {
 	RotationData res;
 
 	auto xzDir = _dir;
 	xzDir.y = 0.0f;
-	xzDir.Normalize();
+	if (!xzDir.Normalize())xzDir = ChVec3(0.0f, 0.0f, 1.0f);
 
-	auto xzCross = ChVec3::GetCross(_dir, ChVec3(0.0f, 0.0f, 1.0f));
+	auto xzCross = ChVec3::GetCross(xzDir, ChVec3(0.0f, 0.0f, 1.0f));
 
 	res.xzRad = ChVec3::GetRadian(xzDir, ChVec3(0.0f, 0.0f, 1.0f));
 

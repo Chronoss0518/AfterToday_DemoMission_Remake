@@ -25,4 +25,4 @@ struct RotationData
 	float yRad = 0.0f;
 };
 
-RotationData GetRotationFromDir(ChVec3 _dir);
+RotationData GetRotationFromDir(const ChVec3& _dir);
