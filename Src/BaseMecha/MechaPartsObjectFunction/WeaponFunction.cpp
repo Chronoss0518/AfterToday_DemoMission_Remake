@@ -207,16 +207,17 @@ void GunFunction::SelectedUpdate()
 
 			ChVec3 dir = lookPos - pos;
 
+			dir.y = 0.0f;
 			dir.Normalize();
 
+			auto tmpPartsDir = partsDir;
+			tmpPartsDir.y = 0.0f;
+
 			ChQua tmp;
-			tmp.SetRotation(partsDir, dir);
+			tmp.SetRotation(tmpPartsDir, dir);
 
 			ChVec3 useDir = tmp.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
-			useDir.Normalize();
-
 			auto rotate = GetRotationFromDir(useDir);
-
 
 			float tmpDegree = ChMath::ToDegree(rotate.xzRad);
 			tmpParts->SetRotate(tmpDegree);

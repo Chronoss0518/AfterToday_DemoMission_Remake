@@ -44,7 +44,7 @@ void MechaPartsObject::Release()
 
 void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _childObject)
 {
-	ChCpp::TransformObject<wchar_t>::Update();
+	ChCpp::TransformObject<wchar_t>::UpdateDrawTransform();
 
 	if (_childObject == nullptr)return;
 
@@ -65,12 +65,19 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 
 	_childObject->SetFrameTransform(lmat);
 
+	_childObject->UpdateDrawTransform();
+
 	lmat = _childObject->GetDrawLHandMatrix();
 
-	if(static_cast<int>(std::abs(lmat.m[1][0])) > 0)
+#if false
+	if(thisRotateType == RotateDirectionType::Horizontal && std::abs(lmat.m[1][2]) > 0.0001f)
+		_childObject->thisRotateType = RotateDirectionType::Vertical;
+#endif
+
+	if(std::abs(lmat.m[1][0]) > 0.0001f)
 		_childObject->thisRotateType = RotateDirectionType::Horizontal;
 
-	if (static_cast<int>(std::abs(lmat.m[1][1])) > 0)
+	if (std::abs(lmat.m[1][1]) > 0.0001f)
 		_childObject->thisRotateType = RotateDirectionType::Vertical;
 
 	//Upï˚å¸ÇÃílÇï€éù//
@@ -192,15 +199,19 @@ void MechaPartsObject::Move()
 
 #if true
 
-	if (thisRotateType == RotateDirectionType::Vertical)
-		tmpRotate = rotateDirection.y * rotate;
+	if (setRotationFlg)
+	{
+		if (thisRotateType == RotateDirectionType::Vertical)
+			tmpRotate = rotateDirection.y * rotate;
 
-	if (thisRotateType == RotateDirectionType::Horizontal)
-		tmpRotate = -rotateDirection.x * rotate;
+		if (thisRotateType == RotateDirectionType::Horizontal)
+			tmpRotate = -rotateDirection.x * rotate;
 
-	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
+		tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
 
-	tmp = tmp * GetOutSideTransformLMat();
+		tmp = tmp * GetOutSideTransformLMat();
+
+	}
 
 #else
 
@@ -211,6 +222,7 @@ void MechaPartsObject::Move()
 	SetOutSideTransform(tmp);
 
 	rotate = 0.0f;
+	setRotationFlg = false;
 }
 
 void  MechaPartsObject::DrawBegin()

@@ -80,7 +80,11 @@ public:
 		partsParameter = _param;
 	}
 
-	inline void SetRotate(float _rotate) { rotate = _rotate; }
+	inline void SetRotate(float _rotate)
+	{
+		rotate = _rotate;
+		setRotationFlg = true;
+	}
 
 public:
 
@@ -167,6 +171,7 @@ private:
 
 	RotateDirectionType thisRotateType = RotateDirectionType::None;
 	float rotate = 0.0f;
+	bool setRotationFlg = false;
 
 	ChVec3 rotateDirection = ChVec3();
 
