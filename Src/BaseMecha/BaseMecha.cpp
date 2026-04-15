@@ -239,11 +239,10 @@ void BaseMecha::BaseMove()
 void BaseMecha::Draw3D()
 {
 	if (core == nullptr)return;
-	ChLMat drawMat;
-	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-	drawMat.SetPosition(physics->GetPosition());
+	beforeDrawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	beforeDrawMat.SetPosition(physics->GetPosition());
 
-	core->SetFrameTransform(drawMat);
+	core->SetFrameTransform(beforeDrawMat);
 	core->Draw3DFunction();
 }
 

@@ -133,6 +133,8 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
+	inline ChLMat GetBeforeDrawMat() { return beforeDrawMat; }
+
 	ChVec3 GetDamageDir() { return damageDir; }
 
 	inline float GetMass() { return mass; }
@@ -216,6 +218,7 @@ protected:
 	ChPtr::Shared<ControllerBase>controller = nullptr;
 
 	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
+	ChLMat beforeDrawMat;
 
 	float mass = 1.0f;
 
