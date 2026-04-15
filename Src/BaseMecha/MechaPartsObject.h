@@ -157,6 +157,8 @@ public:
 
 public:
 
+	void Update()override;
+
 	void Move()override;
 
 	void DrawBegin()override;
@@ -183,6 +185,7 @@ private:
 	RotateDirectionType thisRotateType = RotateDirectionType::None;
 	bool setLookTarget = false;
 	float rotateInverseValue = 1.0f;
+	bool isRotateFlg = false;
 
 	bool isInitRunFlg = false;
 
