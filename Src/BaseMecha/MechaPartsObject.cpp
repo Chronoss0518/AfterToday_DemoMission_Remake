@@ -69,32 +69,6 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 
 	_childObject->UpdateDrawTransform();
 
-#if false
-	lmat = _childObject->GetDrawLHandMatrix();
-
-	if (static_cast<int>(std::abs(lmat.m[1][0])) > 0)
-	{
-		_childObject->thisRotateType = RotateDirectionType::Horizontal;
-		rotateInverseValue = lmat.m[1][0];
-	}
-
-	if (static_cast<int>(std::abs(lmat.m[1][1])) > 0)
-	{
-		_childObject->thisRotateType = RotateDirectionType::Vertical;
-		rotateInverseValue = lmat.m[1][1];
-	}
-
-#if false
-	if (thisRotateType == RotateDirectionType::Horizontal &&
-		static_cast<int>(std::abs(lmat.m[1][2])) > 0)
-	{
-		_childObject->thisRotateType = RotateDirectionType::Vertical;
-		rotateInverseValue = lmat.m[1][2];
-	}
-#endif
-
-#endif
-
 	auto&& tmpObject = positions.find(_objectType);
 	if (tmpObject == positions.end())
 	{
@@ -205,8 +179,6 @@ std::wstring MechaPartsObject::GetPartsName()
 
 void MechaPartsObject::Update()
 {
-#if true
-
 	if (GetParent() != nullptr)
 	{
 		ChLMat lmat = GetDrawLHandMatrix();
@@ -233,8 +205,6 @@ void MechaPartsObject::Update()
 			}
 		}
 	}
-
-#endif
 
 }
 
