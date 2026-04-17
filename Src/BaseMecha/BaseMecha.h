@@ -172,6 +172,8 @@ public:
 
 	inline bool IsBreak() { return breakFlg; }
 
+	bool IsPushFlg(InputName _name);
+
 public:
 
 	void UpdateAnchor(size_t _no, const ChLMat& _drawMat);
@@ -235,6 +237,7 @@ protected:
 	unsigned long createDamageSmokeTime = 0;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
+	ChCpp::BitBool beforeInputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 

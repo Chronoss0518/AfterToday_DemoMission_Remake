@@ -203,6 +203,11 @@ void BaseMecha::Move()
 
 void BaseMecha::MoveEnd()
 {
+	for (size_t i = 0; i < inputFlgs.GetSize(); i++)
+	{
+		beforeInputFlgs.SetValue(inputFlgs.GetValue(i), i);
+	}
+
 	inputFlgs.SetAllDownFlg();
 
 	damageDir = ChVec3();
@@ -390,6 +395,14 @@ void BaseMecha::RemoveCore()
 	if (core == nullptr)return;
 	core->Destroy();
 	core = nullptr;
+}
+
+bool BaseMecha::IsPushFlg(InputName _name)
+{
+	auto inputFlg = ChStd::EnumCast(_name);
+	return !noHoldMaskFlgs.GetBitFlg(inputFlg) ?
+		inputFlgs.GetBitFlg(inputFlg) :
+		inputFlgs.GetBitFlg(inputFlg) && !beforeInputFlgs.GetBitFlg(inputFlg);
 }
 
 void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)
