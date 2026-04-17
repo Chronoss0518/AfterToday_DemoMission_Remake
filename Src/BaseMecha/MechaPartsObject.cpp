@@ -57,7 +57,6 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	ChVec3 pos = ChVec3();
 
 	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
-	//lmat = position->connectionRotate * lmat;
 
 	pos = lmat.Transform(pos);
 
@@ -103,6 +102,7 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 	{
 		res->Set(partsObject.first, partsObject.second->Serialize());
 	}
+
 	return res;
 }
 
