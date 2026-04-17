@@ -49,6 +49,16 @@ public:
 
 private:
 
+	void UpdateFunctions(
+		WeaponHandType _type,
+		InputName _weaponAction,
+		InputName _attackInput,
+		InputName _subFunctionInput,
+		InputName _weaponUpChangeInput,
+		InputName _weaponDownChangeInput);
+
+private:
+
 	size_t useWeaponNo[DRAW_TYPE_COUNT] = { 0,0 };
 	ChPtr::Shared<WeaponFunction>weapons[DRAW_TYPE_COUNT][PALETTE_COUNT];
 
