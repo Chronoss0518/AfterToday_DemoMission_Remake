@@ -38,18 +38,32 @@
 
 #define CREATE_SMOKE_EFFECT_TIME 3
 
-static const std::wstring partsTypeName[]
-{
-	L"Body",L"Head",L"Foot",L"RightArm",L"LeftArm",L"Boost",L"Weapon",L"Extra"
-};
+ChCpp::BitBool noHoldMaskFlgs = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
+bool isNoHoldMaskFlgInit = false;
 
-static const std::wstring weaponTypeName[]
+void InitNoHoldMaskFlgs()
 {
-	L"R*",L"L*"
-};
+	if (isNoHoldMaskFlgInit)return;
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MapOnOff));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::Release));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::UseTargetLooker));
+	//noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponUpChange));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWUChange));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWUChange));
+	//noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponDownChange));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWDChange));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWDChange));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveUpChange));
+	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveDownChange));
+
+	isNoHoldMaskFlgInit = true;
+}
+
 
 BaseMecha::BaseMecha()
 {
+	InitNoHoldMaskFlgs();
+
 	physics->SetLeftRightWallLen(3.0f);
 	physics->SetFrontBackWallLen(3.0f);
 }
