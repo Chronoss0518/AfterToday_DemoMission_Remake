@@ -239,6 +239,8 @@ protected:
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
 	ChCpp::BitBool beforeInputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
 
+	ChCpp::BitBool noHoldMaskFlgs = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
+
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 
 	ChVec3 damageDir = ChVec3();

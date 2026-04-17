@@ -44,6 +44,7 @@ bool isNoHoldMaskFlgInit = false;
 void InitNoHoldMaskFlgs()
 {
 	if (isNoHoldMaskFlgInit)return;
+
 	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MapOnOff));
 	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::Release));
 	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::UseTargetLooker));
