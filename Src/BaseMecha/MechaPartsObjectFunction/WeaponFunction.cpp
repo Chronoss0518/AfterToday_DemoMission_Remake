@@ -186,7 +186,7 @@ void GunFunction::SelectedUpdate()
 	{
 		if (useVerticalFlg && useHorizontalFlg)break;
 
-		auto tmpParts = tree[i];
+		auto tmpParts = tree[tree.size() - i - 1];
 		
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
 
