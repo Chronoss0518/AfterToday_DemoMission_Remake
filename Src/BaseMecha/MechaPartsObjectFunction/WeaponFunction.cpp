@@ -42,6 +42,7 @@ void WeaponFunction::Update()
 	nowWaitTime++;
 
 	UpdateFunction();
+
 }
 
 std::wstring WeaponFunction::GetWeaponName()
@@ -192,13 +193,14 @@ void GunFunction::SelectedUpdate()
 
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical && !useVerticalFlg)
 		{
-			tmpParts->SetLookTargetFlg();
+			tmpParts->UpdateLookTargetDirectionVertical(parts);
+
 			useVerticalFlg = true;
 		}
 
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal && !useHorizontalFlg)
 		{
-			tmpParts->SetLookTargetFlg();
+			tmpParts->UpdateLookTargetDirectionHorizontal(parts);
 			useHorizontalFlg = true;
 
 		}

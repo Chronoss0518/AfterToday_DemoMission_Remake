@@ -210,17 +210,12 @@ void MechaPartsObject::Update()
 
 void MechaPartsObject::Move()
 {
-	UpdateLookTargetDirectionVertical();
-
-	UpdateLookTargetDirectionHorizontal();
-
 	UpdateDrawTransform();
 
 	if (!isRotateFlg)
 		SetOutSideTransform(ChLMat());
 
 	isRotateFlg = false;
-	setLookTarget = false;
 }
 
 void  MechaPartsObject::DrawBegin()
@@ -250,14 +245,14 @@ void  MechaPartsObject::DrawEnd()
 	TransformObject<wchar_t>::DrawEnd();
 }
 
-void MechaPartsObject::UpdateLookTargetDirectionVertical()
+void MechaPartsObject::UpdateLookTargetDirectionVertical(MechaPartsObject* _weaponParts)
 {
-	if (!setLookTarget)return;
+	if (ChPtr::NullCheck(_weaponParts))return;
 	if (thisRotateType != RotateDirectionType::Vertical)return;
 
 	ChVec3 lookPos = GetCameraLookPos();
 
-	auto tmpMat = GetDrawLHandMatrix();
+	auto tmpMat = _weaponParts->GetDrawLHandMatrix();
 
 	ChVec3 pos = tmpMat.Transform(ChVec3());
 
@@ -295,14 +290,14 @@ void MechaPartsObject::UpdateLookTargetDirectionVertical()
 
 }
 
-void MechaPartsObject::UpdateLookTargetDirectionHorizontal()
+void MechaPartsObject::UpdateLookTargetDirectionHorizontal(MechaPartsObject* _weaponParts)
 {
-	if (!setLookTarget)return;
+	if (ChPtr::NullCheck(_weaponParts))return;
 	if (thisRotateType != RotateDirectionType::Horizontal)return;
 
 	ChVec3 lookPos = GetCameraLookPos();
 
-	auto tmpMat = GetDrawLHandMatrix();
+	auto tmpMat = _weaponParts->GetDrawLHandMatrix();
 
 	ChVec3 pos = tmpMat.Transform(ChVec3());
 
