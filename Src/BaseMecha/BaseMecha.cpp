@@ -38,24 +38,31 @@
 
 #define CREATE_SMOKE_EFFECT_TIME 3
 
-ChCpp::BitBool noHoldMaskFlgs = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
-bool isNoHoldMaskFlgInit = false;
+static ChCpp::BitBool& GetNoHoldMaskFlgs()
+{
+	static ChCpp::BitBool noHoldMaskFlgs;
+	return noHoldMaskFlgs;
+}
 
 void InitNoHoldMaskFlgs()
 {
+	static bool isNoHoldMaskFlgInit = false;
+
 	if (isNoHoldMaskFlgInit)return;
 
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MapOnOff));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::Release));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::UseTargetLooker));
-	//noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponUpChange));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWUChange));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWUChange));
-	//noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponDownChange));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWDChange));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWDChange));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveUpChange));
-	noHoldMaskFlgs.SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveDownChange));
+	GetNoHoldMaskFlgs() = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
+
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MapOnOff));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::Release));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::UseTargetLooker));
+	//GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponUpChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWUChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWUChange));
+	//GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponDownChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWDChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWDChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveUpChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveDownChange));
 
 	isNoHoldMaskFlgInit = true;
 }
@@ -71,7 +78,7 @@ BaseMecha::BaseMecha()
 
 BaseMecha::~BaseMecha()
 {
-
+	
 }
 
 void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer, GameFrame* _frame)
@@ -204,10 +211,7 @@ void BaseMecha::Move()
 
 void BaseMecha::MoveEnd()
 {
-	for (size_t i = 0; i < inputFlgs.GetSize(); i++)
-	{
-		beforeInputFlgs.SetValue(inputFlgs.GetValue(i), i);
-	}
+	beforeInputFlgs.SetBitBool(inputFlgs);
 
 	inputFlgs.SetAllDownFlg();
 
@@ -401,7 +405,7 @@ void BaseMecha::RemoveCore()
 bool BaseMecha::IsPushFlg(InputName _name)
 {
 	auto inputFlg = ChStd::EnumCast(_name);
-	return !noHoldMaskFlgs.GetBitFlg(inputFlg) ?
+	return !GetNoHoldMaskFlgs().GetBitFlg(inputFlg) ?
 		inputFlgs.GetBitFlg(inputFlg) :
 		inputFlgs.GetBitFlg(inputFlg) && !beforeInputFlgs.GetBitFlg(inputFlg);
 }
