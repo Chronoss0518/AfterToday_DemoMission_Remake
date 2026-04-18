@@ -21,8 +21,8 @@ void PlayerController::Init()
 	keyTypes[VK_SHIFT] = InputName::Avo;
 	keyTypes[VK_CONTROL] = InputName::Boost;
 
-	keyTypes['Q'] = InputName::SetCameraCenter;
-	keyTypes['E'] = InputName::MapOnOff;
+	//keyTypes['Q'] = InputName::SetCameraCenter;
+	//keyTypes['E'] = InputName::MapOnOff;
 	keyTypes['W'] = InputName::Front;
 	keyTypes['A'] = InputName::Left;
 	keyTypes['D'] = InputName::Right;
@@ -57,10 +57,10 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::A] = InputName::Up;
 	controllerTypes[XInputTypeNames::B] = InputName::Boost;
 	controllerTypes[XInputTypeNames::X] = InputName::Avo;
-	controllerTypes[XInputTypeNames::Y] = InputName::MapOnOff;
+	controllerTypes[XInputTypeNames::Y] = InputName::WeaponSubFunction;
 
-	controllerTypes[XInputTypeNames::Up] = InputName::None;
-	controllerTypes[XInputTypeNames::Down] = InputName::None;
+	controllerTypes[XInputTypeNames::Up] = InputName::WeaponUpChange;
+	controllerTypes[XInputTypeNames::Down] = InputName::WeaponDownChange;
 	controllerTypes[XInputTypeNames::Left] = InputName::None;
 	controllerTypes[XInputTypeNames::Right] = InputName::None;
 
