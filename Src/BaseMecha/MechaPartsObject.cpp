@@ -17,7 +17,6 @@
 void MechaPartsObject::CreateEnd()
 {
 	auto&& baseMecha = GetBaseMecha();
-	auto&& baseParts = GetBaseObject();
 
 	auto&& positions = baseParts->GetPositionList();
 	
@@ -31,7 +30,7 @@ void MechaPartsObject::CreateAnchor()
 {
 	SetLookAnchorNo(mecha->GetAnchorRegistNum());
 
-	mecha->AddAnchorData(GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
+	mecha->AddAnchorData(baseParts->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
 }
 
 void MechaPartsObject::Release()
