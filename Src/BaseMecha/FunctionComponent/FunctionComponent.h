@@ -14,7 +14,7 @@ public://override function//
 
 public:
 
-	inline bool IsPushFlg(InputName _name) { return target->inputFlgs.GetBitFlg(ChStd::EnumCast(_name)); }
+	inline bool IsPushFlg(InputName _name) { return target->IsPushFlg(_name); }
 
 	bool IsGround();
 
@@ -28,7 +28,7 @@ protected:
 
 protected:
 
-	inline void SetPushFlg(InputName _name){ target->inputFlgs.SetBitTrue(ChStd::EnumCast(_name)); }
+	inline void SetPushFlg(InputName _name){ target->SetPushFlg(_name); }
 
 	inline void RemovePushFlg(InputName _name) { target->inputFlgs.SetBitFalse(ChStd::EnumCast(_name)); }
 

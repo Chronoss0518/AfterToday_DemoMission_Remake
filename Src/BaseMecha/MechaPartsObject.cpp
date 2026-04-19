@@ -10,12 +10,13 @@
 #include"CPU/CPULooker.h"
 
 #include"MechaPartsObjectFunction/WeaponFunction.h"
+
 #include"FunctionComponent/WeaponComponent.h"
+#include"FunctionComponent/CameraComponent.h"
 
 void MechaPartsObject::CreateEnd()
 {
 	auto&& baseMecha = GetBaseMecha();
-	auto&& baseParts = GetBaseObject();
 
 	auto&& positions = baseParts->GetPositionList();
 	
@@ -29,7 +30,7 @@ void MechaPartsObject::CreateAnchor()
 {
 	SetLookAnchorNo(mecha->GetAnchorRegistNum());
 
-	mecha->AddAnchorData(GetBaseObject()->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
+	mecha->AddAnchorData(baseParts->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
 }
 
 void MechaPartsObject::Release()
@@ -44,7 +45,7 @@ void MechaPartsObject::Release()
 
 void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Shared<MechaPartsObject> _childObject)
 {
-	ChCpp::TransformObject<wchar_t>::Update();
+	ChCpp::TransformObject<wchar_t>::UpdateDrawTransform();
 
 	if (_childObject == nullptr)return;
 
@@ -55,7 +56,6 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	ChVec3 pos = ChVec3();
 
 	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
-	//lmat = position->connectionRotate * lmat;
 
 	pos = lmat.Transform(pos);
 
@@ -65,16 +65,7 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 
 	_childObject->SetFrameTransform(lmat);
 
-	lmat = _childObject->GetDrawLHandMatrix();
-
-	if(static_cast<int>(std::abs(lmat.m[1][0])) > 0)
-		_childObject->thisRotateType = RotateDirectionType::Horizontal;
-
-	if (static_cast<int>(std::abs(lmat.m[1][1])) > 0)
-		_childObject->thisRotateType = RotateDirectionType::Vertical;
-
-	//Up•ûŒü‚Ì’l‚ð•ÛŽ//
-	_childObject->rotateDirection.val.Set(position->connectionRotate.m[1]);
+	_childObject->UpdateDrawTransform();
 
 	auto&& tmpObject = positions.find(_objectType);
 	if (tmpObject == positions.end())
@@ -110,6 +101,7 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 	{
 		res->Set(partsObject.first, partsObject.second->Serialize());
 	}
+
 	return res;
 }
 
@@ -184,33 +176,45 @@ std::wstring MechaPartsObject::GetPartsName()
 	return result;
 }
 
+void MechaPartsObject::Update()
+{
+	if (GetParent() != nullptr)
+	{
+		ChLMat lmat = GetDrawLHandMatrix();
+
+		ChLMat beforeDrawMat = mecha->GetBeforeDrawMat();
+
+		beforeDrawMat.Inverse();
+		lmat = lmat * beforeDrawMat;
+
+		float x = std::abs(lmat.m[1][0]);
+		float y = std::abs(lmat.m[1][1]);
+
+		if (x > 0.1f || y > 0.1f)
+		{
+			if (x > y)
+			{
+				thisRotateType = RotateDirectionType::Horizontal;
+				rotateInverseValue = lmat.m[1][0];
+			}
+			else
+			{
+				thisRotateType = RotateDirectionType::Vertical;
+				rotateInverseValue = lmat.m[1][1];
+			}
+		}
+	}
+
+}
+
 void MechaPartsObject::Move()
 {
-	ChLMat tmp;
+	UpdateDrawTransform();
 
-	float tmpRotate = rotate;
+	if (!isRotateFlg)
+		SetOutSideTransform(ChLMat());
 
-#if true
-
-	if (thisRotateType == RotateDirectionType::Vertical)
-		tmpRotate = rotateDirection.y * rotate;
-
-	if (thisRotateType == RotateDirectionType::Horizontal)
-		tmpRotate = -rotateDirection.x * rotate;
-
-	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
-
-	tmp = tmp * GetOutSideTransformLMat();
-
-#else
-
-	tmp.SetRotationYAxis(ChMath::ToRadian(tmpRotate));
-
-#endif
-
-	SetOutSideTransform(tmp);
-
-	rotate = 0.0f;
+	isRotateFlg = false;
 }
 
 void  MechaPartsObject::DrawBegin()
@@ -238,6 +242,114 @@ void MechaPartsObject::Draw3D()
 void  MechaPartsObject::DrawEnd()
 {
 	TransformObject<wchar_t>::DrawEnd();
+}
+
+void MechaPartsObject::UpdateLookTargetDirectionVertical(MechaPartsObject* _weaponParts)
+{
+	if (ChPtr::NullCheck(_weaponParts))return;
+	if (thisRotateType != RotateDirectionType::Vertical)return;
+
+	ChVec3 lookPos = GetCameraLookPos();
+
+	auto tmpMat = _weaponParts->GetDrawLHandMatrix();
+
+	ChVec3 pos = tmpMat.Transform(ChVec3());
+
+	ChVec3 dir = lookPos - pos;
+
+#if true
+
+	dir.y = 0.0f;
+
+	if (!dir.Normalize())
+		dir = ChVec3(0.0f, 0.0f, 1.0f);
+
+	auto partsDir = tmpMat.TransformCoord(ChVec3(0.0f,0.0f,1.0f));
+	partsDir.y = 0.0f;
+
+	if (!partsDir.Normalize())
+		partsDir = ChVec3(0.0f, 0.0f, 1.0f);
+
+	ChQua tmpQua;
+	tmpQua.SetRotation(partsDir, dir);
+
+	ChVec3 useDir = tmpQua.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
+	auto rotate = GetRotationFromDir(useDir);
+
+#else
+
+	dir.Normalize();
+	auto rotate = GetRotationFromDir(dir);
+
+#endif
+
+	float tmpDegree = ChMath::ToDegree(rotate.xzRad);
+
+	SetRotation(rotate.xzRad);
+
+}
+
+void MechaPartsObject::UpdateLookTargetDirectionHorizontal(MechaPartsObject* _weaponParts)
+{
+	if (ChPtr::NullCheck(_weaponParts))return;
+	if (thisRotateType != RotateDirectionType::Horizontal)return;
+
+	ChVec3 lookPos = GetCameraLookPos();
+
+	auto tmpMat = _weaponParts->GetDrawLHandMatrix();
+
+	ChVec3 pos = tmpMat.Transform(ChVec3());
+
+	ChVec3 dir = lookPos - pos;
+
+	dir.Normalize();
+
+#if true
+
+	ChVec3 partsDir = tmpMat.TransformCoord(ChVec3(0.0f, 0.0f, 1.0f));
+
+	partsDir.Normalize();
+
+	ChQua tmpQua;
+	tmpQua.SetRotation(partsDir, dir);
+
+	ChVec3 useDir = tmpQua.GetMul(ChVec3(0.0f, 0.0f, 1.0f));
+	useDir.Normalize();
+
+	auto rotate = GetRotationFromDir(useDir);
+
+	if (dir.z > 0.0f)rotate.yRad = -rotate.yRad;
+
+#else
+
+	auto rotate = GetRotationFromDir(dir);
+
+#endif
+
+	float tmpDegree = -ChMath::ToDegree(rotate.yRad);
+
+	SetRotation(rotate.yRad);
+
+}
+
+void MechaPartsObject::SetRotation(float _rad)
+{
+	ChLMat tmp;
+
+	tmp.SetRotationYAxis(rotateInverseValue * _rad);
+
+	tmp = tmp * GetOutSideTransformLMat();
+
+	SetOutSideTransform(tmp);
+
+	isRotateFlg = true;
+}
+
+ChVec3 MechaPartsObject::GetCameraLookPos()
+{
+	auto camCom = mecha->GetComponentObject<CameraComponent>();
+
+	return camCom->GetLookPosition();
 }
 
 float MechaPartsObject::GetDamage(AttackObject& _bullet)

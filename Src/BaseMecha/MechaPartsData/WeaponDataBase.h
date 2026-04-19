@@ -34,10 +34,15 @@ public:
 
 	inline bool GetLookTargetFlg() { return lookTarget; }
 
+	inline ChD3D11::Texture11& GetPaletteImage() { return weaponPaletteImage; }
+
 protected:
 
 	//武器の名称//
 	std::wstring weaponName = L"";
+	//WeaponPaletteに表示される画像ファイル//
+	std::wstring weaponPaletteImageFilePath = L"";
+	ChD3D11::Texture11 weaponPaletteImage;
 	//効果音のファイル//
 	std::wstring seFile = L"";
 	//次の攻撃可能時間//

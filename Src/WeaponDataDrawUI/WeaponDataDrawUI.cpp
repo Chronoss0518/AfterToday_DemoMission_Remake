@@ -41,6 +41,8 @@
 
 void WeaponDataDrawUI::Init(ID3D11Device* _device)
 {
+	if (IsInit())return;
+
 	device = _device;
 
 	backGround.CreateTexture(TEXTURE_DIRECTORY(L"WeaponData.png"), device);
@@ -115,10 +117,13 @@ void WeaponDataDrawUI::Init(ID3D11Device* _device)
 		RectToGameWindow(ChVec4::FromRect(WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT, WEAPON_PARTS_NAME_TOP + PANEL_TOP, WEAPON_NAME_LEFT + RIGHT_PANEL_LEFT + WEAPON_NAME_WIDTH, WEAPON_PARTS_NAME_TOP + PANEL_TOP + WEAPON_PARTS_NAME_HEIGHT))
 	);
 
+	SetInitFlg(true);
 }
 
 void WeaponDataDrawUI::Release()
 {
+	if (!IsInit())return;
+
 	bulletDrawer.drawer.Release();
 	bulletDrawer.bitmap.Release();
 	reloadDrawer.drawer.Release();
@@ -127,6 +132,8 @@ void WeaponDataDrawUI::Release()
 	weaponNameDrawer.bitmap.Release();
 	partsNameDrawer.drawer.Release();
 	partsNameDrawer.bitmap.Release();
+
+	SetInitFlg(false);
 }
 
 void WeaponDataDrawUI::CreateTextDrawer(TextDrawerWICBitmap& _drawer, unsigned long _w, unsigned long _h, float _fontSize)

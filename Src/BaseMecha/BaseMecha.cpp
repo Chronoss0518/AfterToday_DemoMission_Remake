@@ -38,25 +38,47 @@
 
 #define CREATE_SMOKE_EFFECT_TIME 3
 
-static const std::wstring partsTypeName[]
+static ChCpp::BitBool& GetNoHoldMaskFlgs()
 {
-	L"Body",L"Head",L"Foot",L"RightArm",L"LeftArm",L"Boost",L"Weapon",L"Extra"
-};
+	static ChCpp::BitBool noHoldMaskFlgs;
+	return noHoldMaskFlgs;
+}
 
-static const std::wstring weaponTypeName[]
+void InitNoHoldMaskFlgs()
 {
-	L"R*",L"L*"
-};
+	static bool isNoHoldMaskFlgInit = false;
+
+	if (isNoHoldMaskFlgInit)return;
+
+	GetNoHoldMaskFlgs() = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
+
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MapOnOff));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::Release));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::UseTargetLooker));
+	//GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponUpChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWUChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWUChange));
+	//GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::WeaponDownChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::RWDChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::LWDChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveUpChange));
+	GetNoHoldMaskFlgs().SetBitTrue(ChStd::EnumCast(BaseMecha::InputName::MoveDownChange));
+
+	isNoHoldMaskFlgInit = true;
+}
+
 
 BaseMecha::BaseMecha()
 {
+	InitNoHoldMaskFlgs();
+
 	physics->SetLeftRightWallLen(3.0f);
 	physics->SetFrontBackWallLen(3.0f);
 }
 
 BaseMecha::~BaseMecha()
 {
-
+	
 }
 
 void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _drawer, GameFrame* _frame)
@@ -189,6 +211,8 @@ void BaseMecha::Move()
 
 void BaseMecha::MoveEnd()
 {
+	beforeInputFlgs.SetBitBool(inputFlgs);
+
 	inputFlgs.SetAllDownFlg();
 
 	damageDir = ChVec3();
@@ -239,11 +263,10 @@ void BaseMecha::BaseMove()
 void BaseMecha::Draw3D()
 {
 	if (core == nullptr)return;
-	ChLMat drawMat;
-	drawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
-	drawMat.SetPosition(physics->GetPosition());
+	beforeDrawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
+	beforeDrawMat.SetPosition(physics->GetPosition());
 
-	core->SetFrameTransform(drawMat);
+	core->SetFrameTransform(beforeDrawMat);
 	core->Draw3DFunction();
 }
 
@@ -377,6 +400,14 @@ void BaseMecha::RemoveCore()
 	if (core == nullptr)return;
 	core->Destroy();
 	core = nullptr;
+}
+
+bool BaseMecha::IsPushFlg(InputName _name)
+{
+	auto inputFlg = ChStd::EnumCast(_name);
+	return !GetNoHoldMaskFlgs().GetBitFlg(inputFlg) ?
+		inputFlgs.GetBitFlg(inputFlg) :
+		inputFlgs.GetBitFlg(inputFlg) && !beforeInputFlgs.GetBitFlg(inputFlg);
 }
 
 void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)

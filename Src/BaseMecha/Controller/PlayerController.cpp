@@ -11,22 +11,6 @@
 #define MIN_CURSOL_LEN_PARCEC 0.01f
 #define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
 
-BaseMecha::InputName noHoldInputTypes[]
-{
-	BaseMecha::InputName::MapOnOff,
-	BaseMecha::InputName::Release,
-	BaseMecha::InputName::UseTargetLooker,
-	BaseMecha::InputName::WeaponUpChange,
-	BaseMecha::InputName::RWUChange,
-	BaseMecha::InputName::LWUChange,
-	BaseMecha::InputName::WeaponDownChange,
-	BaseMecha::InputName::RWDChange,
-	BaseMecha::InputName::LWDChange,
-	BaseMecha::InputName::MoveUpChange,
-	BaseMecha::InputName::MoveDownChange,
-	BaseMecha::InputName::None,
-};
-
 void PlayerController::Init()
 {
 	auto&& windows = AppIns().GetWindow();
@@ -37,12 +21,15 @@ void PlayerController::Init()
 	keyTypes[VK_SHIFT] = InputName::Avo;
 	keyTypes[VK_CONTROL] = InputName::Boost;
 
-	keyTypes['Q'] = InputName::SetCameraCenter;
-	keyTypes['E'] = InputName::MapOnOff;
+	//keyTypes['Q'] = InputName::SetCameraCenter;
+	//keyTypes['E'] = InputName::MapOnOff;
 	keyTypes['W'] = InputName::Front;
 	keyTypes['A'] = InputName::Left;
 	keyTypes['D'] = InputName::Right;
 	keyTypes['S'] = InputName::Back;
+
+	keyTypes['Z'] = InputName::WeaponUpChange;
+	keyTypes['X'] = InputName::WeaponDownChange;
 
 	keyTypes[VK_LEFT] = InputName::LeftRotation;
 	keyTypes[VK_RIGHT] = InputName::RightRotation;
@@ -58,8 +45,8 @@ void PlayerController::Init()
 	cursolInput[ChStd::EnumCast(AxisTypeName::Down)] = InputName::CameraDownRotation;
 
 
-	keyTypes[VK_LBUTTON] = InputName::LAttack;
-	keyTypes[VK_RBUTTON] = InputName::RAttack;
+	keyTypes[VK_LBUTTON] = InputName::LWeaponAction;
+	keyTypes[VK_RBUTTON] = InputName::RWeaponAction;
 
 	keyTypes[VK_MBUTTON] = InputName::UseTargetLooker;
 
@@ -70,10 +57,10 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::A] = InputName::Up;
 	controllerTypes[XInputTypeNames::B] = InputName::Boost;
 	controllerTypes[XInputTypeNames::X] = InputName::Avo;
-	controllerTypes[XInputTypeNames::Y] = InputName::MapOnOff;
+	controllerTypes[XInputTypeNames::Y] = InputName::WeaponSubFunction;
 
-	controllerTypes[XInputTypeNames::Up] = InputName::None;
-	controllerTypes[XInputTypeNames::Down] = InputName::None;
+	controllerTypes[XInputTypeNames::Up] = InputName::WeaponUpChange;
+	controllerTypes[XInputTypeNames::Down] = InputName::WeaponDownChange;
 	controllerTypes[XInputTypeNames::Left] = InputName::None;
 	controllerTypes[XInputTypeNames::Right] = InputName::None;
 
@@ -89,11 +76,11 @@ void PlayerController::Init()
 	controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
 	//controllerTypes[XInputTypeNames::RRight] = InputName::CameraRightRotation;
 
-	controllerTypes[XInputTypeNames::L1] = InputName::LAttack;
-	controllerTypes[XInputTypeNames::L2] = InputName::LReload;
+	controllerTypes[XInputTypeNames::L1] = InputName::LWeaponAction;
+	controllerTypes[XInputTypeNames::L2] = InputName::LWSubFunction;
 	controllerTypes[XInputTypeNames::L3] = InputName::None;
-	controllerTypes[XInputTypeNames::R1] = InputName::RAttack;
-	controllerTypes[XInputTypeNames::R2] = InputName::RReload;
+	controllerTypes[XInputTypeNames::R1] = InputName::RWeaponAction;
+	controllerTypes[XInputTypeNames::R2] = InputName::RWSubFunction;
 	controllerTypes[XInputTypeNames::R3] = InputName::UseTargetLooker;
 
 }
@@ -121,24 +108,8 @@ void PlayerController::UpdateBegin()
 
 		for (auto&& key : keyTypes)
 		{
-			bool isNoHole = false;
-
-			for (size_t i = 0; noHoldInputTypes[i] != InputName::None; i++)
-			{
-				if (key.second != noHoldInputTypes[i])continue;
-				isNoHole = true;
-				break;
-			}
-
-			if (isNoHole)
-			{
-				if (!keyInput.IsPushKeyNoHold(key.first))continue;
-			}
-			else
-			{
-				if (!keyInput.IsPushKey(key.first))continue;
-			}
-			targetMecha->SetPushFlg(key.second);
+			if (!keyInput.IsPushKey(key.first))continue;
+			SetPushFlg(key.second);
 		}
 
 	}
@@ -215,45 +186,29 @@ void PlayerController::CursolFunction(float& _value, float _removeSize, const Ax
 		return;
 	}
 
-	auto targetMecha = GetBaseMecha();
 	if (_value > _removeSize)
 	{
-		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
+		SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
 		_value -= _removeSize;
 	}
 
 	if (_value < -_removeSize)
 	{
-		targetMecha->SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
+		SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
 		_value += _removeSize;
 	}
 }
 
 void PlayerController::SetXInputFlg(bool _flg,const XInputTypeNames _xinputType)
 {
-	if (controllerTypes.find(_xinputType) == controllerTypes.end())
-	{
-		controllerHoldKeys.SetBitFalse(ChStd::EnumCast(_xinputType));
-		return;
-	}
+	if (!_flg)return;
 
-	if (!_flg)
-	{
-		controllerHoldKeys.SetBitFalse(ChStd::EnumCast(_xinputType));
-		return;
-	}
+	SetPushFlg(controllerTypes[_xinputType]);
+}
 
-	if (controllerHoldKeys.GetBitFlg(ChStd::EnumCast(_xinputType)))
-	{
-		for (size_t i = 0; noHoldInputTypes[i] != InputName::None; i++)
-		{
-			if (controllerTypes[_xinputType] == noHoldInputTypes[i])
-				return;
-		}
-	}
+void PlayerController::SetPushFlg(InputName _input)
+{
+	auto&& targetMecha = GetBaseMecha();
 
-	auto targetMecha = GetBaseMecha();
-	controllerPushFlg = true;
-	targetMecha->SetPushFlg(controllerTypes[_xinputType]);
-	controllerHoldKeys.SetBitTrue(ChStd::EnumCast(_xinputType));
+	targetMecha->SetPushFlg(_input);
 }

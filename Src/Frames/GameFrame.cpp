@@ -15,6 +15,7 @@
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
 #include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
+#include"../WeaponPaletteDrawUI/WeaponPaletteDrawUI.h"
 
 #include"../BaseMecha/Controller/PlayerController.h"
 #include"../BaseMecha/Controller/CPUController.h"
@@ -194,6 +195,9 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	weaponDataDrawer = ChPtr::Make_S<WeaponDataDrawUI>();
 	weaponDataDrawer->Init(device);
+
+	weaponPaletteDrawer = ChPtr::Make_S<WeaponPaletteDrawUI>();
+	weaponPaletteDrawer->Init(device);
 	
 	rt2D.CreateRenderTarget(device,GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rt3D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
@@ -510,6 +514,10 @@ void GameFrame::Release()
 	gameEndFlg = true;
 	shotEffectList->Release();
 	smokeEffectList->Release();
+
+	weaponDataDrawer->Release();
+	weaponPaletteDrawer->Release();
+
 	mechaList.ClearObject();
 	bulletList.ClearObject();
 	mapList.ClearObject();
@@ -647,6 +655,7 @@ void GameFrame::UpdateFunction()
 
 	messageBox->Update();
 	weaponDataDrawer->Update(drawMecha.get());
+	weaponPaletteDrawer->Update(drawMecha.get());
 
 	for (size_t i = 0; i < ENEMY_TARGET_MARKER_SIZE; i++)
 	{
@@ -710,19 +719,18 @@ void GameFrame::DrawFunction()
 	ChD3D11::Shader11().DrawStart();
 
 	Render3D();
+
 	ID3D11RenderTargetView* renderTargetView = rt2D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView,nullptr);
 
-	enemyMarkerShader->DrawStart(dc);
-
-	enemyMarkerShader->Draw(dc);
-
-	enemyMarkerShader->DrawEnd();
+	uiDrawer.SetAlphaBlendFlg(false);
 
 	Render2D();
 
 	renderTargetView = rt3D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+	uiDrawer.SetAlphaBlendFlg(true);
 
 	uiDrawer.DrawStart(dc);
 
@@ -731,8 +739,8 @@ void GameFrame::DrawFunction()
 	if (successFlg)
 	{
 		ChVec4 fadeOutColor = ChVec4(1.0f);
-		fadeOutColor.a =(SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
-		if(nowPlayAudio != L"")audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
+		fadeOutColor.a = (SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
+		if (nowPlayAudio != L"")audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
 		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
 	}
 
@@ -792,7 +800,7 @@ void GameFrame::DrawFunctionBegin()
 
 			ChVec2 tmp = position;
 			tmp.Abs();
-			if (tmp.y > CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_HEIGHT || tmp.x > (CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_WIDTH))continue;
+			if (tmp.y > GetCenterProjectionHeight() || tmp.x > GetCenterProjectionWidth())continue;
 
 			ChVec4 color = cameraCom->IsLookTarget(mechaPointer.get()) ? LOOK_TARGET_MARKER_COLOR : NO_LOOK_TARGET_MARKER_COLOR;
 
@@ -860,6 +868,12 @@ void GameFrame::Render2D(void)
 
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
+	enemyMarkerShader->DrawStart(dc);
+
+	enemyMarkerShader->Draw(dc);
+
+	enemyMarkerShader->DrawEnd();
+
 	if (drawMecha != nullptr)
 	{
 		auto&& energy = drawMecha->GetComponentObject<EnergyComponent>();
@@ -892,15 +906,6 @@ void GameFrame::Render2D(void)
 
 	uiDrawer.DrawStart(dc);
 
-	messageBox->Draw(uiDrawer);
-
-	if (!successFlg && !failedFlg)
-	{
-		uiDrawer.Draw(centerUITexture, centerUISprite);
-		weaponDataDrawer->Draw(uiDrawer);
-
-	}
-
 	if (drawMecha != nullptr)
 	{
 		long hitEffectDrawFrame = drawMecha->GetHitEffectDrawFrame();
@@ -911,6 +916,15 @@ void GameFrame::Render2D(void)
 			uiDrawer.Draw(hitIcon.image, hitIcon.sprite, drawColor);
 		}
 	}
+
+	if (!successFlg && !failedFlg)
+	{
+		uiDrawer.Draw(centerUITexture, centerUISprite);
+		weaponDataDrawer->Draw(uiDrawer);
+		weaponPaletteDrawer->Draw(uiDrawer);
+	}
+
+	messageBox->Draw(uiDrawer);
 
 	uiDrawer.DrawEnd();
 
@@ -1324,6 +1338,16 @@ std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMa
 	}
 
 	return res;
+}
+
+float GameFrame::GetCenterProjectionWidth()
+{
+	return CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_WIDTH;
+}
+
+float GameFrame::GetCenterProjectionHeight()
+{
+	return CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_HEIGHT;
 }
 
 void GameFrame::BreakMecha(BaseMecha* _mecha)

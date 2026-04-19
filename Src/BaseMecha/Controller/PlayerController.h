@@ -41,6 +41,8 @@ private:
 		Up, Down, Left, Right, None
 	};
 
+private:
+
 	void XInputUpdate();
 
 	void CursolUpdate();
@@ -49,11 +51,14 @@ private:
 
 	void SetXInputFlg(bool _flg,const XInputTypeNames _xinputType);
 
+	void SetPushFlg(InputName _input);
+
+private:
+
 	bool controllerPushFlg = false;
 
 	std::map<unsigned char, InputName> keyTypes;
 	std::map<XInputTypeNames, InputName>controllerTypes;
-	ChCpp::BitBool controllerHoldKeys = ChCpp::BitBool((ChStd::EnumCast(XInputTypeNames::None) / 8) + 1);
 
 	InputName cursolInput[ChStd::EnumCast(AxisTypeName::None)] = { InputName::None,InputName::None,InputName::None,InputName::None };
 	InputName wheelInput[ChStd::EnumCast(AxisTypeName::None)]{ InputName::None,InputName::None,InputName::None,InputName::None };

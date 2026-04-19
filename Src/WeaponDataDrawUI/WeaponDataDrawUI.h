@@ -5,7 +5,7 @@
 class BaseMecha;
 class WeaponComponent;
 
-class WeaponDataDrawUI
+class WeaponDataDrawUI : public ChCp::Initializer
 {
 private:
 

@@ -192,7 +192,6 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 
 		auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject, posData.first,_partsObject);
 
-
 	}
 	_partsObject->SetHitSize();
 }

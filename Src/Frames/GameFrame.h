@@ -21,6 +21,7 @@ class SmokeEffectList;
 
 class GameInMessageBox;
 class WeaponDataDrawUI;
+class WeaponPaletteDrawUI;
 
 
 struct MapObject : public ChCpp::BaseObject<wchar_t>
@@ -120,6 +121,10 @@ public:
 	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _vpMatrix);
+
+	static float GetCenterProjectionWidth();
+
+	static float GetCenterProjectionHeight();
 
 public:
 
@@ -228,6 +233,7 @@ private:
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
 	ChPtr::Shared<WeaponDataDrawUI> weaponDataDrawer = nullptr;
+	ChPtr::Shared<WeaponPaletteDrawUI> weaponPaletteDrawer = nullptr;
 
 
 	ChD3D11::Sprite11 testTextureSprite;

@@ -41,8 +41,9 @@ public://Inner Struct Class Enum//
 		CameraUpRotation, CameraDownRotation, CameraRightRotation, CameraLeftRotation,
 		Avo, FrontAvo, BackAvo, RightAvo, LeftAvo, UpAvo, DownAvo,
 		Boost, FrontBoost, BackBoost, RightBoost, LeftBoost, UpBoost, DownBoost,
+		RWeaponAction, LWeaponAction,
 		Attack, RAttack, LAttack,
-		Reload, RReload, LReload,
+		WeaponSubFunction, RWSubFunction, LWSubFunction,
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
 		MoveUpChange, MoveDownChange,
@@ -133,6 +134,8 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
+	inline ChLMat GetBeforeDrawMat() { return beforeDrawMat; }
+
 	ChVec3 GetDamageDir() { return damageDir; }
 
 	inline float GetMass() { return mass; }
@@ -168,6 +171,8 @@ public:
 public:
 
 	inline bool IsBreak() { return breakFlg; }
+
+	bool IsPushFlg(InputName _name);
 
 public:
 
@@ -216,6 +221,7 @@ protected:
 	ChPtr::Shared<ControllerBase>controller = nullptr;
 
 	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
+	ChLMat beforeDrawMat;
 
 	float mass = 1.0f;
 
@@ -231,6 +237,9 @@ protected:
 	unsigned long createDamageSmokeTime = 0;
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
+	ChCpp::BitBool beforeInputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
+
+	ChCpp::BitBool noHoldMaskFlgs = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 

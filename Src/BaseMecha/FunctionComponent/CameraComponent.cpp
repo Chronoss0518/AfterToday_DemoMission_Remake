@@ -103,6 +103,7 @@ void CameraComponent::SetTarget()
 
 	if (mechas.empty())return;
 
+	lookTarget.reset();
 	ChVec3 test = ChVec3(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, 0.0f);
 
 	for (size_t i = 0; i < mechas.size(); i++)
@@ -124,6 +125,8 @@ void CameraComponent::SetTarget()
 		pos.z /= pos.w != 0.0f ? pos.w : 1.0f;
 
 		if (pos.z > 1.0f)continue;
+		if (pos.x > GameFrame::GetCenterProjectionWidth())continue;
+		if (pos.y > GameFrame::GetCenterProjectionHeight())continue;
 
 		ChVec2 testSize = test;
 		ChVec2 posSize = pos;

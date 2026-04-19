@@ -19,7 +19,6 @@ void WeaponComponent::Update()
 		weapon = weapons[ChStd::EnumCast(WeaponHandType::Right)][i];
 		if (weapon != nullptr)
 			weapon->Update();
-
 	}
 
 	auto weapon = weapons[ChStd::EnumCast(WeaponHandType::Left)][useWeaponNo[ChStd::EnumCast(WeaponHandType::Left)]];
@@ -30,25 +29,21 @@ void WeaponComponent::Update()
 	if (weapon != nullptr)
 		weapon->SelectedUpdate();
 
+	UpdateFunctions(
+		WeaponHandType::Left,
+		InputName::LWeaponAction,
+		InputName::LAttack,
+		InputName::LWSubFunction,
+		InputName::LWUChange,
+		InputName::LWDChange);
 
-	if (IsPushFlg(InputName::LAttack))
-		Attack(WeaponHandType::Left);
-
-	if (IsPushFlg(InputName::LWUChange))
-		WeaponUpChange(WeaponHandType::Left);
-
-	if (IsPushFlg(InputName::LWDChange))
-		WeaponDownChange(WeaponHandType::Left);
-
-
-	if (IsPushFlg(InputName::RAttack))
-		Attack(WeaponHandType::Right);
-
-	if (IsPushFlg(InputName::RWUChange))
-		WeaponUpChange(WeaponHandType::Right);
-
-	if (IsPushFlg(InputName::RWDChange))
-		WeaponDownChange(WeaponHandType::Right);
+	UpdateFunctions(
+		WeaponHandType::Right,
+		InputName::RWeaponAction,
+		InputName::RAttack,
+		InputName::RWSubFunction,
+		InputName::RWUChange,
+		InputName::RWDChange);
 }
 
 int WeaponComponent::GetWeaponCount(ChPtr::Shared<WeaponFunction>& _func, WeaponHandType _type)
@@ -122,4 +117,58 @@ void WeaponComponent::WeaponUpChange(WeaponHandType _type)
 void WeaponComponent::WeaponDownChange(WeaponHandType _type)
 {
 	useWeaponNo[ChStd::EnumCast(_type)] = (useWeaponNo[ChStd::EnumCast(_type)] + PALETTE_COUNT - 1) % PALETTE_COUNT;
+}
+
+
+void WeaponComponent::UpdateFunctions(
+	WeaponHandType _type,
+	InputName _weaponAction,
+	InputName _attackInput,
+	InputName _subFunctionInput,
+	InputName _weaponUpChangeInput,
+	InputName _weaponDownChangeInput)
+{
+	if (IsPushFlg(_weaponAction))
+	{
+		bool isRunning = false;
+
+		if (IsPushFlg(InputName::Attack))
+		{
+			isRunning = true;
+			SetPushFlg(_attackInput);
+		}
+
+		if (IsPushFlg(InputName::WeaponSubFunction))
+		{
+			isRunning = true;
+			SetPushFlg(_subFunctionInput);
+		}
+
+		if (IsPushFlg(InputName::WeaponUpChange))
+		{
+			isRunning = true;
+			SetPushFlg(_weaponUpChangeInput);
+		}
+
+		if (IsPushFlg(InputName::WeaponDownChange))
+		{
+			isRunning = true;
+			SetPushFlg(_weaponDownChangeInput);
+		}
+
+		if (!isRunning)SetPushFlg(_attackInput);
+
+	}
+
+	if (IsPushFlg(_attackInput))
+		Attack(_type);
+
+	if (IsPushFlg(_subFunctionInput))
+		StartSubFunction(_type);
+
+	if (IsPushFlg(_weaponUpChangeInput))
+		WeaponUpChange(_type);
+
+	if (IsPushFlg(_weaponDownChangeInput))
+		WeaponDownChange(_type);
 }
