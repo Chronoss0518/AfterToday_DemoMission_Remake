@@ -4,6 +4,7 @@ Resource/XFile/RobotsParts/Weapon/GunSample.x
 GunData:{
 Armature_ShotPos
 MainShot
+Resource/RobotParts/WeaponImage/MF-TPP1.MainShot.png
 SE_Shot.v2.wav
 5
 1
