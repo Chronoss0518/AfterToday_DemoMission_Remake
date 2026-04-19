@@ -723,10 +723,14 @@ void GameFrame::DrawFunction()
 	ID3D11RenderTargetView* renderTargetView = rt2D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView,nullptr);
 
+	uiDrawer.SetAlphaBlendFlg(false);
+
 	Render2D();
 
 	renderTargetView = rt3D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+	uiDrawer.SetAlphaBlendFlg(true);
 
 	uiDrawer.DrawStart(dc);
 
@@ -735,8 +739,8 @@ void GameFrame::DrawFunction()
 	if (successFlg)
 	{
 		ChVec4 fadeOutColor = ChVec4(1.0f);
-		fadeOutColor.a =(SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
-		if(nowPlayAudio != L"")audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
+		fadeOutColor.a = (SUCCESS_PAUSE_COUNT - successPauseCount) / static_cast<float>(SUCCESS_PAUSE_COUNT);
+		if (nowPlayAudio != L"")audios[nowPlayAudio]->SetVolume(1.0f - fadeOutColor.a);
 		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
 	}
 
