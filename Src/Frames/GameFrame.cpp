@@ -710,14 +710,9 @@ void GameFrame::DrawFunction()
 	ChD3D11::Shader11().DrawStart();
 
 	Render3D();
+
 	ID3D11RenderTargetView* renderTargetView = rt2D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView,nullptr);
-
-	enemyMarkerShader->DrawStart(dc);
-
-	enemyMarkerShader->Draw(dc);
-
-	enemyMarkerShader->DrawEnd();
 
 	Render2D();
 
@@ -792,7 +787,7 @@ void GameFrame::DrawFunctionBegin()
 
 			ChVec2 tmp = position;
 			tmp.Abs();
-			if (tmp.y > CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_HEIGHT || tmp.x > (CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_WIDTH))continue;
+			if (tmp.y > GetCenterProjectionHeight() || tmp.x > GetCenterProjectionWidth())continue;
 
 			ChVec4 color = cameraCom->IsLookTarget(mechaPointer.get()) ? LOOK_TARGET_MARKER_COLOR : NO_LOOK_TARGET_MARKER_COLOR;
 
@@ -860,6 +855,12 @@ void GameFrame::Render2D(void)
 
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
+	enemyMarkerShader->DrawStart(dc);
+
+	enemyMarkerShader->Draw(dc);
+
+	enemyMarkerShader->DrawEnd();
+
 	if (drawMecha != nullptr)
 	{
 		auto&& energy = drawMecha->GetComponentObject<EnergyComponent>();
@@ -892,13 +893,10 @@ void GameFrame::Render2D(void)
 
 	uiDrawer.DrawStart(dc);
 
-	messageBox->Draw(uiDrawer);
-
 	if (!successFlg && !failedFlg)
 	{
 		uiDrawer.Draw(centerUITexture, centerUISprite);
 		weaponDataDrawer->Draw(uiDrawer);
-
 	}
 
 	if (drawMecha != nullptr)
@@ -911,6 +909,8 @@ void GameFrame::Render2D(void)
 			uiDrawer.Draw(hitIcon.image, hitIcon.sprite, drawColor);
 		}
 	}
+
+	messageBox->Draw(uiDrawer);
 
 	uiDrawer.DrawEnd();
 
@@ -1324,6 +1324,16 @@ std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMa
 	}
 
 	return res;
+}
+
+float GameFrame::GetCenterProjectionWidth()
+{
+	return CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_WIDTH;
+}
+
+float GameFrame::GetCenterProjectionHeight()
+{
+	return CENTER_UI_SIZE * ENEMY_TARGET_RANGE_COEFFICIENT / GAME_WINDOW_HEIGHT;
 }
 
 void GameFrame::BreakMecha(BaseMecha* _mecha)

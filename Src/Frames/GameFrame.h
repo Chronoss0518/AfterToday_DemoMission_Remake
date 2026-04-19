@@ -121,6 +121,10 @@ public:
 
 	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _vpMatrix);
 
+	static float GetCenterProjectionWidth();
+
+	static float GetCenterProjectionHeight();
+
 public:
 
 	inline bool IsFriendryFireFlg() { return isFrendryFireFlg; }
