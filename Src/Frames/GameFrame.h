@@ -21,6 +21,7 @@ class SmokeEffectList;
 
 class GameInMessageBox;
 class WeaponDataDrawUI;
+class WeaponPaletteDrawUI;
 
 
 struct MapObject : public ChCpp::BaseObject<wchar_t>
@@ -232,6 +233,7 @@ private:
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
 	ChPtr::Shared<WeaponDataDrawUI> weaponDataDrawer = nullptr;
+	ChPtr::Shared<WeaponPaletteDrawUI> weaponPaletteDrawer = nullptr;
 
 
 	ChD3D11::Sprite11 testTextureSprite;

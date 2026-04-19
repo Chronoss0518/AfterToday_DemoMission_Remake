@@ -15,6 +15,7 @@
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
 #include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
+#include"../WeaponPaletteDrawUI/WeaponPaletteDrawUI.h"
 
 #include"../BaseMecha/Controller/PlayerController.h"
 #include"../BaseMecha/Controller/CPUController.h"
@@ -194,6 +195,9 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	weaponDataDrawer = ChPtr::Make_S<WeaponDataDrawUI>();
 	weaponDataDrawer->Init(device);
+
+	weaponPaletteDrawer = ChPtr::Make_S<WeaponPaletteDrawUI>();
+	weaponPaletteDrawer->Init(device);
 	
 	rt2D.CreateRenderTarget(device,GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rt3D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
@@ -510,6 +514,10 @@ void GameFrame::Release()
 	gameEndFlg = true;
 	shotEffectList->Release();
 	smokeEffectList->Release();
+
+	weaponDataDrawer->Release();
+	weaponPaletteDrawer->Release();
+
 	mechaList.ClearObject();
 	bulletList.ClearObject();
 	mapList.ClearObject();
@@ -647,6 +655,7 @@ void GameFrame::UpdateFunction()
 
 	messageBox->Update();
 	weaponDataDrawer->Update(drawMecha.get());
+	weaponPaletteDrawer->Update(drawMecha.get());
 
 	for (size_t i = 0; i < ENEMY_TARGET_MARKER_SIZE; i++)
 	{
@@ -893,12 +902,6 @@ void GameFrame::Render2D(void)
 
 	uiDrawer.DrawStart(dc);
 
-	if (!successFlg && !failedFlg)
-	{
-		uiDrawer.Draw(centerUITexture, centerUISprite);
-		weaponDataDrawer->Draw(uiDrawer);
-	}
-
 	if (drawMecha != nullptr)
 	{
 		long hitEffectDrawFrame = drawMecha->GetHitEffectDrawFrame();
@@ -908,6 +911,13 @@ void GameFrame::Render2D(void)
 			drawColor.a = static_cast<float>(hitEffectDrawFrame) / (drawMecha->GetHitEffectDrawStartFrame());
 			uiDrawer.Draw(hitIcon.image, hitIcon.sprite, drawColor);
 		}
+	}
+
+	if (!successFlg && !failedFlg)
+	{
+		uiDrawer.Draw(centerUITexture, centerUISprite);
+		weaponDataDrawer->Draw(uiDrawer);
+		weaponPaletteDrawer->Draw(uiDrawer);
 	}
 
 	messageBox->Draw(uiDrawer);
