@@ -6,7 +6,7 @@ class WeaponFunction;
 
 class BaseMecha;
 
-class WeaponPaletteDrawUI
+class WeaponPaletteDrawUI : public ChCp::Initializer
 {
 public:
 

@@ -30,6 +30,8 @@
 
 void WeaponPaletteDrawUI::Init(ID3D11Device* _device)
 {
+	if (IsInit())return;
+
 	device = _device;
 	backGround.CreateTexture(PALETTE_TEXTURE_DIRECTORY(L"WeaponPalette.png"), device);
 	palette.CreateTexture(PALETTE_TEXTURE_DIRECTORY(L"Palette.png"), device);
@@ -43,12 +45,18 @@ void WeaponPaletteDrawUI::Init(ID3D11Device* _device)
 			targetFunction[i][j] = nullptr;
 		}
 	}
+
+	SetInitFlg(true);
 }
 
 void WeaponPaletteDrawUI::Release()
 {
+	if (!IsInit())return;
+
 	backGround.Release();
 	palette.Release();
+
+	SetInitFlg(false);
 }
 
 void WeaponPaletteDrawUI::Update(BaseMecha* _targetMecha)
