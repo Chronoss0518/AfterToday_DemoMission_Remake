@@ -82,6 +82,8 @@ public:
 
 	virtual std::wstring GetReloadCount() = 0;
 
+	inline ChD3D11::Texture11& GetPaletteImage() { return data->GetPaletteImage(); }
+
 protected:
 
 	BaseMecha* mecha = nullptr;
