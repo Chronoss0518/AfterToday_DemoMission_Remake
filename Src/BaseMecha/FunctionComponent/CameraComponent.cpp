@@ -124,6 +124,8 @@ void CameraComponent::SetTarget()
 		pos.z /= pos.w != 0.0f ? pos.w : 1.0f;
 
 		if (pos.z > 1.0f)continue;
+		if (pos.x > GameFrame::GetCenterProjectionWidth())continue;
+		if (pos.y > GameFrame::GetCenterProjectionHeight())continue;
 
 		ChVec2 testSize = test;
 		ChVec2 posSize = pos;

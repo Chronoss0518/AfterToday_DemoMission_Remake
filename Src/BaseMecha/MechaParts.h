@@ -189,8 +189,6 @@ private:
 	static std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>createFunctions;
 
 	std::map<std::wstring, ChPtr::Shared<PartsPositionData>> positions;
-
-
 };
 
 class PartsDataBase :public ChCpp::BaseComponent
