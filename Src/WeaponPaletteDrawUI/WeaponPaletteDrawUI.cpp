@@ -1,55 +1,139 @@
 #include"../BaseIncluder.h"
-#include"WeaponPaletteDrawUI.h"
 
+#include"../BaseMecha/BaseMecha.h"
+
+#include"../BaseMecha/FunctionComponent/WeaponComponent.h"
+#include"../BaseMecha/MechaPartsObjectFunction/WeaponFunction.h"
+
+#include"WeaponPaletteDrawUI.h"
 
 #ifndef PALETTE_TEXTURE_DIRECTORY
 #define PALETTE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"WeaponPalette/" current_path) 
 #endif
 
+#define WEAPON_PALETTE_TOP 560.0f
+#define WEAPON_PALETTE_WIDTH 290.0f
+#define WEAPON_PALETTE_HEIGHT 50.0f
+
+#define WEAPON_PALETTE_TOPBOTTOM_ALINE 5.0f
+#define WEAPON_PALETTE_SIDE_ALINE 10.0f
+
+#define PALETTE_WIDTH 46.0f
+#define PALETTE_HEIGHT 40.0f
+
+#define LEFT_WEAPON_PALETTE_LEFT 153.0f
+
+#define RIGHT_WEAPON_PALETTE_LEFT 836.0f
+
+#define WEAPON_SELECT_COLOR ChVec4::FromColor(1.0f,1.0f,0.0f,1.0f)
+#define WEAPON_UNSELECT_COLOR ChVec4::FromColor(1.0f,1.0f,1.0f,1.0f)
 
 void WeaponPaletteDrawUI::Init(ID3D11Device* _device)
 {
 	device = _device;
-
 	backGround.CreateTexture(PALETTE_TEXTURE_DIRECTORY(L"WeaponPalette.png"), device);
 	palette.CreateTexture(PALETTE_TEXTURE_DIRECTORY(L"Palette.png"), device);
+
+	useSprite.Init();
+
+	for (size_t i = 0; i < DRAW_TYPE_COUNT; i++)
+	{
+		for (size_t j = 0; j < PALETTE_COUNT; j++)
+		{
+			targetFunction[i][j] = nullptr;
+		}
+	}
 }
 
 void WeaponPaletteDrawUI::Release()
 {
-
+	backGround.Release();
+	palette.Release();
 }
 
-void WeaponPaletteDrawUI::CreateTextDrawer(TextDrawerWICBitmap& _drawer, unsigned long _w, unsigned long _h, float _fontSize)
+void WeaponPaletteDrawUI::Update(BaseMecha* _targetMecha)
 {
-	_drawer.bitmap = ChD3D::WICBitmapCreatorObj().CreateBitmapObject(_w, _h);
-	_drawer.drawer.Init(_w, _h, _drawer.bitmap, ChD3D::DirectFontBase::LocaleNameId::Japanese);
-	_drawer.drawer.SetClearDisplayColor(ChVec4(0.0f));
-	_drawer.drawer.SetClearDisplayFlg(true);
+	if (ChPtr::NullCheck(_targetMecha))return;
 
-	_drawer.brush = _drawer.drawer.CreateBrush(ChVec4(1.0f));
-	_drawer.format = _drawer.drawer.CreateTextFormat(L"ƒƒCƒŠƒI", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, _fontSize);
-}
+	auto&& com = _targetMecha->GetComponentObject<WeaponComponent>();
 
-void WeaponPaletteDrawUI::CreateTextImage(ChD3D11::Texture11& _outImage, TextDrawerWICBitmap& _drawer, const std::wstring& _text, float _w, float _h)
-{
-	_outImage.Release();
+	for (size_t i = 0; i < DRAW_TYPE_COUNT; i++)
+	{
+		WeaponHandType type = static_cast<WeaponHandType>(i);
+		selectWeaponNo[i] = com->GetUseWeaponNo(type);
+		for (size_t j = 0; j < PALETTE_COUNT; j++)
+		{
+			targetFunction[i][j] = nullptr;
+			auto&& func = com->GetWeaponFunction(type, j);
 
-	_drawer.drawer.DrawStart();
+			if (func == nullptr)continue;
 
-	_drawer.drawer.DrawToScreen(_text, _drawer.format, _drawer.brush, ChVec4::FromRect(0.0f, 0.0f, _w, _h));
-
-	_drawer.drawer.DrawEnd();
-
-	_outImage.CreateColorTexture(device, _drawer.bitmap.GetBitmap());
-}
-
-void WeaponPaletteDrawUI::Update()
-{
+			targetFunction[i][j] = &func->GetPaletteImage();
+		}
+	}
 
 }
 
 void WeaponPaletteDrawUI::Draw(ChD3D11::Shader::BaseDrawSprite11& _uiDrawer)
 {
+	DrawPalette(_uiDrawer,WeaponHandType::Left);
+
+	DrawPalette(_uiDrawer, WeaponHandType::Right);
+}
+
+void WeaponPaletteDrawUI::DrawPalette(
+	ChD3D11::Shader::BaseDrawSprite11& _uiDrawer,
+	WeaponHandType _type)
+{
+	bool leftFlg = _type == WeaponHandType::Left;
+
+	ChVec2 leftTop;
+	leftTop.x = leftFlg ? LEFT_WEAPON_PALETTE_LEFT : RIGHT_WEAPON_PALETTE_LEFT;
+	leftTop.y = WEAPON_PALETTE_TOP;
+
+	useSprite.SetPosRect(
+		RectToGameWindow(
+			ChVec4::FromRect(
+				leftTop.x,
+				leftTop.y,
+				leftTop.x + WEAPON_PALETTE_WIDTH,
+				leftTop.y + WEAPON_PALETTE_HEIGHT)
+		)
+	);
+
+	_uiDrawer.Draw(backGround, useSprite);
+
+	leftTop.y += WEAPON_PALETTE_TOPBOTTOM_ALINE;
+
+	for (unsigned char i = 0; i < PALETTE_COUNT; i++)
+	{
+		leftTop.x += WEAPON_PALETTE_SIDE_ALINE;
+
+		useSprite.SetPosRect(
+			RectToGameWindow(
+				ChVec4::FromRect(
+					leftTop.x,
+					leftTop.y,
+					leftTop.x + PALETTE_WIDTH,
+					leftTop.y + PALETTE_HEIGHT)
+			)
+		);
+
+		unsigned char drawNo = leftFlg ? PALETTE_COUNT - i - 1 : i;
+
+		auto drawFunction = targetFunction[ChStd::EnumCast(_type)][drawNo];
+
+		ChVec4 color = selectWeaponNo[ChStd::EnumCast(_type)] == drawNo ?
+			WEAPON_SELECT_COLOR :
+			WEAPON_UNSELECT_COLOR;
+
+		if (ChPtr::NotNullCheck(drawFunction))
+			_uiDrawer.Draw(*drawFunction, useSprite);
+
+		_uiDrawer.Draw(palette, useSprite, color);
+
+		leftTop.x += PALETTE_WIDTH;
+
+	}
 
 }
