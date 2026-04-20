@@ -235,6 +235,7 @@ private:
 	ChPtr::Shared<WeaponDataDrawUI> weaponDataDrawer = nullptr;
 	ChPtr::Shared<WeaponPaletteDrawUI> weaponPaletteDrawer = nullptr;
 
+	D3D11_BLEND_DESC uiBlending;
 
 	ChD3D11::Sprite11 testTextureSprite;
 

@@ -75,6 +75,8 @@
 #define NO_LOOK_TARGET_MARKER_COLOR ChVec4::FromColor(0.0f, 1.0f, 1.0f, 1.0f)
 #define LOOK_TARGET_MARKER_COLOR ChVec4::FromColor(1.0f, 0.0f, 0.0f, 1.0f)
 
+#define BLEND_TEST_FLG true
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //GameÉÅÉ\ÉbÉh
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +165,21 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	gageDrawer.SetStartDrawDir(ChVec2(0.0f, -1.0f));
 	uiDrawer.Init(device);
 	uiDrawer.SetAlphaBlendFlg(true);
+
+#if BLEND_TEST_FLG
+
+	uiBlending.AlphaToCoverageEnable = false;
+	uiBlending.IndependentBlendEnable = false;
+	uiBlending.RenderTarget[0].BlendEnable = true;
+	uiBlending.RenderTarget[0].SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	uiBlending.RenderTarget[0].DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	uiBlending.RenderTarget[0].BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	uiBlending.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+	uiBlending.RenderTarget[0].DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	uiBlending.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	uiBlending.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
+#endif
 
 	centerUISprite.SetInitPosition();
 	centerUISprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(CENTER_UI_LEFT, CENTER_UI_TOP, CENTER_UI_RIGHT, CENTER_UI_BOTTOM)));
@@ -715,7 +732,6 @@ void GameFrame::DrawFunction()
 	rt2D.SetBackColor(dc, ChVec4(0.0f));
 	dsTex.ClearDepthBuffer(dc);
 
-	uiDrawer.SetAlphaBlendFlg(true);
 	ChD3D11::Shader11().DrawStart();
 
 	Render3D();
@@ -723,12 +739,23 @@ void GameFrame::DrawFunction()
 	ID3D11RenderTargetView* renderTargetView = rt2D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView,nullptr);
 
-	uiDrawer.SetAlphaBlendFlg(false);
+	uiDrawer.SetAlphaBlendFlg(true);
+
+#if BLEND_TEST_FLG
+
+	uiDrawer.CreateBlender(uiBlending);
+
+#endif
 
 	Render2D();
 
 	renderTargetView = rt3D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
+#if BLEND_TEST_FLG
+
+	uiDrawer.CreateDefaultBlender();
+
+#endif
 
 	uiDrawer.SetAlphaBlendFlg(true);
 
