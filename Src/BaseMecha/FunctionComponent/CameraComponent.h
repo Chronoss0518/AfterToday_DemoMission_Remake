@@ -74,6 +74,8 @@ public:
 
 	bool IsLookTarget(BaseMecha* _mecha);
 
+	bool IsUseTargetLooker() { return isTargetLooker; }
+
 public:
 
 	ChLMat CreateViewRotateMatrix();
