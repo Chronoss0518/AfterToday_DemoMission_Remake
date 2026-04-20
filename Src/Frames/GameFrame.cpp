@@ -75,6 +75,11 @@
 #define NO_LOOK_TARGET_MARKER_COLOR ChVec4::FromColor(0.0f, 1.0f, 1.0f, 1.0f)
 #define LOOK_TARGET_MARKER_COLOR ChVec4::FromColor(1.0f, 0.0f, 0.0f, 1.0f)
 
+#define TARGET_LOCK_ON_OFF_PANEL_TOP 39.0f
+#define TARGET_LOCK_ON_OFF_PANEL_LEFT 429.0f
+#define TARGET_LOCK_ON_OFF_PANEL_WIDTH 400.0f
+#define TARGET_LOCK_ON_OFF_PANEL_HEIGHT 80.0f
+
 #define BLEND_TEST_FLG true
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -161,8 +166,24 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	enelgyUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Enelgy.png"), device);
 
 	gageDrawer.Init(device);
-
 	gageDrawer.SetStartDrawDir(ChVec2(0.0f, -1.0f));
+
+
+	targetLockOnImage.CreateTexture(TEXTURE_DIRECTORY(L"TargetLockOnOffText/TargetLockOn.png"), device);
+	targetLockOffImage.CreateTexture(TEXTURE_DIRECTORY(L"TargetLockOnOffText/TargetLockOff.png"), device);
+
+	targetLockOnOffPanelSprite.Init();
+	targetLockOnOffPanelSprite.SetPosRect(
+		RectToGameWindow(
+			ChVec4::FromRect(
+				TARGET_LOCK_ON_OFF_PANEL_LEFT,
+				TARGET_LOCK_ON_OFF_PANEL_TOP,
+				TARGET_LOCK_ON_OFF_PANEL_LEFT + TARGET_LOCK_ON_OFF_PANEL_WIDTH,
+				TARGET_LOCK_ON_OFF_PANEL_TOP + TARGET_LOCK_ON_OFF_PANEL_HEIGHT)
+		)
+	);
+
+
 	uiDrawer.Init(device);
 	uiDrawer.SetAlphaBlendFlg(true);
 
@@ -942,6 +963,10 @@ void GameFrame::Render2D(void)
 			drawColor.a = static_cast<float>(hitEffectDrawFrame) / (drawMecha->GetHitEffectDrawStartFrame());
 			uiDrawer.Draw(hitIcon.image, hitIcon.sprite, drawColor);
 		}
+
+		auto cam = drawMecha->GetComponentObject<CameraComponent>();
+		
+		uiDrawer.Draw(cam->IsUseTargetLooker() ? targetLockOnImage : targetLockOffImage, targetLockOnOffPanelSprite);
 	}
 
 	if (!successFlg && !failedFlg)

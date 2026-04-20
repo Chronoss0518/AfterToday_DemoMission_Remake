@@ -209,6 +209,9 @@ private:
 	ChD3D11::Texture11 receveDamageUITexture;
 	ChD3D11::Sprite11 centerUISprite;
 
+	ChD3D11::Texture11 targetLockOnImage;
+	ChD3D11::Texture11 targetLockOffImage;
+	ChD3D11::Sprite11 targetLockOnOffPanelSprite;
 
 	bool gameEndFlg = false;
 
