@@ -24,8 +24,6 @@ public://Set Functions//
 
 	void SetBoostData(Direction _direction, PartsParameterStruct::BoostData& _boost);
 
-	void SetParamName(const std::wstring& _objectName) { objectName = _objectName; }
-
 	void SetUseEnergy(const unsigned long _useEnergy) { useEnergy = _useEnergy; }
 
 	void SetBoostPower(const float _boostPower) { boostPower = _boostPower; }
@@ -44,8 +42,6 @@ public:
 
 public://Get Functions//
 
-	inline std::wstring GetObjectNameList() { return objectName; }
-
 	inline unsigned long GetBoostUseEnergy()const { return useEnergy; }
 
 	inline float GetBoostPower()const { return boostPower; }
@@ -61,8 +57,6 @@ public://Get Functions//
 	std::wstring GetPartsTypeTag()override { return GET_CLASS_NAME(BoostBrust); }
 
 protected:
-
-	std::wstring objectName = L"";
 
 	ChCpp::BitBool directionFlgs = ChCpp::BitBool(1);
 
