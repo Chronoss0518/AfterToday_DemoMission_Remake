@@ -25,7 +25,7 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	effectShader->SetEffectTexture(TEXTURE_DIRECTORY(L"SircleTexture.png"), 1, 1);
 
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
-	effectShader->SetBlendFlg(false);
+	effectShader->SetBlendFlg(true);
 	effectShader->SetLightFlg(false);
 	effectShader->SetUseDepthStencilTestFlg(SMOKE_EFFECT_USE_RENDER_TARGET);
 	effectShader->SetAlphaBlendTestFlg(!SMOKE_EFFECT_USE_RENDER_TARGET);
