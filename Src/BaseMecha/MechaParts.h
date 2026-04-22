@@ -127,11 +127,7 @@ public://Get Function//
 
 	inline float GetMass()const { return mass; }
 
-	inline float GetGroundHeight() { return groundHeight; }
-
 	inline ChD3D11::Mesh11<wchar_t>& GetMesh() { return *model; }
-
-	inline ChLMat GetDefaultFrameMat() { return defaultFrameMat; }
 
 	inline std::wstring GetThisFileName() { return thisFileName; }
 
@@ -179,10 +175,7 @@ private:
 	std::wstring thisFileName = L"";
 	std::wstring thisFilePath = L"";
 
-	float groundHeight = 0.0f;
-
 	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> model = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-	ChLMat defaultFrameMat;
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t>* drawer = nullptr;
 

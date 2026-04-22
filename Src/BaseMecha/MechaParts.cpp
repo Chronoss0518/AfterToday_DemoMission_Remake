@@ -145,18 +145,7 @@ void MechaParts::LoadModel(ID3D11Device* _device, const std::wstring& _fileName)
 	model->Init(_device);
 	loader.LoadModel(_fileName);
 	loader.CreateModel(model);
-	if (model->GetMyName() == L"Root")
-	{
-		defaultFrameMat = model->GetFrameTransformLMat();
-	}
 
-	float test = model->GetInitAllFrameMinPos().y;
-	if (groundHeight > test)
-	{
-		groundHeight = test;
-	}
-
-	
 }
 
 void MechaParts::RemoveParameter(BaseMecha& _base)
@@ -222,8 +211,6 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
 	partsObject->baseParts = this;
 
 	_base.AddMass(mass);
-
-	_base.SetGroundHeight(groundHeight);
 
 	return partsObject;
 }
