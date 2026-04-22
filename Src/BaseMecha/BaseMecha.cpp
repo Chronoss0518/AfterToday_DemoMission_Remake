@@ -240,6 +240,8 @@ void BaseMecha::AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat)
 
 void BaseMecha::BaseMove()
 {
+	physics->SetGroundHeight(core->GetGroundHeight());
+
 	physics->SetPosition(physics->GetPosition() + physics->GetAddMovePowerVector());
 	physics->SetRotation(physics->GetRotation() + physics->GetAddRotatePowerVector());
 
@@ -263,6 +265,7 @@ void BaseMecha::BaseMove()
 void BaseMecha::Draw3D()
 {
 	if (core == nullptr)return;
+
 	beforeDrawMat.SetRotationYAxis(ChMath::ToRadian(physics->GetRotation().y));
 	beforeDrawMat.SetPosition(physics->GetPosition());
 

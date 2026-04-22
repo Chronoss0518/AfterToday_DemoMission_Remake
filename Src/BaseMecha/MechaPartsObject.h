@@ -86,6 +86,8 @@ private:
 
 public:
 
+	float GetGroundHeight();
+
 	std::vector<MechaPartsObject*>GetParentTree();
 
 	inline RotateDirectionType GetThisRotateType() { return thisRotateType; }

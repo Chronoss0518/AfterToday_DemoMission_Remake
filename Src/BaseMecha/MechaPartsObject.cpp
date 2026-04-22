@@ -138,6 +138,32 @@ void MechaPartsObject::SetHitSize()
 	mecha->SetTestHitSize(tmpHitSize);
 }
 
+float MechaPartsObject::GetGroundHeight()
+{
+	auto&& mesh = baseParts->GetMesh();
+
+	ChVec3 minPos = mesh.GetInitAllFrameMinPos();
+	ChVec3 maxPos = mesh.GetInitAllFrameMaxPos();
+
+	ChLMat beforeDrawMat = mecha->GetBeforeDrawMat();
+	beforeDrawMat.Inverse();
+	ChLMat tmpMat = GetDrawLHandMatrix() * beforeDrawMat;
+
+	minPos = tmpMat.Transform(minPos);
+	maxPos = tmpMat.Transform(maxPos);
+
+	float res = minPos.y < maxPos.y ? minPos.y : maxPos.y;
+
+	for (auto&& pos : positions)
+	{
+		float tmpRes = pos.second->GetGroundHeight();
+
+		res = res < tmpRes ? res : tmpRes;
+	}
+
+	return res;
+}
+
 std::vector<MechaPartsObject*>MechaPartsObject::GetParentTree()
 {
 	std::vector<MechaPartsObject*>res;
