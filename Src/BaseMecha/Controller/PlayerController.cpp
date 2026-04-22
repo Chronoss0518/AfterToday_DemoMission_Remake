@@ -23,6 +23,7 @@ void PlayerController::Init()
 
 	//keyTypes['Q'] = InputName::SetCameraCenter;
 	//keyTypes['E'] = InputName::MapOnOff;
+	keyTypes['R'] = InputName::WeaponSubFunction;
 	keyTypes['W'] = InputName::Front;
 	keyTypes['A'] = InputName::Left;
 	keyTypes['D'] = InputName::Right;
