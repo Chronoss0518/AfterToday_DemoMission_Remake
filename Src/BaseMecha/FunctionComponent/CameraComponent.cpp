@@ -193,7 +193,7 @@ ChLMat CameraComponent::CreateViewRotateMatrix()
 	camYMat.SetRotationYAxis(ChMath::ToRadian(viewHorizontal));
 	camXMat.SetRotationXAxis(ChMath::ToRadian(viewVertical));
 	camYMat = camXMat * camYMat;
-	camYMat.SetPosition(centerPos + ChVec3(0.0f, CAMERA_Y_POS, 0.0f));
+	camYMat.SetPosition(centerPos + ChVec3(0.0f, cameraBaseHeight + CAMERA_Y_POS, 0.0f));
 
 	return camYMat;
 }

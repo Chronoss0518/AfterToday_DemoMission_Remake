@@ -8,7 +8,7 @@ class CameraComponent : public FunctionComponent
 {
 public:
 
-	static constexpr float CAMERA_Y_POS = 4.0f;
+	static constexpr float CAMERA_Y_POS = 1.5f;
 
 public:
 
@@ -43,6 +43,8 @@ private:
 	void SetRotateToTarget();
 
 public:
+
+	inline void SetCameraBaseHeight(const float& _height) { cameraBaseHeight = _height; }
 
 	inline void SetCenterPos(const ChVec3& _center) { centerPos = _center; }
 
@@ -97,6 +99,7 @@ private:
 	float nowFovy = 30.0f;
 
 	ChVec3 centerPos = ChVec3();
+	float cameraBaseHeight = 0.0f;
 
 	float viewVertical = 0.0f;
 	float maxViewVertical = 85.0f;
