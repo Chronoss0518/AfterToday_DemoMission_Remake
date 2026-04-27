@@ -88,6 +88,8 @@
 
 void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
+
+
 	std::wstring stageName = L"stage1.chs";
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
@@ -762,11 +764,6 @@ void GameFrame::DrawFunction()
 
 	uiDrawer.SetAlphaBlendFlg(true);
 
-#if BLEND_TEST_FLG
-
-	uiDrawer.CreateBlender(uiBlending);
-
-#endif
 
 	Render2D();
 
@@ -916,6 +913,8 @@ void GameFrame::Render2D(void)
 
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
+	enemyMarkerShader->CreateBlender(uiBlending);
+
 	enemyMarkerShader->DrawStart(dc);
 
 	enemyMarkerShader->Draw(dc);
@@ -932,6 +931,8 @@ void GameFrame::Render2D(void)
 
 		if (!successFlg && !failedFlg)
 		{
+			gageDrawer.CreateBlender(uiBlending);
+
 			gageDrawer.SetDrawValue(enelgyParcec * 0.5f);
 
 			gageDrawer.DrawStart(dc);
@@ -952,25 +953,27 @@ void GameFrame::Render2D(void)
 
 	}
 
+	uiDrawer.CreateBlender(uiBlending);
+
 	uiDrawer.DrawStart(dc);
-
-	if (drawMecha != nullptr)
-	{
-		long hitEffectDrawFrame = drawMecha->GetHitEffectDrawFrame();
-		if (hitEffectDrawFrame >= 0)
-		{
-			ChVec4 drawColor = ChVec4(1.0f);
-			drawColor.a = static_cast<float>(hitEffectDrawFrame) / (drawMecha->GetHitEffectDrawStartFrame());
-			uiDrawer.Draw(hitIcon.image, hitIcon.sprite, drawColor);
-		}
-
-		auto cam = drawMecha->GetComponentObject<CameraComponent>();
-		
-		uiDrawer.Draw(cam->IsUseTargetLooker() ? targetLockOnImage : targetLockOffImage, targetLockOnOffPanelSprite);
-	}
 
 	if (!successFlg && !failedFlg)
 	{
+		if (drawMecha != nullptr)
+		{
+			long hitEffectDrawFrame = drawMecha->GetHitEffectDrawFrame();
+			if (hitEffectDrawFrame >= 0)
+			{
+				ChVec4 drawColor = ChVec4(1.0f);
+				drawColor.a = static_cast<float>(hitEffectDrawFrame) / (drawMecha->GetHitEffectDrawStartFrame());
+				uiDrawer.Draw(hitIcon.image, hitIcon.sprite, drawColor);
+			}
+
+			auto cam = drawMecha->GetComponentObject<CameraComponent>();
+
+			uiDrawer.Draw(cam->IsUseTargetLooker() ? targetLockOnImage : targetLockOffImage, targetLockOnOffPanelSprite);
+		}
+
 		uiDrawer.Draw(centerUITexture, centerUISprite);
 		weaponDataDrawer->Draw(uiDrawer);
 		weaponPaletteDrawer->Draw(uiDrawer);
