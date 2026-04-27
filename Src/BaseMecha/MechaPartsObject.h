@@ -88,6 +88,8 @@ public:
 
 	float GetGroundHeight();
 
+	float GetCameraBaseHeight();
+
 	std::vector<MechaPartsObject*>GetParentTree();
 
 	inline RotateDirectionType GetThisRotateType() { return thisRotateType; }

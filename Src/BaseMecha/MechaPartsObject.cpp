@@ -87,7 +87,6 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 
 }
 
-
 ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
 {
 	auto&& res = ChPtr::Make_S< ChCpp::JsonObject<wchar_t>>();
@@ -136,6 +135,32 @@ void MechaPartsObject::SetHitSize()
 	tmpHitSize += GetDrawLHandMatrix().GetPosition();
 
 	mecha->SetTestHitSize(tmpHitSize);
+}
+
+float MechaPartsObject::GetCameraBaseHeight()
+{
+	auto&& mesh = baseParts->GetMesh();
+
+	ChVec3 minPos = mesh.GetInitAllFrameMinPos();
+	ChVec3 maxPos = mesh.GetInitAllFrameMaxPos();
+
+	ChLMat beforeDrawMat = mecha->GetBeforeDrawMat();
+	beforeDrawMat.Inverse();
+	ChLMat tmpMat = GetDrawLHandMatrix() * beforeDrawMat;
+
+	minPos = tmpMat.Transform(minPos);
+	maxPos = tmpMat.Transform(maxPos);
+
+	float res = minPos.y > maxPos.y ? minPos.y : maxPos.y;
+
+	for (auto&& pos : positions)
+	{
+		float tmpRes = pos.second->GetGroundHeight();
+
+		res = res > tmpRes ? res : tmpRes;
+	}
+
+	return res;
 }
 
 float MechaPartsObject::GetGroundHeight()
