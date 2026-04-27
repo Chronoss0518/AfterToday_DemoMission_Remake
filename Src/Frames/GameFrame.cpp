@@ -160,8 +160,8 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	}
 
 	light.Init(device);
-	light.SetUseLightFlg(true);
-	light.SetDirectionLightData(true, ChVec3(1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.3f);
+	light.SetUseLightFlg(false);
+	light.SetDirectionLightData(false, ChVec4(1.0f), ChVec3(0.0f, -1.0f, 0.0f), 0.8f);
 
 	centerUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBarFrame.png"),device);
 	receveDamageUITexture.CreateTexture(TEXTURE_DIRECTORY(L"BattleBarUI/BattleBar_Damage.png"), device);
@@ -494,7 +494,7 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 	cpuLookAnchor->SetPositionList(*_map->model, _map->mat);
 	
 	auto mapCollider = _map->SetComponent<MapCollider>();
-	mapCollider->GetCollider().SetLeftHandFlg();
+	mapCollider->GetCollider().SetLeftHandType();
 	mapCollider->SetMatrix(_map->mat);
 	mapCollider->SetPolygon(*_map->model);
 
