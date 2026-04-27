@@ -128,6 +128,8 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
 
+	if (core == nullptr)return;
+
 	testCollider.SetScalling(baseHitSize);
 
 	nowDurable = durable;
@@ -137,8 +139,12 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 void BaseMecha::LoadEnd()
 {
+	if (core == nullptr)return;
+
 	auto&& com = GetComponentObject<CameraComponent>();
 	com->SetViewHorizontal(physics->GetRotation().y);
+
+	com->SetCameraBaseHeight(core->GetCameraBaseHeight());
 }
 
 void BaseMecha::Save(const std::wstring& _fileName)
