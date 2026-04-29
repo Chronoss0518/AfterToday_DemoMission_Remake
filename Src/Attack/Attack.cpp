@@ -248,7 +248,6 @@ void Attack::Draw(const ChMat_11& _mat)
 
 unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
-
 	unsigned long nowPos = _nowPos;
 	firstSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(nowPos).c_str());
 	return nowPos + 1;

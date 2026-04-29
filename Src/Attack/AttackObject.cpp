@@ -57,7 +57,6 @@ void AttackObject::Move()
 void AttackObject::Draw3D()
 {
 	ChLMat tmp = ChLMat();
-	ChQua qua;
 
 	ChQua rot;
 
