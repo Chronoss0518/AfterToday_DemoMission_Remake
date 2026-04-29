@@ -89,7 +89,6 @@
 void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 
-
 	std::wstring stageName = L"stage1.chs";
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
@@ -169,7 +168,6 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	gageDrawer.Init(device);
 	gageDrawer.SetStartDrawDir(ChVec2(0.0f, -1.0f));
-
 
 	targetLockOnImage.CreateTexture(TEXTURE_DIRECTORY(L"TargetLockOnOffText/TargetLockOn.png"), device);
 	targetLockOffImage.CreateTexture(TEXTURE_DIRECTORY(L"TargetLockOnOffText/TargetLockOff.png"), device);
