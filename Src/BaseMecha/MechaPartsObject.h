@@ -80,6 +80,8 @@ public:
 		partsParameter = _param;
 	}
 
+	void SetLookTargetParts(MechaPartsObject* _weaponParts);
+
 private:
 
 	void SetRotation(float _rad);
@@ -149,9 +151,9 @@ private:
 
 public:
 
-	void UpdateLookTargetDirectionVertical(MechaPartsObject* _weaponParts);
+	void UpdateLookTargetDirectionVertical();
 
-	void UpdateLookTargetDirectionHorizontal(MechaPartsObject* _weaponParts);
+	void UpdateLookTargetDirectionHorizontal();
 
 public:
 
@@ -182,6 +184,8 @@ private:
 	GameFrame* frame = nullptr;
 
 	RotateDirectionType thisRotateType = RotateDirectionType::None;
+	MechaPartsObject* lookTargetBasePosParts = nullptr;
+	unsigned long posPartsCount = 0;
 	float rotateInverseValue = 1.0f;
 	bool isRotateFlg = false;
 

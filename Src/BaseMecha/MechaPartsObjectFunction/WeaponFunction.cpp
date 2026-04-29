@@ -187,20 +187,20 @@ void GunFunction::SelectedUpdate()
 	{
 		if (useVerticalFlg && useHorizontalFlg)break;
 
-		auto tmpParts = tree[tree.size() - i - 1];
+		auto tmpParts = tree[i];
 		
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
 
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical && !useVerticalFlg)
 		{
-			tmpParts->UpdateLookTargetDirectionVertical(parts);
+			tmpParts->SetLookTargetParts(parts);
 
 			useVerticalFlg = true;
 		}
 
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::Horizontal && !useHorizontalFlg)
 		{
-			tmpParts->UpdateLookTargetDirectionHorizontal(parts);
+			tmpParts->SetLookTargetParts(parts);
 			useHorizontalFlg = true;
 
 		}

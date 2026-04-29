@@ -137,6 +137,12 @@ void MechaPartsObject::SetHitSize()
 	mecha->SetTestHitSize(tmpHitSize);
 }
 
+void MechaPartsObject::SetLookTargetParts(MechaPartsObject* _weaponParts)
+{
+	lookTargetBasePosParts = _weaponParts;
+	posPartsCount++;
+}
+
 float MechaPartsObject::GetCameraBaseHeight()
 {
 	auto&& mesh = baseParts->GetMesh();
@@ -260,10 +266,16 @@ void MechaPartsObject::Update()
 
 void MechaPartsObject::Move()
 {
-	UpdateDrawTransform();
+	UpdateLookTargetDirectionVertical();
+	UpdateLookTargetDirectionHorizontal();
+
+	lookTargetBasePosParts = nullptr;
+	posPartsCount = 0;
 
 	if (!isRotateFlg)
 		SetOutSideTransform(ChLMat());
+
+	UpdateDrawTransform();
 
 	isRotateFlg = false;
 }
@@ -295,14 +307,16 @@ void  MechaPartsObject::DrawEnd()
 	TransformObject<wchar_t>::DrawEnd();
 }
 
-void MechaPartsObject::UpdateLookTargetDirectionVertical(MechaPartsObject* _weaponParts)
+void MechaPartsObject::UpdateLookTargetDirectionVertical()
 {
-	if (ChPtr::NullCheck(_weaponParts))return;
+	if (ChPtr::NullCheck(lookTargetBasePosParts))return;
 	if (thisRotateType != RotateDirectionType::Vertical)return;
 
 	ChVec3 lookPos = GetCameraLookPos();
 
-	auto tmpMat = _weaponParts->GetDrawLHandMatrix();
+	auto tmpMat = lookTargetBasePosParts->GetDrawLHandMatrix();
+
+	if (posPartsCount > 1)tmpMat = GetDrawLHandMatrix();
 
 	ChVec3 pos = tmpMat.Transform(ChVec3());
 
@@ -340,14 +354,16 @@ void MechaPartsObject::UpdateLookTargetDirectionVertical(MechaPartsObject* _weap
 
 }
 
-void MechaPartsObject::UpdateLookTargetDirectionHorizontal(MechaPartsObject* _weaponParts)
+void MechaPartsObject::UpdateLookTargetDirectionHorizontal()
 {
-	if (ChPtr::NullCheck(_weaponParts))return;
+	if (ChPtr::NullCheck(lookTargetBasePosParts))return;
 	if (thisRotateType != RotateDirectionType::Horizontal)return;
 
 	ChVec3 lookPos = GetCameraLookPos();
 
-	auto tmpMat = _weaponParts->GetDrawLHandMatrix();
+	auto tmpMat = lookTargetBasePosParts->GetDrawLHandMatrix();
+
+	if (posPartsCount > 1)tmpMat = GetDrawLHandMatrix();
 
 	ChVec3 pos = tmpMat.Transform(ChVec3());
 
