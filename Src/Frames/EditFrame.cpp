@@ -242,12 +242,11 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	light.SetCamPos(TMP_CAMERA_POS);
 	auto&& direction = ChVec3(3.0f, -2.0f, -4.0f);
 	direction.Normalize();
-	light.SetLightDir(direction);
+	light.SetDirectionLightData(true,ChVec3(1.0f,1.0f,1.0f), direction, 0.4f);
 
 	InitTextDrawer(panelTitleDrawer, ChVec2(PANEL_TEXT_WIDTH, PANEL_TITLE_HEIGHT), PANEL_TITLE_TEXT_SIZE,true);
 	InitTextDrawer(panelPosTitleDrawer, ChVec2(PANEL_TEXT_WIDTH, PANEL_POS_TITLE_HEIGHT), PANEL_POS_TITLE_TEXT_SIZE,false);
 	InitTextDrawer(panelPosPartsDrawer, ChVec2(PANEL_TEXT_WIDTH, PANEL_POS_PARTS_HEIGHT), PANEL_POS_PARTS_TEXT_SIZE,true);
-
 
 	loadDisplay = ChPtr::Make_S<LoadDisplay>();
 	loadDisplay->Init();
