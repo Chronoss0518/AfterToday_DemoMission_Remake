@@ -144,7 +144,7 @@ void BaseMecha::LoadEnd()
 	auto&& com = GetComponentObject<CameraComponent>();
 	com->SetViewHorizontal(physics->GetRotation().y);
 
-	com->SetCameraBaseHeight(core->GetCameraBaseHeight());
+	com->SetCameraBaseHeight(core->GetCameraBaseHeight() - core->GetGroundHeight());
 }
 
 void BaseMecha::Save(const std::wstring& _fileName)
