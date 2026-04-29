@@ -132,7 +132,9 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 	hardness = ChStr::GetNumFromText<unsigned long>(textObject.GetTextLine(1).c_str());
 	mass = ChStr::GetNumFromText<float>(textObject.GetTextLine(2).c_str());
 
-	for (unsigned long i = 3; i < lineCount; i++)
+	autoRotateLookTarget = ChStr::GetNumFromText<long>(textObject.GetTextLine(3).c_str()) != 0;
+	 
+	for (unsigned long i = 4; i < lineCount; i++)
 	{
 		i = CreateDatas(_base, textObject, i);
 	}
@@ -188,9 +190,7 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 ChPtr::Shared<MechaPartsObject> MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 
-	auto&& parts = SetPartsParameter(_base);
-	parts->SetFrame(_frame);
-	parts->SetBaseMecha(&_base);
+	auto&& parts = SetPartsParameter(_base, _frame);
 
 	for (auto&& com : GetComponents<PartsDataBase>())
 	{
@@ -204,13 +204,15 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetParameters(BaseMecha& _base, Game
 	return parts;
 }
 
-ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base)
+ChPtr::Shared<MechaPartsObject> MechaParts::SetPartsParameter(BaseMecha& _base, GameFrame* _frame)
 {
 	auto partsObject = ChPtr::Make_S<MechaPartsObject>();
 
 	partsObject->baseParts = this;
 
 	_base.AddMass(mass);
+	partsObject->SetBaseMecha(&_base);
+	partsObject->SetFrame(_frame);
 
 	return partsObject;
 }

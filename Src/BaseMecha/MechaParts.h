@@ -111,7 +111,7 @@ public://Set Functions//
 
 	ChPtr::Shared<MechaPartsObject> SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
-	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base);
+	virtual ChPtr::Shared<MechaPartsObject>  SetPartsParameter(BaseMecha& _base, GameFrame* _frame);
 
 	void SetParameters(MechaPartsObject& _parts);
 
@@ -136,6 +136,10 @@ public://Get Function//
 	inline ChD3D11::Shader::BaseDrawMesh11<wchar_t>* GetMeshDrawer() { return drawer; }
 
 	inline std::map<std::wstring, ChPtr::Shared<PartsPositionData>>& GetPositionList() { return positions; }
+
+public:
+
+	inline bool IsAutoRotateLookTarget() { return autoRotateLookTarget; }
 
 public:
 
@@ -171,6 +175,9 @@ private:
 
 	//パーツの重さ//
 	float mass = 1.0f;
+
+	//パーツがTargetの方向に自力で向くかの機能//
+	bool autoRotateLookTarget = false;
 
 	std::wstring thisFileName = L"";
 	std::wstring thisFilePath = L"";
