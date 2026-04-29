@@ -8,8 +8,8 @@
 
 #include"../../Application/Application.h"
 
-#define MIN_CURSOL_LEN_PARCEC 0.01f
-#define DEFAULT_CONTROLLER_MOVE_SIZE 0.3f
+#define MIN_CURSOL_LEN_PARCEC 0.4f
+#define DEFAULT_CONTROLLER_MOVE_SIZE 0.05f
 
 void PlayerController::Init()
 {
@@ -41,10 +41,8 @@ void PlayerController::Init()
 	//cursolInput[ChStd::EnumCast(CursolMoveTypeName::Right)] = InputName::RightRotation;
 	cursolInput[ChStd::EnumCast(AxisTypeName::Right)] = InputName::CameraRightRotation;
 
-
 	cursolInput[ChStd::EnumCast(AxisTypeName::Up)] = InputName::CameraUpRotation;
 	cursolInput[ChStd::EnumCast(AxisTypeName::Down)] = InputName::CameraDownRotation;
-
 
 	keyTypes[VK_LBUTTON] = InputName::LWeaponAction;
 	keyTypes[VK_RBUTTON] = InputName::RWeaponAction;
@@ -172,32 +170,33 @@ void PlayerController::CursolUpdate()
 
 	nowPos += vector;
 
-	CursolFunction(vector.x, MIN_CURSOL_LEN_PARCEC, AxisTypeName::Right, AxisTypeName::Left);
-	CursolFunction(vector.y, MIN_CURSOL_LEN_PARCEC, AxisTypeName::Up, AxisTypeName::Down);
+	AxisFunction(nowPos.x, DEFAULT_CONTROLLER_MOVE_SIZE, MIN_CURSOL_LEN_PARCEC, AxisTypeName::Right, AxisTypeName::Left);
+	AxisFunction(nowPos.y, DEFAULT_CONTROLLER_MOVE_SIZE, MIN_CURSOL_LEN_PARCEC, AxisTypeName::Up, AxisTypeName::Down);
 
 }
 
-void PlayerController::CursolFunction(float& _value, float _removeSize, const AxisTypeName _plus, const AxisTypeName _minus)
+void PlayerController::AxisFunction(float& _value, float _minSize, float _removePar, const AxisTypeName _plus, const AxisTypeName _minus)
 {
 	if (controllerPushFlg)return;
 
-	if (std::abs(_value) < _removeSize)
+	if (_value > _minSize)
+	{
+		SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
+		_value = _value * _removePar;
+	}
+
+	if (_value < -_minSize)
+	{
+		SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
+		_value = _value * _removePar;
+	}
+
+	if (std::abs(_value) < _minSize)
 	{
 		_value = 0.0f;
 		return;
 	}
 
-	if (_value > _removeSize)
-	{
-		SetPushFlg(cursolInput[ChStd::EnumCast(_plus)]);
-		_value -= _removeSize;
-	}
-
-	if (_value < -_removeSize)
-	{
-		SetPushFlg(cursolInput[ChStd::EnumCast(_minus)]);
-		_value += _removeSize;
-	}
 }
 
 void PlayerController::SetXInputFlg(bool _flg,const XInputTypeNames _xinputType)

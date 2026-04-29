@@ -41,13 +41,18 @@ private:
 		Up, Down, Left, Right, None
 	};
 
+	struct AxisTypeInput
+	{
+		InputName inputNames[ChStd::EnumCast(AxisTypeName::None)];
+	};
+
 private:
 
 	void XInputUpdate();
 
 	void CursolUpdate();
 
-	void CursolFunction(float& _value, float _removeSize,const AxisTypeName _plus, const AxisTypeName _minus);
+	void AxisFunction(float& _value, float _minSize, float _removePar,const AxisTypeName _plus, const AxisTypeName _minus);
 
 	void SetXInputFlg(bool _flg,const XInputTypeNames _xinputType);
 
@@ -62,6 +67,7 @@ private:
 
 	InputName cursolInput[ChStd::EnumCast(AxisTypeName::None)] = { InputName::None,InputName::None,InputName::None,InputName::None };
 	InputName wheelInput[ChStd::EnumCast(AxisTypeName::None)]{ InputName::None,InputName::None,InputName::None,InputName::None };
+
 	ChWin::MouseController* mouse = &ChWin::Mouse();
 	float moveSensitivility = 1.0f;
 	ChVec2 nowPos = ChVec2();
