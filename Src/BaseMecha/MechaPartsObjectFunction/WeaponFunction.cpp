@@ -189,12 +189,12 @@ void GunFunction::SelectedUpdate()
 
 		auto tmpParts = tree[i];
 		
+		if (!tmpParts->IsAutoRotateLookTarget())continue;
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::None)continue;
 
 		if (tmpParts->GetThisRotateType() == RotateDirectionType::Vertical && !useVerticalFlg)
 		{
 			tmpParts->SetLookTargetParts(parts);
-
 			useVerticalFlg = true;
 		}
 
