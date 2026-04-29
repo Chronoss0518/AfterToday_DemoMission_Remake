@@ -1,17 +1,20 @@
 {
   "Name": "Air",
   "Core": {
-    "Parts": "Resource/RobotParts/CA_01.mpd",
-    "Head": { "Parts": "Resource/RobotParts/HA_01.mpd" },
-    "Foot": { "Parts": "Resource/RobotParts/FA_01.mpd" },
-    "Right Arm": {
-      "Parts": "Resource/RobotParts/RAA_01.mpd",
-      "Hand": {
-        "Parts": "Resource/RobotParts/MF-TPP1.mpd",
-        "RightWeapon": [ 0 ]
-      }
-    },
-    "Left Arm": { "Parts": "Resource/RobotParts/LAA_01.mpd" },
-    "Boost": { "Parts": "Resource/RobotParts/BA_01.mpd" }
+    "Parts": "Resource/RobotParts/FA_01.mpd",
+    "Body": {
+      "Parts": "Resource/RobotParts/CA_01.mpd",
+      "Head": { "Parts": "Resource/RobotParts/HA_01.mpd" },
+      "Foot": { "Parts": "Resource/RobotParts/FA_01.mpd" },
+      "Right Arm": {
+        "Parts": "Resource/RobotParts/RAA_01.mpd",
+        "Hand": {
+          "Parts": "Resource/RobotParts/MF-TPP1.mpd",
+          "RightWeapon": [ 0 ]
+        }
+      },
+      "Left Arm": { "Parts": "Resource/RobotParts/LAA_01.mpd" },
+      "Boost": { "Parts": "Resource/RobotParts/BA_01.mpd" }
+    }
   }
 }

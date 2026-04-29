@@ -1,17 +1,19 @@
 {
 	"Name":"Normal",
-	"Core":{
-		"Parts":"Resource/RobotParts/CT.mpd",
-		"Head":{"Parts":"Resource/RobotParts/HT.mpd"},
-		"Foot":{"Parts":"Resource/RobotParts/FT.mpd"},
-		"Right Arm": {
-			"Parts": "Resource/RobotParts/RAT.mpd",
-			"Hand": {
-				"Parts": "Resource/RobotParts/MF-TPP1.mpd",
-				"RightWeapon": [ 0 ]
-			}
-		},
-		"Left Arm":{"Parts":"Resource/RobotParts/LAT.mpd"},
-		"Boost":{"Parts":"Resource/RobotParts/BT.mpd"}
+	"Core": {
+		"Parts": "Resource/RobotParts/FT.mpd",
+		"Body": {
+			"Parts": "Resource/RobotParts/CT.mpd",
+			"Head": { "Parts": "Resource/RobotParts/HT.mpd" },
+			"Right Arm": {
+				"Parts": "Resource/RobotParts/RAT.mpd",
+				"Hand": {
+					"Parts": "Resource/RobotParts/MF-TPP1.mpd",
+					"RightWeapon": [ 0 ]
+				}
+			},
+			"Left Arm": { "Parts": "Resource/RobotParts/LAT.mpd" },
+			"Boost": { "Parts": "Resource/RobotParts/BT.mpd" }
+		}
 	}
 }

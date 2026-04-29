@@ -1,17 +1,19 @@
 {
 	"Name":"Guardian",
 	"Core": {
-		"Parts": "Resource/RobotParts/CG_01.mpd",
-		"Head": { "Parts": "Resource/RobotParts/HG_01.mpd" },
-		"Foot": { "Parts": "Resource/RobotParts/FG_01.mpd" },
-		"Right Arm": {
-			"Parts": "Resource/RobotParts/RAG_01.mpd",
-			"Hand": {
-				"Parts": "Resource/RobotParts/MF-TPP1.mpd",
-				"RightWeapon": [ 0 ]
-			}
-		},
-		"Left Arm": { "Parts": "Resource/RobotParts/LAG_01.mpd" },
-		"Boost": { "Parts": "Resource/RobotParts/BG_01.mpd" }
+		"Parts": "Resource/RobotParts/FG_01.mpd",
+		"Body": {
+			"Parts": "Resource/RobotParts/CG_01.mpd",
+			"Head": { "Parts": "Resource/RobotParts/HG_01.mpd" },
+			"Right Arm": {
+				"Parts": "Resource/RobotParts/RAG_01.mpd",
+				"Hand": {
+					"Parts": "Resource/RobotParts/MF-TPP1.mpd",
+					"RightWeapon": [ 0 ]
+				}
+			},
+			"Left Arm": { "Parts": "Resource/RobotParts/LAG_01.mpd" },
+			"Boost": { "Parts": "Resource/RobotParts/BG_01.mpd" }
+		}
 	}
 }
