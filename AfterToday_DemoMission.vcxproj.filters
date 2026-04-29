@@ -684,9 +684,6 @@
     <None Include="Resource\Save\Player.amf">
       <Filter>GameFrame\Mecha\PlayerMecha</Filter>
     </None>
-    <None Include="Resource\RobotParts\core_parts_list.lst">
-      <Filter>PartsDatas</Filter>
-    </None>
     <None Include="Resource\StageScript\stage_no_cpu.chs">
       <Filter>StageScript</Filter>
     </None>

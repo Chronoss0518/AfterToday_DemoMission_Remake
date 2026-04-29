@@ -325,7 +325,6 @@
     <None Include="Resource\RobotParts\Bullet\standard_1968.bod" />
     <None Include="Resource\RobotParts\CA_01.mpd" />
     <None Include="Resource\RobotParts\CG_01.mpd" />
-    <None Include="Resource\RobotParts\core_parts_list.lst" />
     <None Include="Resource\RobotParts\CST_01.mpd" />
     <None Include="Resource\RobotParts\CT.mpd" />
     <None Include="Resource\RobotParts\FA_01.mpd" />
