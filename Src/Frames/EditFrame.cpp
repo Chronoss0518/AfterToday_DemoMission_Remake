@@ -685,8 +685,6 @@ void EditFrame::Load()
 
 		std::wstring extensionName = path.substr(len);
 
-		if (extensionName == L".lst")continue;
-
  		pathList.push_back(path);
 	}
 
