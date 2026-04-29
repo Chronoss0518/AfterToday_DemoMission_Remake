@@ -19,7 +19,7 @@
 #define DEBUG_UP_POS 50.0f
 #endif
 
-#define VIEW_ROTATE_POW_UPPER 16 / 9
+#define VIEW_ROTATE_POW_UPPER 16.0f / 9.0f
 
 #define UN_TARGET_LOOK_LEN 100.0f
 
@@ -125,8 +125,8 @@ void CameraComponent::SetTarget()
 		pos.z /= pos.w != 0.0f ? pos.w : 1.0f;
 
 		if (pos.z > 1.0f)continue;
-		if (pos.x > GameFrame::GetCenterProjectionWidth())continue;
-		if (pos.y > GameFrame::GetCenterProjectionHeight())continue;
+		if (std::abs(pos.x) > GameFrame::GetCenterProjectionWidth())continue;
+		if (std::abs(pos.y) > GameFrame::GetCenterProjectionHeight())continue;
 
 		ChVec2 testSize = test;
 		ChVec2 posSize = pos;

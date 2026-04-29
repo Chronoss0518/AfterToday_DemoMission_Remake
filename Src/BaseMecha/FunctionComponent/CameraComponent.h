@@ -106,7 +106,7 @@ private:
 
 	float viewHorizontal = 0.0f;
 
-	float cameraRotatePow = 50.0f;
+	float cameraRotatePow = 80.0f;
 
 	ChLMat viewMat = ChLMat();
 	ChLMat proMat = ChLMat();
