@@ -419,6 +419,12 @@ ChVec3 MechaPartsObject::GetCameraLookPos()
 	return camCom->GetLookPosition();
 }
 
+bool MechaPartsObject::IsAutoRotateLookTarget()
+{
+	if (ChPtr::NullCheck(baseParts))return false;
+	return baseParts->IsAutoRotateLookTarget();
+}
+
 float MechaPartsObject::GetDamage(AttackObject& _bullet)
 {
 	float res = 0;

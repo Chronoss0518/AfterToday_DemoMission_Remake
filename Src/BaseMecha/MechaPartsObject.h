@@ -151,6 +151,10 @@ private:
 
 public:
 
+	bool IsAutoRotateLookTarget();
+
+private:
+
 	void UpdateLookTargetDirectionVertical();
 
 	void UpdateLookTargetDirectionHorizontal();
