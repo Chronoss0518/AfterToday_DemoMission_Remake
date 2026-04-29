@@ -6,6 +6,14 @@ WalkData:{
 30.000000
 20.000000
 }
+NextPosData:{
+Waist
+Body
+0.0,0.0,1.0
+0.0,1.0,0.0
+0
+0.0
+}
 BoostBrust:{
 RightFootJumpBoost
 16

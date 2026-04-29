@@ -6,3 +6,11 @@ CaterpillarData:{
 30.000000
 0.000000
 }
+NextPosData:{
+TankBasis
+Body
+0.0,0.0,1.0
+0.0,1.0,0.0
+0
+0.0
+}
