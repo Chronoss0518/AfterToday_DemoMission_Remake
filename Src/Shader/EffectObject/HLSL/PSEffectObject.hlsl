@@ -67,7 +67,7 @@ float3 GetLightColor(OutColor _res, In_Pixel _pixel)
 	lightStruct.wfNormal = _pixel.worldNormal;
 	lightStruct.specular = float4(specularPower, 1.0f);
 
-	return GetDirectionalLightColor(lightStruct);
+	return GetLightColor(lightStruct);
 
 }
 
