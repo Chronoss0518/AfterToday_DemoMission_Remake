@@ -183,18 +183,11 @@ private:
 	
 	std::vector<ChPtr::Shared<UseSquareValues>>lookMecas;
 	std::vector<ChPtr::Shared<LookSquareValue>>lookMaps;
-	ChD3D11::Texture11 mechaTexture;
-
-	ChD3D11::Texture11 mapTexture_Cube;
-	ChD3D11::Texture11 mapTexture_Cube_001;
-	ChD3D11::Texture11 mapTexture_Cube_002;
-	ChD3D11::Texture11 mapTexture_Plane_002;
+	ChD3D11::Texture11 whiteTexture;
 
 	std::vector<ChPtr::Shared<ChVec2>>targetPosition;
 
 	float circleSize = 0.19f;
-
-	ChD3D11::ShaderParts::ViewPort drawPosition;
 
 	ChD3D11::Sprite11 sprite;
 

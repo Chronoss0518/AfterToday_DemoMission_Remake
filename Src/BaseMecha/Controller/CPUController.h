@@ -20,7 +20,6 @@ public:
 		ChVec3 position = 0.0f;
 	};
 
-
 	enum class ComparisonOperation : unsigned char
 	{
 		Greater,	//target > test//

@@ -10,10 +10,10 @@
 
 #include"../../Application/Application.h"
 
-#define FEATURE true
+#define FEATURE false
 #define MATH_MATRIX true
 
-#define TEST true
+#define TEST false
 
 unsigned long resetNum = -1;
 
@@ -44,8 +44,9 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
+#if !FEATURE
 	return res;
-
+#endif
 	for (size_t i = 0; i < positionList.size(); i++)
 	{
 		auto&& anchorPos = positionList[i];
@@ -101,7 +102,9 @@ std::vector<ChPtr::Shared<LookSquareValue>> LookAnchor::GetMapSquares(const ChLM
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
+#if !FEATURE
 	return res;
+#endif
 	for (unsigned long i = 0; i < positionList.size(); i++)
 	{
 		auto&& anchorPos = positionList[i];
@@ -158,8 +161,9 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
+#if !FEATURE
 	return res;
-
+#endif
 	for (auto&& anchorObj : positionList)
 	{
 		for (auto&& anchorPos : anchorObj->anchors)
@@ -293,8 +297,9 @@ std::vector<ChPtr::Shared<LookSquareValue>> MapLookAnchor::GetMapSquares(const C
 {
 	std::vector<ChPtr::Shared<LookSquareValue>> res;
 
+#if !FEATURE
 	return res;
-
+#endif
 	for (auto&& anchorObj : positionList)
 	{
 		ChLMat tmpMat = anchorObj->drawMatrix * _vpMatrix;
@@ -480,28 +485,9 @@ void CPUObjectLooker::Init()
 
 	spriteDrawer.SetAlphaBlendFlg(true);
 
-	ChVec4 tmp = ChVec4(0.0f, 1.0f, 0.0f, 0.2f);
+	ChVec4 tmp = ChVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	mechaTexture.CreateColorTexture(&tmp, 1, 1);
-
-	tmp = ChVec4(1.0f, 0.0f, 0.0f, 0.2f);
-	mapTexture_Cube.CreateColorTexture(&tmp, 1, 1);
-
-	tmp = ChVec4(1.0f, 1.0f, 0.0f, 0.2f);
-	mapTexture_Cube_001.CreateColorTexture(&tmp, 1, 1);
-
-	tmp = ChVec4(1.0f, 0.0f, 1.0f, 0.2f);
-	mapTexture_Cube_002.CreateColorTexture(&tmp, 1, 1);
-
-	tmp = ChVec4(0.0f, 1.0f, 1.0f, 0.2f);
-	mapTexture_Plane_002.CreateColorTexture(&tmp, 1, 1);
-
-	//drawPosition.SetSize(ChVec2(0.2f, 0.2f));
-	drawPosition.SetSize(ChVec2(1.0f, 1.0f));
-
-	drawPosition.SetDrawDepth(0.0f, 1.0f);
-	//drawPosition.SetTopLeftPos(ChVec2(0.6f, 0.7f));
-	drawPosition.SetTopLeftPos(ChVec2(-1.0f, 1.0f));
+	whiteTexture.CreateColorTexture(&tmp, 1, 1);
 
 	sprite.Init();
 	sprite.SetInitPosition();
@@ -543,20 +529,9 @@ void CPUObjectLooker::Draw2D()
 
 	auto dc = AppIns().GetDirect3D11().GetDC();
 
-	unsigned int viewPortNum = 0;
-	D3D11_VIEWPORT viewPort;
-	dc->RSGetViewports(&viewPortNum, &viewPort);
-	//drawPosition.SetDrawData(dc);
-
-	ID3D11RenderTargetView* rt = nullptr;
-	ID3D11DepthStencilView* dp = nullptr;
-
-	dc->OMGetRenderTargets(1, &rt, &dp);
-
-	dc->OMSetRenderTargets(1, &rt, nullptr);
-
-
 	spriteDrawer.DrawStart(dc);
+
+	ChVec4 colorTexture = ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f);
 	for (auto&& map : lookMaps)
 	{
 		for (auto&& square : map->square.GetSquare())
@@ -566,17 +541,12 @@ void CPUObjectLooker::Draw2D()
 			sprite.SetPos(ChD3D11::SpritePositionName::RightBottom, ChVec2(square->right, square->bottom));
 			sprite.SetPos(ChD3D11::SpritePositionName::LeftBottom, ChVec2(square->left, square->bottom));
 
-			ChD3D11::TextureBase11* base = &mapTexture_Cube;
+			colorTexture.r += 0.1f;
 
-			if (map->objectName == L"Cube")base = &mapTexture_Cube;
-			if (map->objectName == L"Cube_001")base = &mapTexture_Cube_001;
-			if (map->objectName == L"Cube_002")base = &mapTexture_Cube_002;
-			if (map->objectName == L"Plane_002")base = &mapTexture_Plane_002;
-
-			spriteDrawer.Draw(*base, sprite);
+			spriteDrawer.Draw(whiteTexture, sprite, colorTexture);
 		}
 	}
-
+	colorTexture = ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f);
 	for (auto&& mecha : lookMecas)
 	{
 		for (auto&& value : mecha->values)
@@ -588,17 +558,14 @@ void CPUObjectLooker::Draw2D()
 				sprite.SetPos(ChD3D11::SpritePositionName::RightBottom, ChVec2(square->right, square->bottom));
 				sprite.SetPos(ChD3D11::SpritePositionName::LeftBottom, ChVec2(square->left, square->bottom));
 
-				spriteDrawer.Draw(mechaTexture, sprite);
+				colorTexture.b += 0.1f;
+
+				spriteDrawer.Draw(whiteTexture, sprite, colorTexture);
 			}
 		}
 	}
 
 	spriteDrawer.DrawEnd();
-
-	dc->RSSetViewports(viewPortNum, &viewPort);
-
-
-	dc->OMSetRenderTargets(1, &rt, dp);
 
 	lookMecas.clear();
 
@@ -747,6 +714,11 @@ void CPUObjectLooker::FindMecha()
 		updateFlg = false;
 		return;
 	}
+
+	auto camCom = mecha->GetComponentObject<CameraComponent>();
+
+	auto viewMatrix = camCom->GetViewMat();
+	auto projectionMatrix = camCom->GetProMat();
 
 
 #if MATH_MATRIX
@@ -905,8 +877,8 @@ void CPUObjectLooker::FindMecha()
 
 		ChVec3 targetPos = otherMechaObject->GetPosition();
 
-		MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
-		FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
+		//MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
+		//FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::None)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 
 		float tmpLength = ChVec3::GetLen(targetPos, mecha->GetPosition());
 
@@ -914,7 +886,7 @@ void CPUObjectLooker::FindMecha()
 		{
 			nearLength = tmpLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = i;
+			//lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::None)] = i;
 			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
 			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Near)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 
@@ -924,7 +896,7 @@ void CPUObjectLooker::FindMecha()
 		{
 			farLength = tmpLength;
 
-			lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = i;
+			//lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::None)] = i;
 			MenyDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Many)], i, baseMechaList);
 			FewDamageTest(lookMechaTypes[memberType][ChStd::EnumCast(DistanceType::Far)][ChStd::EnumCast(DamageSizeType::Few)], i, baseMechaList);
 
