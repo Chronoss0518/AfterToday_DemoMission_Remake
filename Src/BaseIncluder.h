@@ -13,7 +13,7 @@
 #endif
 
 #ifndef USE_THREAD
-#define USE_THREAD false
+#define USE_THREAD true
 #endif
 
 #ifndef USE_CPU_THREAD
