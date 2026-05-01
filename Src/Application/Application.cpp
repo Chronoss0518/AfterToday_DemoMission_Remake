@@ -104,8 +104,13 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 	fpsController.SetFPS(BASE_FPS);
 
-#if APPLICATION_USE_THREAD_FLG
+#if USE_THREAD
 	threadList.Init();
+	for (unsigned char i = 0; i < APPLICATION_THREAD_MAX_COUNT; i++)
+	{
+		cpuThreadList[i].Init();
+	}
+
 #endif
 
 	SetInitFlg(true);
@@ -152,13 +157,18 @@ void Application::Release()
 	if (!IsInit())return;
 	if (inUpdateFlg)return;
 
-#if APPLICATION_USE_THREAD_FLG
-	threadList.Release();
-#endif
-
 	frameList.Release();
 	audioList.Release();
 	controller.Release();
+
+#if USE_THREAD
+	threadList.Release();
+	for (unsigned char i = 0; i < APPLICATION_THREAD_MAX_COUNT; i++)
+	{
+		cpuThreadList[i].Release();
+	}
+	cpuThreadListCount = 0;
+#endif
 
 	ChD3D11::Shader11().Release();
 	ChD3D11::D3D11API().Release();
@@ -167,4 +177,10 @@ void Application::Release()
 	windClass.Release();
 
 	SetInitFlg(false);
+}
+
+void Application::AddCPUThread(ChPtr::Shared<ChCpp::ThreadObject> _obj)
+{
+	cpuThreadList[cpuThreadListCount % APPLICATION_THREAD_MAX_COUNT].AddObject(_obj);
+	cpuThreadListCount++;
 }

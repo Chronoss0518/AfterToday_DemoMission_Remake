@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef APPLICATION_USE_THREAD_FLG
-#define APPLICATION_USE_THREAD_FLG false
+#ifndef	APPLICATION_THREAD_MAX_COUNT
+#define	APPLICATION_THREAD_MAX_COUNT 3
 #endif
 
 class Application : public ChCp::Initializer
@@ -38,8 +38,16 @@ public:
 
 	inline ChD3D::XInputController& GetXInputController() { return controller; }
 
-#if APPLICATION_USE_THREAD_FLG
+#if USE_THREAD
 	inline ChCpp::ThreadObjectList& GetThreadList() { return threadList; }
+#endif
+
+public:
+
+#if USE_THREAD
+	inline void SetCPUThreadCount() { cpuThreadListCount = 0; }
+
+	void AddCPUThread(ChPtr::Shared<ChCpp::ThreadObject> _obj);
 #endif
 
 private:
@@ -57,8 +65,10 @@ private:
 
 	ChCpp::FPSController fpsController;
 
-#if APPLICATION_USE_THREAD_FLG
+#if USE_THREAD
 	ChCpp::ThreadObjectList threadList;
+	ChCpp::ThreadObjectList cpuThreadList[APPLICATION_THREAD_MAX_COUNT];
+	unsigned long cpuThreadListCount = 0;
 #endif
 
 	bool inUpdateFlg = false;
