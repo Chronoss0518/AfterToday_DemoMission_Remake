@@ -6,13 +6,12 @@ graph TD;
     Start(CPU Start) --> RunTargetSelect[Run Target Select];
     RunTargetSelect --> RunMovePosition[Run Move Position];
     RunMovePosition --> MoveFunction[Move Function];
-    RunMovePosition --> LooksEnemyTarget{Looks Enemy Target};
+    MoveFunction --> LooksEnemyTarget{Looks Enemy Target};
     LooksEnemyTarget -- Yes --> RunWeaponSelect[Run Weapon Select];
     RunWeaponSelect --> RunAttack[Run Attack<br>実際に攻撃する]
     RunAttack --> RunAvoidTest[Run Avoid Test];
-    LooksEnemyTarget -- No --> RunAvoidTest
-    RunAvoidTest --> End(CPU End);
-    MoveFunction --> End;
+    LooksEnemyTarget -- No --> End(CPU End)
+    RunAvoidTest --> End;
 
 ```
 
