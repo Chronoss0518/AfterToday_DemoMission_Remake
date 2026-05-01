@@ -240,6 +240,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	rt2D.CreateRenderTarget(device,GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rt3D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rtHighLightMap.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rtObjectLooker.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	dsTex.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	fadeOutTexture.CreateColorTexture(device, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f), 1, 1);
 
@@ -787,7 +788,28 @@ void GameFrame::DrawFunction()
 		uiDrawer.Draw(fadeOutTexture, uiSprite, fadeOutColor);
 	}
 
-	//uiDrawer.Draw(rtHighLightMap, testTextureSprite);
+	uiDrawer.DrawEnd();
+
+	if (drawMecha != nullptr)
+	{
+		rtObjectLooker.SetBackColor(dc,ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
+		renderTargetView = rtObjectLooker.GetRTView();
+
+		dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+		auto objectLooker = drawMecha->GetComponent<CPUObjectLooker>();
+
+		objectLooker->Draw2D();
+
+		renderTargetView = rt3D.GetRTView();
+
+		dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+	}
+
+	uiDrawer.DrawStart(dc);
+
+	uiDrawer.Draw(rtObjectLooker, testTextureSprite);
 
 	uiDrawer.DrawEnd();
 

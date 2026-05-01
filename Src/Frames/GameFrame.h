@@ -227,6 +227,7 @@ private:
 	ChD3D11::RenderTarget11 rt2D;
 	ChD3D11::RenderTarget11 rt3D;
 	ChD3D11::RenderTarget11 rtHighLightMap;
+	ChD3D11::RenderTarget11 rtObjectLooker;
 	ChD3D11::Texture11 fadeOutTexture;
 	ChD3D11::DepthStencilTexture11 dsTex;
 
