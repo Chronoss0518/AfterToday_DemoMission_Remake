@@ -103,7 +103,6 @@ void CameraComponent::SetTarget()
 
 	if (mechas.empty())return;
 
-	lookTarget.reset();
 	ChVec3 test = ChVec3(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, 0.0f);
 
 	for (size_t i = 0; i < mechas.size(); i++)
