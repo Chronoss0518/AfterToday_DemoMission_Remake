@@ -116,7 +116,6 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	if (_jsonObject == nullptr) return;
-	SetComponent<LookAnchor>();
 
 	auto&& jsonName = _jsonObject->GetJsonString(JSON_MECHA_NAME);
 	if (jsonName != nullptr)
@@ -235,13 +234,6 @@ void BaseMecha::MoveEnd()
 
 	if (hitEffectDrawFrame < 0)return;
 	hitEffectDrawFrame--;
-}
-
-void BaseMecha::AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat)
-{
-	auto&& anchor = GetComponent<LookAnchor>();
-	if (anchor == nullptr)return;
-	anchor->AddLookAnchorPosition(_size, _drawMat);
 }
 
 void BaseMecha::BaseMove()
@@ -368,14 +360,6 @@ long BaseMecha::GetHitEffectDrawStartFrame()
 	return HIT_EFFECT_DRAW_FRAME;
 }
 
-size_t BaseMecha::GetAnchorRegistNum()
-{
-	auto&& anchor = GetComponent<LookAnchor>();
-	if (anchor == nullptr)return 0;
-
-	return anchor->GetPositionListCount();
-}
-
 ChPtr::Shared<PartsParameters> BaseMecha::GetAllParameters()
 {
 	auto res = ChPtr::Make_S<PartsParameters>();
@@ -418,15 +402,6 @@ bool BaseMecha::IsPushFlg(InputName _name)
 		inputFlgs.GetBitFlg(inputFlg) :
 		inputFlgs.GetBitFlg(inputFlg) && !beforeInputFlgs.GetBitFlg(inputFlg);
 }
-
-void BaseMecha::UpdateAnchor(size_t _no, const ChLMat& _drawMat)
-{
-	auto&& anchor = GetComponent<LookAnchor>();
-	if (anchor == nullptr)return;
-
-	anchor->UpdateLookAnchorPosition(_no, _drawMat);
-}
-
 
 void BaseMecha::AddSmokeCreatePos(ChPtr::Shared<ChCpp::TransformObject<wchar_t>> _pos, MechaPartsObject* _parts)
 {

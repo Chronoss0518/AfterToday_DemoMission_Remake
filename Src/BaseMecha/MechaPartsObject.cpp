@@ -26,13 +26,6 @@ void MechaPartsObject::CreateEnd()
 	}
 }
 
-void MechaPartsObject::CreateAnchor()
-{
-	SetLookAnchorNo(mecha->GetAnchorRegistNum());
-
-	mecha->AddAnchorData(baseParts->GetMesh().GetInitAllFrameBoxSize() * 2.0f, ChLMat());
-}
-
 void MechaPartsObject::Release()
 {
 	TransformObject<wchar_t>::Release();
@@ -296,8 +289,6 @@ void MechaPartsObject::Draw3D()
 	baseParts->Draw((ChMat_11)(lMat));
 
 	collider.SetMatrix(lMat);
-
-	mecha->UpdateAnchor(GetLookAnchorNo(), lMat);
 
 	DrawEndFunction();
 }

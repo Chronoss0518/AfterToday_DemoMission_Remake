@@ -22,8 +22,6 @@ public:
 
 	void CreateEnd();
 
-	void CreateAnchor();
-
 public:
 
 	void Release();

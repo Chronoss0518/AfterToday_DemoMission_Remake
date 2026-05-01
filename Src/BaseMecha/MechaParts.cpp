@@ -189,7 +189,6 @@ void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseM
 
 ChPtr::Shared<MechaPartsObject> MechaParts::SetParameters(BaseMecha& _base, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
-
 	auto&& parts = SetPartsParameter(_base, _frame);
 
 	for (auto&& com : GetComponents<PartsDataBase>())
@@ -198,8 +197,6 @@ ChPtr::Shared<MechaPartsObject> MechaParts::SetParameters(BaseMecha& _base, Game
 	}
 
 	AddWeaponData(parts, _base, _jsonObject);
-
-	parts->CreateAnchor();
 
 	return parts;
 }

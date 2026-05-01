@@ -89,6 +89,8 @@
 void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 
+	AppIns().SetCPUThreadCount();
+
 	std::wstring stageName = L"stage1.chs";
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
@@ -489,9 +491,6 @@ void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
 		fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
 	}
 
-	auto cpuLookAnchor = _map->SetComponent<MapLookAnchor>();
-	cpuLookAnchor->SetPositionList(*_map->model, _map->mat);
-	
 	auto mapCollider = _map->SetComponent<MapCollider>();
 	mapCollider->GetCollider().SetLeftHandType();
 	mapCollider->SetMatrix(_map->mat);
@@ -522,8 +521,8 @@ void GameFrame::LoadStage(std::wstring& _stageScriptName)
 
 	if (stageScript.empty())
 	{
-		auto windows = ChSystem::SysManager().GetSystem<ChSystem::Windows>();
-		windows->Release();
+		auto&& windows = AppIns().GetWindow();
+		windows.Release();
 		return;
 	}
 
@@ -768,11 +767,9 @@ void GameFrame::DrawFunction()
 
 	renderTargetView = rt3D.GetRTView();
 	dc->OMSetRenderTargets(1, &renderTargetView, nullptr);
-#if BLEND_TEST_FLG
 
 	uiDrawer.CreateDefaultBlender();
 
-#endif
 
 	uiDrawer.SetAlphaBlendFlg(true);
 
@@ -799,7 +796,8 @@ void GameFrame::DrawFunction()
 
 		auto objectLooker = drawMecha->GetComponent<CPUObjectLooker>();
 
-		objectLooker->Draw2D();
+		if (objectLooker != nullptr)
+			objectLooker->Draw2D();
 
 		renderTargetView = rt3D.GetRTView();
 
@@ -809,7 +807,7 @@ void GameFrame::DrawFunction()
 
 	uiDrawer.DrawStart(dc);
 
-	uiDrawer.Draw(rtObjectLooker, testTextureSprite);
+	//uiDrawer.Draw(rtObjectLooker, testTextureSprite);
 
 	uiDrawer.DrawEnd();
 
@@ -1367,52 +1365,6 @@ void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVect
 void GameFrame::AddSmokeEffectObject(const ChVec3& _pos, const ChVec3& _moveVector, const float _initDispersalpower, const float _initAlphaPow)
 {
 	smokeEffectList->AddSmokeEffect(_pos, _moveVector, _initDispersalpower, _initAlphaPow);
-}
-
-std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix)
-{
-	std::vector<ChPtr::Shared<LookSquareValue>> res;
-
-	for (auto&& mapWeak : mapList.GetObjectList())
-	{
-		auto&& map = mapWeak.lock();
-
-		if (map == nullptr)continue;
-
-		auto mapLookAnchor = map->GetComponent<MapLookAnchor>();
-
-		if (mapLookAnchor == nullptr)continue;
-
-		for (auto&& square : mapLookAnchor->GetMapSquares(_viewMatrix, _projectionMatrix))
-		{
-			res.push_back(square);
-		}
-	}
-
-	return res;
-}
-
-std::vector<ChPtr::Shared<LookSquareValue>> GameFrame::GetLookSquareValuesFromMap(const ChLMat& _vpMatrix)
-{
-	std::vector<ChPtr::Shared<LookSquareValue>> res;
-
-	for (auto&& mapWeak : mapList.GetObjectList())
-	{
-		auto&& map = mapWeak.lock();
-
-		if (map == nullptr)continue;
-
-		auto mapLookAnchor = map->GetComponent<MapLookAnchor>();
-
-		if (mapLookAnchor == nullptr)continue;
-
-		for (auto&& square : mapLookAnchor->GetMapSquares(_vpMatrix))
-		{
-			res.push_back(square);
-		}
-	}
-
-	return res;
 }
 
 float GameFrame::GetCenterProjectionWidth()

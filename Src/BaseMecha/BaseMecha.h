@@ -104,8 +104,6 @@ public:
 
 	void AddMass(const float _mass) { mass += _mass; }
 
-	void AddAnchorData(const ChVec3& _size, const ChLMat& _drawMat);
-
 public:
 
 	void SubMass(const float _mass) { mass -= _mass; }
@@ -154,8 +152,6 @@ public://Get Function//
 
 	inline std::wstring GetMechaName() { return mechaName; }
 
-	size_t GetAnchorRegistNum();
-
 	ChPtr::Shared<MechaPartsObject> GetCoreParts() { return core; }
 
 	ChPtr::Shared<PartsParameters> GetAllParameters();
@@ -173,10 +169,6 @@ public:
 	inline bool IsBreak() { return breakFlg; }
 
 	bool IsPushFlg(InputName _name);
-
-public:
-
-	void UpdateAnchor(size_t _no, const ChLMat& _drawMat);
 
 public:
 
