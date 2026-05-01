@@ -11,11 +11,23 @@
 #define ANIMATION_COUNT 5
 
 
+void ShotEffectList::ShotEffectThreadUpdate::Update()
+{
+	if (effectList == nullptr)
+	{
+		Destroy();
+		return;
+	}
+
+	if (effectList->updateFlg)return;
+
+	effectList->Update();
+}
+
 void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 {
 	Release();
 
-	gameEndFlg = false;
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
 	effectShader->Init(_device, _maxCount);
@@ -31,18 +43,13 @@ void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
 	effectShader->SetAlphaTestNum(0.5f);
 
 #if USE_THREAD
-	updater.Init([&]() {
-		while (!gameEndFlg)
-		{
-			if (updateFlg)
-			{
-				std::this_thread::yield();
-				continue;
-			}
-			Update();
-			updateFlg = true;
-		}
-	});
+	updateFlg = true;
+	threadObject = ChPtr::Make_S<ShotEffectThreadUpdate>();
+
+	threadObject->SetShotEffectList(this);
+
+	AppIns().GetThreadList().AddObject(threadObject);
+
 #endif
 }
 
@@ -53,8 +60,12 @@ bool ShotEffectList::IsUpdateFlg()
 
 void ShotEffectList::Release()
 {
-	gameEndFlg = true;
-	updater.Release();
+	if (threadObject != nullptr)
+	{
+		threadObject->SetShotEffectList(nullptr);
+		threadObject->Destroy();
+		threadObject = nullptr;
+	}
 	effectShader = nullptr;
 }
 
@@ -100,6 +111,8 @@ void ShotEffectList::Update()
 		}
 		effectShader->SetEffectHorizontalAnimationCount(effectObject.animationCount.w, i);
 	}
+
+	updateFlg = true;
 }
 
 void ShotEffectList::Draw(ID3D11DeviceContext* _dc)

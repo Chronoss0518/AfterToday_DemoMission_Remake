@@ -12,11 +12,23 @@
 
 #define DISPERSAL_POWER_DOWN_PARCEC 0.9f
 
+void SmokeEffectList::SmokeEffectThreadUpdate::Update()
+{
+	if (effectList == nullptr)
+	{
+		Destroy();
+		return;
+	}
+
+	if (effectList->updateFlg)return;
+
+	effectList->Update();
+}
+
 void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount, const unsigned long _width, const unsigned long _height)
 {
 	Release();
 
-	gameEndFlg = false;
 	effectShader = ChPtr::Make_S<EffectObjectShader>();
 
 	effectShader->Init(_device, _maxCount);
@@ -27,29 +39,9 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	effectShader->SetObjectSize(ChVec2(OBJECT_SIZE));
 	effectShader->SetBlendFlg(true);
 	effectShader->SetLightFlg(false);
-	effectShader->SetUseDepthStencilTestFlg(SMOKE_EFFECT_USE_RENDER_TARGET);
-	effectShader->SetAlphaBlendTestFlg(!SMOKE_EFFECT_USE_RENDER_TARGET);
+	effectShader->SetUseDepthStencilTestFlg(false);
+	effectShader->SetAlphaBlendTestFlg(true);
 	effectShader->SetAlphaTestNum(0.01f);
-
-#if SMOKE_EFFECT_USE_RENDER_TARGET
-
-	renderTarget.CreateRenderTarget(_device, _width, _height);
-	sprite.Init(_device);
-
-	sprite.SetPos(0, ChVec2(-1.0f, 1.0f));
-	sprite.SetPos(1, ChVec2(1.0f, 1.0f));
-	sprite.SetPos(2, ChVec2(1.0f, -1.0f));
-	sprite.SetPos(3, ChVec2(-1.0f, -1.0f));
-
-	sprite.SetUVPos(0, ChVec2(0.0f, 0.0f));
-	sprite.SetUVPos(1, ChVec2(1.0f, 0.0f));
-	sprite.SetUVPos(2, ChVec2(1.0f, 1.0f));
-	sprite.SetUVPos(3, ChVec2(0.0f, 1.0f));
-
-	spriteShader.Init(_device);
-	spriteShader.SetAlphaBlendFlg(true);
-
-#endif
 
 	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
 	{
@@ -57,26 +49,25 @@ void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount,
 	}
 
 #if USE_THREAD
-	updater.Init([&]() {
-		while (!gameEndFlg)
-		{
-			if (updateFlg)
-			{
-				std::this_thread::yield();
-				continue;
-			}
-			Update();
-			updateFlg = true;
-		}
-	});
+	updateFlg = true;
+	threadObject = ChPtr::Make_S<SmokeEffectThreadUpdate>();
+
+	threadObject->SetSmokeEffectList(this);
+
+	AppIns().GetThreadList().AddObject(threadObject);
+
 #endif 
 
 }
 
 void SmokeEffectList::Release()
 {
-	gameEndFlg = true;
-	updater.Release();
+	if (threadObject != nullptr)
+	{
+		threadObject->SetSmokeEffectList(nullptr);
+		threadObject->Destroy();
+		threadObject = nullptr;
+	}
 	effectShader = nullptr;
 	if(!effectMoveDataList.empty())effectMoveDataList.clear();
 }
@@ -187,24 +178,13 @@ void SmokeEffectList::Update()
 		effectShader->SetEffectPosition(effectObject.pos, i);
 
 	}
+
+	updateFlg = true;
 }
 
 void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 {
 	if (effectShader == nullptr)return;
-
-#if SMOKE_EFFECT_USE_RENDER_TARGET
-
-	ID3D11RenderTargetView* tmpRTView = nullptr;
-	ID3D11DepthStencilView* tmpDSView = nullptr;
-
-	renderTarget.SetBackColor(_dc, ChVec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-	ID3D11RenderTargetView* rtView = renderTarget.GetRTView();
-
-	_dc->OMGetRenderTargets(1, &tmpRTView, &tmpDSView);
-	_dc->OMSetRenderTargets(1, &rtView, tmpDSView);
-#endif
 
 	effectShader->DrawStart(_dc);
 
@@ -212,18 +192,4 @@ void SmokeEffectList::Draw(ID3D11DeviceContext* _dc)
 
 	effectShader->DrawEnd();
 
-#if SMOKE_EFFECT_USE_RENDER_TARGET
-	_dc->OMSetRenderTargets(1, &tmpRTView, nullptr);
-
-	spriteShader.DrawStart(_dc);
-
-	spriteShader.Draw(_dc, renderTarget, sprite);
-
-	spriteShader.DrawEnd();
-
-	_dc->OMSetRenderTargets(1, &tmpRTView, tmpDSView);
-
-	tmpRTView->Release();
-	tmpDSView->Release();
-#endif
 }

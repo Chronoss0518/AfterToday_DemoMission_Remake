@@ -3,12 +3,27 @@
 
 class EffectObjectShader;
 
-#ifndef SMOKE_EFFECT_USE_RENDER_TARGET
-#define SMOKE_EFFECT_USE_RENDER_TARGET false
-#endif
-
 class SmokeEffectList
 {
+private:
+
+	class SmokeEffectThreadUpdate : public ChCpp::ThreadObject
+	{
+	public:
+
+		inline void SetSmokeEffectList(SmokeEffectList* _effectList)
+		{
+			effectList = _effectList;
+		}
+
+	public:
+
+		void Update()override;
+
+	private:
+
+		SmokeEffectList* effectList = nullptr;
+	};
 
 public:
 
@@ -69,17 +84,8 @@ private:
 
 	float downSpeedOnAlphaValue = 0.05f;
 
-	bool gameEndFlg = false;
 	bool updateFlg = false;
-
-	ChCpp::MultiThread updater;
-
-#if SMOKE_EFFECT_USE_RENDER_TARGET
-
-	ChD3D11::RenderTarget11 renderTarget;
-	ChD3D11::Sprite11 sprite;
-	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
-#endif
+	ChPtr::Shared<SmokeEffectThreadUpdate>threadObject = nullptr;
 
 	std::vector<ChPtr::Shared<EffectMoveData>>effectMoveDataList;
 	ChPtr::Shared<EffectObjectShader> effectShader = nullptr;

@@ -15,6 +15,19 @@
 
 unsigned long resetNum = -1;
 
+void CPUObjectLooker::CPUObjectLookerThreadUpdate::Update()
+{
+	if (looker == nullptr)
+	{
+		Destroy();
+		return;
+	}
+
+	if (!looker->updateFlg)return;
+	looker->FindMecha();
+
+}
+
 unsigned long CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
 {
 	return lookMechaTypes[ChStd::EnumCast(_member)][ChStd::EnumCast(_distance)][ChStd::EnumCast(_damageSize)];
@@ -22,27 +35,6 @@ unsigned long CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceTyp
 
 void CPUObjectLooker::Init()
 {
-
-	endFlg = false;
-
-	updateFlg = false;
-
-#if USE_CPU_THREAD
-	thread.Init([&]()
-		{
-			while (!endFlg)
-			{
-
-				if (!updateFlg)continue;
-				FindMecha();
-
-				updateFlg = false;
-
-				//OutputDebugStringW(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
-			}
-		});
-#endif
-
 	auto device = ChD3D11::D3D11Device();
 
 	spriteDrawer.Init(device);
@@ -55,16 +47,28 @@ void CPUObjectLooker::Init()
 
 	sprite.Init();
 	sprite.SetInitPosition();
+
+#if USE_CPU_THREAD
+
+	updateFlg = false;
+	threadObject = ChPtr::Make_S<CPUObjectLookerThreadUpdate>();
+
+	threadObject->SetCPUObjectLooker(this);
+
+	AppIns().AddCPUThread(threadObject);
+
+#endif
+
 }
 
 void CPUObjectLooker::DrawBegin()
 {
 	nowUpdateCount = (nowUpdateCount + 1) % updateCount;
-	if(!lookMechaList.empty())lookMechaList.clear();
 
 	if (nowUpdateCount <= 0)
 	{
-		auto time = timeGetTime();
+
+		if (!lookMechaList.empty())lookMechaList.clear();
 		for (unsigned char memberType = 0; memberType < MEMBER_TYPE_COUNT; memberType++)
 		{
 			for (unsigned char distanceType = 0; distanceType < DISTANCE_TYPE_COUNT; distanceType++)
@@ -75,14 +79,13 @@ void CPUObjectLooker::DrawBegin()
 				}
 			}
 		}
+
 #if USE_CPU_THREAD
 		updateFlg = true;
 #else
 
 		FindMecha();
 #endif
-
-		//OutputDebugStringW(("CPUObjectLooker End Time: " + std::to_string(timeGetTime() - time) + "\n").c_str());
 	}
 
 
@@ -95,13 +98,19 @@ void CPUObjectLooker::Draw2D()
 
 void CPUObjectLooker::DrawEnd()
 {
-	while (!IsEndUpdate())continue;
+	auto&& mecha = LookObj<BaseMecha>();
+
+	while (!IsEndUpdate() && !mecha->IsBreak())continue;
 }
 
 void CPUObjectLooker::Release()
 {
-	endFlg = true;
-	thread.Release();
+	if (threadObject != nullptr)
+	{
+		threadObject->SetCPUObjectLooker(nullptr);
+		threadObject->Destroy();
+		threadObject = nullptr;
+	}
 }
 
 void CPUObjectLooker::FindMecha()
@@ -143,8 +152,8 @@ void CPUObjectLooker::FindMecha()
 	for (unsigned long i = 0; i < baseMechaList.size(); i++)
 	{
 		auto&& tmpMecha = baseMechaList[i];
-		if (tmpMecha.expired())continue;
 		auto&& otherMecha = tmpMecha.lock();
+		if (otherMecha == nullptr)continue;
 		if (otherMecha->GetMechaNo() == LookObj<BaseMecha>()->GetMechaNo())continue;
 		unsigned long memberType = ChStd::EnumCast(MemberType::Enemy);
 		auto controller = otherMecha->GetComponent<ControllerBase>();
@@ -214,6 +223,7 @@ void CPUObjectLooker::FindMecha()
 
 	}
 
+	updateFlg = false;
 }
 
 void CPUObjectLooker::MenyDamageTest(unsigned long& _base, unsigned long _target, std::vector<ChPtr::Weak<BaseMecha>>& _mechas)

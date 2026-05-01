@@ -5,6 +5,26 @@ class BaseMecha;
 
 class CPUObjectLooker:public ChCpp::BaseComponent
 {
+private:
+
+	class CPUObjectLookerThreadUpdate : public ChCpp::ThreadObject
+	{
+	public:
+
+		inline void SetCPUObjectLooker(CPUObjectLooker* _looker)
+		{
+			looker = _looker;
+		}
+
+	public:
+
+		void Update()override;
+
+	private:
+
+		CPUObjectLooker* looker = nullptr;
+	};
+
 public:
 
 	virtual ~CPUObjectLooker() { Release(); }
@@ -85,9 +105,8 @@ private:
 
 	ChCpp::HitTestRay ray;
 
-	ChCpp::MultiThread thread;
-	bool endFlg = false;
 	bool updateFlg = false;
+	ChPtr::Shared<CPUObjectLookerThreadUpdate>threadObject = nullptr;
 
 	unsigned long updateCount = 1;
 	unsigned long nowUpdateCount = 0;

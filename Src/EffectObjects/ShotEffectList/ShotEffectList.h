@@ -5,6 +5,25 @@ class EffectObjectShader;
 
 class ShotEffectList
 {
+private:
+
+	class ShotEffectThreadUpdate : public ChCpp::ThreadObject
+	{
+	public:
+
+		inline void SetShotEffectList(ShotEffectList* _effectList)
+		{
+			effectList = _effectList;
+		}
+
+	public:
+
+		void Update()override;
+
+	private:
+
+		ShotEffectList* effectList = nullptr;
+	};
 
 public:
 
@@ -38,9 +57,9 @@ public:
 
 private:
 
-	bool gameEndFlg = false;
 	bool updateFlg = false;
-	ChCpp::MultiThread updater;
+	ChPtr::Shared<ShotEffectThreadUpdate>threadObject = nullptr;
+
 	ChPtr::Shared<EffectObjectShader> effectShader = nullptr;
 	unsigned long nowCount = 0;
 };
