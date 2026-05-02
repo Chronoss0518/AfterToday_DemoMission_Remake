@@ -95,6 +95,16 @@ void CameraComponent::SetTarget()
 		return;
 	}
 
+	if (updateKeyFlg)
+		lookTarget.reset();
+
+	if (!lookTarget.expired())
+	{
+		auto obj = lookTarget.lock();
+		if (obj->IsBreak())
+			lookTarget.reset();
+	}
+
 	if (ChPtr::NullCheck(frame))return;
 
 	auto&& baseMecha = GetBaseMecha();
