@@ -87,7 +87,6 @@ void CPUObjectLooker::DrawBegin()
 #endif
 	}
 
-
 }
 
 void CPUObjectLooker::Draw2D()

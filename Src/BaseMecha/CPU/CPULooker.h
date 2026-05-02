@@ -31,13 +31,6 @@ public:
 
 public:
 
-	struct UseSquareValues
-	{
-		std::vector<ChPtr::Shared<LookSquareValue>> values;
-		ChPtr::Weak<BaseMecha> otherMecha;
-		float nearDistance = 1e+38f;
-	};
-
 	enum class MemberType : unsigned char
 	{
 		Member,
@@ -103,28 +96,21 @@ private:
 
 	GameFrame* frame = nullptr;
 
-	ChCpp::HitTestRay ray;
-
 	bool updateFlg = false;
 	ChPtr::Shared<CPUObjectLookerThreadUpdate>threadObject = nullptr;
+
+	ChCpp::HitTestRay ray;
 
 	unsigned long updateCount = 1;
 	unsigned long nowUpdateCount = 0;
 
 	unsigned long lookMechaTypes[MEMBER_TYPE_COUNT][DISTANCE_TYPE_COUNT][DAMAGE_SIZE_TYPE_COUNT];
-	
-	std::vector<ChPtr::Shared<UseSquareValues>>lookMecas;
-	std::vector<ChPtr::Shared<LookSquareValue>>lookMaps;
-	ChD3D11::Texture11 whiteTexture;
-
-	std::vector<ChPtr::Shared<ChVec2>>targetPosition;
-
-	float circleSize = 0.19f;
-
-	ChD3D11::Sprite11 sprite;
-
-	ChD3D11::Shader::BaseDrawSprite11 spriteDrawer;
-
 	std::vector<unsigned long>lookMechaList;
+
+
+	//Debug—p//
+	ChD3D11::Texture11 whiteTexture;
+	ChD3D11::Sprite11 sprite;
+	ChD3D11::Shader::BaseDrawSprite11 spriteDrawer;
 
 };
