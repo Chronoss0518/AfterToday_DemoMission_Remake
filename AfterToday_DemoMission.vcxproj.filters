@@ -699,5 +699,11 @@
     <None Include="Resource\RobotParts\MF-TPP1.mpd">
       <Filter>PartsDatas</Filter>
     </None>
+    <None Include="Resource\StageData\Test_Stage_Wave_10on10.json">
+      <Filter>StageData</Filter>
+    </None>
+    <None Include="Resource\StageScript\test_stage_wave_10on10.chs">
+      <Filter>StageScript</Filter>
+    </None>
   </ItemGroup>
 </Project>

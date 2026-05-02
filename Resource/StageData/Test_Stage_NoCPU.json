@@ -1,0 +1,15 @@
+{
+  "StageImage": "",
+  "StageName": "テスト機の検証",
+  "StageScriptPath": "stage_no_cpu.chs",
+  "StageLocationName": "Test Locale",
+  "StageStrategyOverview": "己の機体をテストするために空間を用意した。好きに暴れると良い",
+  "MissionTimeSeccond": 0,
+  "SuccessFee": 0,
+  "DrawSuccessFee": 0,
+  "AdditionalCompensation": 0,
+  "AdditionalCompensationExplanation": "特になし",
+  "SpecialPayReduction": 0,
+  "SpecialPayReductionExplanation": "特になし",
+  "SelectModelFlg": true
+}
