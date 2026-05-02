@@ -132,7 +132,6 @@ int Application::Update()
 	{
 		keyInput.Update();
 		audioList.Update();
-		frameList.UpdateBegin();
 		if (!fpsController.Update(timeGetTime()))continue;
 		controller.Init();
 		controller.Update();
