@@ -89,8 +89,9 @@
 void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 
+#if USE_THREAD
 	AppIns().SetCPUThreadCount();
-
+#endif
 	std::wstring stageName = L"stage1.chs";
 	auto&& sendData = ChPtr::SharedSafeCast<StageDataStructure>(_sendData);
 	if (sendData != nullptr)stageName = sendData->stageScriptPath;
@@ -572,8 +573,6 @@ void GameFrame::Release()
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-
 void GameFrame::Update()
 {
 
@@ -739,12 +738,13 @@ void GameFrame::DrawFunction()
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
 #if USE_THREAD
-	if (!shotEffectList->IsUpdateFlg()) {}
-	if (!smokeEffectList->IsUpdateFlg()) {}
+	while (!shotEffectList->IsUpdateFlg()) {}
+	while (!smokeEffectList->IsUpdateFlg()) {}
 #else
 	shotEffectList->Update();
 	smokeEffectList->Update();
 #endif
+
 
 	mechaList.ObjectDrawBegin();
 
