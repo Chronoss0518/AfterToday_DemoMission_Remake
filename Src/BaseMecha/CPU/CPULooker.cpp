@@ -48,7 +48,7 @@ void CPUObjectLooker::Init()
 	sprite.Init();
 	sprite.SetInitPosition();
 
-#if USE_CPU_THREAD
+#if USE_THREAD
 
 	updateFlg = false;
 	threadObject = ChPtr::Make_S<CPUObjectLookerThreadUpdate>();
@@ -67,7 +67,6 @@ void CPUObjectLooker::DrawBegin()
 
 	if (nowUpdateCount <= 0)
 	{
-
 		if (!lookMechaList.empty())lookMechaList.clear();
 		for (unsigned char memberType = 0; memberType < MEMBER_TYPE_COUNT; memberType++)
 		{
@@ -80,7 +79,7 @@ void CPUObjectLooker::DrawBegin()
 			}
 		}
 
-#if USE_CPU_THREAD
+#if USE_THREAD
 		updateFlg = true;
 #else
 
@@ -99,8 +98,7 @@ void CPUObjectLooker::Draw2D()
 void CPUObjectLooker::DrawEnd()
 {
 	auto&& mecha = LookObj<BaseMecha>();
-
-	while (!IsEndUpdate() && !mecha->IsBreak())continue;
+	while (updateFlg && !threadObject->IsDestroy() && !mecha->IsBreak())continue;
 }
 
 void CPUObjectLooker::Release()
@@ -186,6 +184,8 @@ void CPUObjectLooker::FindMecha()
 
 		for (auto&& map : hitTestMap)
 		{
+			if (map == nullptr)continue;
+
 			auto&& collider = map->GetComponent<MapCollider>();
 
 			if (collider == nullptr)continue;
