@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef	APPLICATION_CPU_THREAD_MAX_COUNT
-#define	APPLICATION_CPU_THREAD_MAX_COUNT 1
+#define	APPLICATION_CPU_THREAD_MAX_COUNT 3
 #endif
 
 class Application : public ChCp::Initializer
