@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef	APPLICATION_THREAD_MAX_COUNT
-#define	APPLICATION_THREAD_MAX_COUNT 3
+#ifndef	APPLICATION_CPU_THREAD_MAX_COUNT
+#define	APPLICATION_CPU_THREAD_MAX_COUNT 1
 #endif
 
 class Application : public ChCp::Initializer
@@ -67,8 +67,15 @@ private:
 
 #if USE_THREAD
 	ChCpp::ThreadObjectList threadList;
-	ChCpp::ThreadObjectList cpuThreadList[APPLICATION_THREAD_MAX_COUNT];
+
+#if APPLICATION_CPU_THREAD_MAX_COUNT > 1
+	ChCpp::ThreadObjectList cpuThreadList[APPLICATION_CPU_THREAD_MAX_COUNT];
+#else
+	ChCpp::ThreadObjectList cpuThreadList;
+#endif
+
 	unsigned long cpuThreadListCount = 0;
+
 #endif
 
 	bool inUpdateFlg = false;

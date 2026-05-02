@@ -106,10 +106,15 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 #if USE_THREAD
 	threadList.Init();
-	for (unsigned char i = 0; i < APPLICATION_THREAD_MAX_COUNT; i++)
+
+#if APPLICATION_CPU_THREAD_MAX_COUNT > 1
+	for (unsigned char i = 0; i < APPLICATION_CPU_THREAD_MAX_COUNT; i++)
 	{
 		cpuThreadList[i].Init();
 	}
+#else
+	cpuThreadList.Init();
+#endif
 
 #endif
 
@@ -163,10 +168,16 @@ void Application::Release()
 
 #if USE_THREAD
 	threadList.Release();
-	for (unsigned char i = 0; i < APPLICATION_THREAD_MAX_COUNT; i++)
+
+#if APPLICATION_CPU_THREAD_MAX_COUNT > 1
+	for (unsigned char i = 0; i < APPLICATION_CPU_THREAD_MAX_COUNT; i++)
 	{
 		cpuThreadList[i].Release();
 	}
+#else
+	cpuThreadList.Release();
+#endif
+
 	cpuThreadListCount = 0;
 #endif
 
@@ -181,6 +192,12 @@ void Application::Release()
 
 void Application::AddCPUThread(ChPtr::Shared<ChCpp::ThreadObject> _obj)
 {
-	cpuThreadList[cpuThreadListCount % APPLICATION_THREAD_MAX_COUNT].AddObject(_obj);
+
+#if APPLICATION_CPU_THREAD_MAX_COUNT > 1
+	cpuThreadList[cpuThreadListCount % APPLICATION_CPU_THREAD_MAX_COUNT].AddObject(_obj);
+#else
+	cpuThreadList.AddObject(_obj);
+#endif
+
 	cpuThreadListCount++;
 }
