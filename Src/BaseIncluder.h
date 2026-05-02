@@ -16,10 +16,6 @@
 #define USE_THREAD true
 #endif
 
-#ifndef USE_CPU_THREAD
-#define USE_CPU_THREAD true
-#endif
-
 #ifndef TARGET_DIRECTORY 
 #define	TARGET_DIRECTORY(current_path) L"Resource/" current_path
 #endif
