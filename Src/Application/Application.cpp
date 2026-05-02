@@ -132,6 +132,7 @@ int Application::Update()
 	{
 		keyInput.Update();
 		audioList.Update();
+		frameList.UpdateBegin();
 		if (!fpsController.Update(timeGetTime()))continue;
 		controller.Init();
 		controller.Update();
@@ -190,9 +191,9 @@ void Application::Release()
 	SetInitFlg(false);
 }
 
+#if USE_THREAD
 void Application::AddCPUThread(ChPtr::Shared<ChCpp::ThreadObject> _obj)
 {
-
 #if APPLICATION_CPU_THREAD_MAX_COUNT > 1
 	cpuThreadList[cpuThreadListCount % APPLICATION_CPU_THREAD_MAX_COUNT].AddObject(_obj);
 #else
@@ -201,3 +202,4 @@ void Application::AddCPUThread(ChPtr::Shared<ChCpp::ThreadObject> _obj)
 
 	cpuThreadListCount++;
 }
+#endif
