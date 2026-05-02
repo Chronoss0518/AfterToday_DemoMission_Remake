@@ -14,8 +14,6 @@ class GameScript;
 class EffectObjectShader;
 class EffectSpriteShader;
 
-struct LookSquareValue;
-
 class ShotEffectList;
 class SmokeEffectList;
 
@@ -117,10 +115,6 @@ public:
 	ChCpp::ObjectList& GetMapList() { return mapList; }
 
 	const std::vector<ChPtr::Shared<MapObject>>& GetHitMapList() { return hitMapList; }
-
-	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _viewMatrix, const ChLMat& _projectionMatrix);
-
-	std::vector<ChPtr::Shared<LookSquareValue>> GetLookSquareValuesFromMap(const ChLMat& _vpMatrix);
 
 	static float GetCenterProjectionWidth();
 
