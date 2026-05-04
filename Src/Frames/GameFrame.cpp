@@ -1384,7 +1384,6 @@ void GameFrame::BreakMecha(BaseMecha* _mecha)
 
 size_t GameFrame::GettargetNum(std::vector<std::wstring>& _args)
 {
-
 	size_t targetNum = 0;
 
 	for (size_t i = 2; i < _args.size(); i++)
