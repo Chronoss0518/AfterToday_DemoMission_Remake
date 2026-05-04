@@ -8,30 +8,32 @@ graph TD;
     RunMovePosition --> MoveFunction[Move Function];
     MoveFunction --> LooksEnemyTarget{Looks Enemy Target};
     LooksEnemyTarget -- Yes --> RunWeaponSelect[Run Weapon Select];
-    RunWeaponSelect --> RunAttack[Run Attack<br>実際に攻撃する]
+    RunWeaponSelect --> RunAttack[Run Attack]
     RunAttack --> RunAvoidTest[Run Avoid Test];
     LooksEnemyTarget -- No --> End(CPU End)
     RunAvoidTest --> End;
 
 ```
 
-## Run Target Select
+### Run Target Select
 現在見えているすべてのキャラクターで表を作成する
 
-## Run Move Position
+### Run Move Position
 移動先の位置を作成する、敵対者が確認された場合はそのキャラクターから特定の位置離れた位置を指定する。
 
-## Move Function
+### Move Function
 実際に移動させる
 
-## Looks Enemy Target
+### Looks Enemy Target
 敵対者がRun Target Selectで確認できたかどうかの判定
 
-## Run Weapon Select
+### Run Weapon Select
 使用するWeaponを選択する
 
-## Run Attack
+### Run Attack
 実際に攻撃する
 
-## Run Avoid Test
+### Run Avoid Test
 回避行動をとるかどうかの判定を行う
+
+
