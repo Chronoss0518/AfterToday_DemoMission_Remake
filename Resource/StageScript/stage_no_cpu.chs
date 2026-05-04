@@ -1,7 +1,7 @@
 //戦闘BGMを追加//
 LoadBGM reconnaissance.wav -l
 //マップオブジェクトの追加//
-LoadMap ExaminationHall.x -s 50.0,50.0,50.0 -h
+LoadMap ExaminationHall.x -s 50.0,50.0,50.0 -h -rt
 //マップ上にメカを配置(Player)//
 LoadMecha -u player -p 0.0,700.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0
 //マップ上にメカを配置//

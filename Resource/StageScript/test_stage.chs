@@ -5,7 +5,7 @@ LoadBGM reconnaissance.wav -l
 LoadBGM DecisiveBattle.wav -l
 
 //マップオブジェクトの追加//
-LoadMap ExaminationHall.x -s 50.0,50.0,50.0 -h
+LoadMap ExaminationHall.x -s 50.0,50.0,50.0 -h -rt
 //LoadMap TestField.x -s 100.0,100.0,100.0 -h
 //マップオブジェクトの追加//
 //LoadMap TestField2.x -s 100.0,100.0,100.0
