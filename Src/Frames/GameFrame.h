@@ -168,8 +168,6 @@ private:
 		Effect,Obj
 	};
 
-	void CamUpdate();
-
 	ChCpp::ObjectList mapList;
 
 	std::vector<ChPtr::Shared<MapObject>> hitMapList;

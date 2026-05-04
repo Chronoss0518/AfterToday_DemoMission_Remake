@@ -1382,11 +1382,6 @@ void GameFrame::BreakMecha(BaseMecha* _mecha)
 	mechaPartyCounter[_mecha->GetTeamNo()] -= 1;
 }
 
-void GameFrame::CamUpdate(void)
-{
-
-}
-
 size_t GameFrame::GettargetNum(std::vector<std::wstring>& _args)
 {
 
