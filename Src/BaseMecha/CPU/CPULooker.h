@@ -40,6 +40,14 @@ public:
 
 	static const unsigned char MEMBER_TYPE_COUNT = 3;
 
+	enum class StatusType
+	{
+		Distance_Near,
+		Distance_Far,
+		DamageSize_Many,
+		DamageSize_Few,
+	};
+
 	enum class DistanceType : unsigned char
 	{
 		Near,
@@ -107,10 +115,10 @@ private:
 	unsigned long lookMechaTypes[MEMBER_TYPE_COUNT][DISTANCE_TYPE_COUNT][DAMAGE_SIZE_TYPE_COUNT];
 	std::vector<unsigned long>lookMechaList;
 
-
 	//Debug—p//
+	std::vector<ChPtr::Shared<ChCpp::MathSquare>>lookMapSquares;
+	std::vector<ChPtr::Shared<ChCpp::MathSquare>>lookMechaSquares;
 	ChD3D11::Texture11 whiteTexture;
 	ChD3D11::Sprite11 sprite;
 	ChD3D11::Shader::BaseDrawSprite11 spriteDrawer;
-
 };
