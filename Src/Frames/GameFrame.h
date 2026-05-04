@@ -21,38 +21,6 @@ class GameInMessageBox;
 class WeaponDataDrawUI;
 class WeaponPaletteDrawUI;
 
-
-struct MapObject : public ChCpp::BaseObject<wchar_t>
-{
-	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> model = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-	ChLMat mat;
-};
-
-class MapCollider :public ChCpp::BaseComponent
-{
-public:
-
-	void SetMatrix(ChLMat& _mat)
-	{
-		collider.SetMatrix(_mat);
-	}
-
-	void SetPolygon(ChCpp::FrameObject<wchar_t>& _frame)
-	{
-		collider.SetModel(_frame);
-	}
-
-	ChCpp::PolygonCollider<wchar_t>& GetCollider()
-	{
-		return collider;
-	}
-
-private:
-
-	ChCpp::PolygonCollider<wchar_t> collider;
-	
-};
-
 class GameFrame:public ChCpp::BaseFrame
 {
 private:
@@ -78,7 +46,7 @@ private:
 
 	void InitScriptFunction();
 
-	void SetHitMap(ChPtr::Shared<MapObject> _map);
+	void SetHitMap(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> _map,ChCpp::PanelColliderBase::UseHandType _handType);
 
 	void LoadScript(const std::wstring& _text);
 
@@ -113,8 +81,6 @@ public:
 	ChCpp::ObjectList& GetBulletList() { return bulletList; }
 
 	ChCpp::ObjectList& GetMapList() { return mapList; }
-
-	const std::vector<ChPtr::Shared<MapObject>>& GetHitMapList() { return hitMapList; }
 
 	static float GetCenterProjectionWidth();
 
@@ -169,8 +135,6 @@ private:
 	};
 
 	ChCpp::ObjectList mapList;
-
-	std::vector<ChPtr::Shared<MapObject>> hitMapList;
 
 	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
 

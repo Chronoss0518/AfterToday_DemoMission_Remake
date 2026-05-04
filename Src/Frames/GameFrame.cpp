@@ -473,32 +473,26 @@ void GameFrame::InitScriptFunction()
 
 }
 
-void GameFrame::SetHitMap(ChPtr::Shared<MapObject> _map)
+void GameFrame::SetHitMap(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> _map, ChCpp::PanelColliderBase::UseHandType _handType)
 {
 
 	ChVec3 fieldSize;
 
-	for (auto&& child : _map->model->GetAllChildlen<ChCpp::FrameObject<wchar_t>>())
+	for (auto&& child : _map->GetAllChildlen<ChCpp::FrameObject<wchar_t>>())
 	{
 		auto childObj = child.lock();
 		if (childObj == nullptr)continue;
+		childObj->UpdateDrawTransform();
 		auto frameCom = childObj->GetComponent<ChCpp::FrameComponent<wchar_t>>();
 		if (frameCom == nullptr)continue;
-		childObj->UpdateAllDrawTransform();
-		ChLMat tmpMat = childObj->GetDrawLHandMatrix() * _map->mat;
+		ChLMat tmpMat = childObj->GetDrawLHandMatrix();
 		ChVec3 tmp = tmpMat.TransformCoord(frameCom->boxSize);
 		fieldSize = fieldSize.x > tmp.x ? fieldSize.x : tmp.x;
 		fieldSize = fieldSize.y > tmp.y ? fieldSize.y : tmp.y;
 		fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
 	}
 
-	auto mapCollider = _map->SetComponent<MapCollider>();
-	mapCollider->GetCollider().SetLeftHandType();
-	mapCollider->SetMatrix(_map->mat);
-	mapCollider->SetPolygon(*_map->model);
-
-	hitMapList.push_back(_map);
-	PhysicsMachine::AddField(_map->model, _map->mat);
+	PhysicsMachine::AddField(_map, _handType);
 	PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
 }
 
@@ -561,7 +555,6 @@ void GameFrame::Release()
 	bulletList.ClearObject();
 	mapList.ClearObject();
 	mechaList.ClearObject();
-	hitMapList.clear();
 	audios.clear();
 	PhysicsMachine::ClearFieldList();
 	MechaParts::ClearPartsList();
@@ -900,10 +893,10 @@ void GameFrame::Render3D()
 
 	meshDrawer.DrawStart(dc);
 
-	for (auto weakMapModel : mapList.GetObjectList<MapObject>())
+	for (auto weakMapModel : mapList.GetObjectList<ChD3D11::Mesh11<wchar_t>>())
 	{
 		auto mapModel = weakMapModel.lock();
-		meshDrawer.Draw(*mapModel->model, (ChMat_11)mapModel->mat);
+		meshDrawer.Draw(*mapModel);
 	}
 
 	mechaList.ObjectDraw3D();
@@ -1182,19 +1175,19 @@ void GameFrame::AddField(const std::wstring& _text)
 
 	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
-	auto mainMap = ChPtr::Make_S<MapObject>();
-	mainMap->model->Init(device);
+	auto mainMap = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	mainMap->Init(device);
 	size_t pos = argment[0].find_last_of(L".");
 
 	if (argment[0].substr(pos) == L".x") {
 		ChCpp::ModelController::XFile<wchar_t> loader;
 		loader.LoadModel( FIELD_DIRECTORY(+argment[0]));
-		loader.CreateModel(mainMap->model);
+		loader.CreateModel(mainMap);
 	}
 	else if (argment[0].substr(pos) == L".obj") {
 		ChCpp::ModelController::ObjFile<wchar_t> loader;
 		loader.LoadModel(FIELD_DIRECTORY(+argment[0]));
-		loader.CreateModel(mainMap->model);
+		loader.CreateModel(mainMap);
 	}
 	else
 	{
@@ -1206,7 +1199,7 @@ void GameFrame::AddField(const std::wstring& _text)
 	bool hitMapFlg = false;
 
 	ChVec3 position, rotation, scalling;
-
+	ChCpp::PanelColliderBase::UseHandType useHandType = ChCpp::PanelColliderBase::UseHandType::LeftHand;
 	for (size_t i = 1; i < argment.size(); i++)
 	{
 		if (argment[i] == L"-p" || argment[i] == L"--position")
@@ -1232,17 +1225,27 @@ void GameFrame::AddField(const std::wstring& _text)
 			hitMapFlg = true;
 			continue;
 		}
+
+		if (argment[i] == L"-lt" || argment[i] == L"-ltype")
+		{
+			useHandType = ChCpp::PanelColliderBase::UseHandType::LeftHand;
+		}
+
+		if (argment[i] == L"-rt" || argment[i] == L"-rtype")
+		{
+			useHandType = ChCpp::PanelColliderBase::UseHandType::RightHand;
+		}
 	}
 
-	ChMat_11 mapSizeMatrix;
+	ChLMat mapSizeMatrix;
 	mapSizeMatrix.SetPosition(position);
-	mapSizeMatrix.SetRotation(rotation);
-	mapSizeMatrix.SetScaleSize(scalling);
-	mainMap->mat = mapSizeMatrix;
+	mapSizeMatrix.SetRotationYPR(rotation);
+	mapSizeMatrix.SetScalling(scalling);
+	mainMap->SetOutSideTransform(mapSizeMatrix);
 
 	if (hitMapFlg)
 	{
-		SetHitMap(mainMap);
+		SetHitMap(mainMap, useHandType);
 	}
 
 }
