@@ -3,9 +3,9 @@ LoadBGM reconnaissance.wav -l
 //マップオブジェクトの追加//
 LoadMap ExaminationHall.field.json
 //マップ上にメカを配置(Player)//
-LoadMecha -u player -p 0.0,700.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0
+LoadMecha -u player -p 0.0,180.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0
 //マップ上にメカを配置//
-LoadMecha -l NormalRobot.amf -u enemyTest -p 0.0,700.0,0.0 -t 1
+LoadMecha -l NormalRobot.amf -u enemyTest -p 0.0,180.0,0.0 -t 1
 //初期化が終わるまで待機//
 Initialize
 //Battle1.wavを再生//
