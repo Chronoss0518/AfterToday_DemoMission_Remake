@@ -1,0 +1,26 @@
+{
+    "FieldModelList":[
+        {
+            "ModelName":"TestFieldV9.blend.x",
+            "Position":{"X":0.00000,"Y":0.00000,"Z":0.00000},
+            "Rotation":{"X":0.00000,"Y":0.00000,"Z":0.00000},
+            "Scale":{"X":50.00000,"Y":50.00000,"Z":50.00000},
+            "HandType":"LHand",
+            "HitFlg":true
+        }
+    ],
+    "Positions":[
+        {
+            "TargetModelNo":0,
+            "PositionNames":[
+            "Point1",
+            "Point2"
+            ]
+        }
+    ],
+    "PointNames":
+    {
+        "SponePosition1":[0],
+        "SponePosition2":[1]
+    }
+}
