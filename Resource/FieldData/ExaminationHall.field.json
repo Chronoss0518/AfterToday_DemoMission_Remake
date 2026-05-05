@@ -2,8 +2,6 @@
     "FieldModelList":[
         {
             "ModelName":"ExaminationHall.x",
-            "Position":{"X":0.00000,"Y":0.00000,"Z":0.00000},
-            "Rotation":{"X":0.00000,"Y":0.00000,"Z":0.00000},
             "Scale":{"X":50.00000,"Y":50.00000,"Z":50.00000},
             "HandType":"RHand",
             "HitFlg":true
