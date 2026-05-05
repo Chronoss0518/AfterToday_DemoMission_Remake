@@ -20,6 +20,7 @@ class SmokeEffectList;
 class GameInMessageBox;
 class WeaponDataDrawUI;
 class WeaponPaletteDrawUI;
+class FieldManager;
 
 class GameFrame:public ChCpp::BaseFrame
 {
@@ -135,6 +136,7 @@ private:
 	};
 
 	ChCpp::ObjectList mapList;
+	ChPtr::Shared<FieldManager>fieldManager = nullptr;
 
 	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
 

@@ -26,6 +26,7 @@
 #include"../BaseMecha/CPU/CPULooker.h"
 
 #include"../GameInMessageBox/GameInMessageBox.h"
+#include"../FieldManager/FieldManager.h"
 
 #include"../Application/Application.h"
 
@@ -239,7 +240,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	weaponPaletteDrawer = ChPtr::Make_S<WeaponPaletteDrawUI>();
 	weaponPaletteDrawer->Init(device);
-	
+
 	rt2D.CreateRenderTarget(device,GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rt3D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rtHighLightMap.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
@@ -277,7 +278,7 @@ void GameFrame::InitScriptFunction()
 		audios[nowPlayAudio]->Pause();
 		});
 
-	script->SetFunction(L"LoadMap", [&](const std::wstring& _text) {AddField(_text); });
+	script->SetFunction(L"LoadMap", [&](const std::wstring& _text) {fieldManager->Init(_text);; });
 
 	script->SetFunction(L"LoadMecha", [&](const std::wstring& _text) {AddMecha(_text); });
 
@@ -477,6 +478,8 @@ void GameFrame::SetHitMap(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> _map, ChCpp::P
 {
 
 	ChVec3 fieldSize;
+
+	_map->UpdateDrawTransform();
 
 	for (auto&& child : _map->GetAllChildlen<ChCpp::FrameObject<wchar_t>>())
 	{
@@ -1167,87 +1170,6 @@ void GameFrame::AddMecha(const std::wstring& _text)
 	mechaPartyCounter[teamNo] += 1;
 
 	mecha->LoadEnd();
-}
-
-void GameFrame::AddField(const std::wstring& _text)
-{
-	auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-	auto argment = ChStr::Split<wchar_t>(_text, L" ");
-
-	auto mainMap = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-	mainMap->Init(device);
-	size_t pos = argment[0].find_last_of(L".");
-
-	if (argment[0].substr(pos) == L".x") {
-		ChCpp::ModelController::XFile<wchar_t> loader;
-		loader.LoadModel( FIELD_DIRECTORY(+argment[0]));
-		loader.CreateModel(mainMap);
-	}
-	else if (argment[0].substr(pos) == L".obj") {
-		ChCpp::ModelController::ObjFile<wchar_t> loader;
-		loader.LoadModel(FIELD_DIRECTORY(+argment[0]));
-		loader.CreateModel(mainMap);
-	}
-	else
-	{
-		return;
-	}
-
-	mapList.SetObject(mainMap);
-
-	bool hitMapFlg = false;
-
-	ChVec3 position, rotation, scalling;
-	ChCpp::PanelColliderBase::UseHandType useHandType = ChCpp::PanelColliderBase::UseHandType::LeftHand;
-	for (size_t i = 1; i < argment.size(); i++)
-	{
-		if (argment[i] == L"-p" || argment[i] == L"--position")
-		{
-			i++;
-			position.Deserialize<wchar_t>(argment[i], 0, L",", L";");
-			continue;
-		}
-		if (argment[i] == L"-r" || argment[i] == L"--rotation")
-		{
-			i++;
-			rotation.Deserialize<wchar_t>(argment[i], 0, L",", L";");
-			continue;
-		}
-		if (argment[i] == L"-s" || argment[i] == L"--scalling")
-		{
-			i++;
-			scalling.Deserialize<wchar_t>(argment[i], 0, L",", L";");
-			continue;
-		}
-		if (argment[i] == L"-h" || argment[i] == L"--hit")
-		{
-			hitMapFlg = true;
-			continue;
-		}
-
-		if (argment[i] == L"-lt" || argment[i] == L"-ltype")
-		{
-			useHandType = ChCpp::PanelColliderBase::UseHandType::LeftHand;
-		}
-
-		if (argment[i] == L"-rt" || argment[i] == L"-rtype")
-		{
-			useHandType = ChCpp::PanelColliderBase::UseHandType::RightHand;
-		}
-	}
-
-	ChLMat mapSizeMatrix;
-	mapSizeMatrix.SetPosition(position);
-	mapSizeMatrix.SetRotationYPR(rotation);
-	mapSizeMatrix.SetScalling(scalling);
-	mainMap->SetOutSideTransform(mapSizeMatrix);
-
-	if (hitMapFlg)
-	{
-		SetHitMap(mainMap, useHandType);
-	}
-
 }
 
 void GameFrame::AddSkyObject(const std::wstring& _text)
