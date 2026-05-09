@@ -19,12 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\PhysicsMachineTest\PhysicsMachine.h" />
-    <ClInclude Include="..\PhysicsMachineTest\Physics_AirPower.h" />
-    <ClInclude Include="..\PhysicsMachineTest\Physics_Gravity.h" />
-    <ClInclude Include="..\PhysicsMachineTest\Physics_GroundPower.h" />
-    <ClInclude Include="..\PhysicsMachineTest\Physics_MaterialPower.h" />
-    <ClInclude Include="..\PhysicsMachineTest\Physics_WaterPower.h" />
     <ClInclude Include="Src\AllStruct.h" />
     <ClInclude Include="Src\Application\Application.h" />
     <ClInclude Include="Src\Attack\Attack.h" />
@@ -77,6 +71,7 @@
     <ClInclude Include="Src\EffectObjects\BurnEffectList\BurnEffectList.h" />
     <ClInclude Include="Src\EffectObjects\ShotEffectList\ShotEffectList.h" />
     <ClInclude Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.h" />
+    <ClInclude Include="Src\FieldManager\FieldManager.h" />
     <ClInclude Include="Src\Frames\EditFrame.h" />
     <ClInclude Include="Src\Frames\FromStageSelectFrameData.h" />
     <ClInclude Include="Src\Frames\GameFrame.h" />
@@ -89,6 +84,12 @@
     <ClInclude Include="Src\GameInMessageBox\GameInMessageBox.h" />
     <ClInclude Include="Src\GameScript\GameScript.h" />
     <ClInclude Include="Src\LoadDisplay\LoadDisplay.h" />
+    <ClInclude Include="Src\PhysicsMachine\PhysicsMachine.h" />
+    <ClInclude Include="Src\PhysicsMachine\Physics_AirPower.h" />
+    <ClInclude Include="Src\PhysicsMachine\Physics_Gravity.h" />
+    <ClInclude Include="Src\PhysicsMachine\Physics_GroundPower.h" />
+    <ClInclude Include="Src\PhysicsMachine\Physics_MaterialPower.h" />
+    <ClInclude Include="Src\PhysicsMachine\Physics_WaterPower.h" />
     <ClInclude Include="Src\ProgressObject\ProgressObject.h" />
     <ClInclude Include="Src\PublicFunctions.h" />
     <ClInclude Include="Src\SelectList\SelectList.h" />
@@ -102,12 +103,6 @@
     <ClInclude Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\PhysicsMachineTest\PhysicsMachine.cpp" />
-    <ClCompile Include="..\PhysicsMachineTest\Physics_AirPower.cpp" />
-    <ClCompile Include="..\PhysicsMachineTest\Physics_Gravity.cpp" />
-    <ClCompile Include="..\PhysicsMachineTest\Physics_GroundPower.cpp" />
-    <ClCompile Include="..\PhysicsMachineTest\Physics_MaterialPower.cpp" />
-    <ClCompile Include="..\PhysicsMachineTest\Physics_WaterPower.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Src\Application\Application.cpp" />
     <ClCompile Include="Src\Attack\Attack.cpp" />
@@ -154,6 +149,7 @@
     <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp" />
     <ClCompile Include="Src\EffectObjects\ShotEffectList\ShotEffectList.cpp" />
     <ClCompile Include="Src\EffectObjects\SmokeEffectList\SmokeEffectList.cpp" />
+    <ClCompile Include="Src\FieldManager\FieldManager.cpp" />
     <ClCompile Include="Src\Frames\EditFrame.cpp" />
     <ClCompile Include="Src\Frames\GameFrame.cpp" />
     <ClCompile Include="Src\Frames\MenuBase.cpp" />
@@ -165,6 +161,12 @@
     <ClCompile Include="Src\GameInMessageBox\GameInMessageBox.cpp" />
     <ClCompile Include="Src\GameScript\GameScript.cpp" />
     <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp" />
+    <ClCompile Include="Src\PhysicsMachine\PhysicsMachine.cpp" />
+    <ClCompile Include="Src\PhysicsMachine\Physics_AirPower.cpp" />
+    <ClCompile Include="Src\PhysicsMachine\Physics_Gravity.cpp" />
+    <ClCompile Include="Src\PhysicsMachine\Physics_GroundPower.cpp" />
+    <ClCompile Include="Src\PhysicsMachine\Physics_MaterialPower.cpp" />
+    <ClCompile Include="Src\PhysicsMachine\Physics_WaterPower.cpp" />
     <ClCompile Include="Src\ProgressObject\ProgressObject.cpp" />
     <ClCompile Include="Src\PublicFunctions.cpp" />
     <ClCompile Include="Src\SelectList\SelectList.cpp" />
@@ -319,6 +321,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\CPUCharactor\mob.cpu" />
+    <None Include="Resource\FieldData\ExaminationHall.field.json" />
+    <None Include="Resource\FieldData\TestField.field.json" />
     <None Include="Resource\RobotParts\BA_01.mpd" />
     <None Include="Resource\RobotParts\BG_01.mpd" />
     <None Include="Resource\RobotParts\BT.mpd" />
@@ -415,19 +419,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\sinyu\Desktop\MyProject\PhysicsMachineTest;$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Src\External\ChCppBaseLibrary;$(ProjectDir)Src\External\ChCppWinLibrary;$(ProjectDir)Src\External\ChCppDirec3DLibrary;$(ProjectDir)Src\External\ChCppD3D11Library;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)StaticLibrary\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

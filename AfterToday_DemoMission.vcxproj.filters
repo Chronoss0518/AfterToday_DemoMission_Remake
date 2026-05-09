@@ -16,9 +16,6 @@
     <Filter Include="PhysicsLibrary">
       <UniqueIdentifier>{5c3f3a0d-cec2-41ed-80ab-5adbab042eaa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="StageScript">
-      <UniqueIdentifier>{d530f8bd-92f9-4a1c-af40-4f14165ad012}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameFrame">
       <UniqueIdentifier>{b22263e7-e32d-46e0-a4eb-81ffe2e6f49c}</UniqueIdentifier>
     </Filter>
@@ -37,9 +34,6 @@
     <Filter Include="GameFrame\Shader">
       <UniqueIdentifier>{d951a15e-4557-46ae-9b8e-fdc18282a693}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PartsDatas">
-      <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EditFrame">
       <UniqueIdentifier>{22c703ec-8ae8-477f-a776-d405670315c1}</UniqueIdentifier>
     </Filter>
@@ -49,23 +43,8 @@
     <Filter Include="StageSelectFrame">
       <UniqueIdentifier>{9013f333-56b7-4649-b693-782783018d35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="StageData">
-      <UniqueIdentifier>{278612e1-4167-4bcf-9eab-7d4d3444614b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameFrame\CPUData">
-      <UniqueIdentifier>{4af2371d-3c4c-48b4-9bcd-66f649fa9ef3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameFrame\Effect">
       <UniqueIdentifier>{d49fe6ff-935d-41d7-9fd1-bfe97ef5f8e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameFrame\Mecha">
-      <UniqueIdentifier>{c7cb4ded-cc4a-4b18-96a4-7f48ddc7f20f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameFrame\Mecha\PlayerMecha">
-      <UniqueIdentifier>{d00ec477-75e3-4935-b3aa-6dafd00ce3d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameFrame\Mecha\CPUMecha">
-      <UniqueIdentifier>{180f6186-52a4-429b-84de-b8ff4f812904}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameFrame\Shader\EffectSpriteShader">
       <UniqueIdentifier>{244e7f23-aafe-4087-9561-3494e1e806d4}</UniqueIdentifier>
@@ -87,6 +66,33 @@
     </Filter>
     <Filter Include="GameFrame\MechaPartsData">
       <UniqueIdentifier>{be477601-0840-49ff-b299-50e3d4bd4490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles">
+      <UniqueIdentifier>{e84391e8-3fb7-4965-b6fd-6666b5de5441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\StageData">
+      <UniqueIdentifier>{278612e1-4167-4bcf-9eab-7d4d3444614b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\StageScript">
+      <UniqueIdentifier>{d530f8bd-92f9-4a1c-af40-4f14165ad012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\CPUData">
+      <UniqueIdentifier>{4af2371d-3c4c-48b4-9bcd-66f649fa9ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\Mecha">
+      <UniqueIdentifier>{c7cb4ded-cc4a-4b18-96a4-7f48ddc7f20f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\Mecha\PlayerMecha">
+      <UniqueIdentifier>{d00ec477-75e3-4935-b3aa-6dafd00ce3d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\Mecha\CPUMecha">
+      <UniqueIdentifier>{180f6186-52a4-429b-84de-b8ff4f812904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\Mecha\PlayerMecha\PartsDatas">
+      <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\FieldData">
+      <UniqueIdentifier>{ba862c2c-c6aa-4ab0-8d08-c5cd7785de01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -161,24 +167,6 @@
     </ClInclude>
     <ClInclude Include="Src\BaseMecha\BaseMecha.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PhysicsMachineTest\Physics_AirPower.h">
-      <Filter>PhysicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PhysicsMachineTest\Physics_Gravity.h">
-      <Filter>PhysicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PhysicsMachineTest\Physics_GroundPower.h">
-      <Filter>PhysicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PhysicsMachineTest\Physics_MaterialPower.h">
-      <Filter>PhysicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PhysicsMachineTest\Physics_WaterPower.h">
-      <Filter>PhysicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\PhysicsMachineTest\PhysicsMachine.h">
-      <Filter>PhysicsLibrary</Filter>
     </ClInclude>
     <ClInclude Include="Src\Frames\SelectFrame.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -333,6 +321,27 @@
     <ClInclude Include="Src\PublicFunctions.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Src\FieldManager\FieldManager.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PhysicsMachine\PhysicsMachine.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PhysicsMachine\Physics_AirPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PhysicsMachine\Physics_Gravity.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PhysicsMachine\Physics_GroundPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PhysicsMachine\Physics_MaterialPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\PhysicsMachine\Physics_WaterPower.h">
+      <Filter>PhysicsLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -403,24 +412,6 @@
     </ClCompile>
     <ClCompile Include="Src\Shader\TextureEffectShader\TextureEffectShader.cpp">
       <Filter>GameFrame</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PhysicsMachineTest\Physics_AirPower.cpp">
-      <Filter>PhysicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PhysicsMachineTest\Physics_Gravity.cpp">
-      <Filter>PhysicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PhysicsMachineTest\Physics_GroundPower.cpp">
-      <Filter>PhysicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PhysicsMachineTest\Physics_MaterialPower.cpp">
-      <Filter>PhysicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PhysicsMachineTest\Physics_WaterPower.cpp">
-      <Filter>PhysicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\PhysicsMachineTest\PhysicsMachine.cpp">
-      <Filter>PhysicsLibrary</Filter>
     </ClCompile>
     <ClCompile Include="Src\Frames\SelectFrame.cpp">
       <Filter>ソース ファイル</Filter>
@@ -557,6 +548,27 @@
     <ClCompile Include="Src\PublicFunctions.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Src\FieldManager\FieldManager.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PhysicsMachine\PhysicsMachine.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PhysicsMachine\Physics_AirPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PhysicsMachine\Physics_Gravity.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PhysicsMachine\Physics_GroundPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PhysicsMachine\Physics_MaterialPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PhysicsMachine\Physics_WaterPower.cpp">
+      <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\VSEffectObject.hlsl">
@@ -583,127 +595,133 @@
       <Filter>GameFrame\Shader\EffectObjectShader\hlsl</Filter>
     </None>
     <None Include="Resource\StageScript\stage1.chs">
-      <Filter>StageScript</Filter>
+      <Filter>OuterFiles\StageScript</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage2.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\CPUCharactor\mob.cpu">
-      <Filter>GameFrame\CPUData</Filter>
+      <Filter>OuterFiles\CPUData</Filter>
     </None>
     <None Include="Resource\StageScript\stage2.chs">
-      <Filter>StageScript</Filter>
+      <Filter>OuterFiles\StageScript</Filter>
     </None>
     <None Include="Resource\StageScript\test_stage.chs">
-      <Filter>StageScript</Filter>
+      <Filter>OuterFiles\StageScript</Filter>
     </None>
     <None Include="Resource\StageScript\CPU\GuardianRobot.amf">
-      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+      <Filter>OuterFiles\Mecha\CPUMecha</Filter>
     </None>
     <None Include="Resource\StageScript\CPU\NormalRobot.amf">
-      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+      <Filter>OuterFiles\Mecha\CPUMecha</Filter>
     </None>
     <None Include="Resource\StageScript\CPU\AirRobot.amf">
-      <Filter>GameFrame\Mecha\CPUMecha</Filter>
+      <Filter>OuterFiles\Mecha\CPUMecha</Filter>
     </None>
     <None Include="Src\Shader\EffectSprite\HLSL\EffectSpriteShader.hlsli">
       <Filter>GameFrame\Shader\EffectSpriteShader\hlsl</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage_Wave.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage3.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage4.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\RobotParts\HT.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\LAA_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\LAG_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\LAT.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\RAA_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\RAG_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\RAT.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\BA_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\BG_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\BT.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\CA_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\CG_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\CT.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FA_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FG_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FT.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\HA_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\HG_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\Bullet\standard_1968.bod">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\Save\AssemMechaFrameList.json">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha</Filter>
     </None>
     <None Include="Resource\Save\Player.amf">
-      <Filter>GameFrame\Mecha\PlayerMecha</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha</Filter>
     </None>
     <None Include="Resource\StageScript\stage_no_cpu.chs">
-      <Filter>StageScript</Filter>
+      <Filter>OuterFiles\StageScript</Filter>
     </None>
     <None Include="Resource\RobotParts\CST_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FST_01.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage_NoCPU.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\RobotParts\MF-TPP1.mpd">
-      <Filter>PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage_Wave_10on10.json">
-      <Filter>StageData</Filter>
+      <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\StageScript\test_stage_wave_10on10.chs">
-      <Filter>StageScript</Filter>
+      <Filter>OuterFiles\StageScript</Filter>
+    </None>
+    <None Include="Resource\FieldData\ExaminationHall.field.json">
+      <Filter>OuterFiles\FieldData</Filter>
+    </None>
+    <None Include="Resource\FieldData\TestField.field.json">
+      <Filter>OuterFiles\FieldData</Filter>
     </None>
   </ItemGroup>
 </Project>
