@@ -6,7 +6,6 @@
 #include<ChBaseLibrary.h>
 #include<ChWindowsLibrary.h>
 #include<ChDirect3D11Library.h>
-#include<PhysicsMachine.h>
 
 #ifndef BETA 
 #define BETA
