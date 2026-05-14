@@ -1,10 +1,14 @@
 {
-    "FieldModelList":[
-        {
-            "ModelName":"ExaminationHall.x",
-            "Scale":{"X":50.00000,"Y":50.00000,"Z":50.00000},
-            "HandType":"RHand",
-            "HitFlg":true
-        }
-    ]
+  "HandType": "RHand",
+  "FieldModelList": [
+    {
+      "ModelName": "ExaminationHall.x",
+      "Scale": {
+        "X": 50.00000,
+        "Y": 50.00000,
+        "Z": 50.00000
+      },
+      "HitFlg": true
+    }
+  ]
 }
