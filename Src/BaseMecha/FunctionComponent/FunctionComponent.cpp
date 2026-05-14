@@ -20,5 +20,5 @@ bool FunctionComponent::IsGround()
 
 	if (ChPtr::NullCheck(target))return false;
 
-	return target->physics->IsGround();
+	return target->IsGround();
 }

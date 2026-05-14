@@ -20,9 +20,9 @@ public:
 
 protected:
 
-	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->physics->AddMovePowerVector(_moveVecAdd); }
+	inline void AddMoveVector(const ChVec3& _moveVecAdd) { target->AddMoveVector(_moveVecAdd); }
 	
-	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->physics->AddRotatePowerVector(_rotateVecAdd); }
+	inline void AddRotateVector(const ChVec3& _rotateVecAdd) { target->AddRotateVector(_rotateVecAdd); }
 
 	inline void SetSelfViewRotateHorizontalFlg(const bool& _flg) { target->SetSelfViewHorizontalFlg(_flg); }
 
@@ -38,9 +38,9 @@ protected:
 
 	ChVec3 GetRotation() { return target->GetRotation(); }
 
-	ChVec3 GetMoveVector() { return target->physics->GetAddMovePowerVector(); }
+	ChVec3 GetMoveVector() { return target->GetMoveVector(); }
 
-	ChVec3 GetRotateVector() { return target->physics->GetAddRotatePowerVector(); }
+	ChVec3 GetRotateVector() { return target->GetRotateVector(); }
 
 	inline BaseMecha* GetBaseMecha() { return target; }
 
