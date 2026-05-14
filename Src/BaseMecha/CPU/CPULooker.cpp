@@ -22,10 +22,7 @@ void CPUObjectLooker::CPUObjectLookerThreadUpdate::Update()
 		Destroy();
 		return;
 	}
-
-	if (!looker->updateFlg)return;
-	looker->FindMecha();
-
+	else looker->FindMecha();
 }
 
 unsigned long CPUObjectLooker::GetLookTypeMechas(MemberType _member, DistanceType _distance, DamageSizeType _damageSize)
@@ -112,6 +109,7 @@ void CPUObjectLooker::Release()
 
 void CPUObjectLooker::FindMecha()
 {
+	if (!updateFlg)return;
 	if (ChPtr::NullCheck(frame))return;
 
 	auto mecha = LookObj<BaseMecha>();
@@ -131,7 +129,7 @@ void CPUObjectLooker::FindMecha()
 
 	ChVec3 pos = mecha->GetPosition();
 
-	auto&& hitTestMap = frame->GetHitMapList();
+	//auto&& hitTestMap = frame->GetHitMapList();
 
 	auto&& baseMechaList = frame->GetMechas();
 
@@ -181,6 +179,7 @@ void CPUObjectLooker::FindMecha()
 		
 		lookFlg = true;
 
+#if false
 		for (auto&& map : hitTestMap)
 		{
 			if (map == nullptr)continue;
@@ -196,6 +195,7 @@ void CPUObjectLooker::FindMecha()
 			lookFlg = false;
 			break;
 		}
+#endif
 
 		if (!lookFlg)continue;
 

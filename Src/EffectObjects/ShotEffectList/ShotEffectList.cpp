@@ -18,10 +18,7 @@ void ShotEffectList::ShotEffectThreadUpdate::Update()
 		Destroy();
 		return;
 	}
-
-	if (effectList->updateFlg)return;
-
-	effectList->Update();
+	else effectList->Update();
 }
 
 void ShotEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount)
@@ -97,6 +94,7 @@ void ShotEffectList::AddShotEffect(const ChVec3& _pos)
 
 void ShotEffectList::Update()
 {
+	if (updateFlg)return;
 	if (effectShader == nullptr)return;
 
 	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)

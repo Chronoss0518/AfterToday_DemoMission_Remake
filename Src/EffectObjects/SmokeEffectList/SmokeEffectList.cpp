@@ -19,10 +19,7 @@ void SmokeEffectList::SmokeEffectThreadUpdate::Update()
 		Destroy();
 		return;
 	}
-
-	if (effectList->updateFlg)return;
-
-	effectList->Update();
+	else effectList->Update();
 }
 
 void SmokeEffectList::Init(ID3D11Device* _device, const unsigned long _maxCount, const unsigned long _width, const unsigned long _height)
@@ -155,6 +152,7 @@ void SmokeEffectList::AddSmokeEffect(const ChVec3& _pos, const ChVec3& _moveVect
 
 void SmokeEffectList::Update()
 {
+	if (updateFlg)return;
 	if (effectShader == nullptr)return;
 
 	for (unsigned long i = 0; i < effectShader->GetMaxEffectCount(); i++)
