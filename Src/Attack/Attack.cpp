@@ -6,6 +6,7 @@
 #include"AttackObject.h"
 #include"../EditFrame/PartsParameters.h"
 
+#include"../PhysicsMachine/PhysicsMachine.h"
 
 #define CREATE_TYPE(_enum,_class) {ChStd::EnumCast(_enum),[]()->ChPtr::Shared<Attack::AttackBase>{return ChPtr::Make_S<_class>();}}
 
@@ -218,7 +219,7 @@ void Attack::SetPartameter(PartsParameterStruct::WeaponData& _partsParameter)
 
 void Attack::InitBulletObject(const ChLMat& _startMat,AttackObject& _bullet)
 {
-	_bullet.collider.SetScalling(hitSize);
+	_bullet.collider.SetSize(hitSize);
 	
 	for (auto&& bulletFunction : externulFunctions)
 	{

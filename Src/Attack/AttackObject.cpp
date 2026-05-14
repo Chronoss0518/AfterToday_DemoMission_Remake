@@ -4,14 +4,29 @@
 #include"Attack.h"
 #include"AttackObject.h"
 #include"../BaseMecha/BaseMecha.h"
+#include"../PhysicsMachine/PhysicsMachine.h"
 
 #define CREATE_SMOKE_MAX_COUNT 10
 
 void AttackObject::Init(const ChLMat& _startMat)
 {
+	physics = ChPtr::Make_S<PhysicsMachine>();
+
 	data->InitBulletObject(_startMat ,*this);
 	createSmokeCount = CREATE_SMOKE_MAX_COUNT;
 }
+
+void AttackObject::SetPosition(const ChVec3& _pos) { physics->SetPosition(_pos); }
+
+void AttackObject::SetRotation(const ChVec3& _rot) { physics->SetRotation(_rot); }
+
+void AttackObject::SetMovePower(const ChVec3 _pow) { physics->SetAddMovePowerVector(_pow); }
+
+ChVec3 AttackObject::GetPosition() { return physics->GetPosition(); }
+
+ChVec3 AttackObject::GetRotation() { return physics->GetRotation(); }
+
+ChVec3 AttackObject::GetMovePower() { return physics->GetAddMovePowerVector(); }
 
 unsigned long AttackObject::GetPenetration()
 { 
@@ -51,7 +66,7 @@ void AttackObject::Move()
 	rot.AddRotationZAxis(ChMath::ToRadian(physics->GetRotation().z));
 
 	collider.SetPosition(physics->GetPosition());
-	collider.SetRotation(rot);
+	//collider.SetRotation(rot);
 }
 
 void AttackObject::Draw3D()

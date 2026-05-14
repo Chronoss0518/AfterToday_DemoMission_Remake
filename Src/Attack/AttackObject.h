@@ -1,5 +1,6 @@
 #pragma once
 
+class PhysicsMachine;
 class Attack;
 class BulletData;
 class BoostBulletData;
@@ -42,19 +43,19 @@ public:
 
 	inline void SetTeamNo(size_t _no) { teamNo = _no; }
 
-	inline void SetPosition(const ChVec3& _pos) { physics->SetPosition(_pos); }
+	void SetPosition(const ChVec3& _pos);
 
-	inline void SetRotation(const ChVec3& _rot) { physics->SetRotation(_rot); }
+	void SetRotation(const ChVec3& _rot);
 
-	inline void SetMovePower(const ChVec3 _pow) { physics->SetAddMovePowerVector(_pow); }
+	void SetMovePower(const ChVec3 _pow);
 
 public:
 
-	inline ChVec3 GetPosition() { return physics->GetPosition(); }
+	ChVec3 GetPosition();
 
-	inline ChVec3 GetRotation() { return physics->GetRotation(); }
+	ChVec3 GetRotation();
 
-	inline ChVec3 GetMovePower() { return physics->GetAddMovePowerVector(); }
+	ChVec3 GetMovePower();
 
 	unsigned long GetPenetration();
 
@@ -86,7 +87,7 @@ public:
 
 protected:
 
-	ChPtr::Unique<PhysicsMachine>physics = ChPtr::Make_U<PhysicsMachine>();
+	ChPtr::Shared<PhysicsMachine>physics = nullptr;
 
 private:
 
