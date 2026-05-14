@@ -4,9 +4,11 @@
 
 #include"FieldManager.h"
 
-#include"../PhysicsMachineTest/PhysicsMachine.h"
+#include"../PhysicsMachine/PhysicsMachine.h"
 
 #define FIELD_MODEL_LIST_PARAM L"FieldModelList"
+#define FIELD_MAX_SIZE_PARAM L"FieldMaxSize"
+#define FIELD_MIN_SIZE_PARAM L"FieldMinSize"
 #define FIELD_POSITIONS_LIST_PARAM L"Positions"
 #define FIELD_POINT_NAME_LIST_PARAM L"PointNames"
 
@@ -43,7 +45,6 @@ void FieldManager::Init(const std::basic_string<wchar_t>& _fieldFile)
 		ChCpp::CharFile file;
 		file.FileOpen(FIELD_DATA_DIRECTORY(+_fieldFile), false);
 		fieldJsom = ChStr::GetUTF16FromUTF8(file.FileRead());
-		fieldJsom = &fieldJsom[1];
 
 		file.FileClose();
 	}
@@ -80,22 +81,31 @@ void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_ob
 	size_t fieldModelCount = fieldList->GetCount();
 	if (fieldModelCount <= 0)return;
 
-	ChPtr::Shared<ChCpp::JsonString<wchar_t>>handType = nullptr;
+	auto handType = _object->GetJsonString(FIELD_MODEL_COLLISION_HAND_TYPE_PARAM);
+
+	PhysicsMachine::SetFieldColliderUseHandType(handType == nullptr ?
+		ChCpp::PanelColliderBase::UseHandType::LeftHand :
+		handType->GetString() == FIELD_MODEL_COLLISION_HAND_TYPE_LHAND ?
+		ChCpp::PanelColliderBase::UseHandType::LeftHand :
+		ChCpp::PanelColliderBase::UseHandType::RightHand);
+
 	ChPtr::Shared<ChCpp::JsonBoolean<wchar_t>>hitFlg = nullptr;
 	ChLMat baseMat;
 
 	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> model = nullptr;
 
+	ChVec3 maxFieldSize;
+	ChVec3 minFieldSize;
 	for (size_t i = 0; i < fieldModelCount; i++)
 	{
 		auto fieldModel = fieldList->GetJsonObject(i);
 		model = nullptr;
 		auto modelName = fieldModel->GetJsonString(FIELD_MODEL_NAME_PARAM);
-		if (modelName != nullptr)continue;
+		if (modelName == nullptr)continue;
 		model = CreateModel(modelName->GetString());
 
 		if (model == nullptr)continue;
-		if (model->IsInit())continue;
+		if (!model->IsInit())continue;
 
 		baseMat.Identity();
 
@@ -112,19 +122,43 @@ void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_ob
 
 		if (hitFlg != nullptr && hitFlg->IsFlg())
 		{
-			handType = nullptr;
-			handType = fieldModel->GetJsonString(FIELD_MODEL_COLLISION_HAND_TYPE_PARAM);
-
-			PhysicsMachine::AddField(model, handType == nullptr ?
-				ChCpp::PanelColliderBase::UseHandType::LeftHand :
-				handType->GetString() == FIELD_MODEL_COLLISION_HAND_TYPE_LHAND ?
-				ChCpp::PanelColliderBase::UseHandType::LeftHand :
-				ChCpp::PanelColliderBase::UseHandType::RightHand);
+			PhysicsMachine::AddField(model);
 		}
+
+		for (auto&& child : model->GetAllChildlen<ChCpp::FrameObject<wchar_t>>())
+		{
+			auto childObj = child.lock();
+			if (childObj == nullptr)continue;
+			childObj->UpdateDrawTransform();
+			auto frameCom = childObj->GetComponent<ChCpp::FrameComponent<wchar_t>>();
+			if (frameCom == nullptr)continue;
+			ChLMat tmpMat = childObj->GetDrawLHandMatrix();
+			ChVec3 max = tmpMat.Transform(frameCom->maxPos);
+			maxFieldSize.x = maxFieldSize.x > max.x ? maxFieldSize.x : max.x;
+			maxFieldSize.y = maxFieldSize.y > max.y ? maxFieldSize.y : max.y;
+			maxFieldSize.z = maxFieldSize.z > max.z ? maxFieldSize.z : max.z;
+			minFieldSize.x = minFieldSize.x < max.x ? minFieldSize.x : max.x;
+			minFieldSize.y = minFieldSize.y < max.y ? minFieldSize.y : max.y;
+			minFieldSize.z = minFieldSize.z < max.z ? minFieldSize.z : max.z;
+
+			ChVec3 min = tmpMat.Transform(frameCom->minPos);
+
+			maxFieldSize.x = maxFieldSize.x > min.x ? maxFieldSize.x : min.x;
+			maxFieldSize.y = maxFieldSize.y > min.y ? maxFieldSize.y : min.y;
+			maxFieldSize.z = maxFieldSize.z > min.z ? maxFieldSize.z : min.z;
+			minFieldSize.x = minFieldSize.x < min.x ? minFieldSize.x : min.x;
+			minFieldSize.y = minFieldSize.y < min.y ? minFieldSize.y : min.y;
+			minFieldSize.z = minFieldSize.z < min.z ? minFieldSize.z : min.z;
+		}
+
 
 		fieldModels.push_back(model);
 	}
 
+	auto fieldMaxSizeObject = _object->GetJsonObject(FIELD_MAX_SIZE_PARAM);
+	auto fieldMinSizeObject = _object->GetJsonObject(FIELD_MIN_SIZE_PARAM);
+
+	PhysicsMachine::SetFieldSize(CreateVectorValues(fieldMaxSizeObject, maxFieldSize), CreateVectorValues(fieldMinSizeObject, minFieldSize));
 }
 
 ChPtr::Shared<ChD3D11::Mesh11<wchar_t>>FieldManager::CreateModel(const std::basic_string<wchar_t>& _modelName)
