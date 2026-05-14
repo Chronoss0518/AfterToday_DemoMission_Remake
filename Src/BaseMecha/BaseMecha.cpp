@@ -25,6 +25,7 @@
 
 #include"CPU/CPULooker.h"
 
+#include"../PhysicsMachine/PhysicsMachine.h"
 #include"../Application/Application.h"
 
 #define CENTER_LEN 5.0f
@@ -129,7 +130,7 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	if (core == nullptr)return;
 
-	testCollider.SetScalling(baseHitSize);
+	testCollider.SetSize(baseHitSize);
 
 	nowDurable = durable;
 	physics->SetMass(mass);
@@ -201,7 +202,7 @@ void BaseMecha::UpdateEnd()
 
 	float moveSize = physics->GetAddMovePowerVector().GetLen();
 
-	testCollider.SetScalling(moveSize + baseHitSize);
+	testCollider.SetSize(moveSize + baseHitSize);
 
 }
 
@@ -348,6 +349,16 @@ ChVec3 BaseMecha::GetRotation()
 	return physics->GetRotation();
 }
 
+ChVec3 BaseMecha::GetMoveVector()
+{
+	return physics->GetAddMovePowerVector();
+}
+
+ChVec3 BaseMecha::GetRotateVector()
+{
+	return physics->GetAddRotatePowerVector();
+}
+
 size_t BaseMecha::GetTeamNo()
 {
 	auto controller = GetComponent<ControllerBase>();
@@ -401,6 +412,11 @@ bool BaseMecha::IsPushFlg(InputName _name)
 	return !GetNoHoldMaskFlgs().GetBitFlg(inputFlg) ?
 		inputFlgs.GetBitFlg(inputFlg) :
 		inputFlgs.GetBitFlg(inputFlg) && !beforeInputFlgs.GetBitFlg(inputFlg);
+}
+
+bool BaseMecha::IsGround()
+{
+	return physics->IsGround();
 }
 
 void BaseMecha::AddSmokeCreatePos(ChPtr::Shared<ChCpp::TransformObject<wchar_t>> _pos, MechaPartsObject* _parts)
@@ -521,7 +537,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	ChVec3 pos = _obj.GetPosition();
 
-	testAttackCollider.SetScalling(hitSize + moveLen);
+	testAttackCollider.SetSize(hitSize + moveLen);
 
 	testAttackCollider.SetPosition(pos);
 
@@ -531,7 +547,7 @@ void BaseMecha::TestBulletHit(AttackObject& _obj)
 
 	unsigned long cutCount = static_cast<unsigned long>(moveLen / hitSize) + 1;
 
-	testAttackCollider.SetScalling(hitSize);
+	testAttackCollider.SetSize(hitSize);
 
 	ChVec3 nowVector = dir;
 	float damage = 0.0f;

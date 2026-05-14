@@ -132,6 +132,10 @@ public://Get Function//
 
 	ChVec3 GetRotation();
 
+	ChVec3 GetMoveVector();
+
+	ChVec3 GetRotateVector();
+
 	inline ChLMat GetBeforeDrawMat() { return beforeDrawMat; }
 
 	ChVec3 GetDamageDir() { return damageDir; }
@@ -169,6 +173,8 @@ public:
 	inline bool IsBreak() { return breakFlg; }
 
 	bool IsPushFlg(InputName _name);
+
+	bool IsGround();
 
 public:
 
