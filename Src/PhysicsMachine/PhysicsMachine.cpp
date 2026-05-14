@@ -120,6 +120,12 @@ void PhysicsMachine::Init()
 		functionList[i] = CreatePhysics(i);
 		functionList[i]->Init(this);
 	}
+
+	xRay.SetBaseDirection(ChVec3(-1.0f, 0.0f, 0.0f));
+	yRay.SetBaseDirection(ChVec3(0.0f, -1.0f, 0.0f));
+	zRay.SetBaseDirection(ChVec3(0.0f, 0.0f, -1.0f));
+
+
 }
 
 void PhysicsMachine::Update()
@@ -163,110 +169,183 @@ void PhysicsMachine::UpdateHitTest()
 	
 	HitTestEmptyModelAndField();
 
-	ChVec3 testPos = position + addMovePowerVector;
+#if true
 
-#if 0
+	sphereCollider.SetPosition(position);
+	float moveSize = addMovePowerVector.GetLen();
+	if (moveSize <= 0.0f)return;
+	sphereCollider.SetSize(groundHeight + moveSize);
 
-	ChCpp::SphereCollider thisCol;
-	thisCol.SetPosition(testPos.y);
-	thisCol.SetRotation(rotation + addRotatePowerVector);
-	thisCol.SetScalling(addMovePowerVector);
-	for (auto field : FieldList())
+	auto&& fieldCollider = FieldCollider();
+
+	if (!fieldCollider.IsHit(&sphereCollider))return;
+
+	auto&& min = fieldCollider.GetHitMaxVector();
+	auto&& max = fieldCollider.GetHitMinVector();
+
+	min *= -1.0f;
+	max *= -1.0f;
+
+	ChVec3 tmpPos = position + addMovePowerVector;
+
+	if (min.y > tmpPos.y)
 	{
-		if (!field->collider.IsHit(&thisCol))continue;
+		addMovePowerVector.y = min.y;
+		isGroundFlg = true;
+	}
 
-		ChVec3 vector = thisCol.GetHitVectol();
-
-		addMovePowerVector -= vector;
-
+	if (min.x > tmpPos.x)
+	{
+		addMovePowerVector.x = min.x;
 		isWallFlg = true;
-		if (vector.y != 0.0f)
-		{
-			isGroundFlg = true;
-		}
-
 	}
 
-#else
-
-
+	if (min.z > tmpPos.z)
 	{
-		xRay.SetInversFlg(addMovePowerVector.x < 0.0f);
-		xRay.SetBaseDirection(ChVec3(-1.0f, 0.0f, 0.0f));
-		xRay.SetPosition(ChVec3(testPos.x + addMovePowerVector.x, testPos.y, testPos.z));
+		addMovePowerVector.z = min.z;
+		isWallFlg = true;
 	}
 
+	if (max.y < tmpPos.y)
 	{
-		yRay.SetInversFlg(addMovePowerVector.y < 0.0f);
-		yRay.SetBaseDirection(ChVec3(0.0f, -1.0f, 0.0f));
-		yRay.SetPosition(ChVec3(testPos.x, testPos.y + groundHeight, testPos.z));
+		addMovePowerVector.y = max.y;
+		isWallFlg = true;
 	}
 
+	if (max.x < tmpPos.x)
 	{
-		zRay.SetInversFlg(addMovePowerVector.z < 0.0f);
-		zRay.SetBaseDirection(ChVec3(0.0f, 0.0f, -1.0f));
-		zRay.SetPosition(ChVec3(testPos.x, testPos.y, testPos.z + addMovePowerVector.z));
-
+		addMovePowerVector.x = max.x;
+		isWallFlg = true;
 	}
+
+	if (max.z < tmpPos.z)
+	{
+		addMovePowerVector.z = max.z;
+		isWallFlg = true;
+	}
+
+	return;
+#endif
+
+	ChVec3 testPowerPos = addMovePowerVector;
+
+	testPowerPos.x = testPowerPos.x < 0.0f ? -1.0f : 1.0f;
+	testPowerPos.y = testPowerPos.y < 0.0f ? -1.0f : 1.0f;
+	testPowerPos.z = testPowerPos.z < 0.0f ? -1.0f : 1.0f;
+
+	ChVec3 testPos = position + testPowerPos;
+
+	xRay.SetInversFlg(addMovePowerVector.x < 0.0f);
+	yRay.SetInversFlg(addMovePowerVector.y < 0.0f);
+	zRay.SetInversFlg(addMovePowerVector.z < 0.0f);
 
 	xRay.Start();
 	yRay.Start();
 	zRay.Start();
 
-	for (auto&& model : FieldList())
-	{
-		auto obj = model->GetModel();
-		if (obj == nullptr)return;
+	float tmpX = 1000.0f, tmpY = 1000.0f, tmpZ = 1000.0f;
+	bool tmpXFlg = false, tmpYFlg = false, tmpZFlg = false;
 
-		yRay.IsHitField(*model);
-		xRay.IsHitField(*model);
-		zRay.IsHitField(*model);
+
+#if false
+	//へこみ方向のチェック//
+	xRay.SetPosition(ChVec3(testPos.x, position.y, position.z));
+	yRay.SetPosition(ChVec3(position.x, yRay.IsInvers() ? testPos.y + groundHeight : testPos.y, position.z));
+	zRay.SetPosition(ChVec3(position.x, position.y, testPos.z));
+
+	yRay.IsHitField(FieldCollider());
+	xRay.IsHitField(FieldCollider());
+	zRay.IsHitField(FieldCollider());
+
+	if (xRay.IsHit())
+	{
+		tmpX = xRay.GetVecSize();
+		tmpXFlg = true;
 	}
 
 	if (yRay.IsHit())
 	{
-		if (std::abs(yRay.GetVecSize()) < std::abs(addMovePowerVector.y) + 5.0f)
-		{
-			addMovePowerVector.y -= (!yRay.IsInvers() ? yRay.GetVecSize() : -yRay.GetVecSize());
-			isWallFlg = true;
-			isGroundFlg = yRay.IsInvers();
-		}
-	}
-
-	if (xRay.IsHit())
-	{
-		if (std::abs(xRay.GetVecSize()) < std::abs(addMovePowerVector.x) + leftRightWallLen)
-		{
-			addMovePowerVector.x -= (!xRay.IsInvers() ? xRay.GetVecSize() : -xRay.GetVecSize());
-			isWallFlg = true;
-		}
+		tmpY = yRay.GetVecSize();
+		tmpYFlg = true;
 	}
 
 	if (zRay.IsHit())
 	{
-		if (std::abs(zRay.GetVecSize()) < std::abs(addMovePowerVector.z) + frontBackWallLen)
-		{
-			addMovePowerVector.z -= (!zRay.IsInvers() ? zRay.GetVecSize() : -zRay.GetVecSize());
-			isWallFlg = true;
-		}
+		tmpZ = zRay.GetVecSize();
+		tmpZFlg = true;
+	}
+#endif
+	//突方向のチェック//
+
+	xRay.SetPosition(ChVec3(testPos.x, testPos.y, testPos.z));
+	yRay.SetPosition(ChVec3(testPos.x, yRay.IsInvers() ? testPos.y + groundHeight: testPos.y, testPos.z));
+	zRay.SetPosition(ChVec3(testPos.x, testPos.y, testPos.z));
+
+	yRay.IsHitField(FieldCollider());
+	xRay.IsHitField(FieldCollider());
+	zRay.IsHitField(FieldCollider());
+
+
+	if (xRay.IsHit())
+	{
+		tmpX = tmpX < xRay.GetVecSize() ? tmpX : xRay.GetVecSize();
+		tmpXFlg = true;
+	}
+
+	if (yRay.IsHit())
+	{
+		tmpY = tmpY < yRay.GetVecSize() ? tmpY : yRay.GetVecSize();
+		tmpYFlg = true;
+	}
+
+	if (zRay.IsHit())
+	{
+		tmpZ = tmpZ < zRay.GetVecSize() ? tmpZ : zRay.GetVecSize();
+		tmpZFlg = true;
 	}
 
 	xRay.End();
 	yRay.End();
 	zRay.End();
-#endif
+
+	if (tmpYFlg)
+	{
+		float tmpValue = std::abs(addMovePowerVector.y) - std::abs(tmpY);
+		if (tmpValue > 0.0f)
+		{
+			addMovePowerVector.y -= addMovePowerVector.y < 0.0f ?  -tmpValue : tmpValue;
+			isWallFlg = !yRay.IsInvers();
+			isGroundFlg = yRay.IsInvers();
+		}
+	}
+
+	if (tmpXFlg)
+	{
+		if (std::abs(xRay.GetVecSize() - testPowerPos.x) < std::abs(addMovePowerVector.x))
+		{
+			addMovePowerVector.x = 0.0f;
+			isWallFlg = true;
+		}
+	}
+
+	if (tmpZFlg)
+	{
+		if (std::abs(zRay.GetVecSize() - testPowerPos.z) < std::abs(addMovePowerVector.z))
+		{
+			addMovePowerVector.z = 0.0f;
+			isWallFlg = true;
+		}
+	}
+
 	return;
 
 
 }
 
-void PhysicsMachine::AddField(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _fieldModel, ChCpp::PanelColliderBase::UseHandType _type)
+void PhysicsMachine::AddField(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _fieldModel)
 {
 	if (_fieldModel == nullptr)return;
-	auto field = ChPtr::Make_S<ChCpp::PolygonCollider<wchar_t>>();
-	field->SetModel(*_fieldModel);
-	field->SetHandType(_type);
-	FieldList().push_back(field);
+	FieldObject().SetChild(_fieldModel);
 }
 
 ChPtr::Shared<PhysicsFunction> PhysicsMachine::CreatePhysics(unsigned long _physicsFunctionlistName)
@@ -286,36 +365,39 @@ void PhysicsMachine::TestFieldRange()
 {
 
 	isOutSide = false;
-	ChVec3 testPos = position + addMovePowerVector;
+	//ChVec3 testPos = position + addMovePowerVector;
+	ChVec3 testPos = position;
 	testPos.y += groundHeight;
 
-	RangeTest(addMovePowerVector.x, testPos.x, FieldMaxSize().x, FieldMinSize().x);
-	
-	RangeTest(addMovePowerVector.y, testPos.y, FieldMaxSize().y, FieldMinSize().y);
+	bool test = false;
 
-	RangeTest(addMovePowerVector.z, testPos.z, FieldMaxSize().z, FieldMinSize().z);
+	RangeTest(test,addMovePowerVector.x, testPos.x, FieldMaxSize().x, FieldMinSize().x);
+	
+	RangeTest(isGroundFlg,addMovePowerVector.y, testPos.y, FieldMaxSize().y, FieldMinSize().y);
+
+	RangeTest(test,addMovePowerVector.z, testPos.z, FieldMaxSize().z, FieldMinSize().z);
 
 }
 
-void PhysicsMachine::RangeTest(float& _addMovePowerVectorElement, const float _testPosElement, const float _fieldMaxElement, const float _fieldMinElement)
+void PhysicsMachine::RangeTest(bool& _isGroundOutSide,float& _addMovePowerVectorElement, const float _testPosElement, const float _fieldMaxElement, const float _fieldMinElement)
 {
-	return;
 	if (_fieldMaxElement < _testPosElement + _addMovePowerVectorElement)
 	{
-		_addMovePowerVectorElement = _fieldMaxElement - (_testPosElement + _addMovePowerVectorElement);
+		_addMovePowerVectorElement -= _testPosElement + _addMovePowerVectorElement - _fieldMaxElement;
 		isOutSide = true;
 	}
 
 	if (_fieldMinElement > _testPosElement + _addMovePowerVectorElement)
 	{
-		_addMovePowerVectorElement = (_testPosElement + _addMovePowerVectorElement) - _fieldMinElement;
-		isOutSide = true;
+		_addMovePowerVectorElement -= (_testPosElement + _addMovePowerVectorElement) - _fieldMinElement;
+ 		isOutSide = true;
+		_isGroundOutSide = true;
 	}
 }
 
 void PhysicsMachine::HitTestEmptyModelAndField()
 {
-	if (!FieldList().empty())return;
+	if (!FieldObject().GetAllChildlen().empty())return;
 
 	float testPos = position.y + addMovePowerVector.y;
 	if (testPos < groundHeight)
@@ -330,7 +412,8 @@ void PhysicsMachine::FieldHitTestRay::Start()
 {
 	isHit = false;
 	ray.SetRayDir((!inversFlg ? baseDir : baseDir * -1.0f));
-	vecSize = 0.0f;
+	ray.SetMaxLength();
+	vecSize = 1000.0f;
 }
 
 void PhysicsMachine::FieldHitTestRay::IsHitField(ChCpp::PolygonCollider<wchar_t>& _polygon)
@@ -338,9 +421,9 @@ void PhysicsMachine::FieldHitTestRay::IsHitField(ChCpp::PolygonCollider<wchar_t>
 
 	if (!_polygon.IsHit(&ray))return;
 
-	float hitLen = ray.GetHitVectol().GetLen();
+ 	float hitLen = ray.GetHitVector().GetLen();
 
-	if (hitLen < vecSize)return;
+	if (isHit && hitLen > vecSize)return;
 
 	vecSize = hitLen;
 	isHit = true;

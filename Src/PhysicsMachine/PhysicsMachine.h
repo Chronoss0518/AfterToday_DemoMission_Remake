@@ -37,7 +37,7 @@ public:
 
 	inline void AddRotatePowerVector(const ChVec3& _addPowerVector) { addRotatePowerVector += _addPowerVector / (CastFloat(GetFPS()) / CastFloat(BaseSpeed())); }
 
-	static void AddField(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _fieldModel, ChCpp::PanelColliderBase::UseHandType _type);
+	static void AddField(ChPtr::Shared<ChCpp::FrameObject<wchar_t>> _fieldModel);
 
 	static inline void AddBrustPos(const ChVec3& _pos)
 	{
@@ -96,6 +96,11 @@ public:
 		FieldMinSize() = _min;
 	}
 
+	static inline void SetFieldColliderUseHandType(ChCpp::PanelColliderBase::UseHandType _type)
+	{
+		FieldCollider().SetHandType(_type);
+	}
+
 public:
 
 	inline ChVec3 GetAddMovePowerVector() { return addMovePowerVector; }
@@ -136,9 +141,7 @@ public:
 
 	static inline void ClearFieldList()
 	{
-		auto&& fieldList = FieldList();
-		if (fieldList.empty())return;
-		fieldList.clear();
+		FieldObject().DestroyToChild();
 	}
 
 private:
@@ -147,7 +150,7 @@ private:
 
 	void TestFieldRange();
 
-	void RangeTest(float& _addMovePowerVectorElement,const float _testPosElement, const float _fieldMaxElement, const float _fieldMinElement);
+	void RangeTest(bool& _isGroundOutSide,float& _addMovePowerVectorElement,const float _testPosElement, const float _fieldMaxElement, const float _fieldMinElement);
 
 	void HitTestEmptyModelAndField();
 
@@ -202,9 +205,17 @@ private:
 		return ins;
 	}
 
-	inline static std::vector<ChPtr::Shared<ChCpp::PolygonCollider<wchar_t>>>& FieldList()
+	inline static ChCpp::FrameObject<wchar_t>& FieldObject()
 	{
-		static std::vector<ChPtr::Shared<ChCpp::PolygonCollider<wchar_t>>> ins;
+		static ChPtr::Shared<ChCpp::FrameObject<wchar_t>> ins = ChPtr::Make_S<ChCpp::FrameObject<wchar_t>>();
+		return *ins;
+	}
+
+	inline static ChCpp::PolygonCollider<wchar_t>& FieldCollider()
+	{
+		static ChCpp::PolygonCollider<wchar_t>ins;
+		if (ChPtr::NullCheck(ins.GetModel()))
+			ins.SetModel(FieldObject());
 		return ins;
 	}
 
@@ -299,6 +310,8 @@ private:
 	};
 
 	FieldHitTestRay yRay, xRay, zRay;
+
+	ChCpp::SphereCollider sphereCollider;
 };
 
 class PhysicsFunction
