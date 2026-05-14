@@ -127,7 +127,7 @@ public:
 
 	float GetDamage(AttackObject& _bullet);
 
-	ChVec3 GetColliderSize() { return collider.GetScl(); }
+	float GetColliderSize() { return collider.GetSize(); }
 
 	size_t GetLookAnchorNo() { return lookAnchorNo; }
 

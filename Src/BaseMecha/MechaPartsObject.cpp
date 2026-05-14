@@ -288,7 +288,7 @@ void MechaPartsObject::Draw3D()
 
 	baseParts->Draw((ChMat_11)(lMat));
 
-	collider.SetMatrix(lMat);
+	collider.SetPosition(lMat.GetPosition());
 
 	DrawEndFunction();
 }
