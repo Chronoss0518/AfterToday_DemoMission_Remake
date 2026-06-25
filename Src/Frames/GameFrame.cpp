@@ -28,6 +28,8 @@
 #include"../GameInMessageBox/GameInMessageBox.h"
 #include"../FieldManager/FieldManager.h"
 
+#include"../PhysicsMachine/PhysicsMachine.h"
+
 #include"../Application/Application.h"
 
 //想定するメカオブジェクトの最大数//
@@ -229,8 +231,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		smokeEffectList->SetProjectionMatrix(proMat);
 	}
 
-	LoadStage(stageName);
-
+	fieldManager = ChPtr::Make_S<FieldManager>();
 
 	messageBox = ChPtr::Make_S<GameInMessageBox>();
 	messageBox->Init(device);
@@ -241,15 +242,18 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	weaponPaletteDrawer = ChPtr::Make_S<WeaponPaletteDrawUI>();
 	weaponPaletteDrawer->Init(device);
 
-	rt2D.CreateRenderTarget(device,GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	rt2D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rt3D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rtHighLightMap.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	rtObjectLooker.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	dsTex.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	fadeOutTexture.CreateColorTexture(device, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f), 1, 1);
 
-	uiSprite.Init(); 
+	uiSprite.Init();
 	uiSprite.SetInitPosition();
+
+	LoadStage(stageName);
+
 
 }
 
@@ -473,32 +477,6 @@ void GameFrame::InitScriptFunction()
 
 
 }
-
-void GameFrame::SetHitMap(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> _map, ChCpp::PanelColliderBase::UseHandType _handType)
-{
-
-	ChVec3 fieldSize;
-
-	_map->UpdateDrawTransform();
-
-	for (auto&& child : _map->GetAllChildlen<ChCpp::FrameObject<wchar_t>>())
-	{
-		auto childObj = child.lock();
-		if (childObj == nullptr)continue;
-		childObj->UpdateDrawTransform();
-		auto frameCom = childObj->GetComponent<ChCpp::FrameComponent<wchar_t>>();
-		if (frameCom == nullptr)continue;
-		ChLMat tmpMat = childObj->GetDrawLHandMatrix();
-		ChVec3 tmp = tmpMat.TransformCoord(frameCom->boxSize);
-		fieldSize = fieldSize.x > tmp.x ? fieldSize.x : tmp.x;
-		fieldSize = fieldSize.y > tmp.y ? fieldSize.y : tmp.y;
-		fieldSize = fieldSize.z > tmp.z ? fieldSize.z : tmp.z;
-	}
-
-	PhysicsMachine::AddField(_map, _handType);
-	PhysicsMachine::SetFieldSize(fieldSize * 0.9f);
-}
-
 
 void GameFrame::LoadStage(std::wstring& _stageScriptName)
 {
@@ -896,11 +874,7 @@ void GameFrame::Render3D()
 
 	meshDrawer.DrawStart(dc);
 
-	for (auto weakMapModel : mapList.GetObjectList<ChD3D11::Mesh11<wchar_t>>())
-	{
-		auto mapModel = weakMapModel.lock();
-		meshDrawer.Draw(*mapModel);
-	}
+	fieldManager->Draw(meshDrawer, viewMat);
 
 	mechaList.ObjectDraw3D();
 
