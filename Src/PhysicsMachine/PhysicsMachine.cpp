@@ -169,7 +169,7 @@ void PhysicsMachine::UpdateHitTest()
 	
 	HitTestEmptyModelAndField();
 
-#if true
+#if false
 
 	sphereCollider.SetPosition(position);
 	float moveSize = addMovePowerVector.GetLen();
