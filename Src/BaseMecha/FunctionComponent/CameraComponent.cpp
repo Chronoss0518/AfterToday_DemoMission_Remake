@@ -59,7 +59,7 @@ void CameraComponent::CamVerticalRotateUpdate(InputName _input, const float _cam
 {
 	if (!IsPushFlg(_input))return;
 
-	AddViewVertical(_camRot / PhysicsMachine::GetFPS());
+	AddViewVertical(_camRot / BASE_FPS);
 
 	updateKeyFlg = true;
 }
@@ -68,7 +68,7 @@ void CameraComponent::CamHorizontalRotateUpdate(InputName _input, const float _c
 {
 	if (!IsPushFlg(_input))return;
 
-	AddViewHorizontal(_camRot / PhysicsMachine::GetFPS());
+	AddViewHorizontal(_camRot / BASE_FPS);
 
 	updateKeyFlg = true;
 }

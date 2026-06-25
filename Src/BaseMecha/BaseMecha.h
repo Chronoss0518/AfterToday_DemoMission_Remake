@@ -47,6 +47,7 @@ public://Inner Struct Class Enum//
 		WeaponUpChange, RWUChange, LWUChange,
 		WeaponDownChange, RWDChange, LWDChange,
 		MoveUpChange, MoveDownChange,
+		ResetFovy, ScopeUpChange, ScopeDownChange,
 		ScopeMagnificationUp, ScopeMagnificationDown,
 		OverBoost, Release, OnSubKey, SetCameraCenter,
 		MapOnOff, UseTargetLooker, None
