@@ -87,9 +87,9 @@ public://Create Function//
 
 public:
 
-	void Load(ID3D11Device* _device, const std::wstring& _fileName);
+	void Load(const std::wstring& _fileName);
 
-	void LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
+	void LoadPartsList(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
 	void LoadEnd();
 
@@ -237,8 +237,6 @@ protected:
 
 	ChCpp::BitBool inputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
 	ChCpp::BitBool beforeInputFlgs = ChCpp::BitBool(((unsigned char)InputName::None / 8) + 1);
-
-	ChCpp::BitBool noHoldMaskFlgs = ChCpp::BitBool(((unsigned char)BaseMecha::InputName::None / 8) + 1);
 
 	ChPtr::Shared<MechaPartsObject> core = nullptr;
 

@@ -80,7 +80,7 @@ struct In_Pixel
 #endif
 
 #ifdef __SHADER__
-cbuffer GSEffectObjectData :register(CHANGE_CBUFFER(EFFECT_OBJECT_GEOMETRY_DATA))
+cbuffer GSEffectObjectData :register(CH_CHANGE_CBUFFER(EFFECT_OBJECT_GEOMETRY_DATA))
 #else
 struct GSEffectObjectData
 #endif
@@ -93,7 +93,7 @@ struct GSEffectObjectData
 
 
 #ifdef __SHADER__
-cbuffer PSEffectObjectData :register(CHANGE_CBUFFER(EFFECT_OBJECT_PIXEL_DATA))
+cbuffer PSEffectObjectData :register(CH_CHANGE_CBUFFER(EFFECT_OBJECT_PIXEL_DATA))
 #else
 struct PSEffectObjectData
 #endif
@@ -108,10 +108,10 @@ struct PSEffectObjectData
 
 #ifdef __SHADER__
 
-texture2D baseTex :register(CHANGE_TBUFFER(EFFECT_OBJECT_PIXEL_TEXTURE));
+texture2D baseTex :register(CH_CHANGE_TBUFFER(EFFECT_OBJECT_PIXEL_TEXTURE));
 
 //画像から1ピクセルの色を取得するための物//
-sampler baseSmp:register(CHANGE_SBUFFER(EFFECT_OBJECT_PIXEL_TEXTURE));
+sampler baseSmp:register(CH_CHANGE_SBUFFER(EFFECT_OBJECT_PIXEL_TEXTURE));
 
 #endif
 

@@ -87,17 +87,17 @@ private:
 
 	unsigned long CreateDatas(BaseMecha& _base, ChCpp::TextObject<wchar_t>& _textObject, unsigned long _linePos);
 
-	void CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
+	void CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject,BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
 public://Serialize Deserialize//
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath);
 
-	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject,const std::wstring& _positionObjectType = L"", ChPtr::Shared<MechaPartsObject> _parent = nullptr);
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject,const std::wstring& _positionObjectType = L"", ChPtr::Shared<MechaPartsObject> _parent = nullptr);
 
-	void Load(BaseMecha& _base, ID3D11Device* _device, const std::wstring& _fileName);
+	void Load(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _fileName);
 
-	void Deserialize(BaseMecha& _base,ID3D11Device* _device,const std::wstring& _text);
+	void Deserialize(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer,const std::wstring& _text);
 
 	std::wstring Save(const std::wstring& _fileName);
 
@@ -105,7 +105,7 @@ public://Serialize Deserialize//
 
 private:
 
-	void LoadModel(ID3D11Device* _device, const std::wstring& _fileName);
+	void LoadModel(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _fileName);
 
 public://Set Functions//
 
@@ -127,7 +127,7 @@ public://Get Function//
 
 	inline float GetMass()const { return mass; }
 
-	inline ChD3D11::Mesh11<wchar_t>& GetMesh() { return *model; }
+	inline ChCpp::ModelObject<wchar_t>& GetMesh() { return *model; }
 
 	inline std::wstring GetThisFileName() { return thisFileName; }
 
@@ -182,7 +182,7 @@ private:
 	std::wstring thisFileName = L"";
 	std::wstring thisFilePath = L"";
 
-	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> model = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	ChPtr::Shared<ChCpp::ModelObject<wchar_t>> model = ChPtr::Make_S<ChCpp::ModelObject<wchar_t>>();
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t>* drawer = nullptr;
 
@@ -219,7 +219,7 @@ public://Get Functions//
 		return _base.GetComponentObject<T>();
 	}
 
-	ChD3D11::Mesh11<wchar_t>& GetModel(MechaPartsObject& _base);
+	ChCpp::ModelObject<wchar_t>& GetModel(MechaPartsObject& _base);
 
 public:
 

@@ -68,7 +68,7 @@ struct In_Pixel
 #endif
 
 #ifdef __SHADER__
-cbuffer GSEffectSpriteData :register(CHANGE_CBUFFER(EFFECT_SPRITE_GEOMETRY_DATA))
+cbuffer GSEffectSpriteData :register(CH_CHANGE_CBUFFER(EFFECT_SPRITE_GEOMETRY_DATA))
 #else
 struct GSEffectSpriteData
 #endif
@@ -81,7 +81,7 @@ struct GSEffectSpriteData
 
 
 #ifdef __SHADER__
-cbuffer PSEffectSpriteData :register(CHANGE_CBUFFER(EFFECT_SPRITE_PIXEL_DATA))
+cbuffer PSEffectSpriteData :register(CH_CHANGE_CBUFFER(EFFECT_SPRITE_PIXEL_DATA))
 #else
 struct PSEffectSpriteData
 #endif

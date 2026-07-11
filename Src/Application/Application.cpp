@@ -58,9 +58,7 @@ void Application::Init(HINSTANCE hInst, int nCmdshow)
 
 		d3dApi.Init(window.GethWnd(), fullScreenFlg, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
-		ChD3D11::Shader11().Init(d3dApi, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
-
-		ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
+		d3dApi.SetBackColor(ChVec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		audioList.Init();
 
@@ -181,8 +179,7 @@ void Application::Release()
 	cpuThreadListCount = 0;
 #endif
 
-	ChD3D11::Shader11().Release();
-	ChD3D11::D3D11API().Release();
+	d3dApi.Release();
 
 	window.Release();
 	windClass.Release();

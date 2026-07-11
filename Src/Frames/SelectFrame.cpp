@@ -20,7 +20,7 @@
 
 void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
-	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	AppIns().GetDirect3D11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	MenuBase::InitMenu();
 
@@ -82,7 +82,7 @@ void SelectFrame::DrawFunction()
 {
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
-	ChD3D11::Shader11().DrawStart();
+	AppIns().GetDirect3D11().DrawStart();
 
 	spriteShader.DrawStart(dc);
 
@@ -99,7 +99,7 @@ void SelectFrame::DrawFunction()
 	spriteShader.Draw(description[nowSelect], descriptionWindowSprite);
 	spriteShader.DrawEnd();
 
-	ChD3D11::Shader11().DrawEnd();
+	AppIns().GetDirect3D11().DrawEnd();
 }
 
 void SelectFrame::UpdateAction(ActionType _type)

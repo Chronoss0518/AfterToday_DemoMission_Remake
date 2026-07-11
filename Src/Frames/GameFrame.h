@@ -47,7 +47,7 @@ private:
 
 	void InitScriptFunction();
 
-	void SetHitMap(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> _map,ChCpp::PanelColliderBase::UseHandType _handType);
+	void SetHitMap(ChPtr::Shared<ChCpp::ModelObject<wchar_t>> _map,ChCpp::PanelColliderBase::UseHandType _handType);
 
 	void LoadScript(const std::wstring& _text);
 
@@ -138,7 +138,7 @@ private:
 	ChCpp::ObjectList mapList;
 	ChPtr::Shared<FieldManager>fieldManager = nullptr;
 
-	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	ChPtr::Shared<ChCpp::ModelObject<wchar_t>> skySphere = ChPtr::Make_S<ChCpp::ModelObject<wchar_t>>();
 
 	std::map<std::wstring,ChPtr::Shared<ChD3D::AudioObject>>audios;
 	std::wstring nowPlayAudio = L"";

@@ -19,7 +19,7 @@
 
 void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
-	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
+	AppIns().GetDirect3D11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 1.0f));
 
 	MenuBase::InitMenu();
 
@@ -188,7 +188,7 @@ void StageSelectFrame::DrawFunction()
 {
 	
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
-	ChD3D11::Shader11().DrawStart();
+	AppIns().GetDirect3D11().DrawStart();
 
 	dc->OMGetRenderTargets(1, &rtView, nullptr);
 
@@ -206,7 +206,7 @@ void StageSelectFrame::DrawFunction()
 
 	spriteShader.DrawEnd();
 
-	ChD3D11::Shader11().DrawEnd();
+	AppIns().GetDirect3D11().DrawEnd();
 
 }
 

@@ -105,7 +105,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	resultData = sendData->resultData;
 
-	ChD3D11::Shader11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	AppIns().GetDirect3D11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	script = ChPtr::Make_S<GameScript>();
 	InitScriptFunction();
@@ -282,7 +282,7 @@ void GameFrame::InitScriptFunction()
 		audios[nowPlayAudio]->Pause();
 		});
 
-	script->SetFunction(L"LoadMap", [&](const std::wstring& _text) {fieldManager->Init(_text);; });
+	script->SetFunction(L"LoadMap", [&](const std::wstring& _text) {fieldManager->Init(_text, meshDrawer); });
 
 	script->SetFunction(L"LoadMecha", [&](const std::wstring& _text) {AddMecha(_text); });
 
@@ -727,7 +727,7 @@ void GameFrame::DrawFunction()
 	rt2D.SetBackColor(dc, ChVec4(0.0f));
 	dsTex.ClearDepthBuffer(dc);
 
-	ChD3D11::Shader11().DrawStart();
+	AppIns().GetDirect3D11().DrawStart();
 
 	Render3D();
 
@@ -785,7 +785,7 @@ void GameFrame::DrawFunction()
 
 	uiDrawer.DrawEnd();
 
-	ChD3D11::Shader11().DrawEnd(rt3D);
+	AppIns().GetDirect3D11().DrawEnd(rt3D);
 
 	mechaList.ObjectDrawEnd();
 
@@ -1108,7 +1108,7 @@ void GameFrame::AddMecha(const std::wstring& _text)
 	mecha->SetPosition(position);
 	mecha->SetRotation(rotation);
 
-	mecha->Load(device, loadFile);
+	mecha->Load(loadFile);
 
 	if (playerFlg)
 	{	
@@ -1152,8 +1152,7 @@ void GameFrame::AddSkyObject(const std::wstring& _text)
 
 	auto argment = ChStr::Split<wchar_t>(_text, L" ");
 
-	skySphere = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-	skySphere->Init(device);
+	skySphere = ChPtr::Make_S<ChCpp::ModelObject<wchar_t>>();
 	size_t pos = argment[0].find_last_of(L".");
 	if (argment[0].substr(pos) == L".x") {
 		ChCpp::ModelController::XFile<wchar_t> loader;
@@ -1169,6 +1168,8 @@ void GameFrame::AddSkyObject(const std::wstring& _text)
 	{
 		return;
 	}
+
+	meshDrawer.CreateFrameMesh(skySphere);
 
 	for (size_t i = 1; i < argment.size(); i++)
 	{

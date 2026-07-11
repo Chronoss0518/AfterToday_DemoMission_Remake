@@ -31,7 +31,7 @@ public:
 	{
 	public:
 
-		virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack,const ChCpp::TextObject<wchar_t>& _text,const unsigned long _nowPos = 0) = 0;
+		virtual unsigned long Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack,const ChCpp::TextObject<wchar_t>& _text,const unsigned long _nowPos = 0) = 0;
 
 		virtual std::wstring Serialize() = 0;
 
@@ -55,7 +55,7 @@ public:
 
 public://Serialize Deserialize\\
 
-	virtual void Deserialize(ID3D11Device* _device, const std::wstring& _text);
+	virtual void Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _text);
 
 	virtual std::wstring Serialize();
 
@@ -105,7 +105,7 @@ protected:
 	AttackType attackType = AttackType::Sword;
 
 	//’e‚Ìƒ‚ƒfƒ‹//
-	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> bullet = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
+	ChPtr::Shared<ChCpp::ModelObject<wchar_t>> bullet = ChPtr::Make_S<ChCpp::ModelObject<wchar_t>>();
 	ChLMat defaultMat;
 
 	std::vector<ChPtr::Shared<AttackBase>> externulFunctions;
@@ -121,7 +121,7 @@ class BulletData :public Attack::AttackBase
 {
 public:
 
-	unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
+	unsigned long Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
 	std::wstring Serialize()override;
 
@@ -147,7 +147,7 @@ class BoostBulletData :public Attack::AttackBase
 {
 public:
 
-	virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
+	virtual unsigned long Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
 	virtual std::wstring Serialize()override;
 
@@ -175,7 +175,7 @@ class ExplosiveBulletData :public Attack::AttackBase
 {
 public:
 
-	virtual unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
+	virtual unsigned long Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
 	virtual std::wstring Serialize()override;
 
@@ -197,7 +197,7 @@ class  MissileData :public Attack::AttackBase
 {
 public://Serialize Deserialize\\
 		
-	unsigned long Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
+	unsigned long Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos = 0)override;
 
 	std::wstring Serialize()override;
 

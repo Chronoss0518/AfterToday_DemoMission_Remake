@@ -92,7 +92,7 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<
 	mechasNo = frame->GetMechas().size();
 }
 
-void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
+void BaseMecha::Load(const std::wstring& _fileName)
 {
 	std::wstring text = L"";
 
@@ -111,10 +111,10 @@ void BaseMecha::Load(ID3D11Device* _device, const std::wstring& _fileName)
 	GetComponentObject<CameraComponent>();
 	GetComponentObject<WeaponComponent>();
 
-	LoadPartsList(_device, jsonObject);
+	LoadPartsList(jsonObject);
 }
 
-void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
+void BaseMecha::LoadPartsList(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	if (_jsonObject == nullptr) return;
 
@@ -126,7 +126,7 @@ void BaseMecha::LoadPartsList(ID3D11Device* _device, ChPtr::Shared<ChCpp::JsonOb
 
 	if (coreObject == nullptr)return;
 
-	core = MechaParts::LoadParts(*this, _device, drawer, frame, coreObject);
+	core = MechaParts::LoadParts(*this, drawer, frame, coreObject);
 
 	if (core == nullptr)return;
 

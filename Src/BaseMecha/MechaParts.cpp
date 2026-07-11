@@ -39,15 +39,15 @@ std::map<std::wstring, std::function<ChPtr::Shared<PartsDataBase>(MechaParts&)>>
 	PARTS_DATA_CREATER(GunData),
 };
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath)
 {
 	auto&& jsonObject = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 	jsonObject->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(_partsFilePath));
 
-	return LoadParts(_base, _device, _drawer, _frame, jsonObject);
+	return LoadParts(_base, _drawer, _frame, jsonObject);
 }
 
-ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
 {
 	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
 
@@ -64,7 +64,7 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 			_parent->AddChildObject(_positionObjectType, partsObject);
 		}
 
-		(*it).second->CreateChild(partsObject, _base, _device, _drawer, _frame, _jsonObject);
+		(*it).second->CreateChild(partsObject, _base, _drawer, _frame, _jsonObject);
 
 		partsObject->CreateEnd();
 
@@ -72,7 +72,7 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 	}
 
 	auto mechaParts = ChPtr::Make_S<MechaParts>();
-	mechaParts->Load(_base, _device, *partsName);
+	mechaParts->Load(_base, _drawer, *partsName);
 
 	if (mechaParts->GetThisFileName().empty())return nullptr;
 
@@ -86,14 +86,14 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ID3D11De
 		_parent->AddChildObject(_positionObjectType, partsObject);
 	}
 
-	mechaParts->CreateChild(partsObject,_base, _device, _drawer, _frame, _jsonObject);
+	mechaParts->CreateChild(partsObject,_base, _drawer, _frame, _jsonObject);
 
 	partsObject->CreateEnd();
 
 	return partsObject;
 }
 
-void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstring& _fileName)
+void MechaParts::Load(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _fileName)
 {
 	std::wstring text = L"";
 
@@ -116,10 +116,10 @@ void MechaParts::Load(BaseMecha& _base, ID3D11Device* _device, const std::wstrin
 	{
 		SetMyName(thisFileName.substr(0, thisFileName.find(L".")));
 	}
-	Deserialize(_base, _device, text);
+	Deserialize(_base, _drawer, text);
 }
 
-void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std::wstring& _text)
+void MechaParts::Deserialize(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _text)
 {
 	ChCpp::TextObject<wchar_t> textObject;
 	textObject.SetCutChar(L"\n");
@@ -127,7 +127,7 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 
 	size_t lineCount = textObject.LineCount();
 
-	LoadModel(_device, textObject.GetTextLine(0));
+	LoadModel(_drawer, textObject.GetTextLine(0));
 
 	hardness = ChStr::GetNumFromText<unsigned long>(textObject.GetTextLine(1).c_str());
 	mass = ChStr::GetNumFromText<float>(textObject.GetTextLine(2).c_str());
@@ -140,13 +140,14 @@ void MechaParts::Deserialize(BaseMecha& _base, ID3D11Device* _device, const std:
 	}
 }
 
-void MechaParts::LoadModel(ID3D11Device* _device, const std::wstring& _fileName)
+void MechaParts::LoadModel(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _fileName)
 {
 	ChCpp::ModelController::XFile<wchar_t> loader;
 
-	model->Init(_device);
 	loader.LoadModel(_fileName);
 	loader.CreateModel(model);
+
+	_drawer->CreateFrameMesh(model);
 
 }
 
@@ -174,14 +175,14 @@ unsigned long MechaParts::CreateDatas(BaseMecha& _base, ChCpp::TextObject<wchar_
 	return linePos;
 }
 
-void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ID3D11Device* _device, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
+void MechaParts::CreateChild(ChPtr::Shared<MechaPartsObject> _partsObject, BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
 {
 	for (auto&& posData : positions)
 	{
 		auto&& jsonObject = _jsonObject->GetJsonObject(posData.first);
 		if (jsonObject == nullptr)continue;
 
-		auto&& childParts = LoadParts(_base, _device, drawer, _frame, jsonObject, posData.first,_partsObject);
+		auto&& childParts = LoadParts(_base, drawer, _frame, jsonObject, posData.first,_partsObject);
 
 	}
 	_partsObject->SetHitSize();
@@ -300,7 +301,7 @@ void MechaParts::Draw(const ChMat_11& _mat)
 	drawer->Draw(*model, _mat);
 }
 
-ChD3D11::Mesh11<wchar_t>& PartsDataBase::GetModel(MechaPartsObject& _base)
+ChCpp::ModelObject<wchar_t>& PartsDataBase::GetModel(MechaPartsObject& _base)
 {
 	return *_base.GetBaseObject()->model;
 }

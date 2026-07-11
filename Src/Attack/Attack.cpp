@@ -127,9 +127,11 @@ ChPtr::Shared<Attack> Attack::CreateAttackData(ChD3D11::Shader::BaseDrawMesh11<w
 		attack->objectName = attack->objectName.substr(0, attack->objectName.find(L"."));
 	}
 
+	if (_drawer == nullptr)return attack;
+
 	attack->SetMeshDrawer(_drawer);
 
-	attack->Deserialize(_device, text);
+	attack->Deserialize(_drawer, text);
 
 	return attack;
 
@@ -142,7 +144,7 @@ void Attack::AllRelease()
 	attackList.clear();
 }
 
-void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
+void Attack::Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _text)
 {
 	ChCpp::TextObject<wchar_t> textObject;
 
@@ -154,9 +156,9 @@ void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 
 	{
 		ChCpp::ModelController::XFile<wchar_t> loader;
-		bullet->Init(_device);
 		loader.LoadModel(textObject.GetTextLine(3));
 		loader.CreateModel(bullet);
+		_drawer->CreateFrameMesh(bullet);
 
 		if (bullet->GetMyName() == L"Root")
 		{
@@ -175,7 +177,7 @@ void Attack::Deserialize(ID3D11Device* _device, const std::wstring& _text)
 
 		auto&& bulletFunction = CreateAttackType[atkType]();
 		pos++;
-		pos = bulletFunction->Deserialize(_device, *this,textObject, pos);
+		pos = bulletFunction->Deserialize(_drawer, *this,textObject, pos);
 
 		externulFunctions.push_back(bulletFunction);
 	}
@@ -247,7 +249,7 @@ void Attack::Draw(const ChMat_11& _mat)
 	drawer->Draw(*bullet, _mat);
 }
 
-unsigned long BulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
+unsigned long BulletData::Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 	unsigned long nowPos = _nowPos;
 	firstSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(nowPos).c_str());
@@ -332,7 +334,7 @@ void BulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long BoostBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
+unsigned long BoostBulletData::Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
 	startBoostTime = ChStr::GetNumFromText<unsigned long>(_text.GetTextLine(_nowPos).c_str());
@@ -369,7 +371,7 @@ void BoostBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long ExplosiveBulletData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
+unsigned long ExplosiveBulletData::Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 
 	blastRange = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos).c_str());
@@ -399,7 +401,7 @@ void ExplosiveBulletData::UpdateBulletObject(AttackObject& _bullet)
 
 }
 
-unsigned long MissileData::Deserialize(ID3D11Device* _device, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
+unsigned long MissileData::Deserialize(ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, Attack& _attack, const ChCpp::TextObject<wchar_t>& _text, const unsigned long _nowPos)
 {
 	rotateSpeed = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos).c_str());
 	lostRange = ChStr::GetNumFromText<float>(_text.GetTextLine(_nowPos + 1).c_str());

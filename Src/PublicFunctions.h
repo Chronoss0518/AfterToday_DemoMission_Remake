@@ -1,6 +1,6 @@
 #pragma once
 
-void ReleaseMesh11(ChPtr::Shared<ChD3D11::Mesh11<wchar_t>>& _meshObject);
+void ReleaseMesh11(ChPtr::Shared<ChCpp::ModelObject<wchar_t>>& _meshObject);
 
 float HorizontalToProjection(float _x);
 

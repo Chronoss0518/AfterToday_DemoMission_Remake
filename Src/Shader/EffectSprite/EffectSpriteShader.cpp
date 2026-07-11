@@ -214,7 +214,7 @@ void EffectSpriteShader::Draw(ID3D11DeviceContext* _dc)
 
 	gsBuf.SetToGeometryShader(_dc);
 	psBuf.SetToPixelShader(_dc);
-	effectTexture->SetDrawData(_dc, BASE_TEXTURE_REGISTER);
+	effectTexture->SetDrawData(_dc, CH_BT_BASE_TEXTURE_REGISTER);
 
 	vb.SetVertexBuffer(_dc, 0);
 	_dc->Draw(effectPosList.size(), 0);

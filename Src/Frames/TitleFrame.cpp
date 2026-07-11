@@ -14,19 +14,19 @@ void TitleFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	xfileLoader.SetMaxBoneNum(100);
 	auto&& device = ChD3D11::D3D11Device();
-	msd->Init(device);
+	meshDrawer.Init(device);
+
 	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"MSD.x"));
 	xfileLoader.CreateModel(msd);
+	meshDrawer.CreateFrameMesh(msd);
 	
-	desk->Init(device);
 	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"Desk.x"));
 	xfileLoader.CreateModel(desk);
+	meshDrawer.CreateFrameMesh(desk);
 
-	room->Init(device);
 	xfileLoader.LoadModel(TITLE_MESH_DIRECTORY(L"Room.x"));
 	xfileLoader.CreateModel(room);
-
-	meshDrawer.Init(device);
+	meshDrawer.CreateFrameMesh(room);
 
 	ChMat_11 proMat,viewMat;
 	proMat.CreateProjectionMat(60.0f,GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_PROJECTION_NEAR, GAME_PROJECTION_FAR);
@@ -68,13 +68,13 @@ void TitleFrame::SetScript()
 
 void TitleFrame::DrawFunction()
 {
-	ChD3D11::Shader11().DrawStart();
+	AppIns().GetDirect3D11().DrawStart();
 
 	Draw3D();
 
 	Draw2D();
 
-	ChD3D11::Shader11().DrawEnd();
+	AppIns().GetDirect3D11().DrawEnd();
 }
 
 void TitleFrame::UpdateFunction()

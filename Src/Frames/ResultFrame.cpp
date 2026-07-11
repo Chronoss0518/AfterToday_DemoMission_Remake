@@ -48,7 +48,7 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	float color = (0xaa * 1.0f) / (0xff * 1.0f);
 
-	ChD3D11::Shader11().SetBackColor(ChVec4::FromColor(color, color, color, 1.0f));
+	AppIns().GetDirect3D11().SetBackColor(ChVec4::FromColor(color, color, color, 1.0f));
 
 	resultData = ChPtr::SharedSafeCast<ResultStructure>(_sendData);
 
@@ -150,7 +150,7 @@ void ResultFrame::DrawFunction()
 {
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
-	ChD3D11::Shader11().DrawStart();
+	AppIns().GetDirect3D11().DrawStart();
 
 	spriteShader.DrawStart(dc);
 
@@ -178,7 +178,7 @@ void ResultFrame::DrawFunction()
 
 	spriteShader.DrawEnd();
 
-	ChD3D11::Shader11().DrawEnd();
+	AppIns().GetDirect3D11().DrawEnd();
 }
 
 void ResultFrame::CreateTextImageFromBlock(

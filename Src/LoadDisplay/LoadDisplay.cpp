@@ -508,7 +508,7 @@ bool LoadDisplay::LoadFile(size_t _openNumber)
 	loadMecha->mecha->SetPosition(ChVec3(0.0f));
 	loadMecha->mecha->SetRotation(ChVec3(0.0f));
 
-	loadMecha->mecha->LoadPartsList(device, assembleMechaFrame);
+	loadMecha->mecha->LoadPartsList(assembleMechaFrame);
 
 	loadMecha->mechaTexture.CreateRenderTarget(device, static_cast<unsigned long>(GAME_WINDOW_WIDTH), static_cast<unsigned long>(GAME_WINDOW_HEIGHT));
 	loadMecha->mechaTexture.SetBackColor(dc, backColor);

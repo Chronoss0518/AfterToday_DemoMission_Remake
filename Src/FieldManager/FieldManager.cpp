@@ -35,7 +35,7 @@
 #define FIELD_DIRECTORY(current_path) MESH_DIRECTORY(L"Field/" current_path)
 #define FIELD_DATA_DIRECTORY(current_path) TARGET_DIRECTORY(L"FieldData/" current_path)
 
-void FieldManager::Init(const std::basic_string<wchar_t>& _fieldFile)
+void FieldManager::Init(const std::basic_string<wchar_t>& _fieldFile, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _meshDrawer)
 {
 	Release();
 
@@ -55,7 +55,7 @@ void FieldManager::Init(const std::basic_string<wchar_t>& _fieldFile)
 
 	if (json == nullptr)return;
 
-	CreateFieldModel(json);
+	CreateFieldModel(json, _meshDrawer);
 
 	if (fieldModels.empty())return;
 
@@ -73,7 +73,7 @@ void FieldManager::Release()
 	if (!pointNames.empty())pointNames.clear();
 }
 
-void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_object)
+void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_object, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _meshDrawer)
 {
 	auto fieldList = _object->GetJsonArray(FIELD_MODEL_LIST_PARAM);
 
@@ -92,7 +92,7 @@ void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_ob
 	ChPtr::Shared<ChCpp::JsonBoolean<wchar_t>>hitFlg = nullptr;
 	ChLMat baseMat;
 
-	ChPtr::Shared<ChD3D11::Mesh11<wchar_t>> model = nullptr;
+	ChPtr::Shared<ChCpp::ModelObject<wchar_t>> model = nullptr;
 
 	ChVec3 maxFieldSize;
 	ChVec3 minFieldSize;
@@ -102,10 +102,9 @@ void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_ob
 		model = nullptr;
 		auto modelName = fieldModel->GetJsonString(FIELD_MODEL_NAME_PARAM);
 		if (modelName == nullptr)continue;
-		model = CreateModel(modelName->GetString());
+		model = CreateModel(modelName->GetString(), _meshDrawer);
 
 		if (model == nullptr)continue;
-		if (!model->IsInit())continue;
 
 		baseMat.Identity();
 
@@ -161,25 +160,25 @@ void FieldManager::CreateFieldModel(ChPtr::Shared<ChCpp::JsonObject<wchar_t>>_ob
 	PhysicsMachine::SetFieldSize(CreateVectorValues(fieldMaxSizeObject, maxFieldSize), CreateVectorValues(fieldMinSizeObject, minFieldSize));
 }
 
-ChPtr::Shared<ChD3D11::Mesh11<wchar_t>>FieldManager::CreateModel(const std::basic_string<wchar_t>& _modelName)
+ChPtr::Shared<ChCpp::ModelObject<wchar_t>>FieldManager::CreateModel(const std::basic_string<wchar_t>& _modelName, ChD3D11::Shader::BaseDrawMesh11<wchar_t>& _meshDrawer)
 {
 	auto device = AppIns().GetDirect3D11().GetDevice();
 	size_t pos = _modelName.find_last_of(L".");
 
 	if (_modelName.substr(pos) == L".x") {
-		auto res = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-		res->Init(device);
+		auto res = ChPtr::Make_S<ChCpp::ModelObject<wchar_t>>();
 		ChCpp::ModelController::XFile<wchar_t> loader;
 		loader.LoadModel(FIELD_DIRECTORY(+_modelName));
 		loader.CreateModel(res);
+		_meshDrawer.CreateFrameMesh(res);
 		return res;
 	}
 	else if (_modelName.substr(pos) == L".obj") {
-		auto res = ChPtr::Make_S<ChD3D11::Mesh11<wchar_t>>();
-		res->Init(device);
+		auto res = ChPtr::Make_S<ChCpp::ModelObject<wchar_t>>();
 		ChCpp::ModelController::ObjFile<wchar_t> loader;
 		loader.LoadModel(FIELD_DIRECTORY(+_modelName));
 		loader.CreateModel(res);
+		_meshDrawer.CreateFrameMesh(res);
 		return res;
 	}
 	else
