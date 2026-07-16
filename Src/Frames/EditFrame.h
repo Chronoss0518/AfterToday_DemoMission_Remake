@@ -10,7 +10,8 @@ class LoadDisplay;
 class EditList;
 class EditListItem;
 
-class EditControlListItem;
+class SelectPartsList;
+
 class EditControlList;
 
 class ParameterList;
@@ -20,6 +21,16 @@ class ParameterList;
 
 class EditFrame :public ChCpp::BaseFrame, public MenuBase
 {
+public:
+
+	enum class EditControlType
+	{
+		Select,
+		Change,
+		Remove,
+		Cancel
+	};
+
 private:
 
 	enum class SelectButtonType
@@ -104,11 +115,16 @@ private:
 	SelectButtonType selectType = SelectButtonType::None;
 
 	ChPtr::Shared<EditList>partsList = nullptr;
+	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
+	bool partsSelectFlg = false;
+	ChPtr::Shared<EditControlList>editControlButtons = nullptr;
+	bool openEditControlButtons = false;
+
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
 	ChPtr::Shared<ParameterList> parameterList = nullptr;
 	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
 	//変更後のパーツ//
-	ChPtr::Shared<MechaPartsObject>changeTargetParts = nullptr;
+	ChPtr::Shared<MechaPartsObject>changeTargetParentParts = nullptr;
 
 	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;
