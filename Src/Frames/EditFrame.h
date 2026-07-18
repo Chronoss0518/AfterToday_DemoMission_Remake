@@ -23,6 +23,8 @@ class EditFrame :public ChCpp::BaseFrame, public MenuBase
 {
 public:
 
+	static constexpr unsigned char EDIT_CONTROL_TYPEE_COUNT = 4;
+
 	enum class EditControlType
 	{
 		Select,
@@ -59,6 +61,9 @@ private:
 	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
 	void UpdateAction(ActionType _type)override;
+
+	void UpdatePartsListAction(ActionType _type);
+	void UpdateSelectPartsListAction(ActionType _type);
 
 	void UpdateMouse()override;
 

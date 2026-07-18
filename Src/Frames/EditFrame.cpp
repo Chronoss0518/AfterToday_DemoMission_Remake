@@ -21,10 +21,17 @@
 #define PARTS_PANEL_LIST_X 30.0f
 #define PARTS_PANEL_LIST_Y 141.0f
 
+#define EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_X 360.0f
+#define EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_Y 186.0f
+
 #define PANEL_COUNT 4
+#define EDIT_CONTROL_BUTTON_PANEL_COUNT EditFrame::EDIT_CONTROL_TYPEE_COUNT
 
 #define PANEL_SIZE_W 280.0f
 #define PANEL_SIZE_H 102.0f
+
+#define EDIT_CONTROL_BUTTON_PANEL_SIZE_W 183.0f
+#define EDIT_CONTROL_BUTTON_PANEL_SIZE_H 102.0f
 
 #define UP_BUTTON_PANEL_Y 30.0f
 #define DOWN_BUTTON_PANEL_Y 558.0f
@@ -119,22 +126,8 @@ public:
 		SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
 		SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
 		SetAlighSize(0.0f, PANEL_SIZE_H);
-		CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
-		CreateSelectImage(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
-	}
-
-public:
-
-	void CreateSelectImage(const std::wstring& _fileName, ID3D11Device* _device)
-	{
-		if (_fileName.empty())return;
-		selectImage.CreateTexture(_fileName, _device);
-	}
-
-	void CreatePanelBackGround(const std::wstring& _fileName,ID3D11Device* _device)
-	{
-		if (_fileName.empty())return;
-		background.CreateTexture(_fileName, _device);
+		background.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
+		selectImage.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
 	}
 
 public:
@@ -208,22 +201,8 @@ public:
 		SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
 		SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
 		SetAlighSize(0.0f, PANEL_SIZE_H);
-		CreatePanelBackGround(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
-		CreateSelectImage(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
-	}
-
-public:
-
-	void CreateSelectImage(const std::wstring& _fileName, ID3D11Device* _device)
-	{
-		if (_fileName.empty())return;
-		selectImage.CreateTexture(_fileName, _device);
-	}
-
-	void CreatePanelBackGround(const std::wstring& _fileName, ID3D11Device* _device)
-	{
-		if (_fileName.empty())return;
-		background.CreateTexture(_fileName, _device);
+		background.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
+		selectImage.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
 	}
 
 public:
@@ -287,22 +266,18 @@ public:
 
 	void Init()override
 	{
+		auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 		sprite.Init();
 		SelectListBase::Init();
-	}
 
-public:
-
-	void CreateSelectImage(const std::wstring& _fileName, ID3D11Device* _device)
-	{
-		if (_fileName.empty())return;
-		selectImage.CreateTexture(_fileName, _device);
-	}
-
-	void CreatePanelBackGround(const std::wstring& _fileName, ID3D11Device* _device)
-	{
-		if (_fileName.empty())return;
-		background.CreateTexture(_fileName, _device);
+		SetDrawCount(EDIT_CONTROL_BUTTON_PANEL_COUNT);
+		SetMoveDiraction(MoveDiraction::Vertical);
+		SetPanelSize(ChVec2::FromSize(EDIT_CONTROL_BUTTON_PANEL_SIZE_W, EDIT_CONTROL_BUTTON_PANEL_SIZE_H));
+		SetStartPosition(EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_X, EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_Y);
+		SetAlighSize(0.0f, EDIT_CONTROL_BUTTON_PANEL_SIZE_H);
+		background.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
+		selectImage.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
 	}
 
 public:
@@ -397,8 +372,50 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	selectPartsList = ChPtr::Make_S<SelectPartsList>();
 	selectPartsList->Init();
 
+	{
+		auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
 
-	
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
+
+		selectPartsList->AddItem(panel);
+	}
+
+#if false
+
+	editControlButtons = ChPtr::Make_S<EditControlList>();
+	editControlButtons->Init();
+
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Select");
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
+
+		editControlButtons->AddItem(panel);
+	}
+
+#endif
+
 	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
 		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, UP_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, UP_BUTTON_PANEL_Y + PANEL_SIZE_H)));
@@ -558,11 +575,18 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	parameterList->Update(_type);
 
-	partsList->UpdateAction(_type);
-	selectPartsList->UpdateAction(_type);
-
+	partsSelectFlg ? 
+		selectPartsList->UpdateAction(_type):
+		partsList->UpdateAction(_type);
+	
 	if (_type == ActionType::Cancel)
 	{
+		if (partsSelectFlg)
+		{
+			partsSelectFlg = false;
+			return;
+		}
+
 		if (selectStack.empty())
 		{
 			if (sendData == nullptr)
@@ -601,42 +625,71 @@ void EditFrame::UpdateAction(ActionType _type)
 			return;
 		}
 
-		auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
-		
-		if (partsPanel == nullptr)
-		{
-			auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
-			
-			if (panel->partsPosName == L"")
-			{
-				AddActionType(ActionType::Cancel);
-
-				return;
-			}
-
-			
-
-			return;
-		}
-
-		if (partsPanel->targetParts == nullptr)
-		{
-			//AddActionType(ActionType::Cancel);
-
-			return;
-		}
-
-		partsList->SetDrawPosition(0);
-		selectStack.push_back(selectParts);
-		selectParts = nullptr;
-		selectParts = partsPanel->targetParts;
-
-		parameterList->SetBaseParts(device, selectParts);
-
-		partsList->ClearItem();
-		SetPartsList(selectParts.get());
+		partsSelectFlg ?
+			UpdateSelectPartsListAction(_type):
+			UpdatePartsListAction(_type);
 
 	}
+
+}
+
+void EditFrame::UpdatePartsListAction(ActionType _type)
+{
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<SelectPartsListItem>(selectPartsList->GetSelectItem(selectPartsList->GetNowSelect()));
+
+	if (partsPanel != nullptr)return;
+	if (partsPanel->partsPath == L"")
+	{
+		partsSelectFlg = false;
+		selectPartsList->SetDrawPosition(0);
+		return;
+	}
+
+	parameterList->SetBaseParts(device, selectParts);
+
+
+}
+
+void EditFrame::UpdateSelectPartsListAction(ActionType _type)
+{
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+	if (partsPanel == nullptr)
+	{
+		auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+		if (panel->partsPosName == L"")
+		{
+			AddActionType(ActionType::Cancel);
+
+			return;
+		}
+
+		partsSelectFlg = true;
+
+		return;
+	}
+
+	if (partsPanel->targetParts == nullptr)
+	{
+		//AddActionType(ActionType::Cancel);
+
+		return;
+	}
+
+	partsList->SetDrawPosition(0);
+	selectStack.push_back(selectParts);
+	selectParts = nullptr;
+	selectParts = partsPanel->targetParts;
+
+	parameterList->SetBaseParts(device, selectParts);
+
+	partsList->ClearItem();
+	SetPartsList(selectParts.get());
 
 }
 
@@ -665,10 +718,11 @@ void EditFrame::UpdateMouse()
 	}
 
 	selectType = SelectButtonType::None;
-	
-	partsSelectFlg ? 
-		selectPartsList->UpdateMouse() : 
+
+	partsSelectFlg ?
+		selectPartsList->UpdateMouse() :
 		partsList->UpdateMouse();
+
 }
 
 void EditFrame::UpdateNowLoadingRect()
@@ -766,9 +820,11 @@ void EditFrame::DrawEndLoading()
 
 	spriteShader.Draw(leftPanelBackGround, backgroundSprite);
 
-	partsSelectFlg ? 
-		selectPartsList->Draw(spriteShader):
+	partsSelectFlg ?
+		selectPartsList->Draw(spriteShader) :
 		partsList->Draw(spriteShader);
+
+	//editControlButtons->Draw(spriteShader);
 
 	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
@@ -831,15 +887,6 @@ void EditFrame::Load()
 bool EditFrame::LoadPart()
 {
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-	{
-		auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
-
-		selectPartsList->AddItem(panel);
-
-	}
 
 	if (pathList.size() <= loadCount)return true;
 
