@@ -23,8 +23,6 @@ class EditFrame :public ChCpp::BaseFrame, public MenuBase
 {
 public:
 
-	static constexpr unsigned char EDIT_CONTROL_TYPEE_COUNT = 4;
-
 	enum class EditControlType
 	{
 		Select,
@@ -54,20 +52,53 @@ private:
 
 	void InitNowLoadingRect();
 
+private:
+
+	void CreateEditControlButtonUseSelectItems();
+
+	void CreateEditControlButtonUnUseSelectItems();
+
+private:
+
 	void SetPartsList(MechaPartsObject* _parts);
 
 	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
 	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
-	void UpdateAction(ActionType _type)override;
+private:
 
-	void UpdatePartsListAction(ActionType _type);
-	void UpdateSelectPartsListAction(ActionType _type);
+	void UpdateAction(ActionType _type)override;
 
 	void UpdateMouse()override;
 
 	void UpdateNowLoadingRect();
+
+private:
+
+	void UpdatePartsListAction(ActionType _type);
+
+	void RefreshPartsList();
+
+private:
+
+	void OpenPartsSelectList();
+
+	void UpdateSelectPartsListAction(ActionType _type);
+
+	void UpdateSelectPartsSetter();
+
+private:
+
+	void UpdateButtonSelect();
+
+	void UpdateButtonChange();
+
+	void UpdateButtonRemove();
+
+	void UpdateButtonCancel();
+
+private:
 
 	void DrawFunction();
 
@@ -123,13 +154,16 @@ private:
 	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
 	bool partsSelectFlg = false;
 	ChPtr::Shared<EditControlList>editControlButtons = nullptr;
-	bool openEditControlButtons = false;
+	bool useSelectButtonFlg = false;
 
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
+	ChPtr::Shared<MechaPartsObject>tmpSelectParts = nullptr;
 	ChPtr::Shared<ParameterList> parameterList = nullptr;
-	std::vector<ChPtr::Shared<MechaPartsObject>>selectStack;
 	//変更後のパーツ//
-	ChPtr::Shared<MechaPartsObject>changeTargetParentParts = nullptr;
+	ChPtr::Shared<MechaPartsObject>nowChangeTargetPartsParent = nullptr;
+	std::wstring nowChangeTargetPartsName = L"";
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>>beforePartsJson = nullptr;
+	std::wstring changePartsPosName = L"";
 
 	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;

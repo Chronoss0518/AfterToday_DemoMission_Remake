@@ -25,7 +25,8 @@
 #define EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_Y 186.0f
 
 #define PANEL_COUNT 4
-#define EDIT_CONTROL_BUTTON_PANEL_COUNT EditFrame::EDIT_CONTROL_TYPEE_COUNT
+#define EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT 4
+#define EDIT_CONTROL_BUTTON_UN_USE_SELECT_PANEL_COUNT 3
 
 #define PANEL_SIZE_W 280.0f
 #define PANEL_SIZE_H 102.0f
@@ -271,7 +272,6 @@ public:
 		sprite.Init();
 		SelectListBase::Init();
 
-		SetDrawCount(EDIT_CONTROL_BUTTON_PANEL_COUNT);
 		SetMoveDiraction(MoveDiraction::Vertical);
 		SetPanelSize(ChVec2::FromSize(EDIT_CONTROL_BUTTON_PANEL_SIZE_W, EDIT_CONTROL_BUTTON_PANEL_SIZE_H));
 		SetStartPosition(EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_X, EDIT_CONTROL_BUTTON_PARTS_PANEL_LIST_Y);
@@ -380,45 +380,8 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		selectPartsList->AddItem(panel);
 	}
 
-#if true
-
 	editControlButtons = ChPtr::Make_S<EditControlList>();
 	editControlButtons->Init();
-
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Select");
-		panel->type = EditControlType::Select;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
-		panel->type = EditControlType::Change;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
-		panel->type = EditControlType::Remove;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
-		panel->type = EditControlType::Cancel;
-
-		editControlButtons->AddItem(panel);
-	}
-
-#endif
 
 	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
@@ -454,18 +417,15 @@ void EditFrame::Update()
 	{
 		MenuBase::UpdateFunction();
 
+		editMecha->DestroyCoreTest();
+
 		auto&& rotate = editMecha->GetRotation();
 
 		rotate += ChVec3(0.0f, MECHA_ROTATION_SPEED, 0.0f);
 
 		editMecha->SetRotation(rotate);
 
-		auto&& keyInput = AppIns().GetKeyInput();
-		if (keyInput.IsPushKeyNoHold('C'))
-		{
-			//editMecha->RemoveCore();
-
-		}
+		UpdateSelectPartsSetter();
 	}
 
 	UpdateNowLoadingRect();
@@ -499,8 +459,88 @@ void EditFrame::InitNowLoadingRect()
 	upFlg = true;
 }
 
+void EditFrame::CreateEditControlButtonUseSelectItems()
+{
+	if(editControlButtons->GetCount() == EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT)return ;
+
+	editControlButtons->ClearItem();
+	editControlButtons->SetDrawCount(EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT);
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Select");
+		panel->type = EditControlType::Select;
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
+		panel->type = EditControlType::Change;
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
+		panel->type = EditControlType::Remove;
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
+		panel->type = EditControlType::Cancel;
+
+		editControlButtons->AddItem(panel);
+	}
+
+	useSelectButtonFlg = true;
+
+}
+
+void EditFrame::CreateEditControlButtonUnUseSelectItems()
+{
+	if (editControlButtons->GetCount() == EDIT_CONTROL_BUTTON_UN_USE_SELECT_PANEL_COUNT)return;
+
+	editControlButtons->ClearItem();
+	editControlButtons->SetDrawCount(EDIT_CONTROL_BUTTON_UN_USE_SELECT_PANEL_COUNT);
+
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
+		panel->type = EditControlType::Change;
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
+		panel->type = EditControlType::Remove;
+
+		editControlButtons->AddItem(panel);
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
+		panel->type = EditControlType::Cancel;
+
+		editControlButtons->AddItem(panel);
+	}
+
+	useSelectButtonFlg = false;
+}
+
 void EditFrame::SetPartsList(MechaPartsObject* _parts)
 {
+	partsList->ClearItem();
+
 	{
 		auto&& panel = ChPtr::Make_S<EditListItem>();
 
@@ -513,9 +553,8 @@ void EditFrame::SetPartsList(MechaPartsObject* _parts)
 	{
 
 		auto&& panel = ChPtr::Make_S<EditListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"+ Core");
-		panel->partsPosName = L"Core";
+		panel->positionNameTexture = CreatePanelTitleTexture(L"+ " LOAD_JSON_CORE_PARAM_NAME);
+		panel->partsPosName = LOAD_JSON_CORE_PARAM_NAME;
 
 		partsList->AddItem(panel);
 		return;
@@ -528,6 +567,8 @@ void EditFrame::SetPartsList(MechaPartsObject* _parts)
 	selectPartsPanel->positionNameTexture = CreatePanelPosTitleTexture(L"Select Parts");
 
 	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
+
+	selectPartsPanel->partsPosName = _parts->GetPartsPosName();
 
 	partsList->AddItem(selectPartsPanel);
 
@@ -568,6 +609,7 @@ void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shar
 
 	res->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 
+	res->partsPosName = _positionName;
 	res->targetParts = _parts;
 
 	_res = res;
@@ -579,19 +621,32 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	parameterList->Update(_type);
 
-	partsSelectFlg ? 
-		selectPartsList->UpdateAction(_type):
-		partsList->UpdateAction(_type);
-	
+	if (editControlButtons->GetCount() <= 0)
+	{
+		partsSelectFlg ?
+			selectPartsList->UpdateAction(_type) :
+			partsList->UpdateAction(_type);
+	}
+	else
+	{
+		editControlButtons->UpdateAction(_type);
+	}
+
 	if (_type == ActionType::Cancel)
 	{
 		if (partsSelectFlg)
 		{
+			selectPartsList->SetNowSelect(0);
+			selectPartsList->SetDrawPosition(0);
+
+			UpdateSelectPartsSetter();
+
+			RefreshPartsList();
 			partsSelectFlg = false;
 			return;
 		}
 
-		if (selectStack.empty())
+		if (selectParts == nullptr)
 		{
 			if (sendData == nullptr)
 			{
@@ -605,96 +660,64 @@ void EditFrame::UpdateAction(ActionType _type)
 			return;
 		}
 
-		partsList->SetDrawPosition(0);
-		selectParts = selectStack[selectStack.size() - 1];
-		selectStack.pop_back();
+		if (selectParts->GetParent() == nullptr)
+		{
+			if (sendData == nullptr)
+			{
+				ChangeFrame(ChStd::EnumCast(FrameNo::Select));
+			}
+			else
+			{
+				SendData(sendData);
+				ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
+			}
+			return;
+		}
 
-		parameterList->SetBaseParts(device,selectParts);
+		UpdateButtonRemove();
 
-		partsList->ClearItem();
-		SetPartsList(selectParts.get());
 	}
 
-	if (_type == ActionType::Decision)
+	if (_type != ActionType::Decision)return;
+
+	if (selectType == SelectButtonType::Up)
 	{
-		if (selectType == SelectButtonType::Up)
-		{
-			AddActionType(ActionType::Up);
-			return;
-		}
+		AddActionType(ActionType::Up);
+		return;
+	}
 
-		if (selectType == SelectButtonType::Down)
-		{
-			AddActionType(ActionType::Down);
-			return;
-		}
+	if (selectType == SelectButtonType::Down)
+	{
+		AddActionType(ActionType::Down);
+		return;
+	}
 
+	if (editControlButtons->GetCount() <= 0)
+	{
 		partsSelectFlg ?
-			UpdateSelectPartsListAction(_type):
+			UpdateSelectPartsListAction(_type) :
 			UpdatePartsListAction(_type);
 
-	}
-
-}
-
-void EditFrame::UpdateSelectPartsListAction(ActionType _type)
-{
-	auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-	auto&& partsPanel = ChPtr::SharedSafeCast<SelectPartsListItem>(selectPartsList->GetSelectItem(selectPartsList->GetNowSelect()));
-
-	if (partsPanel == nullptr)return;
-
-	if (partsPanel->partsPath == L"")
-	{
-		partsSelectFlg = false;
-		selectPartsList->SetDrawPosition(0);
 		return;
 	}
 
-	parameterList->SetBaseParts(device, selectParts);
+	auto buttonItem = ChPtr::SharedSafeCast<EditControlListItem>(editControlButtons->GetSelectItem(editControlButtons->GetNowSelect()));
 
+	if (buttonItem->type == EditControlType::Select)
+		UpdateButtonSelect();
 
-}
+	if (buttonItem->type == EditControlType::Change)
+		UpdateButtonChange();
 
-void EditFrame::UpdatePartsListAction(ActionType _type)
-{
-	auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
-
-	if (partsPanel == nullptr)
+	if (buttonItem->type == EditControlType::Remove)
 	{
-		auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
-
-		if (panel->partsPosName == L"")
-		{
-			AddActionType(ActionType::Cancel);
-
-			return;
-		}
-
-		partsSelectFlg = true;
-
-		return;
+		if(selectParts != nullptr)selectParts->Destroy();
+		selectParts = nullptr;
+		UpdateButtonRemove();
 	}
 
-	if (partsPanel->targetParts == nullptr)
-	{
-		//AddActionType(ActionType::Cancel);
-
-		return;
-	}
-
-	partsList->SetDrawPosition(0);
-	selectStack.push_back(selectParts);
-	selectParts = nullptr;
-	selectParts = partsPanel->targetParts;
-
-	parameterList->SetBaseParts(device, selectParts);
-
-	partsList->ClearItem();
-	SetPartsList(selectParts.get());
+	if (buttonItem->type == EditControlType::Cancel)
+		UpdateButtonCancel();
 
 }
 
@@ -722,9 +745,16 @@ void EditFrame::UpdateMouse()
 		return;
 	}
 
-	partsSelectFlg ?
-		selectPartsList->UpdateMouse() :
-		partsList->UpdateMouse();
+	if (editControlButtons->GetCount() <= 0)
+	{
+		partsSelectFlg ?
+			selectPartsList->UpdateMouse() :
+			partsList->UpdateMouse();
+	}
+	else
+	{
+		editControlButtons->UpdateMouse();
+	}
 
 	selectType = SelectButtonType::None;
 
@@ -753,6 +783,203 @@ void EditFrame::UpdateNowLoadingRect()
 		if (nowLoadingPosRect.left <= 1.0f)return;
 		InitNowLoadingRect();
 	}
+}
+
+void EditFrame::UpdatePartsListAction(ActionType _type)
+{
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+	if (partsPanel == nullptr)
+	{
+		auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+		if (panel->partsPosName == L"")
+		{
+			AddActionType(ActionType::Cancel);
+
+			return;
+		}
+
+		OpenPartsSelectList();
+
+		useSelectButtonFlg = true;
+
+		return;
+	}
+
+	if (partsPanel->targetParts == nullptr)
+	{
+		//AddActionType(ActionType::Cancel);
+		CreateEditControlButtonUnUseSelectItems();
+		return;
+	}
+
+	CreateEditControlButtonUseSelectItems();
+
+}
+
+void EditFrame::RefreshPartsList()
+{
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	partsList->SetDrawPosition(0);
+
+	partsList->ClearItem();
+	SetPartsList(selectParts.get());
+
+	parameterList->SetBaseParts(device, selectParts);
+
+}
+
+void EditFrame::OpenPartsSelectList()
+{
+	if (selectParts != nullptr)
+	{
+		beforePartsJson = selectParts->Serialize();
+		changePartsPosName = selectParts->GetPartsPosName();
+		if (changePartsPosName == LOAD_JSON_CORE_PARAM_NAME)changePartsPosName = L"";
+
+		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+	}
+
+	partsSelectFlg = true;
+
+}
+
+void EditFrame::UpdateSelectPartsListAction(ActionType _type)
+{
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<SelectPartsListItem>(selectPartsList->GetSelectItem(selectPartsList->GetNowSelect()));
+
+	if (partsPanel == nullptr)return;
+
+	UpdateSelectPartsSetter();
+
+	if (!useSelectButtonFlg)
+	{
+		selectParts = tmpSelectParts;
+	}
+
+	tmpSelectParts = nullptr;
+
+	RefreshPartsList();
+
+	partsSelectFlg = false;
+
+	if (partsPanel->partsPath == L"")
+	{
+		selectPartsList->SetDrawPosition(0);
+		return;
+	}
+
+	parameterList->SetNextParts(device, selectParts);
+
+
+}
+
+void EditFrame::UpdateSelectPartsSetter()
+{
+	if (!partsSelectFlg)return;
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<SelectPartsListItem>(selectPartsList->GetSelectItem(selectPartsList->GetNowSelect()));
+
+	if (partsPanel == nullptr)return;
+
+	if (partsPanel->partsPath == nowChangeTargetPartsName)return;
+	nowChangeTargetPartsName = partsPanel->partsPath;
+
+	if (nowChangeTargetPartsParent != nullptr)
+	{
+		nowChangeTargetPartsParent->RemoveChildObject(changePartsPosName);
+
+		if (nowChangeTargetPartsName != L"")
+			tmpSelectParts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, nowChangeTargetPartsName, changePartsPosName, nowChangeTargetPartsParent);
+		else
+			tmpSelectParts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, beforePartsJson, changePartsPosName, nowChangeTargetPartsParent);
+
+		if (useSelectButtonFlg)
+			selectParts = tmpSelectParts;
+
+		parameterList->RefreshMechaParameter(editMecha);
+		return;
+	}
+
+	editMecha->RemoveCore();
+
+	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> json = nullptr;
+
+	if (nowChangeTargetPartsName != L"")
+		json = BaseMecha::CreateBaseMechaData(nowChangeTargetPartsName);
+	else
+		json = BaseMecha::CreateBaseMechaCoreData(beforePartsJson);
+
+	editMecha->LoadCore(json);
+
+	parameterList->RefreshMechaParameter(editMecha);
+
+
+}
+
+void EditFrame::UpdateButtonSelect()
+{
+	UpdateButtonCancel();
+
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+	if (partsPanel == nullptr)return;
+
+	partsList->SetDrawPosition(0);
+	selectParts = partsPanel->targetParts;
+
+	parameterList->SetBaseParts(device, selectParts);
+
+	partsList->ClearItem();
+	SetPartsList(selectParts.get());
+}
+
+void EditFrame::UpdateButtonChange()
+{
+	OpenPartsSelectList();
+	UpdateButtonCancel();
+}
+
+void EditFrame::UpdateButtonRemove()
+{
+	UpdateButtonCancel();
+
+	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
+	partsList->SetDrawPosition(0);
+	
+	if (selectParts == nullptr)
+	{
+		SetPartsList(nullptr);
+		return;
+	}
+
+	if (selectParts->GetParent() == nullptr)
+	{
+		SetPartsList(selectParts.get());
+		return;
+	}
+
+	selectParts = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+
+	parameterList->SetBaseParts(device, selectParts);
+
+	partsList->ClearItem();
+	SetPartsList(selectParts == nullptr ? nullptr : selectParts.get());
+}
+
+void EditFrame::UpdateButtonCancel()
+{
+	editControlButtons->ClearItem();
+	editControlButtons->SetDrawCount(0);
 }
 
 void EditFrame::DrawFunction()
@@ -829,7 +1056,8 @@ void EditFrame::DrawEndLoading()
 		selectPartsList->Draw(spriteShader) :
 		partsList->Draw(spriteShader);
 
-	editControlButtons->Draw(spriteShader);
+	if (editControlButtons->GetCount() > 0)
+		editControlButtons->Draw(spriteShader);
 
 	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
