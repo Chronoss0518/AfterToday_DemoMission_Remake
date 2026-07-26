@@ -43,24 +43,9 @@ public:
 
 public:
 
-	inline void RemoveChildObject(const std::wstring& _objectType)
-	{
-		auto findObject = positions.find(_objectType);
-		if (findObject == positions.end())return;
-		
-		findObject->second->baseParts->RemoveParameter(*mecha);
-
-		for (auto&& child : findObject->second->positions)
-		{
-			child.second->RemoveChildObject(child.first);
-		}
-
-		positions.erase(findObject);
-	}
+	void RemoveChildObject(const std::wstring& _objectType);
 
 public:
-
-	void SetPartsPosData(unsigned char _names, size_t _no) { partsPosName = _names; partsPosNo = _no; }
 
 	void SetFrame(GameFrame* _frame) { frame = _frame; }
 
@@ -115,11 +100,9 @@ public:
 		return &collider;
 	}
 
+	std::wstring GetPartsPosName() { return partsPosName; }
+
 	float GetDurableValue() { return durableValue; }
-
-	unsigned char GetPartsPosName() { return partsPosName; }
-
-	size_t GetPartsPosNo() { return partsPosNo; }
 
 	float GetDamage(ChCpp::SphereCollider& _sphereCollider, AttackObject& _bullet);
 
@@ -204,8 +187,7 @@ private:
 	//パーツの耐久地//
 	float durableValue = 100.0f;
 
-	unsigned char partsPosName = -1;
-	size_t partsPosNo = 0;
+	std::wstring partsPosName = L"";
 
 	size_t lookAnchorNo = -1;
 

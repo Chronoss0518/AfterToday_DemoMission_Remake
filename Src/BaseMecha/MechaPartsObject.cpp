@@ -46,6 +46,8 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 
 	SetChild(_childObject);
 
+	_childObject->partsPosName = _objectType;
+
 	ChVec3 pos = ChVec3();
 
 	ChLMat lmat = position->positionObject->GetDrawLHandMatrix();
@@ -77,7 +79,21 @@ void MechaPartsObject::AddChildObject(const std::wstring& _objectType, ChPtr::Sh
 	}
 
 	tmpObject->second = _childObject;
+}
 
+void MechaPartsObject::RemoveChildObject(const std::wstring& _objectType)
+{
+	auto findObject = positions.find(_objectType);
+	if (findObject == positions.end())return;
+
+	findObject->second->baseParts->RemoveParameter(*mecha);
+
+	for (auto&& child : findObject->second->positions)
+	{
+		child.second->RemoveChildObject(child.first);
+	}
+	findObject->second->Destroy();
+	positions.erase(findObject);
 }
 
 ChPtr::Shared<ChCpp::JsonObject<wchar_t>> MechaPartsObject::Serialize()
