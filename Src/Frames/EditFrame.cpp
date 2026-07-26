@@ -802,9 +802,10 @@ void EditFrame::UpdatePartsListAction(ActionType _type)
 			return;
 		}
 
+		useSelectButtonFlg = true;
+
 		OpenPartsSelectList();
 
-		useSelectButtonFlg = true;
 
 		return;
 	}
@@ -835,14 +836,30 @@ void EditFrame::RefreshPartsList()
 
 void EditFrame::OpenPartsSelectList()
 {
-	if (selectParts != nullptr)
-	{
-		beforePartsJson = selectParts->Serialize();
-		changePartsPosName = selectParts->GetPartsPosName();
-		if (changePartsPosName == LOAD_JSON_CORE_PARAM_NAME)changePartsPosName = L"";
+	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
 
-		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+	if (partsPanel == nullptr)
+	{
+		auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+		changePartsPosName = panel->partsPosName;
+
+		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(!useSelectButtonFlg ? selectParts->GetParent() : selectParts);
+
+		beforePartsJson = selectParts != nullptr ? selectParts->Serialize() : ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 	}
+	else
+	{
+
+		changePartsPosName = partsPanel->partsPosName;
+		
+		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+
+		beforePartsJson = selectParts->Serialize();
+	}
+
+
+	if (changePartsPosName == LOAD_JSON_CORE_PARAM_NAME)changePartsPosName = L"";
 
 	partsSelectFlg = true;
 
@@ -899,9 +916,6 @@ void EditFrame::UpdateSelectPartsSetter()
 			tmpSelectParts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, nowChangeTargetPartsName, changePartsPosName, nowChangeTargetPartsParent);
 		else
 			tmpSelectParts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, beforePartsJson, changePartsPosName, nowChangeTargetPartsParent);
-
-		if (useSelectButtonFlg)
-			selectParts = tmpSelectParts;
 
 		parameterList->RefreshMechaParameter(editMecha);
 		return;
