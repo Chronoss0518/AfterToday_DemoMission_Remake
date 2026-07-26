@@ -1,6 +1,10 @@
 #ifndef _BaseRobot
 #define _BaseRobot
 
+#ifndef LOAD_JSON_CORE_PARAM_NAME
+#define LOAD_JSON_CORE_PARAM_NAME L"Core"
+#endif
+
 class GameFrame;
 class MechaPartsObject;
 class WeaponObject;
@@ -71,6 +75,16 @@ public://Override Functions//
 
 	void DrawEnd()override;
 
+public:
+
+	static ChPtr::Shared<ChCpp::JsonObject<wchar_t>>CreateBaseMechaData(const std::wstring& _partsPath);
+
+	static ChPtr::Shared<ChCpp::JsonObject<wchar_t>>CreateBaseMechaData(const std::wstring& _partsPath, const std::wstring& _name);
+
+	static ChPtr::Shared<ChCpp::JsonObject<wchar_t>>CreateBaseMechaCoreData(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _partsData);
+
+	static ChPtr::Shared<ChCpp::JsonObject<wchar_t>>CreateBaseMechaCoreData(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _partsData, const std::wstring& _name);
+
 private:
 
 	void BaseMove();
@@ -87,9 +101,17 @@ public://Create Function//
 
 public:
 
+	void DestroyCoreTest();
+
+	void RemoveCore();
+
+public:
+
 	void Load(const std::wstring& _fileName);
 
 	void LoadPartsList(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
+
+	void LoadCore(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject);
 
 	void LoadEnd();
 
@@ -164,10 +186,6 @@ public://Get Function//
 private:
 
 	void AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _nowParts);
-
-public:
-
-	void RemoveCore();
 
 public:
 

@@ -35,7 +35,6 @@
 #define OBJECT_DESTROY_COUNT 2 * AppIns().GetFPS()
 
 #define JSON_MECHA_NAME L"Name"
-#define JSON_CORE L"Core"
 
 #define CREATE_SMOKE_EFFECT_TIME 3
 
@@ -92,6 +91,26 @@ void BaseMecha::Create(const ChVec2& _viewSize, ChD3D11::Shader::BaseDrawMesh11<
 	mechasNo = frame->GetMechas().size();
 }
 
+void BaseMecha::DestroyCoreTest()
+{
+	if (core == nullptr)return;
+	
+	if (core->IsDethFlg())
+	{
+		core->Destroy();
+		core = nullptr;
+		return;
+	}
+
+	core->DestroyToChildTest();
+}
+
+void BaseMecha::RemoveCore()
+{
+	if (core == nullptr)return;
+	core->Destroy();
+}
+
 void BaseMecha::Load(const std::wstring& _fileName)
 {
 	std::wstring text = L"";
@@ -122,7 +141,13 @@ void BaseMecha::LoadPartsList(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObj
 	if (jsonName != nullptr)
 		mechaName = jsonName->GetString();
 
-	auto&& coreObject = _jsonObject->GetJsonObject(JSON_CORE);
+	LoadCore(_jsonObject);
+
+}
+
+void BaseMecha::LoadCore(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject)
+{
+	auto&& coreObject = _jsonObject->GetJsonObject(LOAD_JSON_CORE_PARAM_NAME);
 
 	if (coreObject == nullptr)return;
 
@@ -134,7 +159,6 @@ void BaseMecha::LoadPartsList(ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObj
 
 	nowDurable = durable;
 	physics->SetMass(mass);
-
 }
 
 void BaseMecha::LoadEnd()
@@ -165,7 +189,7 @@ ChPtr::Shared<ChCpp::JsonObject<wchar_t>> BaseMecha::SavePartsList()
 {
 	auto&& res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
 	res->Set(JSON_MECHA_NAME, ChCpp::JsonString<wchar_t>::CreateObject(mechaName));
-	res->Set(JSON_CORE, core->Serialize());
+	res->Set(LOAD_JSON_CORE_PARAM_NAME, core->Serialize());
 
 	return res;
 }
@@ -283,6 +307,45 @@ void BaseMecha::DrawEnd()
 	CreateDamageSmoke();
 }
 
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>>BaseMecha::CreateBaseMechaData(const std::wstring& _partsPath)
+{
+	auto partsPathJson = ChPtr::Make_S<ChCpp::JsonString<wchar_t>>();
+	partsPathJson->SetString(_partsPath);
+	auto partsJson = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	partsJson->Set(JSON_PROPEATY_PARTS_NAME, partsPathJson);
+
+	auto res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	res->Set(LOAD_JSON_CORE_PARAM_NAME, partsJson);
+	return res;
+}
+
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>>BaseMecha::CreateBaseMechaData(const std::wstring& _partsPath, const std::wstring& _name)
+{
+	auto res = CreateBaseMechaData(_partsPath);
+	auto nameJson = ChPtr::Make_S<ChCpp::JsonString<wchar_t>>();
+	nameJson->SetString(_name);
+
+	res->Set(JSON_MECHA_NAME, nameJson);
+	return res;
+}
+
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>>BaseMecha::CreateBaseMechaCoreData(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _partsData)
+{
+	auto res = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	res->Set(LOAD_JSON_CORE_PARAM_NAME, _partsData);
+	return res;
+}
+
+ChPtr::Shared<ChCpp::JsonObject<wchar_t>>BaseMecha::CreateBaseMechaCoreData(const ChPtr::Shared<ChCpp::JsonObject<wchar_t>>& _partsData, const std::wstring& _name)
+{
+	auto res = CreateBaseMechaCoreData(_partsData);
+	auto nameJson = ChPtr::Make_S<ChCpp::JsonString<wchar_t>>();
+	nameJson->SetString(_name);
+
+	res->Set(JSON_MECHA_NAME, nameJson);
+	return res;
+}
+
 void BaseMecha::Deserialize(const std::wstring& _fileName)
 {
 
@@ -397,13 +460,6 @@ void BaseMecha::AddChildParameters(PartsParameters& _parameter, ChPtr::Shared<Me
 		std::wstring nextPosName = nextPos->GetConnectionName();
 		AddChildParameters(_parameter, _nowParts->GetChildParts(nextPosName));
 	}
-}
-
-void BaseMecha::RemoveCore()
-{
-	if (core == nullptr)return;
-	core->Destroy();
-	core = nullptr;
 }
 
 bool BaseMecha::IsPushFlg(InputName _name)
