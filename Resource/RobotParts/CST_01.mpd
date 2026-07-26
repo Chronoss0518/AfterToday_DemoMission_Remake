@@ -11,14 +11,6 @@ EnergyTankData:{
 10000
 10
 }
-NextPosData:{
-Armature_FootPos
-Foot
-0.0,0.0,1.0
-0.0,1.0,0.0
-0
-0.0
-}
 GunData:{
 Armature_GunBarrel_ShotPosEnd
 MainShot
