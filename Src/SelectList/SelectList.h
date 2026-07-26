@@ -28,6 +28,8 @@ public:
 
 public:
 
+	inline void SetNowSelect(size_t _no) { nowSelectPanel = _no; }
+
 	inline void SetIsControl(bool _isControl) { isControlFlg = _isControl; }
 
 	inline void SetLoopFlg(bool _flg) { loopFlg = _flg; }
