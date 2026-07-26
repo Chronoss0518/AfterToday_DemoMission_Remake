@@ -164,6 +164,9 @@ public:
 		return displays[ChStd::EnumCast(displayType)]->GetDrawPanelSize();
 	}
 
+public:
+
+	void RefreshMechaParameter(ChPtr::Shared<BaseMecha> _baseMecha);
 
 public:
 

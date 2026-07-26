@@ -250,18 +250,10 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 	baseAllParameter = ChPtr::Make_S<PartsParameters>();
 	nextAllParameter = ChPtr::Make_S<PartsParameters>();
 
-	auto&& weaponComponent = _baseMecha->GetComponentObject<WeaponComponent>();
-
-	*nextAllParameter = *baseAllParameter = *_baseMecha->GetAllParameters();
-
-	nextParameter = baseParameter = _baseMecha->GetCoreParts();
-
-	if(baseParameter != nullptr)
-		*nextPartsParameter = *basePartsParameter = *baseParameter->GetPartsParameters();
+	RefreshMechaParameter(_baseMecha);
 
 	displays[ChStd::EnumCast(DisplayType::Partial)]->Init(titleBGTexture, valueBGTexture, basePartsParameter, nextPartsParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
 	displays[ChStd::EnumCast(DisplayType::Entire)]->Init(titleBGTexture, valueBGTexture, baseAllParameter, nextAllParameter, _device, textDrawer, titleTextDrawer, valueTextDrawer);
-
 }
 
 void ParameterList::SetBaseParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject)
@@ -296,6 +288,18 @@ void ParameterList::SubParameterData(PartsParameters& _parameter, ChPtr::Shared<
 	if (_partsObject == nullptr)return;
 
 	_parameter -= *_partsObject->GetPartsParameters();
+}
+
+void ParameterList::RefreshMechaParameter(ChPtr::Shared<BaseMecha> _baseMecha)
+{
+	auto&& weaponComponent = _baseMecha->GetComponentObject<WeaponComponent>();
+
+	*nextAllParameter = *baseAllParameter = *_baseMecha->GetAllParameters();
+
+	nextParameter = baseParameter = _baseMecha->GetCoreParts();
+
+	if (baseParameter != nullptr)
+		*nextPartsParameter = *basePartsParameter = *baseParameter->GetPartsParameters();
 }
 
 bool ParameterList::Update(MenuBase::ActionType _type)
