@@ -173,8 +173,6 @@ private:
 	TextDrawerWICBitmap panelPosTitleDrawer;//パーツネームが確認できた際にPosition名を描画する
 	TextDrawerWICBitmap panelPosPartsDrawer;//パーツ名を描画する
 
-	std::vector<std::wstring>coreList;
-
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
 	bool selectFlg = false;
 
