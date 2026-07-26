@@ -93,6 +93,8 @@ public://Serialize Deserialize//
 
 	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath);
 
+	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent);
+
 	static ChPtr::Shared<MechaPartsObject> LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject,const std::wstring& _positionObjectType = L"", ChPtr::Shared<MechaPartsObject> _parent = nullptr);
 
 	void Load(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, const std::wstring& _fileName);

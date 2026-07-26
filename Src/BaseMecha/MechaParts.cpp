@@ -47,6 +47,14 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11:
 	return LoadParts(_base, _drawer, _frame, jsonObject);
 }
 
+ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, const std::wstring& _partsFilePath, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
+{
+	auto&& jsonObject = ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
+	jsonObject->Set(JSON_PROPEATY_PARTS_NAME, ChCpp::JsonString<wchar_t>::CreateObject(_partsFilePath));
+
+	return LoadParts(_base, _drawer, _frame, jsonObject, _positionObjectType, _parent);
+}
+
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
 {
 	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
