@@ -537,7 +537,7 @@ void EditFrame::CreateEditControlButtonUnUseSelectItems()
 	useSelectButtonFlg = false;
 }
 
-void EditFrame::SetPartsList(MechaPartsObject* _parts)
+void EditFrame::SetPartsList(ChPtr::Shared<MechaPartsObject> _parts)
 {
 	partsList->ClearItem();
 
@@ -549,7 +549,7 @@ void EditFrame::SetPartsList(MechaPartsObject* _parts)
 		partsList->AddItem(panel);
 	}
 
-	if (ChPtr::NullCheck(_parts))
+	if (_parts == nullptr)
 	{
 
 		auto&& panel = ChPtr::Make_S<EditListItem>();
@@ -569,6 +569,8 @@ void EditFrame::SetPartsList(MechaPartsObject* _parts)
 	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 
 	selectPartsPanel->partsPosName = _parts->GetPartsPosName();
+
+	selectPartsPanel->targetParts = _parts;
 
 	partsList->AddItem(selectPartsPanel);
 
@@ -639,10 +641,9 @@ void EditFrame::UpdateAction(ActionType _type)
 			selectPartsList->SetNowSelect(0);
 			selectPartsList->SetDrawPosition(0);
 
-			UpdateSelectPartsSetter();
-
-			RefreshPartsList();
+			UpdateSelectPartsListAction(_type);
 			partsSelectFlg = false;
+
 			return;
 		}
 
@@ -723,9 +724,7 @@ void EditFrame::UpdateAction(ActionType _type)
 
 void EditFrame::UpdateMouse()
 {
-
 	auto&& keyInput = AppIns().GetKeyInput();
-
 
 	InputTest(MenuBase::ActionType::Decision, keyInput.IsPushKeyNoHold(VK_LBUTTON));
 
@@ -828,7 +827,7 @@ void EditFrame::RefreshPartsList()
 	partsList->SetDrawPosition(0);
 
 	partsList->ClearItem();
-	SetPartsList(selectParts.get());
+	SetPartsList(selectParts);
 
 	parameterList->SetBaseParts(device, selectParts);
 
@@ -836,11 +835,13 @@ void EditFrame::RefreshPartsList()
 
 void EditFrame::OpenPartsSelectList()
 {
-	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+	auto nowSelectPanel = partsList->GetSelectItem(partsList->GetNowSelect());
+
+	auto partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(nowSelectPanel);
 
 	if (partsPanel == nullptr)
 	{
-		auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+		auto panel = ChPtr::SharedSafeCast<EditListItem>(nowSelectPanel);
 
 		changePartsPosName = panel->partsPosName;
 
@@ -853,7 +854,7 @@ void EditFrame::OpenPartsSelectList()
 
 		changePartsPosName = partsPanel->partsPosName;
 		
-		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(partsPanel->targetParts->GetParent());
 
 		beforePartsJson = selectParts->Serialize();
 	}
@@ -953,7 +954,7 @@ void EditFrame::UpdateButtonSelect()
 	parameterList->SetBaseParts(device, selectParts);
 
 	partsList->ClearItem();
-	SetPartsList(selectParts.get());
+	SetPartsList(selectParts);
 }
 
 void EditFrame::UpdateButtonChange()
@@ -969,7 +970,9 @@ void EditFrame::UpdateButtonRemove()
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	partsList->SetDrawPosition(0);
-	
+
+	auto targetParts = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+
 	if (selectParts == nullptr)
 	{
 		SetPartsList(nullptr);
@@ -978,7 +981,7 @@ void EditFrame::UpdateButtonRemove()
 
 	if (selectParts->GetParent() == nullptr)
 	{
-		SetPartsList(selectParts.get());
+		SetPartsList(selectParts);
 		return;
 	}
 
@@ -987,7 +990,7 @@ void EditFrame::UpdateButtonRemove()
 	parameterList->SetBaseParts(device, selectParts);
 
 	partsList->ClearItem();
-	SetPartsList(selectParts == nullptr ? nullptr : selectParts.get());
+	SetPartsList(selectParts);
 }
 
 void EditFrame::UpdateButtonCancel()
@@ -1164,7 +1167,7 @@ bool EditFrame::LoadPart()
 
 	parameterList->Init(device, editMecha);
 
-	SetPartsList(selectParts.get());
+	SetPartsList(selectParts);
 
 	pathList.clear();
 

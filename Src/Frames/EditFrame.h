@@ -60,7 +60,7 @@ private:
 
 private:
 
-	void SetPartsList(MechaPartsObject* _parts);
+	void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts);
 
 	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
