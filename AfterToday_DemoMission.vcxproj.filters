@@ -342,6 +342,12 @@
     <ClInclude Include="Src\PhysicsMachine\Physics_WaterPower.h">
       <Filter>PhysicsLibrary</Filter>
     </ClInclude>
+    <ClInclude Include="Src\EditFrame\PartsSelectDisplay.h">
+      <Filter>EditFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\EditFrame\PartsChangeDisplay.h">
+      <Filter>EditFrame</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -568,6 +574,12 @@
     </ClCompile>
     <ClCompile Include="Src\PhysicsMachine\Physics_WaterPower.cpp">
       <Filter>PhysicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\PartsSelectDisplay.cpp">
+      <Filter>EditFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\PartsChangeDisplay.cpp">
+      <Filter>EditFrame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

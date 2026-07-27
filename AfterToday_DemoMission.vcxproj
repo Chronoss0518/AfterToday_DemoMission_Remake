@@ -67,6 +67,8 @@
     <ClInclude Include="Src\EditFrame\ParameterDisplay.h" />
     <ClInclude Include="Src\EditFrame\ParameterList.h" />
     <ClInclude Include="Src\EditFrame\ParameterPanel.h" />
+    <ClInclude Include="Src\EditFrame\PartsChangeDisplay.h" />
+    <ClInclude Include="Src\EditFrame\PartsSelectDisplay.h" />
     <ClInclude Include="Src\EditFrame\PartsParameters.h" />
     <ClInclude Include="Src\EffectObjects\BurnEffectList\BurnEffectList.h" />
     <ClInclude Include="Src\EffectObjects\ShotEffectList\ShotEffectList.h" />
@@ -145,6 +147,8 @@
     <ClCompile Include="Src\EditFrameDrawObject\PanelObject\PanelObject.cpp" />
     <ClCompile Include="Src\EditFrame\ParameterDisplay.cpp" />
     <ClCompile Include="Src\EditFrame\ParameterList.cpp" />
+    <ClCompile Include="Src\EditFrame\PartsChangeDisplay.cpp" />
+    <ClCompile Include="Src\EditFrame\PartsSelectDisplay.cpp" />
     <ClCompile Include="Src\EditFrame\PartsParameters.cpp" />
     <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp" />
     <ClCompile Include="Src\EffectObjects\ShotEffectList\ShotEffectList.cpp" />
