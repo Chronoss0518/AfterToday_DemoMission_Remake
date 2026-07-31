@@ -1096,32 +1096,24 @@ bool EditFrame::LoadPart()
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	if (pathList.size() <= loadCount)return true;
-	//if (1000 <= loadCount)return true;
+	auto&& parts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, pathList[loadCount]);
 
-	if (pathList.size() > loadCount)
+	parts->GetBaseObject()->SetParameters(*parts);
+
 	{
 
-		auto&& parts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, pathList[loadCount]);
+		auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
 
-		parts->GetBaseObject()->SetParameters(*parts);
-
-		{
-
-			auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
-
-			panel->positionNameTexture = CreatePanelTitleTexture(parts->GetPartsName());
-			panel->partsPath = pathList[loadCount];
-			selectPartsList->AddItem(panel);
-
-		}
-
-		parts = nullptr;
+		panel->positionNameTexture = CreatePanelTitleTexture(parts->GetPartsName());
+		panel->partsPath = pathList[loadCount];
+		selectPartsList->AddItem(panel);
 
 	}
+
+	parts = nullptr;
+
 	loadCount++;
 
-
-	//if (1000 > loadCount)return false;
 	if (pathList.size() > loadCount)return false;
 
 	editMecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, nullptr);
