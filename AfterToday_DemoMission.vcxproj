@@ -86,6 +86,7 @@
     <ClInclude Include="Src\GameInMessageBox\GameInMessageBox.h" />
     <ClInclude Include="Src\GameScript\GameScript.h" />
     <ClInclude Include="Src\LoadDisplay\LoadDisplay.h" />
+    <ClInclude Include="Src\NowLoadingUpdater\NowLoadingUpdater.h" />
     <ClInclude Include="Src\PhysicsMachine\PhysicsMachine.h" />
     <ClInclude Include="Src\PhysicsMachine\Physics_AirPower.h" />
     <ClInclude Include="Src\PhysicsMachine\Physics_Gravity.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Src\GameInMessageBox\GameInMessageBox.cpp" />
     <ClCompile Include="Src\GameScript\GameScript.cpp" />
     <ClCompile Include="Src\LoadDisplay\LoadDisplay.cpp" />
+    <ClCompile Include="Src\NowLoadingUpdater\NowLoadingUpdater.cpp" />
     <ClCompile Include="Src\PhysicsMachine\PhysicsMachine.cpp" />
     <ClCompile Include="Src\PhysicsMachine\Physics_AirPower.cpp" />
     <ClCompile Include="Src\PhysicsMachine\Physics_Gravity.cpp" />

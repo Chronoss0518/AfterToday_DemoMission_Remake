@@ -94,6 +94,9 @@
     <Filter Include="OuterFiles\FieldData">
       <UniqueIdentifier>{ba862c2c-c6aa-4ab0-8d08-c5cd7785de01}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NowLoadingUpdater">
+      <UniqueIdentifier>{970c19e8-7469-4bca-8b39-d29abe1162d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\BaseIncluder.h">
@@ -348,6 +351,9 @@
     <ClInclude Include="Src\EditFrame\PartsChangeDisplay.h">
       <Filter>EditFrame</Filter>
     </ClInclude>
+    <ClInclude Include="Src\NowLoadingUpdater\NowLoadingUpdater.h">
+      <Filter>NowLoadingUpdater</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -580,6 +586,9 @@
     </ClCompile>
     <ClCompile Include="Src\EditFrame\PartsChangeDisplay.cpp">
       <Filter>EditFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\NowLoadingUpdater\NowLoadingUpdater.cpp">
+      <Filter>NowLoadingUpdater</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
