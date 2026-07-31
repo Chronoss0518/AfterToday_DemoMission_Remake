@@ -9,12 +9,14 @@
 #include"../EditFrame/ParameterList.h"
 
 #include"../LoadDisplay/LoadDisplay.h"
+#include"../NowLoadingUpdater/NowLoadingUpdater.h"
 
 #include"../SelectList/SelectList.h"
 
 #include"../Application/Application.h"
 
-#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
+#include"../EditFrame/PartsSelectDisplay.h"
+#include"../EditFrame/PartsChangeDisplay.h"
 
 #define MECHA_ROTATION_SPEED 1.0f
 
@@ -32,7 +34,7 @@
 #define PANEL_SIZE_H 102.0f
 
 #define EDIT_CONTROL_BUTTON_PANEL_SIZE_W 183.0f
-#define EDIT_CONTROL_BUTTON_PANEL_SIZE_H 102.0f
+#define EDIT_CONTROL_BUTTON_PANEL_SIZE_H 80.0f
 
 #define UP_BUTTON_PANEL_Y 30.0f
 #define DOWN_BUTTON_PANEL_Y 558.0f
@@ -339,11 +341,8 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 		meshDrawer.SetViewMatrix(mat);
 	}
 
-	nowLoadingSprite.Init();
-	nowLoadingSprite.SetInitPosition();
-	nowLoading.CreateTexture(TEXTURE_DIRECTORY(L"NowLoading.png"), device);
-	InitNowLoadingRect();
-
+	nowLoadingUpdater = ChPtr::Make_S<NowLoadingUpdater>();
+	nowLoadingUpdater->Init();
 
 	light.Init(device);
 	light.SetUseLightFlg(true);
@@ -382,6 +381,47 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	editControlButtons = ChPtr::Make_S<EditControlList>();
 	editControlButtons->Init();
+
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Select");
+		panel->type = EditControlType::Select;
+
+		editControllButtonItems[ChStd::EnumCast(panel->type)] = panel;
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
+		panel->type = EditControlType::Change;
+
+		editControllButtonItems[ChStd::EnumCast(panel->type)] = panel;
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
+		panel->type = EditControlType::Remove;
+
+		editControllButtonItems[ChStd::EnumCast(panel->type)] = panel;
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"SetWeapon");
+		panel->type = EditControlType::SetWeapon;
+
+		editControllButtonItems[ChStd::EnumCast(panel->type)] = panel;
+	}
+	{
+		auto&& panel = ChPtr::Make_S<EditControlListItem>();
+
+		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
+		panel->type = EditControlType::Cancel;
+
+		editControllButtonItems[ChStd::EnumCast(panel->type)] = panel;
+	}
 
 	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
@@ -428,7 +468,7 @@ void EditFrame::Update()
 		UpdateSelectPartsSetter();
 	}
 
-	UpdateNowLoadingRect();
+	nowLoadingUpdater->Update();
 
 	DrawFunction();
 }
@@ -449,56 +489,22 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 	_initDrawer.format = _initDrawer.drawer.CreateTextFormat(L"ÉSÉVÉbÉN",nullptr, _boldFlg ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,DWRITE_FONT_STYLE_NORMAL,DWRITE_FONT_STRETCH_NORMAL,_fontSize);
 }
 
-void EditFrame::InitNowLoadingRect()
-{
-	animationMoveSpeed = 1.0f / (NOW_LOADING_ANIMATION_MOVE_SPEED * static_cast<float>(AppIns().GetFPS()));
-	animationWaitTime = 1.0f / (NOW_LOADING_ANIMATION_WAIT_TIME * static_cast<float>(AppIns().GetFPS()));
-	nowLoadingPosRect = ChVec4::FromRect(-1.0f, 1.0f, -1.0f, -1.0f);
-	nowLoadingUVRect = ChVec4::FromRect(0.0f, 0.0f, 0.0f, 1.0f);
-	nowAnimationWaitTime = 1.0f;
-	upFlg = true;
-}
-
 void EditFrame::CreateEditControlButtonUseSelectItems()
 {
-	if(editControlButtons->GetCount() == EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT)return ;
+
+
+	if (editControlButtons->GetCount() == EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT)return;
 
 	editControlButtons->ClearItem();
 	editControlButtons->SetDrawCount(EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT);
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(EditControlType::None); i++)
 	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Select");
-		panel->type = EditControlType::Select;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
-		panel->type = EditControlType::Change;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
-		panel->type = EditControlType::Remove;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
-		panel->type = EditControlType::Cancel;
-
-		editControlButtons->AddItem(panel);
+		editControlButtons->AddItem(editControllButtonItems[i]);
 	}
 
 	useSelectButtonFlg = true;
+
 
 }
 
@@ -509,30 +515,11 @@ void EditFrame::CreateEditControlButtonUnUseSelectItems()
 	editControlButtons->ClearItem();
 	editControlButtons->SetDrawCount(EDIT_CONTROL_BUTTON_UN_USE_SELECT_PANEL_COUNT);
 
+	for (unsigned char i = 1; i < ChStd::EnumCast(EditControlType::None); i++)
 	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Change");
-		panel->type = EditControlType::Change;
-
-		editControlButtons->AddItem(panel);
+		editControlButtons->AddItem(editControllButtonItems[i]);
 	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
 
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Remove");
-		panel->type = EditControlType::Remove;
-
-		editControlButtons->AddItem(panel);
-	}
-	{
-		auto&& panel = ChPtr::Make_S<EditControlListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
-		panel->type = EditControlType::Cancel;
-
-		editControlButtons->AddItem(panel);
-	}
 
 	useSelectButtonFlg = false;
 }
@@ -757,31 +744,6 @@ void EditFrame::UpdateMouse()
 
 	selectType = SelectButtonType::None;
 
-}
-
-void EditFrame::UpdateNowLoadingRect()
-{
-	if (upFlg)
-	{
-		nowLoadingPosRect.right += animationMoveSpeed;
-		nowLoadingUVRect.right += (animationMoveSpeed * 0.5f);
-
-		if (nowLoadingPosRect.right < 1.0f)return;
-
-		upFlg = false;
-		nowLoadingPosRect.right = 1.0f;
-		nowLoadingUVRect.right = 1.0f;
-	}
-	else
-	{
-		if ((nowAnimationWaitTime -= animationWaitTime) > 0.0f)return;
-
-		nowLoadingPosRect.left += animationMoveSpeed;
-		nowLoadingUVRect.left += (animationMoveSpeed * 0.5f);
-
-		if (nowLoadingPosRect.left <= 1.0f)return;
-		InitNowLoadingRect();
-	}
 }
 
 void EditFrame::UpdatePartsListAction(ActionType _type)
@@ -1042,11 +1004,7 @@ void EditFrame::DrawNowLoading()
 {
 	if (loadEndFlg)return;
 
-	nowLoadingSprite.SetPosRect(nowLoadingPosRect);
-	nowLoadingSprite.SetUVPosRect(nowLoadingUVRect);
-
-	spriteShader.Draw(nowLoading, nowLoadingSprite);
-
+	nowLoadingUpdater->Draw(spriteShader);
 }
 
 void EditFrame::DrawEndLoading()
@@ -1078,7 +1036,6 @@ void EditFrame::DrawEndLoading()
 
 	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
-
 		spriteShader.Draw(selectButton[i].image, selectButton[i].sprite);
 
 		if (ChStd::EnumCast(selectType) == i)
@@ -1139,25 +1096,32 @@ bool EditFrame::LoadPart()
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	if (pathList.size() <= loadCount)return true;
+	//if (1000 <= loadCount)return true;
 
-	auto&& parts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, pathList[loadCount]);
-
-	parts->GetBaseObject()->SetParameters(*parts);
-
+	if (pathList.size() > loadCount)
 	{
 
-		auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
+		auto&& parts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, pathList[loadCount]);
 
-		panel->positionNameTexture = CreatePanelTitleTexture(parts->GetPartsName());
-		panel->partsPath = pathList[loadCount];
-		selectPartsList->AddItem(panel);
+		parts->GetBaseObject()->SetParameters(*parts);
+
+		{
+
+			auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
+
+			panel->positionNameTexture = CreatePanelTitleTexture(parts->GetPartsName());
+			panel->partsPath = pathList[loadCount];
+			selectPartsList->AddItem(panel);
+
+		}
+
+		parts = nullptr;
 
 	}
-
 	loadCount++;
 
-	parts = nullptr;
 
+	//if (1000 > loadCount)return false;
 	if (pathList.size() > loadCount)return false;
 
 	editMecha->Create(ChVec2(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT), meshDrawer, nullptr);

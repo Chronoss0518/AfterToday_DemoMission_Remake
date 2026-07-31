@@ -2,6 +2,10 @@
 
 #include"FromStageSelectFrameData.h"
 
+#ifndef EDIT_TEXTURE_DIRECTORY
+#define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
+#endif
+
 class BaseMecha;
 class MechaParts;
 class MechaPartsObject;
@@ -13,8 +17,11 @@ class EditListItem;
 class SelectPartsList;
 
 class EditControlList;
+class EditControlListItem;
 
 class ParameterList;
+
+class NowLoadingUpdater;
 
 
 #include"MenuBase.h"
@@ -28,7 +35,9 @@ public:
 		Select,
 		Change,
 		Remove,
-		Cancel
+		Cancel,
+		SetWeapon,
+		None
 	};
 
 private:
@@ -36,6 +45,40 @@ private:
 	enum class SelectButtonType
 	{
 		Up, Down, None
+	};
+
+public:
+
+	class EditFrameDisplayBase
+	{
+	public:
+
+		virtual void Init(EditFrame* _frame) { frame = _frame; }
+
+		virtual void Update(ActionType _type) = 0;
+
+		virtual void UpdateMouse() {};
+
+		virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader) = 0;
+
+	protected:
+
+		inline void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts) { frame->SetPartsList(_parts); }
+
+	protected:
+
+		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelTitleTexture(const std::wstring& _str) { return frame->CreatePanelTitleTexture(_str); }
+
+		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelPosTitleTexture(const std::wstring& _str) { return frame->CreatePanelPosTitleTexture(_str); }
+
+		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelPosPartsTexture(const std::wstring& _str) { return frame->CreatePanelPosPartsTexture(_str); }
+
+		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelTexture(const std::wstring& _str, TextDrawerWICBitmap& _drawer, const ChVec2& _size) { return frame->CreatePanelTexture(_str, _drawer, _size); }
+
+	private:
+
+		EditFrame* frame = nullptr;
+
 	};
 
 public:
@@ -49,8 +92,6 @@ public:
 private:
 
 	void InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _textureSize, float _fontSize,bool _boldFlg);
-
-	void InitNowLoadingRect();
 
 private:
 
@@ -68,11 +109,13 @@ private:
 
 private:
 
+	void ReturnFrame();
+
+private:
+
 	void UpdateAction(ActionType _type)override;
 
 	void UpdateMouse()override;
-
-	void UpdateNowLoadingRect();
 
 private:
 
@@ -135,14 +178,7 @@ private:
 	ChD3D11::Texture11 rightPanelBackGround, leftPanelBackGround;
 	ChD3D11::Sprite11 backgroundSprite;
 
-	ChD3D11::Sprite11 nowLoadingSprite;
-	ChD3D11::Texture11 nowLoading;
-	ChVec4 nowLoadingPosRect;
-	ChVec4 nowLoadingUVRect;
-	float animationMoveSpeed = 0.0f;
-	float animationWaitTime = 0.0f;
-	float nowAnimationWaitTime = 1.0f;
-	bool upFlg = true;
+	ChPtr::Shared<NowLoadingUpdater>nowLoadingUpdater = nullptr;
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
@@ -154,6 +190,8 @@ private:
 	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
 	bool partsSelectFlg = false;
 	ChPtr::Shared<EditControlList>editControlButtons = nullptr;
+	ChPtr::Shared<EditControlListItem>editControllButtonItems[ChStd::EnumCast(EditControlType::None)];
+
 	bool useSelectButtonFlg = false;
 
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
@@ -164,6 +202,9 @@ private:
 	std::wstring nowChangeTargetPartsName = L"";
 	ChPtr::Shared<ChCpp::JsonObject<wchar_t>>beforePartsJson = nullptr;
 	std::wstring changePartsPosName = L"";
+
+
+	bool returnFrameFlg = false;
 
 	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;
