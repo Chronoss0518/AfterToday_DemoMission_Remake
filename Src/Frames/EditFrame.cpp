@@ -60,9 +60,6 @@
 
 #define LOAD_PARTS_COUNT 1
 
-#define NOW_LOADING_ANIMATION_MOVE_SPEED 0.5f
-#define NOW_LOADING_ANIMATION_WAIT_TIME 0.2f
-
 class EditListItem : public SelectListItemBase
 {
 public:
