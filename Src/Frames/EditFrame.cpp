@@ -58,8 +58,6 @@
 
 #define TMP_CAMERA_POS ChVec3(0.0f, 2.5f, 10.0f)
 
-#define LOAD_PARTS_COUNT 1
-
 class EditListItem : public SelectListItemBase
 {
 public:
