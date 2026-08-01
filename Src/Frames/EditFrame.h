@@ -169,9 +169,6 @@ private:
 
 	ChPtr::Shared<LoadDisplay>loadDisplay = nullptr;
 
-	ChD3D11::RenderTarget11 rtView;
-	ChD3D11::DepthStencilTexture11 dsView;
-
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 	ChD3D11::Texture11 rightPanelBackGround, leftPanelBackGround;
 	ChD3D11::Sprite11 backgroundSprite;
