@@ -31,6 +31,9 @@ class ParameterList;
 
 class NowLoadingUpdater;
 
+class PartsSelectDisplay;
+class PartsChangeDisplay;
+class PartsAddWeaponPaletteDisplay;
 
 #include"MenuBase.h"
 
@@ -85,7 +88,15 @@ public:
 
 	protected:
 
+		inline bool IsNotSelectButtons() { return frame->selectType == SelectButtonType::None; }
+
+	protected:
+
 		inline void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts) { frame->SetPartsList(_parts); }
+
+		void SetBaseParts(ChPtr::Shared<MechaPartsObject> _parts);
+
+		void SetNextParts(ChPtr::Shared<MechaPartsObject> _parts);
 
 	protected:
 
@@ -115,12 +126,6 @@ private:
 
 private:
 
-	void CreateEditControlButtonUseSelectItems();
-
-	void CreateEditControlButtonUnUseSelectItems();
-
-private:
-
 	void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts);
 
 	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
@@ -135,8 +140,6 @@ private:
 
 private:
 
-	void UpdatePartsListAction(ActionType _type);
-
 	void RefreshPartsList();
 
 private:
@@ -146,16 +149,6 @@ private:
 	void UpdateSelectPartsListAction(ActionType _type);
 
 	void UpdateSelectPartsSetter();
-
-private:
-
-	void UpdateButtonSelect();
-
-	void UpdateButtonChange();
-
-	void UpdateButtonRemove();
-
-	void UpdateButtonCancel();
 
 private:
 
@@ -198,7 +191,10 @@ private:
 	ChD3D11::CB::CBLight11 light;
 
 	ImageSprite selectButton[ChStd::EnumCast(SelectButtonType::None)];
+	ChD3D11::Texture11 selectImage;
 	SelectButtonType selectType = SelectButtonType::None;
+
+	ChPtr::Shared<PartsSelectDisplay>partsSelectDisplay = nullptr;
 
 	ChPtr::Shared<EditList>partsList = nullptr;
 	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
