@@ -6,6 +6,14 @@
 #define EDIT_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"Edit/") current_path
 #endif
 
+#ifndef ACTIVE_COLOR
+#define ACTIVE_COLOR ChVec4::FromColor(1.0f,1.0f,0.0f,1.0f)
+#endif
+
+#ifndef NOT_ACTIVE_COLOR
+#define NOT_ACTIVE_COLOR ChVec4::FromColor(0.0f,1.0f,1.0f,1.0f)
+#endif
+
 class BaseMecha;
 class MechaParts;
 class MechaPartsObject;
@@ -63,12 +71,6 @@ public:
 
 	protected:
 
-		inline void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts) { frame->SetPartsList(_parts); }
-
-		inline void AddActionType(MenuBase::ActionType _type) { frame->AddActionType(_type); }
-
-	protected:
-
 		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelTitleTexture(const std::wstring& _str) { return frame->CreatePanelTitleTexture(_str); }
 
 		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelPosTitleTexture(const std::wstring& _str) { return frame->CreatePanelPosTitleTexture(_str); }
@@ -76,6 +78,22 @@ public:
 		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelPosPartsTexture(const std::wstring& _str) { return frame->CreatePanelPosPartsTexture(_str); }
 
 		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelTexture(const std::wstring& _str, TextDrawerWICBitmap& _drawer, const ChVec2& _size) { return frame->CreatePanelTexture(_str, _drawer, _size); }
+
+	protected:
+
+		inline void AddActionType(MenuBase::ActionType _type) { frame->AddActionType(_type); }
+
+	protected:
+
+		inline void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts) { frame->SetPartsList(_parts); }
+
+	protected:
+
+		inline ChPtr::Shared<BaseMecha> GetEditMecha() { return frame->editMecha; }
+
+	protected:
+
+		inline void ReturnFrame() { frame->returnFrameFlg = true; }
 
 	private:
 
@@ -159,9 +177,9 @@ private:
 
 private:
 
-	void Load();
+	void ReturnFrame();
 
-private:
+	void Load();
 
 	bool LoadPart();
 
@@ -175,8 +193,6 @@ private:
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
 	ChD3D11::Texture11 rightPanelBackGround, leftPanelBackGround;
 	ChD3D11::Sprite11 backgroundSprite;
-
-	ChPtr::Shared<NowLoadingUpdater>nowLoadingUpdater = nullptr;
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
@@ -201,8 +217,9 @@ private:
 	ChPtr::Shared<ChCpp::JsonObject<wchar_t>>beforePartsJson = nullptr;
 	std::wstring changePartsPosName = L"";
 
-
 	bool returnFrameFlg = false;
+
+	ChPtr::Shared<NowLoadingUpdater>nowLoadingUpdater = nullptr;
 
 	std::vector<std::wstring> pathList;
 	unsigned long loadCount = 0;

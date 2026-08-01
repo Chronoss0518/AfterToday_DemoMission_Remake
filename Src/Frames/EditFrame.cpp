@@ -450,6 +450,8 @@ void EditFrame::Update()
 	{
 		MenuBase::UpdateFunction();
 
+		ReturnFrame();
+
 		editMecha->DestroyCoreTest();
 
 		auto&& rotate = editMecha->GetRotation();
@@ -460,8 +462,8 @@ void EditFrame::Update()
 
 		UpdateSelectPartsSetter();
 	}
-
-	nowLoadingUpdater->Update();
+	else
+		nowLoadingUpdater->Update();
 
 	DrawFunction();
 }
@@ -595,6 +597,8 @@ void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shar
 
 void EditFrame::UpdateAction(ActionType _type)
 {
+	if (returnFrameFlg)return;
+
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	parameterList->Update(_type);
@@ -625,31 +629,16 @@ void EditFrame::UpdateAction(ActionType _type)
 
 		if (selectParts == nullptr)
 		{
-			if (sendData == nullptr)
-			{
-				ChangeFrame(ChStd::EnumCast(FrameNo::Select));
-			}
-			else
-			{
-				SendData(sendData);
-				ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
-			}
+			returnFrameFlg = true;
 			return;
 		}
 
 		if (selectParts->GetParent() == nullptr)
 		{
-			if (sendData == nullptr)
-			{
-				ChangeFrame(ChStd::EnumCast(FrameNo::Select));
-			}
-			else
-			{
-				SendData(sendData);
-				ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
-			}
+			returnFrameFlg = true;
 			return;
 		}
+
 
 		UpdateButtonRemove();
 
@@ -1060,6 +1049,20 @@ ChPtr::Shared<ChD3D11::Texture11>EditFrame::CreatePanelTexture(const std::wstrin
 	res->CreateColorTexture(AppIns().GetDirect3D11().GetDevice(), _drawer.bitmap.GetBitmap());
 
 	return res;
+}
+
+void EditFrame::ReturnFrame()
+{
+	if (!returnFrameFlg)return;
+
+	if (sendData == nullptr)
+	{
+		ChangeFrame(ChStd::EnumCast(FrameNo::Select));
+		return;
+	}
+
+	SendData(sendData);
+	ChangeFrame(ChStd::EnumCast(FrameNo::SelectStage));
 }
 
 void EditFrame::Load()
