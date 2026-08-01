@@ -320,6 +320,8 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	MenuBase::InitMenu();
 
 	spriteShader.Init(device);
+	rtView.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
+	dsView.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
 	backgroundSprite.Init();
 	backgroundSprite.SetInitPosition();
@@ -952,9 +954,14 @@ void EditFrame::DrawFunction()
 {
 	auto&& dc = AppIns().GetDirect3D11().GetDC();
 
-	AppIns().GetDirect3D11().SetBackColor(ChVec4::FromColor(0.0f, 0.0f, 0.0f, 0.0f));
+	rtView.SetBackColor(dc, ChVec4::FromColor(0.0f, 0.0f, 0.0f, 0.0f));
+	dsView.ClearDepthBuffer(dc);
 
 	AppIns().GetDirect3D11().DrawStart();
+
+	ID3D11RenderTargetView* tmpView = rtView.GetRTView();
+
+	dc->OMSetRenderTargets(1, &tmpView, dsView.GetDSView());
 
 	if (loadEndFlg)
 	{
@@ -965,6 +972,8 @@ void EditFrame::DrawFunction()
 
 		meshDrawer.DrawEnd();
 	}
+
+	dc->OMSetRenderTargets(1, &tmpView, nullptr);
 
 	spriteShader.SetAlphaBlendFlg(true);
 	spriteShader.DrawStart(dc);
@@ -977,7 +986,7 @@ void EditFrame::DrawFunction()
 
 	spriteShader.DrawEnd();
 
-	AppIns().GetDirect3D11().DrawEnd();
+	AppIns().GetDirect3D11().DrawEnd(rtView);
 }
 
 void EditFrame::DrawNowLoading()
