@@ -69,110 +69,6 @@ void EditFrame::EditFrameDisplayBase::SetNextParts(ChPtr::Shared<MechaPartsObjec
 }
 
 
-class EditListItem : public SelectListItemBase
-{
-public:
-
-	inline virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)
-	{
-		ChVec4 rect = _rect;
-		rect.left += TEXT_ALIGN;
-		rect.right -= TEXT_ALIGN;
-
-		rect.top = _rect.top + PANEL_TITLE_Y;
-		rect.bottom = rect.top + PANEL_TITLE_HEIGHT;
-
-		_sprite.SetPosRect(RectToGameWindow(rect));
-		_drawer.Draw(*positionNameTexture, _sprite);
-	}
-
-	ChPtr::Shared<ChD3D11::Texture11> positionNameTexture = nullptr;
-	std::wstring partsPosName = L"";
-};
-
-class EditListPartsItem : public EditListItem
-{
-public:
-
-	inline void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)override
-	{
-		ChVec4 rect = _rect;
-		rect.left += TEXT_ALIGN;
-		rect.right -= TEXT_ALIGN;
-
-		rect.top = _rect.top + PANEL_POS_TITLE_Y;
-		rect.bottom = rect.top + PANEL_POS_TITLE_HEIGHT;
-
-		_sprite.SetPosRect(RectToGameWindow(rect));
-		_drawer.Draw(*positionNameTexture, _sprite);
-
-		rect.top = _rect.top + PANEL_POS_PARTS_Y;
-		rect.bottom = rect.top + PANEL_POS_PARTS_HEIGHT;
-
-		_sprite.SetPosRect(RectToGameWindow(rect));
-		_drawer.Draw(*partsNameTexture, _sprite);
-	}
-
-	ChPtr::Shared<ChD3D11::Texture11>  partsNameTexture = nullptr;
-	ChPtr::Shared<MechaPartsObject> targetParts = nullptr;
-};
-
-
-class EditList :public SelectListBase
-{
-
-public:
-
-	void Init()
-	{
-		auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-		sprite.Init();
-		SelectListBase::Init();
-
-		SetDrawCount(PANEL_COUNT);
-		SetMoveDiraction(MoveDiraction::Vertical);
-		SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
-		SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
-		SetAlighSize(0.0f, PANEL_SIZE_H);
-		background.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
-		selectImage.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
-	}
-
-public:
-
-	ChD3D11::Texture11* GetSelectImage() { return &selectImage; }
-
-public:
-
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo, bool _isSelectPanel)override
-	{
-		auto&& item = ChPtr::SharedSafeCast<EditListItem>(_drawItem);
-		if (item == nullptr)return;
-
-		if (background.IsTex())
-		{
-			sprite.SetPosRect(RectToGameWindow(_rect));
-			_drawer.Draw(background, sprite);
-		}
-
-		if (selectImage.IsTex() && _isSelectPanel)
-		{
-			sprite.SetPosRect(RectToGameWindow(_rect));
-			_drawer.Draw(selectImage, sprite);
-		}
-
-		item->Draw(_drawer, _rect, sprite);
-
-	}
-
-private:
-
-	ChD3D11::Texture11 selectImage;
-	ChD3D11::Texture11 background;
-	ChD3D11::Sprite11 sprite;
-};
-
 class SelectPartsListItem : public SelectListItemBase
 {
 public:
@@ -385,86 +281,6 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 	_initDrawer.format = _initDrawer.drawer.CreateTextFormat(L"ÉSÉVÉbÉN",nullptr, _boldFlg ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,DWRITE_FONT_STYLE_NORMAL,DWRITE_FONT_STRETCH_NORMAL,_fontSize);
 }
 
-void EditFrame::SetPartsList(ChPtr::Shared<MechaPartsObject> _parts)
-{
-	partsList->ClearItem();
-
-	{
-		auto&& panel = ChPtr::Make_S<EditListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Back");
-
-		partsList->AddItem(panel);
-	}
-
-	if (_parts == nullptr)
-	{
-
-		auto&& panel = ChPtr::Make_S<EditListItem>();
-		panel->positionNameTexture = CreatePanelTitleTexture(L"+ " LOAD_JSON_CORE_PARAM_NAME);
-		panel->partsPosName = LOAD_JSON_CORE_PARAM_NAME;
-
-		partsList->AddItem(panel);
-		return;
-	}
-
-	auto&& base = _parts->GetBaseObject();
-
-	auto&& selectPartsPanel = ChPtr::Make_S<EditListPartsItem>();
-
-	selectPartsPanel->positionNameTexture = CreatePanelPosTitleTexture(L"Select Parts");
-
-	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
-
-	selectPartsPanel->partsPosName = _parts->GetPartsPosName();
-
-	selectPartsPanel->targetParts = _parts;
-
-	partsList->AddItem(selectPartsPanel);
-
-	for (auto&& position : base->GetPositionList())
-	{
-		auto&& child = _parts->GetChildParts(position.first);
-
-		ChPtr::Shared<EditListItem>item = nullptr;
-
-		SetPanelItem(item, child, position.first);
-		
-		SetPanelPartsItem(item, child, position.first);
-
-		partsList->AddItem(item);
-	}
-
-}
-
-void EditFrame::SetPanelItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName)
-{
-	if (_parts != nullptr)return;
-	auto&& res = ChPtr::Make_S<EditListItem>();
-
-	res->positionNameTexture = CreatePanelTitleTexture(L"+ " + _positionName);
-	res->partsPosName = _positionName;
-
-	_res = res;
-}
-
-void EditFrame::SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res, ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName)
-{
-	if (_parts == nullptr)return;
-	auto&& res = ChPtr::Make_S<EditListPartsItem>();
-
-	res->positionNameTexture = CreatePanelPosTitleTexture(_positionName);
-
-	auto&& base = _parts->GetBaseObject();
-
-	res->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
-
-	res->partsPosName = _positionName;
-	res->targetParts = _parts;
-
-	_res = res;
-}
-
 void EditFrame::UpdateAction(ActionType _type)
 {
 	if (returnFrameFlg)return;
@@ -589,21 +405,9 @@ void EditFrame::UpdateMouse()
 
 }
 
-void EditFrame::RefreshPartsList()
-{
-	auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-	partsList->SetDrawPosition(0);
-
-	partsList->ClearItem();
-	SetPartsList(selectParts);
-
-	parameterList->SetBaseParts(device, selectParts);
-
-}
-
 void EditFrame::OpenPartsSelectList()
 {
+#if false
 	auto nowSelectPanel = partsList->GetSelectItem(partsList->GetNowSelect());
 
 	auto partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(nowSelectPanel);
@@ -632,7 +436,7 @@ void EditFrame::OpenPartsSelectList()
 	if (changePartsPosName == LOAD_JSON_CORE_PARAM_NAME)changePartsPosName = L"";
 
 	partsSelectFlg = true;
-
+#endif
 }
 
 void EditFrame::UpdateSelectPartsListAction(ActionType _type)
@@ -651,8 +455,6 @@ void EditFrame::UpdateSelectPartsListAction(ActionType _type)
 	}
 
 	tmpSelectParts = nullptr;
-
-	RefreshPartsList();
 
 	partsSelectFlg = false;
 

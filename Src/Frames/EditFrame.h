@@ -41,14 +41,11 @@ class EditFrame :public ChCpp::BaseFrame, public MenuBase
 {
 public:
 
-	enum class EditControlType
+	enum class EditType
 	{
-		Select,
-		Change,
-		Remove,
-		Cancel,
-		SetWeapon,
-		None
+		SelectParts,
+		ChangeParts,
+		SetWeapon
 	};
 
 private:
@@ -92,8 +89,6 @@ public:
 
 	protected:
 
-		inline void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts) { frame->SetPartsList(_parts); }
-
 		void SetBaseParts(ChPtr::Shared<MechaPartsObject> _parts);
 
 		void SetNextParts(ChPtr::Shared<MechaPartsObject> _parts);
@@ -126,21 +121,9 @@ private:
 
 private:
 
-	void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts);
-
-	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
-
-	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
-
-private:
-
 	void UpdateAction(ActionType _type)override;
 
 	void UpdateMouse()override;
-
-private:
-
-	void RefreshPartsList();
 
 private:
 
@@ -196,11 +179,8 @@ private:
 
 	ChPtr::Shared<PartsSelectDisplay>partsSelectDisplay = nullptr;
 
-	ChPtr::Shared<EditList>partsList = nullptr;
 	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
 	bool partsSelectFlg = false;
-	ChPtr::Shared<EditControlList>editControlButtons = nullptr;
-	ChPtr::Shared<EditControlListItem>editControllButtonItems[ChStd::EnumCast(EditControlType::None)];
 
 	bool useSelectButtonFlg = false;
 
