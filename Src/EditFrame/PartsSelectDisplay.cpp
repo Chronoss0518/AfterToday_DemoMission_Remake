@@ -541,7 +541,7 @@ void PartsSelectDisplay::UpdateButtonRemove()
 	if (editSelectParts != nullptr)
 	{
 		selectParts = ChPtr::SharedSafeCast<MechaPartsObject>(editSelectParts->GetParent());
-		selectParts->RemoveChildObject(editSelectParts->GetPartsPosName());
+		if(selectParts != nullptr)selectParts->RemoveChildObject(editSelectParts->GetPartsPosName());
 		editSelectParts->Destroy();
 		editSelectParts = nullptr;
 	}
@@ -552,6 +552,7 @@ void PartsSelectDisplay::UpdateButtonRemove()
 
 	if (selectParts == nullptr)
 	{
+		GetEditMecha()->RemoveCore();
 		SetPartsList(nullptr);
 		return;
 	}
