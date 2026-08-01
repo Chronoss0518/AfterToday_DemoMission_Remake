@@ -426,8 +426,6 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Down)].sprite,
 		RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, DOWN_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, DOWN_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 
-	selectFlg = false;
-
 	rightPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
 	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
 	
@@ -486,8 +484,6 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 
 void EditFrame::CreateEditControlButtonUseSelectItems()
 {
-
-
 	if (editControlButtons->GetCount() == EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT)return;
 
 	editControlButtons->ClearItem();
@@ -499,8 +495,6 @@ void EditFrame::CreateEditControlButtonUseSelectItems()
 	}
 
 	useSelectButtonFlg = true;
-
-
 }
 
 void EditFrame::CreateEditControlButtonUnUseSelectItems()

@@ -65,6 +65,8 @@ public:
 
 		inline void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts) { frame->SetPartsList(_parts); }
 
+		inline void AddActionType(MenuBase::ActionType _type) { frame->AddActionType(_type); }
+
 	protected:
 
 		inline ChPtr::Shared<ChD3D11::Texture11>CreatePanelTitleTexture(const std::wstring& _str) { return frame->CreatePanelTitleTexture(_str); }
@@ -106,10 +108,6 @@ private:
 	void SetPanelItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
 
 	void SetPanelPartsItem(ChPtr::Shared<EditListItem>& _res,ChPtr::Shared<MechaPartsObject>& _parts, const std::wstring& _positionName);
-
-private:
-
-	void ReturnFrame();
 
 private:
 
@@ -215,7 +213,6 @@ private:
 	TextDrawerWICBitmap panelPosPartsDrawer;//ÉpÅ[ÉcñºÇï`âÊÇ∑ÇÈ
 
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
-	bool selectFlg = false;
 
 	ChPtr::Shared<FromStageSelectFrameData> sendData = nullptr;
 
