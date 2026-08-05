@@ -17,8 +17,8 @@ public:
 		Select,
 		Change,
 		Remove,
-		Cancel,
 		SetWeapon,
+		Cancel,
 		None
 	};
 
@@ -32,15 +32,13 @@ public:
 
 	void Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)override;
 
-private:
-
-	void CreateEditControlButtonItems();
-
 public:
 
 	inline ChPtr::Shared<MechaPartsObject> GetEditParts() { return editSelectParts; }
 
 	inline ChPtr::Shared<MechaPartsObject> GetSelectParts() { return selectParts; }
+
+	inline std::wstring GetTargetPartsPosName() { return targetPartsPosName; }
 
 public:
 
@@ -62,6 +60,10 @@ private:
 
 private:
 
+	void CreateEditControlButtonItems();
+
+	void SetEditParts();
+
 	bool UpdateEditButton(MenuBase::ActionType _type);
 
 	void UpdateButtonSelect();
@@ -77,10 +79,15 @@ private:
 private:
 
 	ChPtr::Shared<EditList>partsList = nullptr;
+	ChPtr::Shared<EditListItem>backPanel = nullptr;
+	ChPtr::Shared<ChD3D11::Texture11> selectPartsTexture = nullptr;
+
 	ChPtr::Shared<EditControlList>editControlButtons = nullptr;
 	bool useSelectButtonFlg = false;
 
 	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
+	std::wstring targetPartsPosName = L"";
+
 	ChPtr::Shared<MechaPartsObject>editSelectParts = nullptr;
 
 	ChPtr::Shared<EditControlListItem>editControllButtonItems[ChStd::EnumCast(EditControlType::None)];

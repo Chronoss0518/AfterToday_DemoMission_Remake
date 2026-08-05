@@ -227,6 +227,11 @@ void PartsSelectDisplay::Init(EditFrame* _frame)
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->Init();
 
+	backPanel = ChPtr::Make_S<EditListItem>();
+	backPanel->positionNameTexture = CreatePanelTitleTexture(L"Back");
+
+	selectPartsTexture = CreatePanelPosTitleTexture(L"Select Parts");
+
 	editControlButtons = ChPtr::Make_S<EditControlList>();
 	editControlButtons->Init();
 
@@ -302,56 +307,20 @@ void PartsSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 		editControlButtons->Draw(_spriteShader);
 }
 
-void PartsSelectDisplay::CreateEditControlButtonItems()
-{
-	bool weaponFlg = false;
-	useSelectButtonFlg = false;
-
-	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
-
-	editSelectParts = selectParts;
-
-	if (partsPanel != nullptr &&
-		partsPanel->targetParts != nullptr)
-	{
-		useSelectButtonFlg = selectParts.get() != partsPanel->targetParts.get();
-		editSelectParts = partsPanel->targetParts;
-	}
-
-	if (!editSelectParts->GetWeaponFunctions().empty())
-		weaponFlg = true;
-
-	editControlButtons->ClearItem();
-
-	for (unsigned char i = 0; i < ChStd::EnumCast(EditControlType::None); i++)
-	{
-		if ((EditControlType)(i) == EditControlType::Select && !useSelectButtonFlg)continue;
-		if ((EditControlType)(i) == EditControlType::SetWeapon && !weaponFlg)continue;
-
-		editControlButtons->AddItem(editControllButtonItems[i]);
-	}
-
-	editControlButtons->SetDrawCount(editControlButtons->GetCount());
-
-}
-
 void PartsSelectDisplay::InitPartsList(ChPtr::Shared<MechaPartsObject> _parts)
 {
-	selectParts = _parts;
+	if(!useSelectButtonFlg)selectParts = _parts;
+
 	SetPartsList(selectParts);
+
+	partsList->SetDrawPosition(0);
 }
 
 void PartsSelectDisplay::SetPartsList(ChPtr::Shared<MechaPartsObject> _parts)
 {
 	partsList->ClearItem();
 
-	{
-		auto&& panel = ChPtr::Make_S<EditListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Back");
-
-		partsList->AddItem(panel);
-	}
+	partsList->AddItem(backPanel);
 
 	if (_parts == nullptr)
 	{
@@ -367,7 +336,7 @@ void PartsSelectDisplay::SetPartsList(ChPtr::Shared<MechaPartsObject> _parts)
 
 	auto&& selectPartsPanel = ChPtr::Make_S<EditListPartsItem>();
 
-	selectPartsPanel->positionNameTexture = CreatePanelPosTitleTexture(L"Select Parts");
+	selectPartsPanel->positionNameTexture = selectPartsTexture;
 	selectPartsPanel->partsNameTexture = CreatePanelPosPartsTexture(base->GetMyName());
 	selectPartsPanel->partsPosName = _parts->GetPartsPosName();
 	selectPartsPanel->targetParts = _parts;
@@ -449,9 +418,11 @@ void PartsSelectDisplay::UpdateDecision(MenuBase::ActionType _type)
 			return;
 		}
 
-		useSelectButtonFlg = true;
+		targetPartsPosName = panel->partsPosName;
+		useSelectButtonFlg = selectParts != nullptr;
 
-		//OpenPartsSelectList();
+		editSelectParts = nullptr;
+		OpenChangeParts();
 
 		return;
 	}
@@ -478,9 +449,58 @@ void PartsSelectDisplay::UpdateCancel(MenuBase::ActionType _type)
 
 	partsList->SetDrawPosition(0);
 
-	InitPartsList(ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent()));
-
+	selectParts = ChPtr::SharedSafeCast<MechaPartsObject>(selectParts->GetParent());
+	SetPartsList(selectParts);
+	
 	SetBaseParts(selectParts);
+
+}
+
+void PartsSelectDisplay::CreateEditControlButtonItems()
+{
+	bool weaponFlg = false;
+
+	SetEditParts();
+
+	if (!editSelectParts->GetWeaponFunctions().empty())
+		weaponFlg = true;
+
+	editControlButtons->ClearItem();
+
+	for (unsigned char i = 0; i < ChStd::EnumCast(EditControlType::None); i++)
+	{
+		if ((EditControlType)(i) == EditControlType::Select && !useSelectButtonFlg)continue;
+		if ((EditControlType)(i) == EditControlType::SetWeapon && !weaponFlg)continue;
+
+		editControlButtons->AddItem(editControllButtonItems[i]);
+	}
+
+	editControlButtons->SetDrawCount(editControlButtons->GetCount());
+
+}
+
+void PartsSelectDisplay::SetEditParts()
+{
+	useSelectButtonFlg = false;
+
+	auto&& partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+	editSelectParts = selectParts;
+
+	if (partsPanel != nullptr &&
+		partsPanel->targetParts != nullptr)
+	{
+		useSelectButtonFlg = selectParts.get() != partsPanel->targetParts.get();
+		editSelectParts = partsPanel->targetParts;
+		return;
+	}
+
+	auto panel = ChPtr::SharedSafeCast<EditListItem>(partsList->GetSelectItem(partsList->GetNowSelect()));
+
+	if (panel->partsPosName == LOAD_JSON_CORE_PARAM_NAME)
+	{
+		editSelectParts = nullptr;
+	}
 
 }
 
@@ -531,7 +551,10 @@ void PartsSelectDisplay::UpdateButtonSelect()
 void PartsSelectDisplay::UpdateButtonChange()
 {
 	UpdateButtonCancel();
-	//OpenPartsSelectList();
+
+
+
+	OpenChangeParts();
 }
 
 void PartsSelectDisplay::UpdateButtonRemove()
