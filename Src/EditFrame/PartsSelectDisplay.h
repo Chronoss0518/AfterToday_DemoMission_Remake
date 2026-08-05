@@ -38,6 +38,12 @@ private:
 
 public:
 
+	inline ChPtr::Shared<MechaPartsObject> GetEditParts() { return editSelectParts; }
+
+	inline ChPtr::Shared<MechaPartsObject> GetSelectParts() { return selectParts; }
+
+public:
+
 	void InitPartsList(ChPtr::Shared<MechaPartsObject> _parts);
 
 	void SetPartsList(ChPtr::Shared<MechaPartsObject> _parts);
