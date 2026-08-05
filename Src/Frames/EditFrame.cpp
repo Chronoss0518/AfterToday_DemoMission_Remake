@@ -71,11 +71,27 @@ void EditFrame::EditFrameDisplayBase::SetNextParts(ChPtr::Shared<MechaPartsObjec
 void EditFrame::EditFrameDisplayBase::OpenChangeParts()
 {
 	frame->nowDisplay = frame->partsChangeDisplay;
+
+	auto parts = frame->partsSelectDisplay->GetEditParts();
+	if(parts != nullptr)
+		frame->partsChangeDisplay->InitChangeData(parts);
+	else
+		frame->partsChangeDisplay->InitChangeData(frame->partsSelectDisplay->GetSelectParts(), frame->partsSelectDisplay->GetTargetPartsPosName());
+
 }
 
 void EditFrame::EditFrameDisplayBase::CloseChangeParts()
 {
 	frame->nowDisplay = frame->partsSelectDisplay;
+
+	frame->partsSelectDisplay->InitPartsList(frame->partsChangeDisplay->GetResultParts());
+
+	frame->partsChangeDisplay->Close();
+}
+
+void EditFrame::EditFrameDisplayBase::RefreshMechaParameter()
+{
+	frame->parameterList->RefreshMechaParameter(frame->editMecha);
 }
 
 class SelectPartsListItem : public SelectListItemBase
@@ -301,6 +317,21 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	parameterList->Update(_type);
 
+	if (_type == ActionType::Decision)
+	{
+		if (selectType == SelectButtonType::Up)
+		{
+			AddActionType(ActionType::Up);
+			return;
+		}
+
+		if (selectType == SelectButtonType::Down)
+		{
+			AddActionType(ActionType::Down);
+			return;
+		}
+	}
+
 	if(nowDisplay != nullptr)nowDisplay->Update(_type);
 
 #if false
@@ -348,19 +379,6 @@ void EditFrame::UpdateAction(ActionType _type)
 #endif
 	}
 
-	if (_type != ActionType::Decision)return;
-
-	if (selectType == SelectButtonType::Up)
-	{
-		AddActionType(ActionType::Up);
-		return;
-	}
-
-	if (selectType == SelectButtonType::Down)
-	{
-		AddActionType(ActionType::Down);
-		return;
-	}
 
 #if false
 	if (editControlButtons->GetCount() <= 0)

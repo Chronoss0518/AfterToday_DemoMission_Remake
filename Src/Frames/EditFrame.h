@@ -91,11 +91,15 @@ public:
 
 		inline ChPtr::Shared<BaseMecha> GetEditMecha() { return frame->editMecha; }
 
+		inline ChD3D11::Shader::BaseDrawMesh11<wchar_t>& GetMeshDrawer() { return frame->meshDrawer; }
+
 	protected:
 
 		void OpenChangeParts();
 
 		void CloseChangeParts();
+
+		void RefreshMechaParameter();
 
 		inline void ReturnFrame() { frame->returnFrameFlg = true; }
 
