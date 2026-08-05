@@ -88,14 +88,14 @@
     <Filter Include="OuterFiles\Mecha\CPUMecha">
       <UniqueIdentifier>{180f6186-52a4-429b-84de-b8ff4f812904}</UniqueIdentifier>
     </Filter>
-    <Filter Include="OuterFiles\Mecha\PlayerMecha\PartsDatas">
-      <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
-    </Filter>
     <Filter Include="OuterFiles\FieldData">
       <UniqueIdentifier>{ba862c2c-c6aa-4ab0-8d08-c5cd7785de01}</UniqueIdentifier>
     </Filter>
     <Filter Include="NowLoadingUpdater">
       <UniqueIdentifier>{970c19e8-7469-4bca-8b39-d29abe1162d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OuterFiles\Mecha\PartsDatas">
+      <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -655,61 +655,61 @@
       <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\RobotParts\HT.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\LAA_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\LAG_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\LAT.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\RAA_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\RAG_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\RAT.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\BA_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\BG_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\BT.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\CA_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\CG_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\CT.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FA_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FG_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FT.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\HA_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\HG_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\Bullet\standard_1968.bod">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\Save\AssemMechaFrameList.json">
       <Filter>OuterFiles\Mecha\PlayerMecha</Filter>
@@ -721,16 +721,16 @@
       <Filter>OuterFiles\StageScript</Filter>
     </None>
     <None Include="Resource\RobotParts\CST_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\RobotParts\FST_01.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage_NoCPU.json">
       <Filter>OuterFiles\StageData</Filter>
     </None>
     <None Include="Resource\RobotParts\MF-TPP1.mpd">
-      <Filter>OuterFiles\Mecha\PlayerMecha\PartsDatas</Filter>
+      <Filter>OuterFiles\Mecha\PartsDatas</Filter>
     </None>
     <None Include="Resource\StageData\Test_Stage_Wave_10on10.json">
       <Filter>OuterFiles\StageData</Filter>
