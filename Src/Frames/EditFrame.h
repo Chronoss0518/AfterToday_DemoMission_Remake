@@ -19,8 +19,6 @@ class MechaParts;
 class MechaPartsObject;
 class LoadDisplay;
 
-class SelectPartsList;
-
 class ParameterList;
 
 class NowLoadingUpdater;
@@ -129,14 +127,6 @@ private:
 
 private:
 
-	void OpenPartsSelectList();
-
-	void UpdateSelectPartsListAction(ActionType _type);
-
-	void UpdateSelectPartsSetter();
-
-private:
-
 	void DrawFunction();
 
 	void DrawNowLoading();
@@ -184,19 +174,7 @@ private:
 
 	ChPtr::Shared<EditFrameDisplayBase>nowDisplay = nullptr;
 
-	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
-	bool partsSelectFlg = false;
-
-	bool useSelectButtonFlg = false;
-
-	ChPtr::Shared<MechaPartsObject>selectParts = nullptr;
-	ChPtr::Shared<MechaPartsObject>tmpSelectParts = nullptr;
 	ChPtr::Shared<ParameterList> parameterList = nullptr;
-	//変更後のパーツ//
-	ChPtr::Shared<MechaPartsObject>nowChangeTargetPartsParent = nullptr;
-	std::wstring nowChangeTargetPartsName = L"";
-	ChPtr::Shared<ChCpp::JsonObject<wchar_t>>beforePartsJson = nullptr;
-	std::wstring changePartsPosName = L"";
 
 	bool returnFrameFlg = false;
 

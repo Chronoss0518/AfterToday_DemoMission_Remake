@@ -94,81 +94,6 @@ void EditFrame::EditFrameDisplayBase::RefreshMechaParameter()
 	frame->parameterList->RefreshMechaParameter(frame->editMecha);
 }
 
-class SelectPartsListItem : public SelectListItemBase
-{
-public:
-
-	inline virtual void Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChD3D11::Sprite11& _sprite)
-	{
-		ChVec4 rect = _rect;
-		rect.left += TEXT_ALIGN;
-		rect.right -= TEXT_ALIGN;
-
-		rect.top = _rect.top + PANEL_TITLE_Y;
-		rect.bottom = rect.top + PANEL_TITLE_HEIGHT;
-
-		_sprite.SetPosRect(RectToGameWindow(rect));
-		_drawer.Draw(*positionNameTexture, _sprite);
-	}
-
-	ChPtr::Shared<ChD3D11::Texture11> positionNameTexture = nullptr;
-	std::wstring partsPath = L"";
-};
-
-class SelectPartsList :public SelectListBase
-{
-public:
-
-	void Init()override
-	{
-		auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-		sprite.Init();
-		SelectListBase::Init();
-
-		SetDrawCount(PANEL_COUNT);
-		SetMoveDiraction(MoveDiraction::Vertical);
-		SetPanelSize(ChVec2::FromSize(PANEL_SIZE_W, PANEL_SIZE_H));
-		SetStartPosition(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y);
-		SetAlighSize(0.0f, PANEL_SIZE_H);
-		background.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanel.png"), device);
-		selectImage.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
-	}
-
-public:
-
-	ChD3D11::Texture11* GetSelectImage() { return &selectImage; }
-
-public:
-
-	void DrawPanel(ChD3D11::Shader::BaseDrawSprite11& _drawer, const ChVec4& _rect, ChPtr::Shared<SelectListItemBase> _drawItem, size_t _itemNo, bool _isSelectPanel)override
-	{
-		auto&& item = ChPtr::SharedSafeCast<SelectPartsListItem>(_drawItem);
-		if (item == nullptr)return;
-
-		if (background.IsTex())
-		{
-			sprite.SetPosRect(RectToGameWindow(_rect));
-			_drawer.Draw(background, sprite);
-		}
-
-		if (selectImage.IsTex() && _isSelectPanel)
-		{
-			sprite.SetPosRect(RectToGameWindow(_rect));
-			_drawer.Draw(selectImage, sprite);
-		}
-
-		item->Draw(_drawer, _rect, sprite);
-
-	}
-
-private:
-
-	ChD3D11::Texture11 selectImage;
-	ChD3D11::Texture11 background;
-	ChD3D11::Sprite11 sprite;
-};
-
 void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 {
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
@@ -284,8 +209,6 @@ void EditFrame::Update()
 		rotate += ChVec3(0.0f, MECHA_ROTATION_SPEED, 0.0f);
 
 		editMecha->SetRotation(rotate);
-
-		UpdateSelectPartsSetter();
 	}
 	else
 		nowLoadingUpdater->Update();
@@ -334,63 +257,6 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	if(nowDisplay != nullptr)nowDisplay->Update(_type);
 
-#if false
-	if (editControlButtons->GetCount() <= 0)
-	{
-		partsSelectFlg ?
-			selectPartsList->UpdateAction(_type) :
-			partsList->UpdateAction(_type);
-	}
-	else
-	{
-		editControlButtons->UpdateAction(_type);
-	}
-#endif
-
-	if (_type == ActionType::Cancel)
-	{
-
-#if false
-		if (partsSelectFlg)
-		{
-			selectPartsList->SetNowSelect(0);
-			selectPartsList->SetDrawPosition(0);
-
-			UpdateSelectPartsListAction(_type);
-			partsSelectFlg = false;
-
-			return;
-		}
-
-		if (selectParts == nullptr)
-		{
-			returnFrameFlg = true;
-			return;
-		}
-
-		if (selectParts->GetParent() == nullptr)
-		{
-			returnFrameFlg = true;
-			return;
-		}
-
-
-		UpdateButtonRemove();
-#endif
-	}
-
-
-#if false
-	if (editControlButtons->GetCount() <= 0)
-	{
-		partsSelectFlg ?
-			UpdateSelectPartsListAction(_type) :
-			UpdatePartsListAction(_type);
-
-		return;
-	}
-
-#endif
 }
 
 void EditFrame::UpdateMouse()
@@ -415,126 +281,9 @@ void EditFrame::UpdateMouse()
 		return;
 	}
 
-
-	if (nowDisplay != nullptr)nowDisplay->UpdateMouse();
-
-#if false
-	if (editControlButtons->GetCount() <= 0)
-	{
-		partsSelectFlg ?
-			selectPartsList->UpdateMouse() :
-			partsList->UpdateMouse();
-	}
-	else
-	{
-		editControlButtons->UpdateMouse();
-	}
-#endif
-
 	selectType = SelectButtonType::None;
 
-}
-
-void EditFrame::OpenPartsSelectList()
-{
-#if false
-	auto nowSelectPanel = partsList->GetSelectItem(partsList->GetNowSelect());
-
-	auto partsPanel = ChPtr::SharedSafeCast<EditListPartsItem>(nowSelectPanel);
-
-	if (partsPanel == nullptr)
-	{
-		auto panel = ChPtr::SharedSafeCast<EditListItem>(nowSelectPanel);
-
-		changePartsPosName = panel->partsPosName;
-
-		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(!useSelectButtonFlg ? selectParts->GetParent() : selectParts);
-
-		beforePartsJson = selectParts != nullptr ? selectParts->Serialize() : ChPtr::Make_S<ChCpp::JsonObject<wchar_t>>();
-	}
-	else
-	{
-
-		changePartsPosName = partsPanel->partsPosName;
-		
-		nowChangeTargetPartsParent = ChPtr::SharedSafeCast<MechaPartsObject>(partsPanel->targetParts->GetParent());
-
-		beforePartsJson = selectParts->Serialize();
-	}
-
-
-	if (changePartsPosName == LOAD_JSON_CORE_PARAM_NAME)changePartsPosName = L"";
-
-	partsSelectFlg = true;
-#endif
-}
-
-void EditFrame::UpdateSelectPartsListAction(ActionType _type)
-{
-	auto&& device = AppIns().GetDirect3D11().GetDevice();
-
-	auto&& partsPanel = ChPtr::SharedSafeCast<SelectPartsListItem>(selectPartsList->GetSelectItem(selectPartsList->GetNowSelect()));
-
-	if (partsPanel == nullptr)return;
-
-	UpdateSelectPartsSetter();
-
-	if (!useSelectButtonFlg)
-	{
-		selectParts = tmpSelectParts;
-	}
-
-	tmpSelectParts = nullptr;
-
-	partsSelectFlg = false;
-
-	if (partsPanel->partsPath == L"")
-	{
-		selectPartsList->SetDrawPosition(0);
-		return;
-	}
-
-	parameterList->SetNextParts(device, selectParts);
-
-
-}
-
-void EditFrame::UpdateSelectPartsSetter()
-{
-	if (!partsSelectFlg)return;
-
-	auto&& partsPanel = ChPtr::SharedSafeCast<SelectPartsListItem>(selectPartsList->GetSelectItem(selectPartsList->GetNowSelect()));
-
-	if (partsPanel == nullptr)return;
-
-	if (partsPanel->partsPath == nowChangeTargetPartsName)return;
-	nowChangeTargetPartsName = partsPanel->partsPath;
-
-	if (nowChangeTargetPartsParent != nullptr)
-	{
-		nowChangeTargetPartsParent->RemoveChildObject(changePartsPosName);
-
-		if (nowChangeTargetPartsName != L"")
-			tmpSelectParts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, nowChangeTargetPartsName, changePartsPosName, nowChangeTargetPartsParent);
-		else
-			tmpSelectParts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, beforePartsJson, changePartsPosName, nowChangeTargetPartsParent);
-
-		parameterList->RefreshMechaParameter(editMecha);
-		return;
-	}
-
-	editMecha->RemoveCore();
-
-	ChPtr::Shared<ChCpp::JsonObject<wchar_t>> json = nullptr;
-
-	if (nowChangeTargetPartsName != L"")
-		json = BaseMecha::CreateBaseMechaData(nowChangeTargetPartsName);
-	else
-		json = BaseMecha::CreateBaseMechaCoreData(beforePartsJson);
-
-	editMecha->LoadCore(json);
-
-	parameterList->RefreshMechaParameter(editMecha);
+	if (nowDisplay != nullptr)nowDisplay->UpdateMouse();
 
 }
 
