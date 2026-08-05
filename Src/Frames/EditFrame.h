@@ -99,6 +99,10 @@ public:
 
 	protected:
 
+		void OpenChangeParts();
+
+		void CloseChangeParts();
+
 		inline void ReturnFrame() { frame->returnFrameFlg = true; }
 
 	private:
@@ -178,6 +182,8 @@ private:
 	SelectButtonType selectType = SelectButtonType::None;
 
 	ChPtr::Shared<PartsSelectDisplay>partsSelectDisplay = nullptr;
+
+	ChPtr::Shared<EditFrameDisplayBase>nowDisplay = nullptr;
 
 	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
 	bool partsSelectFlg = false;

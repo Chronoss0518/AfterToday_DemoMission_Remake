@@ -289,7 +289,7 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	parameterList->Update(_type);
 
-	partsSelectDisplay->Update(_type);
+	if(nowDisplay != nullptr)nowDisplay->Update(_type);
 
 #if false
 	if (editControlButtons->GetCount() <= 0)
@@ -386,7 +386,7 @@ void EditFrame::UpdateMouse()
 	}
 
 
-	partsSelectDisplay->UpdateMouse();
+	if (nowDisplay != nullptr)nowDisplay->UpdateMouse();
 
 #if false
 	if (editControlButtons->GetCount() <= 0)
@@ -574,7 +574,7 @@ void EditFrame::DrawEndLoading()
 
 	spriteShader.Draw(leftPanelBackGround, backgroundSprite);
 
-	partsSelectDisplay->Draw(spriteShader);
+	if (nowDisplay != nullptr)nowDisplay->Draw(spriteShader);
 
 #if false
 	partsSelectFlg ?
@@ -687,6 +687,7 @@ bool EditFrame::LoadPart()
 	editMecha->Load(PLAYER_USE_MECHA_PATH);
 
 	partsSelectDisplay->InitPartsList(editMecha->GetCoreParts());
+	nowDisplay = partsSelectDisplay;
 
 	parameterList->Init(device, editMecha);
 
