@@ -57,6 +57,8 @@ ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11:
 
 ChPtr::Shared<MechaPartsObject> MechaParts::LoadParts(BaseMecha& _base, ChD3D11::Shader::BaseDrawMesh11<wchar_t>* _drawer, GameFrame* _frame, ChPtr::Shared<ChCpp::JsonObject<wchar_t>> _jsonObject, const std::wstring& _positionObjectType, ChPtr::Shared<MechaPartsObject> _parent)
 {
+	if (_jsonObject == nullptr)return nullptr;
+
 	auto&& partsName = _jsonObject->GetJsonString(JSON_PROPEATY_PARTS_NAME);
 
 	auto&& loadPartss = LoadPartsList();
