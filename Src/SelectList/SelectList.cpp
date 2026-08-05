@@ -51,7 +51,11 @@ bool SelectListBase::UpdateMouse()
 {
 	if (!isControlFlg)return false;
 
-	drawPos %= itemList.size();
+	size_t size = itemList.size();
+
+	if (size <= 0)return false;
+
+	drawPos %= size;
 
 	ChVec4 rect = GetStartRect();
 
@@ -141,6 +145,8 @@ void SelectListBase::RemoveItem(ChPtr::Shared<SelectListItemBase> _item)
 {
 	if (_item == nullptr)return;
 
+	if (itemList.empty())return;
+
 	auto&& it = std::find(itemList.begin(), itemList.end(), _item);
 	if (it == itemList.end())return;
 
@@ -197,6 +203,8 @@ ChVec4 SelectListBase::UpdateRightBottomInRect(const ChVec4& _rect)
 
 void SelectListBase::MoveAdd()
 {
+	if (itemList.empty())return;
+
 	if (!loopFlg && drawPos + drawCount == itemList.size())return;
 
 	if (drawCount < itemList.size())
@@ -210,6 +218,8 @@ void SelectListBase::MoveAdd()
 
 void SelectListBase::MoveSub()
 {
+	if (itemList.empty())return;
+
 	if (!loopFlg && 0 == drawPos)return;
 
 	if (drawCount < itemList.size())
