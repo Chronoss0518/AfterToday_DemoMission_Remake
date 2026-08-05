@@ -19,13 +19,7 @@ class MechaParts;
 class MechaPartsObject;
 class LoadDisplay;
 
-class EditList;
-class EditListItem;
-
 class SelectPartsList;
-
-class EditControlList;
-class EditControlListItem;
 
 class ParameterList;
 
@@ -182,6 +176,7 @@ private:
 	SelectButtonType selectType = SelectButtonType::None;
 
 	ChPtr::Shared<PartsSelectDisplay>partsSelectDisplay = nullptr;
+	ChPtr::Shared<PartsChangeDisplay>partsChangeDisplay = nullptr;
 
 	ChPtr::Shared<EditFrameDisplayBase>nowDisplay = nullptr;
 

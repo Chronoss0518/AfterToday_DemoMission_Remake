@@ -68,6 +68,15 @@ void EditFrame::EditFrameDisplayBase::SetNextParts(ChPtr::Shared<MechaPartsObjec
 	frame->parameterList->SetNextParts(device, _parts);
 }
 
+void EditFrame::EditFrameDisplayBase::OpenChangeParts()
+{
+	frame->nowDisplay = frame->partsChangeDisplay;
+}
+
+void EditFrame::EditFrameDisplayBase::CloseChangeParts()
+{
+	frame->nowDisplay = frame->partsSelectDisplay;
+}
 
 class SelectPartsListItem : public SelectListItemBase
 {
@@ -196,6 +205,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	partsSelectDisplay = ChPtr::Make_S<PartsSelectDisplay>();
 	partsSelectDisplay->Init(this);
 
+	partsChangeDisplay = ChPtr::Make_S<PartsChangeDisplay>();
+	partsChangeDisplay->Init(this);
+	
 #if false
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->Init();
@@ -664,6 +676,8 @@ bool EditFrame::LoadPart()
 	auto&& parts = MechaParts::LoadParts(*editMecha, &meshDrawer, nullptr, pathList[loadCount]);
 
 	parts->GetBaseObject()->SetParameters(*parts);
+
+	partsChangeDisplay->AddMechaParts(parts);
 
 #if false
 	{
