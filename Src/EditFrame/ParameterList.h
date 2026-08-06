@@ -144,6 +144,10 @@ public:
 
 	void SetNextParts(ID3D11Device* _device, ChPtr::Shared<MechaPartsObject> _partsObject);
 
+	void SetUseVisibleFlg(bool _flg) { useVisibleFlg = _flg; }
+
+	void SetUseSpecialActionFlg(bool _flg);
+
 public:
 
 	void AddParameterData(PartsParameters& _parameter,ChPtr::Shared<MechaPartsObject> _partsObject);
@@ -189,6 +193,12 @@ private:
 	TextDrawerWICBitmap textDrawer;
 	TextDrawerWICBitmap titleTextDrawer;
 	TextDrawerWICBitmap valueTextDrawer;
+
+	ChD3D11::Texture11 backGroundTexture;
+	ChD3D11::Sprite11 backgroundSprite;
+
+	bool useVisibleFlg = true;
+	bool useSpecialActionFlg = true;
 
 	DisplayType displayType = DisplayType::Partial;
 

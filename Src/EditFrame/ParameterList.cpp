@@ -236,6 +236,10 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 	CreateTextDrawer(titleTextDrawer, static_cast<unsigned long>(PARAMETER_PANEL_TITLE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f)), static_cast<unsigned long>(PARAMETER_PANEL_HEIGHT), VALUE_TITLE_FONT_SIZE);
 	CreateTextDrawer(valueTextDrawer, static_cast<unsigned long>(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f)), static_cast<unsigned long>(PARAMETER_PANEL_HEIGHT), VALUE_TITLE_FONT_SIZE);
 
+	backGroundTexture.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), _device);
+	backgroundSprite.Init();
+	backgroundSprite.SetInitPosition();
+
 	titleBGTexture = ChPtr::Make_S<ChD3D11::Texture11>();
 	titleBGTexture->CreateTexture(EDIT_TEXTURE_DIRECTORY(L"ParameterTitle.png"), _device);
 
@@ -276,6 +280,14 @@ void ParameterList::SetNextParts(ID3D11Device* _device, ChPtr::Shared<MechaParts
 	UpdateDisplayParameter(_device);
 }
 
+void ParameterList::SetUseSpecialActionFlg(bool _flg)
+{
+	useSpecialActionFlg = _flg;
+
+	if (useSpecialActionFlg)return;
+	displayType = DisplayType::Partial;
+}
+
 void ParameterList::AddParameterData(PartsParameters& _parameter, ChPtr::Shared<MechaPartsObject> _partsObject)
 {
 	if (_partsObject == nullptr)return;
@@ -304,6 +316,8 @@ void ParameterList::RefreshMechaParameter(ChPtr::Shared<BaseMecha> _baseMecha)
 
 bool ParameterList::Update(MenuBase::ActionType _type)
 {
+	if (!useVisibleFlg)return false;
+
 	if (_type == MenuBase::ActionType::Right)
 	{
 		displays[ChStd::EnumCast(displayType)]->Up();
@@ -315,6 +329,8 @@ bool ParameterList::Update(MenuBase::ActionType _type)
 		displays[ChStd::EnumCast(displayType)]->Down();
 		return true;
 	}
+
+	if (!useSpecialActionFlg)return false;
 
 	if (_type == MenuBase::ActionType::Special)
 	{
@@ -350,6 +366,17 @@ void ParameterList::CreateTextDrawer(TextDrawerWICBitmap& _textDrawer,unsigned l
 
 void ParameterList::Draw(ChD3D11::Shader::BaseDrawSprite11& _drawer)
 {
+	if (!useVisibleFlg)return;
+
 	if (displays[ChStd::EnumCast(displayType)] == nullptr)return;
+
+	ChVec2 pos = GetDrawStartPosition();
+	ChVec2 size = GetDrawPanelSize();
+	ChVec4 rect = ChVec4::FromRect(pos.x, pos.y, pos.x + size.w, pos.y + size.h);
+
+	backgroundSprite.SetPosRect(RectToGameWindow(rect));
+
+	_drawer.Draw(backGroundTexture, backgroundSprite);
+
 	displays[ChStd::EnumCast(displayType)]->Draw(_drawer);
 }
