@@ -105,6 +105,8 @@ void PartsChangeDisplay::Init(EditFrame* _frame)
 {
 	EditFrameDisplayBase::Init(_frame);
 
+	auto device = AppIns().GetDirect3D11().GetDevice();
+
 	selectPartsList = ChPtr::Make_S<SelectPartsList>();
 	selectPartsList->Init();
 
@@ -112,6 +114,14 @@ void PartsChangeDisplay::Init(EditFrame* _frame)
 
 	cancelPanel->texture = CreatePanelTitleTexture(L"Cancel");
 	cancelPanel->partsPath = L"";
+
+	backGroundTexture.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
+	backgroundSprite.Init();
+	backgroundSprite.SetInitPosition();
+
+	auto rect = ChVec4::FromRect(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, PARTS_PANEL_LIST_Y + PANEL_SIZE_H * PANEL_COUNT);
+	backgroundSprite.SetPosRect(RectToGameWindow(rect));
+
 }
 
 void PartsChangeDisplay::Update(MenuBase::ActionType _type)
@@ -201,6 +211,8 @@ void PartsChangeDisplay::UpdateMouse()
 
 void PartsChangeDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 {
+	_spriteShader.Draw(backGroundTexture, backgroundSprite);
+
 	selectPartsList->Draw(_spriteShader);
 }
 

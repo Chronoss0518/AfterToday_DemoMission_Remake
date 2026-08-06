@@ -43,6 +43,9 @@ private:
 
 private:
 
+	ChD3D11::Texture11 backGroundTexture;
+	ChD3D11::Sprite11 backgroundSprite;
+
 	ChPtr::Shared<SelectPartsList>selectPartsList = nullptr;
 
 	std::vector<ChPtr::Shared<SelectPartsListItem>>partsPanelList;
