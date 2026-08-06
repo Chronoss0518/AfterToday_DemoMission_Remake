@@ -224,6 +224,8 @@ void PartsSelectDisplay::Init(EditFrame* _frame)
 {
 	EditFrame::EditFrameDisplayBase::Init(_frame);
 
+	auto device = AppIns().GetDirect3D11().GetDevice();
+
 	partsList = ChPtr::Make_S<EditList>();
 	partsList->Init();
 
@@ -276,6 +278,14 @@ void PartsSelectDisplay::Init(EditFrame* _frame)
 
 		editControllButtonItems[ChStd::EnumCast(panel->type)] = panel;
 	}
+
+	backGroundTexture.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
+	backgroundSprite.Init();
+	backgroundSprite.SetInitPosition();
+
+	auto rect = ChVec4::FromRect(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, PARTS_PANEL_LIST_Y + PANEL_SIZE_H * PANEL_COUNT);
+	backgroundSprite.SetPosRect(RectToGameWindow(rect));
+
 }
 
 void PartsSelectDisplay::Update(MenuBase::ActionType _type)
@@ -299,6 +309,8 @@ void PartsSelectDisplay::UpdateMouse()
 
 void PartsSelectDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 {
+	_spriteShader.Draw(backGroundTexture, backgroundSprite);
+
 	partsList->SetActiveFlg(editControlButtons->GetCount() <= 0);
 
 	partsList->Draw(_spriteShader);

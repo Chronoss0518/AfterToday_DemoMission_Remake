@@ -78,6 +78,9 @@ private:
 
 private:
 
+	ChD3D11::Texture11 backGroundTexture;
+	ChD3D11::Sprite11 backgroundSprite;
+
 	ChPtr::Shared<EditList>partsList = nullptr;
 	ChPtr::Shared<EditListItem>backPanel = nullptr;
 	ChPtr::Shared<ChD3D11::Texture11> selectPartsTexture = nullptr;
