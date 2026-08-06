@@ -23,15 +23,8 @@
 #define PARTS_PANEL_LIST_X 30.0f
 #define PARTS_PANEL_LIST_Y 141.0f
 
-#define PANEL_COUNT 4
-#define EDIT_CONTROL_BUTTON_USE_SELECT_PANEL_COUNT 4
-#define EDIT_CONTROL_BUTTON_UN_USE_SELECT_PANEL_COUNT 3
-
 #define PANEL_SIZE_W 280.0f
 #define PANEL_SIZE_H 102.0f
-
-#define EDIT_CONTROL_BUTTON_PANEL_SIZE_W 183.0f
-#define EDIT_CONTROL_BUTTON_PANEL_SIZE_H 80.0f
 
 #define UP_BUTTON_PANEL_Y 30.0f
 #define DOWN_BUTTON_PANEL_Y 558.0f
@@ -72,6 +65,8 @@ void EditFrame::EditFrameDisplayBase::OpenChangeParts()
 {
 	frame->nowDisplay = frame->partsChangeDisplay;
 
+	frame->parameterList->SetUseSpecialActionFlg(false);
+
 	auto parts = frame->partsSelectDisplay->GetEditParts();
 	if(parts != nullptr)
 		frame->partsChangeDisplay->InitChangeData(parts);
@@ -85,6 +80,8 @@ void EditFrame::EditFrameDisplayBase::CloseChangeParts()
 	frame->nowDisplay = frame->partsSelectDisplay;
 
 	frame->partsSelectDisplay->InitPartsList(frame->partsChangeDisplay->GetResultParts());
+
+	frame->parameterList->SetUseSpecialActionFlg(true);
 
 	frame->partsChangeDisplay->Close();
 }
@@ -106,8 +103,6 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	rtView.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	dsView.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 
-	backgroundSprite.Init();
-	backgroundSprite.SetInitPosition();
 	meshDrawer.Init(device);
 	
 	{
@@ -176,9 +171,6 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	selectImage.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PartsPanelSelect.png"), device);
 
-	rightPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
-	leftPanelBackGround.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), device);
-	
 	Load();
 
 	sendData = ChPtr::SharedSafeCast<FromStageSelectFrameData>(_sendData);
@@ -337,32 +329,10 @@ void EditFrame::DrawEndLoading()
 {
 	if (!loadEndFlg)return;
 
-	ChVec2 pos = parameterList->GetDrawStartPosition();
-	ChVec2 size = parameterList->GetDrawPanelSize();
-	ChVec4 rect = ChVec4::FromRect(pos.x, pos.y, pos.x + size.w,pos.y + size.h);
-
-	backgroundSprite.SetPosRect(RectToGameWindow(rect));
-
-	spriteShader.Draw(rightPanelBackGround, backgroundSprite);
-
 	parameterList->Draw(spriteShader);
-
-	rect = ChVec4::FromRect(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, PARTS_PANEL_LIST_Y + PANEL_SIZE_H * PANEL_COUNT);
-
-	backgroundSprite.SetPosRect(RectToGameWindow(rect));
-
-	spriteShader.Draw(leftPanelBackGround, backgroundSprite);
 
 	if (nowDisplay != nullptr)nowDisplay->Draw(spriteShader);
 
-#if false
-	partsSelectFlg ?
-		selectPartsList->Draw(spriteShader) :
-		partsList->Draw(spriteShader);
-
-	if (editControlButtons->GetCount() > 0)
-		editControlButtons->Draw(spriteShader);
-#endif
 	for (unsigned char i = 0; i < ChStd::EnumCast(SelectButtonType::None); i++)
 	{
 		spriteShader.Draw(selectButton[i].image, selectButton[i].sprite);
@@ -445,20 +415,6 @@ bool EditFrame::LoadPart()
 	parts->GetBaseObject()->SetParameters(*parts);
 
 	partsChangeDisplay->AddMechaParts(parts);
-
-#if false
-	{
-
-		auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(parts->GetPartsName());
-		panel->partsPath = pathList[loadCount];
-		selectPartsList->AddItem(panel);
-
-	}
-
-	parts = nullptr;
-#endif
 
 	loadCount++;
 

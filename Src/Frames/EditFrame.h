@@ -159,8 +159,6 @@ private:
 	ChD3D11::DepthStencilTexture11 dsView;
 
 	ChD3D11::Shader::BaseDrawSprite11 spriteShader;
-	ChD3D11::Texture11 rightPanelBackGround, leftPanelBackGround;
-	ChD3D11::Sprite11 backgroundSprite;
 
 	ChD3D11::Shader::BaseDrawMesh11<wchar_t> meshDrawer;
 	ChD3D11::CB::CBLight11 light;
