@@ -148,6 +148,8 @@ public://Set Function//
 	void SetGroundHeight(const float _height);
 
 	void SetHitEffectDrawFrame();
+	
+	inline void SetMechaName(const std::wstring& _mechaName) { mechaName = _mechaName; }
 
 public://Get Function//
 
