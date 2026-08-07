@@ -120,6 +120,25 @@ void MenuBase::UpdateController()
 
 }
 
+void MenuBase::SetDefaultActionTest()
+{
+
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return !_input.IsPushKey(VK_SHIFT) && (_input.IsPushKey(VK_RETURN) || _input.IsPushKey(VK_SPACE)); }, ActionType::Decision);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_SHIFT) && (_input.IsPushKey(VK_RETURN) || _input.IsPushKey(VK_SPACE)); }, ActionType::Cancel);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_UP) || _input.IsPushKey('W'); }, ActionType::Up);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_DOWN) || _input.IsPushKey('S'); }, ActionType::Down);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_LEFT) || _input.IsPushKey('A'); }, ActionType::Left);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_RIGHT) || _input.IsPushKey('D'); }, ActionType::Right);
+
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetAFlg(); }, ActionType::Decision);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetBFlg(); }, ActionType::Cancel);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetUpFlg() || _input.GetLYStick() > STICK_INPUT_SIZE); }, ActionType::Up);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetDownFlg() || _input.GetLYStick() < -STICK_INPUT_SIZE); }, ActionType::Down);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetLeftFlg() || _input.GetLXStick() < -STICK_INPUT_SIZE); }, ActionType::Left);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetRightFlg() || _input.GetLXStick() > STICK_INPUT_SIZE); }, ActionType::Right);
+
+}
+
 void MenuBase::SetActionTest(std::function<bool(ChWin::WinKeyInput&)> _keyInputTest, ActionType _type)
 {
 	keyInputActionTest[ChStd::EnumCast(_type)] = _keyInputTest;

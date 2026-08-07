@@ -45,6 +45,8 @@ private:
 
 public:
 
+	void SetDefaultActionTest();
+
 	void SetActionTest(std::function<bool(ChWin::WinKeyInput&)> _keyInputTest, ActionType _type);
 
 	void SetActionTest(std::function<bool(ChD3D::XInputController&)> _controllerInputTest, ActionType _type);
