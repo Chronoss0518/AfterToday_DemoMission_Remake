@@ -198,7 +198,11 @@ void EditFrame::Update()
 
 	if (loadEndFlg)
 	{
+
+		namePanel.SetVisibleFlg(parameterList->GetNowDisplayType() != ParameterList::DisplayType::Entire);
+
 		namePanel.Update();
+
 		MenuBase::UpdateFunction();
 
 		ReturnFrame();
@@ -241,7 +245,7 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
-	parameterList->Update(_type);
+	if(parameterList->Update(_type))return;
 
 	if (_type == ActionType::Decision)
 	{

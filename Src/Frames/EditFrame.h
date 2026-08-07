@@ -31,15 +31,6 @@ class SetWeaponDisplay;
 
 class EditFrame :public ChCpp::BaseFrame, public MenuBase
 {
-public:
-
-	enum class EditType
-	{
-		SelectParts,
-		ChangeParts,
-		SetWeapon
-	};
-
 private:
 
 	enum class SelectButtonType
