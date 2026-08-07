@@ -236,6 +236,8 @@ void ParameterList::Init(ID3D11Device* _device, ChPtr::Shared<BaseMecha> _baseMe
 	CreateTextDrawer(titleTextDrawer, static_cast<unsigned long>(PARAMETER_PANEL_TITLE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f)), static_cast<unsigned long>(PARAMETER_PANEL_HEIGHT), VALUE_TITLE_FONT_SIZE);
 	CreateTextDrawer(valueTextDrawer, static_cast<unsigned long>(PARAMETER_PANEL_VALUE_WIDTH - (PANEL_TEXT_SIDE_ALIGH * 2.0f)), static_cast<unsigned long>(PARAMETER_PANEL_HEIGHT), VALUE_TITLE_FONT_SIZE);
 
+	displayType = DisplayType::Partial;
+
 	backGroundTexture.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"PanelList.png"), _device);
 	backgroundSprite.Init();
 	backgroundSprite.SetInitPosition();
@@ -332,7 +334,7 @@ bool ParameterList::Update(MenuBase::ActionType _type)
 
 	if (!useSpecialActionFlg)return false;
 
-	if (_type == MenuBase::ActionType::Special)
+	if (_type == MenuBase::ActionType::Special1)
 	{
 		displayType = static_cast<DisplayType>((ChStd::EnumCast(displayType) + 1) % DISPLAY_TYPE_COUNT);
 		return true;

@@ -7,7 +7,7 @@ class ParameterTitlePanel
 {
 public:
 
-	ParameterTitlePanel()
+	inline ParameterTitlePanel()
 	{
 		sprite.Init();
 	}

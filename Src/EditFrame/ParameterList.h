@@ -128,6 +128,8 @@ private:
 
 	static constexpr unsigned char DISPLAY_TYPE_COUNT = 2;
 
+public:
+
 	enum class DisplayType
 	{
 		Partial,//ˆê•”•\Ž¦
@@ -147,6 +149,10 @@ public:
 	void SetUseVisibleFlg(bool _flg) { useVisibleFlg = _flg; }
 
 	void SetUseSpecialActionFlg(bool _flg);
+
+public:
+
+	inline DisplayType GetNowDisplayType() { return displayType; }
 
 public:
 
@@ -207,6 +213,7 @@ private:
 
 	ChPtr::Shared<PartsParameters>basePartsParameter = nullptr;
 	ChPtr::Shared<PartsParameters>nextPartsParameter = nullptr;
+
 	ChPtr::Shared<PartsParameters>baseAllParameter = nullptr;
 	ChPtr::Shared<PartsParameters>nextAllParameter = nullptr;
 
