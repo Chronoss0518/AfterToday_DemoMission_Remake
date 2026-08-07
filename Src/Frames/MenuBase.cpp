@@ -49,31 +49,6 @@ void MenuBase::UpdateKeyboard()
 		bool flg = keyInputActionTest[i](keyInput);
 		InputTest((ActionType)i, flg);
 	}
-
-	return;
-
-	pushSpecialKey.clear();
-
-	for (size_t i = 0; i < specialKeyType.size(); i++)
-	{
-		bool flg = keyInput.IsPushKey(specialKeyType[i]);
-		InputTest(ActionType::Special1, flg);
-		if (!flg)continue;
-		pushSpecialKey.push_back(specialKeyType[i]);
-		return;
-	}
-
-	InputTest(ActionType::Decision,!keyInput.IsPushKey(VK_SHIFT) && (keyInput.IsPushKey(VK_RETURN) || keyInput.IsPushKey(VK_SPACE)));
-
-	InputTest(ActionType::Cancel, keyInput.IsPushKey(VK_SHIFT) && (keyInput.IsPushKey(VK_RETURN) || keyInput.IsPushKey(VK_SPACE)));
-
-	InputTest(ActionType::Up, keyInput.IsPushKey(VK_UP) || keyInput.IsPushKey('W'));
-
-	InputTest(ActionType::Down, keyInput.IsPushKey(VK_DOWN) || keyInput.IsPushKey('S'));
-
-	InputTest(ActionType::Left, keyInput.IsPushKey(VK_LEFT) || keyInput.IsPushKey('A'));
-
-	InputTest(ActionType::Right, keyInput.IsPushKey(VK_RIGHT) || keyInput.IsPushKey('D'));
 }
 
 void MenuBase::UpdateController()
@@ -90,34 +65,6 @@ void MenuBase::UpdateController()
 		if (!flg)continue;
 		isPushControllerFlg = true;
 	}
-
-	return;
-
-	if (specialKeyMask > 0)
-	{
-		bool flg = controller.GetFlgs(specialKeyMask);
-		InputTest(ActionType::Special1, flg);
-		if (flg)return;
-	}
-
-	InputTest(ActionType::Decision, controller.GetAFlg());
-	isPushControllerFlg = isPushControllerFlg || controller.GetAFlg();
-
-	InputTest(ActionType::Cancel, controller.GetBFlg());
-	isPushControllerFlg = isPushControllerFlg || controller.GetBFlg();
-
-	InputTest(ActionType::Up, controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE);
-	isPushControllerFlg = isPushControllerFlg || controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE;
-	
-	InputTest(ActionType::Down, controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE);
-	isPushControllerFlg = isPushControllerFlg || controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE;
-	
-	InputTest(ActionType::Left, controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE);
-	isPushControllerFlg = isPushControllerFlg || controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE;
-	
-	InputTest(ActionType::Right, controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE);
-	isPushControllerFlg = isPushControllerFlg || controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE;
-
 }
 
 void MenuBase::SetDefaultActionTest()
@@ -132,10 +79,10 @@ void MenuBase::SetDefaultActionTest()
 
 	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetAFlg(); }, ActionType::Decision);
 	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetBFlg(); }, ActionType::Cancel);
-	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetUpFlg() || _input.GetLYStick() > STICK_INPUT_SIZE); }, ActionType::Up);
-	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetDownFlg() || _input.GetLYStick() < -STICK_INPUT_SIZE); }, ActionType::Down);
-	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetLeftFlg() || _input.GetLXStick() < -STICK_INPUT_SIZE); }, ActionType::Left);
-	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetRightFlg() || _input.GetLXStick() > STICK_INPUT_SIZE); }, ActionType::Right);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetUpFlg() || _input.GetLYStick() > STICK_INPUT_SIZE; }, ActionType::Up);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetDownFlg() || _input.GetLYStick() < -STICK_INPUT_SIZE; }, ActionType::Down);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetLeftFlg() || _input.GetLXStick() < -STICK_INPUT_SIZE; }, ActionType::Left);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetRightFlg() || _input.GetLXStick() > STICK_INPUT_SIZE; }, ActionType::Right);
 
 }
 
