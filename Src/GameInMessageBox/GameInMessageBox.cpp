@@ -1,6 +1,8 @@
 #include"../BaseIncluder.h"
 #include"GameInMessageBox.h"
 
+#include"../../Application/Application.h"
+
 #define MESSAGE_BOX_TOP 585.0f
 #define MESSAGE_BOX_LEFT 256
 
@@ -120,6 +122,12 @@ void GameInMessageBox::SetMessage(const std::wstring& _messenger, const std::wst
 {
 	if (_message.length() <= 0)return;
 	if (_messenger.length() <= 0)return;
+
+	if (_messenger == L"COM")
+	{
+		AppIns().SpeechStop();
+		AppIns().Speech(_message);
+	}
 
 	std::wstring testMessage = L"";
 	for (unsigned long i = 0; i < _message.length(); i++)
