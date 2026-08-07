@@ -40,7 +40,7 @@ void MenuBase::UpdateFunction()
 
 void MenuBase::UpdateKeyboard()
 {
-	if (!useKeyInputActionTestFlg)return;
+	if (!useActionTestFlg)return;
 
 	auto&& keyInput = AppIns().GetKeyInput();
 
@@ -56,7 +56,7 @@ void MenuBase::UpdateController()
 {
 	isPushControllerFlg = false;
 
-	if (!useControllerActionTestFlg)return;
+	if (!useActionTestFlg)return;
 
 	auto&& controller = AppIns().GetXInputController();
 
