@@ -198,8 +198,8 @@ void EditFrame::Update()
 
 	if (loadEndFlg)
 	{
-		if(!namePanel.IsSelect())
-			MenuBase::UpdateFunction();
+		namePanel.Update();
+		MenuBase::UpdateFunction();
 
 		ReturnFrame();
 
@@ -245,7 +245,7 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	if (_type == ActionType::Decision)
 	{
-		if (IsMoucePosOnRect(namePanelRect))
+		if (namePanel.IsCursorPosOnWindow())
 		{
 			namePanel.Select();
 			return;
@@ -276,6 +276,8 @@ void EditFrame::UpdateMouse()
 
 	InputTest(MenuBase::ActionType::Cancel, keyInput.IsPushKeyNoHold(VK_RBUTTON));
 
+	if (namePanel.IsSelect())return;
+
 	auto&& mouse = ChWin::Mouse();
 	mouse.Update();
 
@@ -300,13 +302,16 @@ bool EditFrame::UpdateNamePanel(ActionType _type)
 {
 	if (!namePanel.IsSelect())return false;
 
-	if(_type == ActionType::Decision && !IsMoucePosOnRect(namePanelRect))
+	SetLoopBreakTrue();
+
+	if(_type == ActionType::Decision && !namePanel.IsCursorPosOnWindow())
 	{
+		std::wstring tmp = namePanel.GetText();
+		editMecha->SetMechaName(tmp);
 		namePanel.UnSelect();
-		return false;
+		return true;
 	}
 
-	editMecha->SetMechaName(namePanel.GetText());
 	return true;
 }
 
@@ -468,14 +473,6 @@ bool EditFrame::LoadPart()
 
 	float wParcec = windSize.w / GAME_WINDOW_WIDTH;
 	float hParcec = windSize.h / GAME_WINDOW_HEIGHT;
-
-	namePanelRect.left = NAME_PANEL_X * wParcec;
-	namePanelRect.top = NAME_PANEL_Y * hParcec;
-	
-	namePanelRect.right = NAME_PANEL_X * wParcec + NAME_PANEL_W * wParcec;
-	namePanelRect.bottom = NAME_PANEL_Y * hParcec + NAME_PANEL_H * hParcec;
-
-	namePanelRect = RectToGameWindow(namePanelRect);
 
 	namePanel.Create(
 		editMecha->GetMechaName().c_str(),

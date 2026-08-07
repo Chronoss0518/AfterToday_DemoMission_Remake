@@ -191,7 +191,6 @@ private:
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
 
 	ChWin::TextBoxW namePanel;
-	ChVec4 namePanelRect;
 
 	ChPtr::Shared<FromStageSelectFrameData> sendData = nullptr;
 
