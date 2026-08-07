@@ -32,7 +32,8 @@ void MenuBase::UpdateFunction()
 
 	loopBreakFlg = false;
 
-	afterInputMenuType.SetValue(beforeInputMenuType.GetValue());
+	afterInputMenuType.SetValue(beforeInputMenuType.GetValue(0),0);
+	afterInputMenuType.SetValue(beforeInputMenuType.GetValue(1),1);
 	beforeInputMenuType.SetAllDownFlg();
 
 	inputMenuType.SetAllDownFlg();
