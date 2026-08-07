@@ -48,6 +48,11 @@
 
 #define TMP_CAMERA_POS ChVec3(0.0f, 2.5f, 10.0f)
 
+#define NAME_PANEL_X 390
+#define NAME_PANEL_Y 30
+#define NAME_PANEL_W 500
+#define NAME_PANEL_H 50
+
 
 void EditFrame::EditFrameDisplayBase::SetBaseParts(ChPtr::Shared<MechaPartsObject> _parts)
 {
@@ -193,7 +198,8 @@ void EditFrame::Update()
 
 	if (loadEndFlg)
 	{
-		MenuBase::UpdateFunction();
+		if(!namePanel.IsSelect())
+			MenuBase::UpdateFunction();
 
 		ReturnFrame();
 
@@ -230,6 +236,8 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 void EditFrame::UpdateAction(ActionType _type)
 {
 	if (returnFrameFlg)return;
+	
+	if (UpdateNamePanel(_type))return;
 
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
@@ -237,6 +245,12 @@ void EditFrame::UpdateAction(ActionType _type)
 
 	if (_type == ActionType::Decision)
 	{
+		if (IsMoucePosOnRect(namePanelRect))
+		{
+			namePanel.Select();
+			return;
+		}
+
 		if (selectType == SelectButtonType::Up)
 		{
 			AddActionType(ActionType::Up);
@@ -280,6 +294,20 @@ void EditFrame::UpdateMouse()
 
 	if (nowDisplay != nullptr)nowDisplay->UpdateMouse();
 
+}
+
+bool EditFrame::UpdateNamePanel(ActionType _type)
+{
+	if (!namePanel.IsSelect())return false;
+
+	if(_type == ActionType::Decision && !IsMoucePosOnRect(namePanelRect))
+	{
+		namePanel.UnSelect();
+		return false;
+	}
+
+	editMecha->SetMechaName(namePanel.GetText());
+	return true;
 }
 
 void EditFrame::DrawFunction()
@@ -432,6 +460,31 @@ bool EditFrame::LoadPart()
 	parameterList->Init(device, editMecha);
 
 	pathList.clear();
+
+
+	auto&& window = AppIns().GetWindow();
+
+	auto&& windSize = window.GetWindSize();
+
+	float wParcec = windSize.w / GAME_WINDOW_WIDTH;
+	float hParcec = windSize.h / GAME_WINDOW_HEIGHT;
+
+	namePanelRect.left = NAME_PANEL_X * wParcec;
+	namePanelRect.top = NAME_PANEL_Y * hParcec;
+	
+	namePanelRect.right = NAME_PANEL_X * wParcec + NAME_PANEL_W * wParcec;
+	namePanelRect.bottom = NAME_PANEL_Y * hParcec + NAME_PANEL_H * hParcec;
+
+	namePanelRect = RectToGameWindow(namePanelRect);
+
+	namePanel.Create(
+		editMecha->GetMechaName().c_str(),
+		ChINTPOINT(NAME_PANEL_X * wParcec, NAME_PANEL_Y * hParcec),
+		ChINTPOINT(NAME_PANEL_W * wParcec, NAME_PANEL_H * hParcec),
+		window);
+
+	namePanel.UnSelect();
+	namePanel.SetCharLimit(20);
 
 	return true;
 

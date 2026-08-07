@@ -125,6 +125,8 @@ private:
 
 	void UpdateMouse()override;
 
+	bool UpdateNamePanel(ActionType _type);
+
 private:
 
 	void DrawFunction();
@@ -187,6 +189,9 @@ private:
 	TextDrawerWICBitmap panelPosPartsDrawer;//ÉpÅ[ÉcñºÇï`âÊÇ∑ÇÈ
 
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
+
+	ChWin::TextBoxW namePanel;
+	ChVec4 namePanelRect;
 
 	ChPtr::Shared<FromStageSelectFrameData> sendData = nullptr;
 
