@@ -181,6 +181,8 @@ void Application::Release()
 
 	d3dApi.Release();
 
+	speech.Release();
+
 	window.Release();
 	windClass.Release();
 

@@ -38,6 +38,10 @@ public:
 
 	inline ChD3D::XInputController& GetXInputController() { return controller; }
 
+	inline void Speech(const std::wstring& _text) { speech.Speech(_text); }
+
+	inline void SpeechStop() { speech.Stop(); }
+
 #if USE_THREAD
 	inline ChCpp::ThreadObjectList& GetThreadList() { return threadList; }
 #endif
@@ -64,6 +68,8 @@ private:
 	ChD3D::XInputController controller;
 
 	ChCpp::FPSController fpsController;
+
+	ChWin::TextToSpeech speech;
 
 #if USE_THREAD
 	ChCpp::ThreadObjectList threadList;
