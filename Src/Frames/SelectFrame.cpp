@@ -23,7 +23,8 @@ void SelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	AppIns().GetDirect3D11().SetBackColor(ChVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	MenuBase::InitMenu();
-
+	MenuBase::SetDefaultActionTest();
+	
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
 	spriteShader.Init(device);

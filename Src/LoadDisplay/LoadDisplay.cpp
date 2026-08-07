@@ -173,7 +173,9 @@ private:
 void LoadDisplay::Init()
 {
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
+
 	MenuBase::InitMenu();
+	MenuBase::SetDefaultActionTest();
 
 	dsTex.CreateDepthBuffer(device, static_cast<unsigned long>(GAME_SPRITE_WIDTH), static_cast<unsigned long>(GAME_SPRITE_HEIGHT));
 

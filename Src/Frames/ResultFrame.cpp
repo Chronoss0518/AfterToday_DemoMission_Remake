@@ -50,6 +50,10 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	AppIns().GetDirect3D11().SetBackColor(ChVec4::FromColor(color, color, color, 1.0f));
 
+	MenuBase::InitMenu();
+
+	MenuBase::SetDefaultActionTest();
+
 	resultData = ChPtr::SharedSafeCast<ResultStructure>(_sendData);
 
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
@@ -104,7 +108,6 @@ void ResultFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	spriteShader.Init(device);
 
-	MenuBase::InitMenu();
 }
 
 void ResultFrame::Release()
