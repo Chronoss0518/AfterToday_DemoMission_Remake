@@ -43,17 +43,25 @@ void MenuBase::UpdateKeyboard()
 
 	auto&& keyInput = AppIns().GetKeyInput();
 
+	for (unsigned char i = 0; i < ChStd::EnumCast(ActionType::None); i++)
+	{
+		if (!keyInputActionTest[i])continue;
+		bool flg = keyInputActionTest[i](keyInput);
+		InputTest((ActionType)i, flg);
+	}
+
+	return;
+
 	pushSpecialKey.clear();
 
 	for (size_t i = 0; i < specialKeyType.size(); i++)
 	{
 		bool flg = keyInput.IsPushKey(specialKeyType[i]);
-		InputTest(ActionType::Special, flg);
-		if (flg)
-			pushSpecialKey.push_back(specialKeyType[i]);
+		InputTest(ActionType::Special1, flg);
+		if (!flg)continue;
+		pushSpecialKey.push_back(specialKeyType[i]);
+		return;
 	}
-
-	if (!pushSpecialKey.empty())return;
 
 	InputTest(ActionType::Decision,!keyInput.IsPushKey(VK_SHIFT) && (keyInput.IsPushKey(VK_RETURN) || keyInput.IsPushKey(VK_SPACE)));
 
@@ -74,32 +82,52 @@ void MenuBase::UpdateController()
 
 	auto&& controller = AppIns().GetXInputController();
 
+	for (unsigned char i = 0; i < ChStd::EnumCast(ActionType::None); i++)
+	{
+		if (!controllerActionTest[i])continue;
+		bool flg = controllerActionTest[i](controller);
+		InputTest((ActionType)i, flg);
+		if (!flg)continue;
+		isPushControllerFlg = true;
+	}
+
+	return;
+
 	if (specialKeyMask > 0)
 	{
 		bool flg = controller.GetFlgs(specialKeyMask);
-		InputTest(ActionType::Special, flg);
-		if (flg)
-			return;
+		InputTest(ActionType::Special1, flg);
+		if (flg)return;
 	}
 
 	InputTest(ActionType::Decision, controller.GetAFlg());
-	isPushControllerFlg = !isPushControllerFlg ? controller.GetAFlg() : isPushControllerFlg;
+	isPushControllerFlg = isPushControllerFlg || controller.GetAFlg();
 
 	InputTest(ActionType::Cancel, controller.GetBFlg());
-	isPushControllerFlg = !isPushControllerFlg ? controller.GetBFlg() : isPushControllerFlg;
+	isPushControllerFlg = isPushControllerFlg || controller.GetBFlg();
 
 	InputTest(ActionType::Up, controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE : isPushControllerFlg;
+	isPushControllerFlg = isPushControllerFlg || controller.GetUpFlg() || controller.GetLYStick() > STICK_INPUT_SIZE;
 	
 	InputTest(ActionType::Down, controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
+	isPushControllerFlg = isPushControllerFlg || controller.GetDownFlg() || controller.GetLYStick() < -STICK_INPUT_SIZE;
 	
 	InputTest(ActionType::Left, controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE : isPushControllerFlg;
+	isPushControllerFlg = isPushControllerFlg || controller.GetLeftFlg() || controller.GetLXStick() < -STICK_INPUT_SIZE;
 	
 	InputTest(ActionType::Right, controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE);
-	isPushControllerFlg = !isPushControllerFlg ? controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE : isPushControllerFlg;
+	isPushControllerFlg = isPushControllerFlg || controller.GetRightFlg() || controller.GetLXStick() > STICK_INPUT_SIZE;
 
+}
+
+void MenuBase::SetActionTest(std::function<bool(ChWin::WinKeyInput&)> _keyInputTest, ActionType _type)
+{
+	keyInputActionTest[ChStd::EnumCast(_type)] = _keyInputTest;
+}
+
+void MenuBase::SetActionTest(std::function<bool(ChD3D::XInputController&)> _controllerInputTest, ActionType _type)
+{
+	controllerActionTest[ChStd::EnumCast(_type)] = _controllerInputTest;
 }
 
 void MenuBase::AddActionType(ActionType _action)

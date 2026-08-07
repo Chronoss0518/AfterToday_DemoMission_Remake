@@ -6,14 +6,17 @@ public:
 
 	enum class ActionType : unsigned char
 	{
+		//特殊なアクション//
+		Special1,
+		Special2,
+		Special3,
+		//基本的なアクション//
 		Decision,
 		Cancel,
 		Up,
 		Down,
 		Left,
 		Right,
-		//キー不特定//
-		Special,
 		//キー入力無し//
 		None,
 	};
@@ -40,6 +43,12 @@ private:
 
 	void UpdateController();
 
+public:
+
+	void SetActionTest(std::function<bool(ChWin::WinKeyInput&)> _keyInputTest, ActionType _type);
+
+	void SetActionTest(std::function<bool(ChD3D::XInputController&)> _controllerInputTest, ActionType _type);
+
 protected:
 
 	void AddActionType(ActionType _action);
@@ -65,6 +74,9 @@ private:
 	ChCpp::BitBool beforeInputMenuType = ChCpp::BitBool((ChStd::EnumCast(ActionType::None) / 8) + 1);
 	ChCpp::BitBool afterInputMenuType = ChCpp::BitBool((ChStd::EnumCast(ActionType::None) / 8) + 1);
 	ChCpp::BitBool inputMenuType = ChCpp::BitBool((ChStd::EnumCast(ActionType::None) / 8) + 1);
+
+	std::function<bool(ChWin::WinKeyInput&)>keyInputActionTest[ChStd::EnumCast(ActionType::None)];
+	std::function<bool(ChD3D::XInputController&)>controllerActionTest[ChStd::EnumCast(ActionType::None)];
 
 	bool isPushControllerFlg = false;
 
