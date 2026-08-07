@@ -629,9 +629,9 @@ void GameFrame::UpdateFunction()
 	if (allControllFlg)
 	{
 		mechaList.ObjectUpdateBegin();
-	}
 
-	mechaList.ObjectUpdate();
+		mechaList.ObjectUpdate();
+	}
 
 	bulletList.ObjectUpdate();
 
