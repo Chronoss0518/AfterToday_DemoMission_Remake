@@ -251,6 +251,7 @@ void EditFrame::UpdateAction(ActionType _type)
 	{
 		if (namePanel.IsCursorPosOnWindow())
 		{
+			SetUseActionTestFlg(false);
 			namePanel.Select();
 			return;
 		}
@@ -306,10 +307,10 @@ bool EditFrame::UpdateNamePanel(ActionType _type)
 {
 	if (!namePanel.IsSelect())return false;
 
-	SetLoopBreakTrue();
-
 	if(_type == ActionType::Decision && !namePanel.IsCursorPosOnWindow())
 	{
+		SetUseActionTestFlg(true);
+
 		std::wstring tmp = namePanel.GetText();
 		editMecha->SetMechaName(tmp);
 		namePanel.UnSelect();
