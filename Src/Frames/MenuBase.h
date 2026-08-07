@@ -47,7 +47,11 @@ public:
 
 	void SetDefaultActionTest();
 
+	void SetUseKeyInputActionTestFlg(bool _flg) { useKeyInputActionTestFlg = _flg; }
+
 	void SetActionTest(std::function<bool(ChWin::WinKeyInput&)> _keyInputTest, ActionType _type);
+
+	void SetUseControllerActionTestFlg(bool _flg) { useControllerActionTestFlg = _flg; }
 
 	void SetActionTest(std::function<bool(ChD3D::XInputController&)> _controllerInputTest, ActionType _type);
 
@@ -65,7 +69,10 @@ private:
 	ChCpp::BitBool afterInputMenuType = ChCpp::BitBool((ChStd::EnumCast(ActionType::None) / 8) + 1);
 	ChCpp::BitBool inputMenuType = ChCpp::BitBool((ChStd::EnumCast(ActionType::None) / 8) + 1);
 
+	bool useKeyInputActionTestFlg = true;
 	std::function<bool(ChWin::WinKeyInput&)>keyInputActionTest[ChStd::EnumCast(ActionType::None)];
+
+	bool useControllerActionTestFlg = true;
 	std::function<bool(ChD3D::XInputController&)>controllerActionTest[ChStd::EnumCast(ActionType::None)];
 
 	bool isPushControllerFlg = false;

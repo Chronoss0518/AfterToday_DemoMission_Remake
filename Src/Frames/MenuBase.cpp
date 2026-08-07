@@ -40,6 +40,8 @@ void MenuBase::UpdateFunction()
 
 void MenuBase::UpdateKeyboard()
 {
+	if (!useKeyInputActionTestFlg)return;
+
 	auto&& keyInput = AppIns().GetKeyInput();
 
 	for (unsigned char i = 0; i < ChStd::EnumCast(ActionType::None); i++)
@@ -53,6 +55,8 @@ void MenuBase::UpdateKeyboard()
 void MenuBase::UpdateController()
 {
 	isPushControllerFlg = false;
+
+	if (!useControllerActionTestFlg)return;
 
 	auto&& controller = AppIns().GetXInputController();
 
