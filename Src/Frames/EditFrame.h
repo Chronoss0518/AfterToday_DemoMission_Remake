@@ -25,7 +25,7 @@ class NowLoadingUpdater;
 
 class PartsSelectDisplay;
 class PartsChangeDisplay;
-class PartsAddWeaponPaletteDisplay;
+class SetWeaponDisplay;
 
 #include"MenuBase.h"
 
