@@ -40,7 +40,6 @@ void MenuBase::UpdateFunction()
 
 void MenuBase::UpdateKeyboard()
 {
-
 	auto&& keyInput = AppIns().GetKeyInput();
 
 	for (unsigned char i = 0; i < ChStd::EnumCast(ActionType::None); i++)
@@ -99,40 +98,6 @@ void MenuBase::SetActionTest(std::function<bool(ChD3D::XInputController&)> _cont
 void MenuBase::AddActionType(ActionType _action)
 {
 	inputMenuType.SetBitTrue(ChStd::EnumCast(_action));
-}
-
-void MenuBase::AddSpecialKey(unsigned char _key)
-{
-	for (size_t i = 0; i < specialKeyType.size(); i++)
-	{
-		if (specialKeyType[i] == _key)
-			return;
-	}
-
-	specialKeyType.push_back(_key);
-}
-
-void MenuBase::SubSpecialKey(unsigned char _key)
-{
-	for (size_t i = 0; i < specialKeyType.size(); i++)
-	{
-		if (specialKeyType[i] != _key)
-			continue;
-
-		specialKeyType.erase(specialKeyType.begin() + i);
-		return;
-	}
-}
-
-bool MenuBase::IsPushSpecialKey(unsigned char _key)
-{
-	for (size_t i = 0; i < pushSpecialKey.size(); i++)
-	{
-		if (specialKeyType[i] == _key)
-			return true;
-	}
-
-	return false;
 }
 
 void MenuBase::InputTest(ActionType _action, bool _inputFlg)

@@ -57,18 +57,6 @@ protected:
 
 public:
 
-	void AddSpecialKey(unsigned char _key);
-
-	inline void AddSpecialKeyMask(unsigned short _mask) { specialKeyMask |= _mask; }
-
-	void SubSpecialKey(unsigned char _key);
-
-	inline void SubSpecialKeyMask(unsigned short _mask) { specialKeyMask = (specialKeyMask & (0xffff - _mask)); }
-
-	bool IsPushSpecialKey(unsigned char _key);
-
-protected:
-
 	void InputTest(ActionType _action, bool _inputFlg);
 
 private:
@@ -83,9 +71,4 @@ private:
 	bool isPushControllerFlg = false;
 
 	bool loopBreakFlg = false;
-
-	std::vector<unsigned char>specialKeyType;
-	std::vector<unsigned char>pushSpecialKey;
-
-	unsigned short specialKeyMask = 0;
 };
