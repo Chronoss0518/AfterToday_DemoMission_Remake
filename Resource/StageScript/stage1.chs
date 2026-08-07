@@ -3,14 +3,14 @@ LoadBGM reconnaissance.wav -l
 //マップオブジェクトの追加//
 LoadMap ExaminationHall.field.json
 //マップ上にメカを配置(Player)//
-LoadMecha -u player -p 0.0,180.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0  -l AirRobot.amf
+LoadMecha -u player -p 0.0,10.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0  -l AirRobot.amf
 //マップ上にメカを配置//
-LoadMecha -l AirRobot.amf -u enemyTest -p 0.0,180.0,0.0 -t 1 -cc mob.cpu
+LoadMecha -l AirRobot.amf -u enemyTest -p 0.0,10.0,0.0 -t 1 -cc mob.cpu
+SetControllerUsing false
 //初期化が終わるまで待機//
 Initialize
 //Battle1.wavを再生//
 Play reconnaissance.wav
-SetControllerUsing false
 Message 作戦開始。\n目標は、あの水色の機体だ。 --messenger operator --addFrame 0.1 --afterFrame 3.0 --stop --endDrawKeyFlg
 Message 相手は速度重視の機体だ。\n気を抜くなよ。 --messenger operator --addFrame 0.1 --afterFrame 3.0 --stop --endDrawKeyFlg
 Message ミッション開始だ --messenger operator --addFrame 0.1 --afterFrame 3.0

@@ -10,15 +10,14 @@ LoadMap ExaminationHall.field.json
 //マップオブジェクトの追加//
 //LoadMap TestField2.x -s 100.0,100.0,100.0
 //マップ上にメカを配置(Player)//
-LoadMecha -u player -p 0.0,180.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0
+LoadMecha -u player -p 0.0,10.0,200.0 -r 0.0,180.0f,0.0 -pc -t 0
 //マップ上にメカを配置//
-LoadMecha -l GuardianRobot.amf -u enemyTest -p 0.0,180.0,0.0 -t 1 -cc mob.cpu
+LoadMecha -l GuardianRobot.amf -u enemyTest -p 0.0,10.0,0.0 -t 1 -cc mob.cpu
 //初期化が終わるまで待機//
 Initialize
 //Battle1.wavを再生//
 Play reconnaissance.wav
 Message 作戦開始だ。遅れるなよ。 --messenger operator --addFrame 0.2 --afterFrame 3.0
-//SetControllerUsing false
 //Loopの開始//
 Loop Loop1
 //チームメンバーが1以上の場合は次のコードをスキップする//
