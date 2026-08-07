@@ -99,6 +99,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	MenuBase::InitMenu();
 
+	MenuBase::SetDefaultActionTest();
+
+
 	spriteShader.Init(device);
 	rtView.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
 	dsView.CreateDepthBuffer(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
@@ -134,9 +137,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
 	parameterList = ChPtr::Make_S<ParameterList>();
-	AddSpecialKey('Z');
-	AddSpecialKey('X');
-	AddSpecialKeyMask(XINPUT_GAMEPAD_X | XINPUT_GAMEPAD_Y);
+
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKeyNoHold('Z') || _input.IsPushKeyNoHold('X'); }, ActionType::Special1);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetFlgs(XINPUT_GAMEPAD_X | XINPUT_GAMEPAD_Y); }, ActionType::Special1);
 
 	partsSelectDisplay = ChPtr::Make_S<PartsSelectDisplay>();
 	partsSelectDisplay->Init(this);
