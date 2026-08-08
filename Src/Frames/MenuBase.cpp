@@ -72,8 +72,8 @@ void MenuBase::UpdateController()
 void MenuBase::SetDefaultActionTest()
 {
 
-	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return !_input.IsPushKey(VK_SHIFT) && (_input.IsPushKey(VK_RETURN) || _input.IsPushKey(VK_SPACE)); }, ActionType::Decision);
-	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_SHIFT) && (_input.IsPushKey(VK_RETURN) || _input.IsPushKey(VK_SPACE)); }, ActionType::Cancel);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return !_input.IsPushKey(VK_SHIFT) && _input.IsPushKey(VK_SPACE); }, ActionType::Decision);
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_SHIFT) && _input.IsPushKey(VK_SPACE); }, ActionType::Cancel);
 	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_UP) || _input.IsPushKey('W'); }, ActionType::Up);
 	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_DOWN) || _input.IsPushKey('S'); }, ActionType::Down);
 	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_LEFT) || _input.IsPushKey('A'); }, ActionType::Left);
