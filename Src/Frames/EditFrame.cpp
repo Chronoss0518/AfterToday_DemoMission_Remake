@@ -106,6 +106,16 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	MenuBase::SetDefaultActionTest();
 
+	//ActionType::Special1は一部表示と全体表示の切り替え//
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey('Z') || _input.IsPushKey('X'); }, ActionType::Special1);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetFlgs(XINPUT_GAMEPAD_X | XINPUT_GAMEPAD_Y); }, ActionType::Special1);
+
+	//ActionType::Special2はセーブ//
+	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKey(VK_RETURN); }, ActionType::Special2);
+	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetStartFlg(); }, ActionType::Special2);
+
+	editMechaSaveMsgBox.ClearDisplayButtonType();
+	editMechaSaveMsgBox.AddDisplayButtonType(ChWin::MsgBox::DisplayButtonType::Ok);
 
 	spriteShader.Init(device);
 	rtView.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);
@@ -142,9 +152,6 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	editMecha = ChPtr::Make_S<BaseMecha>();
 
 	parameterList = ChPtr::Make_S<ParameterList>();
-
-	SetActionTest([](ChWin::WinKeyInput& _input)->bool {return _input.IsPushKeyNoHold('Z') || _input.IsPushKeyNoHold('X'); }, ActionType::Special1);
-	SetActionTest([](ChD3D::XInputController& _input)->bool {return _input.GetFlgs(XINPUT_GAMEPAD_X | XINPUT_GAMEPAD_Y); }, ActionType::Special1);
 
 	partsSelectDisplay = ChPtr::Make_S<PartsSelectDisplay>();
 	partsSelectDisplay->Init(this);
@@ -227,6 +234,7 @@ void EditFrame::UpdateAction(ActionType _type)
 	if (UpdateNamePanel(_type))return;
 
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
+	auto&& window = AppIns().GetWindow();
 
 	if(parameterList->Update(_type))return;
 
@@ -250,6 +258,14 @@ void EditFrame::UpdateAction(ActionType _type)
 			AddActionType(ActionType::Down);
 			return;
 		}
+	}
+
+	if (_type == ActionType::Special2)
+	{
+		if (editMecha == nullptr)return;
+		editMecha->Save(PLAYER_USE_MECHA_PATH);
+		editMechaSaveMsgBox.DisplayW(window.GethWnd(), L"Mechaの保存", L"MechaのSaveに成功しました");
+		return;
 	}
 
 	if(nowDisplay != nullptr)nowDisplay->Update(_type);

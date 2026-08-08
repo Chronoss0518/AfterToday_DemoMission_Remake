@@ -180,6 +180,7 @@ private:
 	TextDrawerWICBitmap panelPosPartsDrawer;//ƒp[ƒc–¼‚ğ•`‰æ‚·‚é
 
 	ChPtr::Shared<BaseMecha> editMecha = nullptr;
+	ChWin::MsgBox editMechaSaveMsgBox;
 
 	ChWin::TextBoxW namePanel;
 
