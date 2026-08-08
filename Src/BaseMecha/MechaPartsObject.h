@@ -65,6 +65,13 @@ public:
 
 	void SetLookTargetParts(MechaPartsObject* _weaponParts);
 
+	inline void SetWeaponPaletteCounter(size_t _num, WeaponHandType _type, char _paletteNum)
+	{
+		if (_num >= weaponPaletteCounter[ChStd::EnumCast(_type)].size())
+			return;
+
+		weaponPaletteCounter[ChStd::EnumCast(_type)][_num] = _paletteNum;
+	}
 private:
 
 	void SetRotation(float _rad);
