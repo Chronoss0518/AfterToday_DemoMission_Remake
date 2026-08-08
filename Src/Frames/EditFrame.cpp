@@ -151,23 +151,6 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	partsChangeDisplay = ChPtr::Make_S<PartsChangeDisplay>();
 	partsChangeDisplay->Init(this);
-	
-#if false
-	partsList = ChPtr::Make_S<EditList>();
-	partsList->Init();
-
-	selectPartsList = ChPtr::Make_S<SelectPartsList>();
-	selectPartsList->Init();
-
-	{
-		auto&& panel = ChPtr::Make_S<SelectPartsListItem>();
-
-		panel->positionNameTexture = CreatePanelTitleTexture(L"Cancel");
-
-		selectPartsList->AddItem(panel);
-	}
-
-#endif
 
 	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,
