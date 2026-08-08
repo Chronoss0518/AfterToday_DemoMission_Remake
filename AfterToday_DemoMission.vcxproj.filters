@@ -180,9 +180,6 @@
     <ClInclude Include="Src\Frames\EditFrame.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\BaseMecha\MechaEditor.h">
-      <Filter>EditFrame</Filter>
-    </ClInclude>
     <ClInclude Include="Src\EditFrameDrawObject\PanelList\PanelList.h">
       <Filter>EditFrame\DrawObject</Filter>
     </ClInclude>
@@ -354,6 +351,9 @@
     <ClInclude Include="Src\NowLoadingUpdater\NowLoadingUpdater.h">
       <Filter>NowLoadingUpdater</Filter>
     </ClInclude>
+    <ClInclude Include="Src\EditFrame\SetWeaponDisplay.h">
+      <Filter>EditFrame</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -433,9 +433,6 @@
     </ClCompile>
     <ClCompile Include="Src\Frames\EditFrame.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\BaseMecha\MechaEditor.cpp">
-      <Filter>EditFrame</Filter>
     </ClCompile>
     <ClCompile Include="Src\EditFrameDrawObject\PanelList\PanelList.cpp">
       <Filter>EditFrame\DrawObject</Filter>
@@ -589,6 +586,9 @@
     </ClCompile>
     <ClCompile Include="Src\NowLoadingUpdater\NowLoadingUpdater.cpp">
       <Filter>NowLoadingUpdater</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EditFrame\SetWeaponDisplay.cpp">
+      <Filter>EditFrame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
