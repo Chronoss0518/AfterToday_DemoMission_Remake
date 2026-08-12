@@ -14,8 +14,8 @@
 #include"../Attack/AttackObject.h"
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
-#include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
-#include"../WeaponPaletteDrawUI/WeaponPaletteGameUI.h"
+#include"../WeaponDataUI/WeaponDataUI.h"
+#include"../WeaponPaletteUI/WeaponPaletteGameUI.h"
 
 #include"../BaseMecha/Controller/PlayerController.h"
 #include"../BaseMecha/Controller/CPUController.h"
