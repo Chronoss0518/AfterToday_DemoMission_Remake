@@ -15,7 +15,7 @@
 #include"../Attack/Attack.h"
 #include"../GameScript/GameScript.h"
 #include"../WeaponDataDrawUI/WeaponDataDrawUI.h"
-#include"../WeaponPaletteDrawUI/WeaponPaletteDrawUI.h"
+#include"../WeaponPaletteDrawUI/WeaponPaletteGameUI.h"
 
 #include"../BaseMecha/Controller/PlayerController.h"
 #include"../BaseMecha/Controller/CPUController.h"
@@ -239,7 +239,7 @@ void GameFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 	weaponDataDrawer = ChPtr::Make_S<WeaponDataDrawUI>();
 	weaponDataDrawer->Init(device);
 
-	weaponPaletteDrawer = ChPtr::Make_S<WeaponPaletteDrawUI>();
+	weaponPaletteDrawer = ChPtr::Make_S<WeaponPaletteGameUI>();
 	weaponPaletteDrawer->Init(device);
 
 	rt2D.CreateRenderTarget(device, GAME_WINDOW_WIDTH_LONG, GAME_WINDOW_HEIGHT_LONG);

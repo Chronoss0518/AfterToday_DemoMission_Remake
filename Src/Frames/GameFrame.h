@@ -19,7 +19,7 @@ class SmokeEffectList;
 
 class GameInMessageBox;
 class WeaponDataDrawUI;
-class WeaponPaletteDrawUI;
+class WeaponPaletteGameUI;
 class FieldManager;
 
 class GameFrame:public ChCpp::BaseFrame
@@ -195,7 +195,7 @@ private:
 
 	ChPtr::Shared<GameInMessageBox> messageBox = nullptr;
 	ChPtr::Shared<WeaponDataDrawUI> weaponDataDrawer = nullptr;
-	ChPtr::Shared<WeaponPaletteDrawUI> weaponPaletteDrawer = nullptr;
+	ChPtr::Shared<WeaponPaletteGameUI> weaponPaletteDrawer = nullptr;
 
 	D3D11_BLEND_DESC uiBlending;
 
