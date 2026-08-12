@@ -64,6 +64,16 @@ public:
 
 	protected:
 
+		void SetUpButtonSpriteRect(const ChVec4& _rect);
+
+		void SetDownButtonSpriteRect(const ChVec4& _rect);
+
+		void SetInitUpButtonSpriteRect();
+
+		void SetInitDownButtonSpriteRect();
+
+	protected:
+
 		inline void AddActionType(MenuBase::ActionType _type) { frame->AddActionType(_type); }
 
 	protected:

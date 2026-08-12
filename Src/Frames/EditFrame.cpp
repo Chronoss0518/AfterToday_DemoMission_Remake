@@ -17,6 +17,7 @@
 
 #include"../EditFrame/PartsSelectDisplay.h"
 #include"../EditFrame/PartsChangeDisplay.h"
+#include"../EditFrame/SetWeaponDisplay.h"
 
 #define MECHA_ROTATION_SPEED 1.0f
 
@@ -52,7 +53,6 @@
 #define NAME_PANEL_Y 30
 #define NAME_PANEL_W 500
 #define NAME_PANEL_H 50
-
 
 void EditFrame::EditFrameDisplayBase::SetBaseParts(ChPtr::Shared<MechaPartsObject> _parts)
 {
@@ -225,6 +225,26 @@ void EditFrame::InitTextDrawer(TextDrawerWICBitmap& _initDrawer, const ChVec2& _
 	_initDrawer.brush = _initDrawer.drawer.CreateBrush(ChVec4::FromColor(0.0f,0.0f,0.0f,1.0f));
 
 	_initDrawer.format = _initDrawer.drawer.CreateTextFormat(L"ƒSƒVƒbƒN",nullptr, _boldFlg ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,DWRITE_FONT_STYLE_NORMAL,DWRITE_FONT_STRETCH_NORMAL,_fontSize);
+}
+
+void EditFrame::EditFrameDisplayBase::SetUpButtonSpriteRect(const ChVec4& _rect)
+{
+	frame->selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite.SetPosRect(_rect);
+}
+
+void EditFrame::EditFrameDisplayBase::SetDownButtonSpriteRect(const ChVec4& _rect)
+{
+	frame->selectButton[ChStd::EnumCast(SelectButtonType::Down)].sprite.SetPosRect(_rect);
+}
+
+void EditFrame::EditFrameDisplayBase::SetInitUpButtonSpriteRect()
+{
+	frame->selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, UP_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, UP_BUTTON_PANEL_Y + PANEL_SIZE_H)));
+}
+
+void EditFrame::EditFrameDisplayBase::SetInitDownButtonSpriteRect()
+{
+	frame->selectButton[ChStd::EnumCast(SelectButtonType::Down)].sprite.SetPosRect(RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, DOWN_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, DOWN_BUTTON_PANEL_Y + PANEL_SIZE_H)));
 }
 
 void EditFrame::UpdateAction(ActionType _type)
