@@ -5,30 +5,16 @@
 #include"../BaseMecha/FunctionComponent/WeaponComponent.h"
 #include"../BaseMecha/MechaPartsObjectFunction/WeaponFunction.h"
 
-#include"WeaponPaletteDrawUI.h"
+#include"WeaponPaletteUIBase.h"
 
 #ifndef PALETTE_TEXTURE_DIRECTORY
 #define PALETTE_TEXTURE_DIRECTORY(current_path) TEXTURE_DIRECTORY(L"WeaponPalette/" current_path) 
 #endif
 
-#define WEAPON_PALETTE_TOP 560.0f
-#define WEAPON_PALETTE_WIDTH 290.0f
-#define WEAPON_PALETTE_HEIGHT 50.0f
-
-#define WEAPON_PALETTE_TOPBOTTOM_ALINE 5.0f
-#define WEAPON_PALETTE_SIDE_ALINE 10.0f
-
-#define PALETTE_WIDTH 46.0f
-#define PALETTE_HEIGHT 40.0f
-
-#define LEFT_WEAPON_PALETTE_LEFT 153.0f
-
-#define RIGHT_WEAPON_PALETTE_LEFT 836.0f
-
 #define WEAPON_SELECT_COLOR ChVec4::FromColor(1.0f,1.0f,0.0f,1.0f)
 #define WEAPON_UNSELECT_COLOR ChVec4::FromColor(1.0f,1.0f,1.0f,1.0f)
 
-void WeaponPaletteDrawUI::Init(ID3D11Device* _device)
+void WeaponPaletteUIBase::Init(ID3D11Device* _device)
 {
 	if (IsInit())return;
 
@@ -49,7 +35,7 @@ void WeaponPaletteDrawUI::Init(ID3D11Device* _device)
 	SetInitFlg(true);
 }
 
-void WeaponPaletteDrawUI::Release()
+void WeaponPaletteUIBase::Release()
 {
 	if (!IsInit())return;
 
@@ -59,7 +45,7 @@ void WeaponPaletteDrawUI::Release()
 	SetInitFlg(false);
 }
 
-void WeaponPaletteDrawUI::Update(BaseMecha* _targetMecha)
+void WeaponPaletteUIBase::Update(BaseMecha* _targetMecha)
 {
 	if (ChPtr::NullCheck(_targetMecha))return;
 
@@ -82,48 +68,48 @@ void WeaponPaletteDrawUI::Update(BaseMecha* _targetMecha)
 
 }
 
-void WeaponPaletteDrawUI::Draw(ChD3D11::Shader::BaseDrawSprite11& _uiDrawer)
+void WeaponPaletteUIBase::Draw(ChD3D11::Shader::BaseDrawSprite11& _uiDrawer)
 {
 	DrawPalette(_uiDrawer,WeaponHandType::Left);
 
 	DrawPalette(_uiDrawer, WeaponHandType::Right);
 }
 
-void WeaponPaletteDrawUI::DrawPalette(
+void WeaponPaletteUIBase::DrawPalette(
 	ChD3D11::Shader::BaseDrawSprite11& _uiDrawer,
 	WeaponHandType _type)
 {
 	bool leftFlg = _type == WeaponHandType::Left;
 
 	ChVec2 leftTop;
-	leftTop.x = leftFlg ? LEFT_WEAPON_PALETTE_LEFT : RIGHT_WEAPON_PALETTE_LEFT;
-	leftTop.y = WEAPON_PALETTE_TOP;
+	leftTop.x = leftFlg ? leftWeapomPaletteLeft : rightWeapomPaletteLeft;
+	leftTop.y = weapomPaletteTop;
 
 	useSprite.SetPosRect(
 		RectToGameWindow(
 			ChVec4::FromRect(
 				leftTop.x,
 				leftTop.y,
-				leftTop.x + WEAPON_PALETTE_WIDTH,
-				leftTop.y + WEAPON_PALETTE_HEIGHT)
+				leftTop.x + weapomPaletteWidth,
+				leftTop.y + weapomPaletteHeight)
 		)
 	);
 
 	_uiDrawer.Draw(backGround, useSprite);
 
-	leftTop.y += WEAPON_PALETTE_TOPBOTTOM_ALINE;
+	leftTop.y += weaponPaletteTopAline;
 
 	for (unsigned char i = 0; i < PALETTE_COUNT; i++)
 	{
-		leftTop.x += WEAPON_PALETTE_SIDE_ALINE;
+		leftTop.x += weaponPaletteSideAline;
 
 		useSprite.SetPosRect(
 			RectToGameWindow(
 				ChVec4::FromRect(
 					leftTop.x,
 					leftTop.y,
-					leftTop.x + PALETTE_WIDTH,
-					leftTop.y + PALETTE_HEIGHT)
+					leftTop.x + paletteWidth,
+					leftTop.y + paletteHeight)
 			)
 		);
 
@@ -140,7 +126,7 @@ void WeaponPaletteDrawUI::DrawPalette(
 
 		_uiDrawer.Draw(palette, useSprite, color);
 
-		leftTop.x += PALETTE_WIDTH;
+		leftTop.x += paletteWidth;
 
 	}
 
