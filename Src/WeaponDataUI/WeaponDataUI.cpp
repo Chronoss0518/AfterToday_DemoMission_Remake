@@ -1,5 +1,5 @@
 #include"../BaseIncluder.h"
-#include"WeaponDataDrawUI.h"
+#include"WeaponDataUI.h"
 
 #include"../BaseMecha/BaseMecha.h"
 #include"../BaseMecha/FunctionComponent/WeaponComponent.h"
