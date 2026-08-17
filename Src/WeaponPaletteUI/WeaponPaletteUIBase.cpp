@@ -117,12 +117,10 @@ void WeaponPaletteUIBase::DrawPalette(
 
 		auto drawFunction = targetFunction[ChStd::EnumCast(_type)][drawNo];
 
-		ChVec4 color = selectWeaponNo[ChStd::EnumCast(_type)] == drawNo ?
-			WEAPON_SELECT_COLOR :
-			WEAPON_UNSELECT_COLOR;
-
 		if (ChPtr::NotNullCheck(drawFunction))
 			_uiDrawer.Draw(*drawFunction, useSprite);
+
+		ChVec4 color = GetPaletteColor(drawNo, _type);
 
 		_uiDrawer.Draw(palette, useSprite, color);
 
@@ -130,4 +128,13 @@ void WeaponPaletteUIBase::DrawPalette(
 
 	}
 
+}
+
+ChVec4 WeaponPaletteUIBase::GetPaletteColor(
+	unsigned char _drawNo,
+	WeaponHandType _type)
+{
+	return selectWeaponNo[ChStd::EnumCast(_type)] == _drawNo ?
+		WEAPON_SELECT_COLOR :
+		WEAPON_UNSELECT_COLOR;
 }

@@ -14,6 +14,13 @@ public:
 
 	void Release();
 
+public:
+
+	void SetSelectWeaponNo(WeaponHandType _type, unsigned char _no)
+	{
+		selectWeaponNo[ChStd::EnumCast(_type)] = _no;
+	}
+
 protected:
 
 	void SetWeaponPaletteTop(float _pos) { weapomPaletteTop = _pos; }
@@ -36,6 +43,19 @@ protected:
 	void SetPaletteWidth(float _pos) { paletteWidth = _pos; }
 
 	void SetPaletteHeight(float _pos) { paletteHeight = _pos; }
+
+public:
+
+	unsigned char GetSelectWeaponNo(WeaponHandType _type)
+	{
+		return selectWeaponNo[ChStd::EnumCast(_type)];
+	}
+
+protected:
+
+	virtual ChVec4 GetPaletteColor(
+		unsigned char _drawNo,
+		WeaponHandType _type);
 
 public:
 
