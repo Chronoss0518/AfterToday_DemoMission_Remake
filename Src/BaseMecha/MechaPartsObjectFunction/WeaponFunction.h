@@ -84,6 +84,8 @@ public:
 
 	inline ChD3D11::Texture11& GetPaletteImage() { return data->GetPaletteImage(); }
 
+	inline MechaPartsObject* GetMechaPartsObject() { return parts; }
+
 protected:
 
 	BaseMecha* mecha = nullptr;
