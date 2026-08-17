@@ -97,6 +97,9 @@
     <Filter Include="OuterFiles\Mecha\PartsDatas">
       <UniqueIdentifier>{182f121d-1da1-4cde-a6f5-9c5d96277476}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WeaponPaletteUIBase">
+      <UniqueIdentifier>{39902a64-cf61-4756-b16c-42aa56fe3123}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\BaseIncluder.h">
@@ -222,9 +225,6 @@
     <ClInclude Include="Src\EffectObjects\BurnEffectList\BurnEffectList.h">
       <Filter>GameFrame\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h">
-      <Filter>GameFrame</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Shader\EffectSprite\EffectSpriteShader.h">
       <Filter>GameFrame\Shader\EffectSpriteShader</Filter>
     </ClInclude>
@@ -312,9 +312,6 @@
     <ClInclude Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.h">
       <Filter>GameFrame\MechaPartsFunction</Filter>
     </ClInclude>
-    <ClInclude Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.h">
-      <Filter>GameFrame</Filter>
-    </ClInclude>
     <ClInclude Include="Src\BaseMecha\WeaponHandType.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -352,6 +349,18 @@
       <Filter>NowLoadingUpdater</Filter>
     </ClInclude>
     <ClInclude Include="Src\EditFrame\SetWeaponDisplay.h">
+      <Filter>EditFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponPaletteUI\WeaponPaletteUIBase.h">
+      <Filter>WeaponPaletteUIBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponPaletteUI\WeaponPaletteGameUI.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponDataUI\WeaponDataUI.h">
+      <Filter>GameFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\WeaponPaletteUI\WeaponPaletteEditUI.h">
       <Filter>EditFrame</Filter>
     </ClInclude>
   </ItemGroup>
@@ -470,9 +479,6 @@
     <ClCompile Include="Src\EffectObjects\BurnEffectList\BurnEffectList.cpp">
       <Filter>GameFrame\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp">
-      <Filter>GameFrame</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Shader\EffectSprite\EffectSpriteShader.cpp">
       <Filter>GameFrame\Shader\EffectSpriteShader</Filter>
     </ClCompile>
@@ -551,9 +557,6 @@
     <ClCompile Include="Src\BaseMecha\MechaPartsObjectFunction\BoostFunction.cpp">
       <Filter>GameFrame\MechaPartsFunction</Filter>
     </ClCompile>
-    <ClCompile Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.cpp">
-      <Filter>GameFrame</Filter>
-    </ClCompile>
     <ClCompile Include="Src\PublicFunctions.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -588,6 +591,18 @@
       <Filter>NowLoadingUpdater</Filter>
     </ClCompile>
     <ClCompile Include="Src\EditFrame\SetWeaponDisplay.cpp">
+      <Filter>EditFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponPaletteUI\WeaponPaletteUIBase.cpp">
+      <Filter>WeaponPaletteUIBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponPaletteUI\WeaponPaletteGameUI.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponDataUI\WeaponDataUI.cpp">
+      <Filter>GameFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\WeaponPaletteUI\WeaponPaletteEditUI.cpp">
       <Filter>EditFrame</Filter>
     </ClCompile>
   </ItemGroup>

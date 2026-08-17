@@ -102,8 +102,10 @@
     <ClInclude Include="Src\StageSelectFrame\StageData\StageData.h" />
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.h" />
     <ClInclude Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.h" />
-    <ClInclude Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.h" />
-    <ClInclude Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.h" />
+    <ClInclude Include="Src\WeaponDataUI\WeaponDataUI.h" />
+    <ClInclude Include="Src\WeaponPaletteUI\WeaponPaletteEditUI.h" />
+    <ClInclude Include="Src\WeaponPaletteUI\WeaponPaletteGameUI.h" />
+    <ClInclude Include="Src\WeaponPaletteUI\WeaponPaletteUIBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -182,8 +184,10 @@
     <ClCompile Include="Src\StageSelectFrame\StageData\StageData.cpp" />
     <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageDetailedDisplay.cpp" />
     <ClCompile Include="Src\StageSelectFrame\StageSelectFrameDisplay\StageSelectDisplay.cpp" />
-    <ClCompile Include="Src\WeaponDataDrawUI\WeaponDataDrawUI.cpp" />
-    <ClCompile Include="Src\WeaponPaletteDrawUI\WeaponPaletteDrawUI.cpp" />
+    <ClCompile Include="Src\WeaponDataUI\WeaponDataUI.cpp" />
+    <ClCompile Include="Src\WeaponPaletteUI\WeaponPaletteEditUI.cpp" />
+    <ClCompile Include="Src\WeaponPaletteUI\WeaponPaletteGameUI.cpp" />
+    <ClCompile Include="Src\WeaponPaletteUI\WeaponPaletteUIBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shader\EffectObject\HLSL\GSEffectObject.hlsl">
