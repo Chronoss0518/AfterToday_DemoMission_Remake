@@ -26,16 +26,16 @@ void WeaponPaletteGameUI::Init(ID3D11Device* _device)
 
 	WeaponPaletteUIBase::Init(_device);
 
-	SetWeaponPaletteTop(WEAPON_PALETTE_TOP);
-	SetWeaponPaletteWidth(WEAPON_PALETTE_WIDTH);
-	SetWeaponPaletteHeight(WEAPON_PALETTE_HEIGHT);
+	weapomPaletteTop = WEAPON_PALETTE_TOP;
+	weapomPaletteWidth = WEAPON_PALETTE_WIDTH;
+	weapomPaletteHeight = WEAPON_PALETTE_HEIGHT;
 
-	SetLeftWeaponPaletteLeft(LEFT_WEAPON_PALETTE_LEFT);
-	SetRightWeaponPaletteLeft(RIGHT_WEAPON_PALETTE_LEFT);
+	leftWeapomPaletteLeft = LEFT_WEAPON_PALETTE_LEFT;
+	rightWeapomPaletteLeft = RIGHT_WEAPON_PALETTE_LEFT;
 
-	SetWeaponPaletteTopAline(WEAPON_PALETTE_TOP_ALINE);
-	SetWeaponPaletteSideAline(WEAPON_PALETTE_SIDE_ALINE);
+	weaponPaletteTopAline = WEAPON_PALETTE_TOP_ALINE;
+	weaponPaletteSideAline = WEAPON_PALETTE_SIDE_ALINE;
 
-	SetPaletteWidth(PALETTE_WIDTH);
-	SetPaletteHeight(PALETTE_HEIGHT);
+	paletteWidth = PALETTE_WIDTH;
+	paletteHeight = PALETTE_HEIGHT;
 }
