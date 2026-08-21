@@ -91,6 +91,24 @@ void EditFrame::EditFrameDisplayBase::CloseChangeParts()
 	frame->partsChangeDisplay->Close();
 }
 
+void EditFrame::EditFrameDisplayBase::OpenSetWeapon()
+{
+	frame->nowDisplay = frame->setWeaponDisplay;
+
+	frame->setWeaponDisplay->InitAttackList();
+
+	frame->parameterList->SetUseSpecialActionFlg(false);
+}
+
+void EditFrame::EditFrameDisplayBase::CloseSetWeapon()
+{
+	frame->nowDisplay = frame->partsSelectDisplay;
+
+	frame->setWeaponDisplay->ReleaseAttackList();
+
+	frame->parameterList->SetUseSpecialActionFlg(true);
+}
+
 void EditFrame::EditFrameDisplayBase::RefreshMechaParameter()
 {
 	frame->parameterList->RefreshMechaParameter(frame->editMecha);
@@ -158,6 +176,9 @@ void EditFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	partsChangeDisplay = ChPtr::Make_S<PartsChangeDisplay>();
 	partsChangeDisplay->Init(this);
+
+	setWeaponDisplay = ChPtr::Make_S<SetWeaponDisplay>();
+	setWeaponDisplay->Init(this);
 
 	selectButton[ChStd::EnumCast(SelectButtonType::Up)].image.CreateTexture(EDIT_TEXTURE_DIRECTORY(L"UPButton.png"), device);
 	SPRITE_INIT(selectButton[ChStd::EnumCast(SelectButtonType::Up)].sprite,

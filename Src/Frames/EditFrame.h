@@ -98,6 +98,10 @@ public:
 
 		void CloseChangeParts();
 
+		void OpenSetWeapon();
+
+		void CloseSetWeapon();
+
 		void RefreshMechaParameter();
 
 		inline void ReturnFrame() { frame->returnFrameFlg = true; }
@@ -172,6 +176,7 @@ private:
 
 	ChPtr::Shared<PartsSelectDisplay>partsSelectDisplay = nullptr;
 	ChPtr::Shared<PartsChangeDisplay>partsChangeDisplay = nullptr;
+	ChPtr::Shared<SetWeaponDisplay>setWeaponDisplay = nullptr;
 
 	ChPtr::Shared<EditFrameDisplayBase>nowDisplay = nullptr;
 
