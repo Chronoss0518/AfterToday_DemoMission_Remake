@@ -4,6 +4,10 @@
 
 #include"../Frames/MenuBase.h"
 
+#ifndef NOT_WEAPON_PALETTE_SELECT_NO
+#define NOT_WEAPON_PALETTE_SELECT_NO 0xff
+#endif
+
 class WeaponPaletteEditUI : public WeaponPaletteUIBase
 {
 public:
@@ -12,9 +16,30 @@ public:
 
 public:
 
+	void Open();
+
+public:
+
 	void Update(MenuBase::ActionType _type);
 
-	void UpdateMouse(ChWin::MouseController& _mouse);
+	void UpdateMouse();
+
+	void UpdateSelect(ChPtr::Shared<BaseMecha>_editMecha);
+
+public:
+
+	void SetWeaponNo(WeaponHandType _type,unsigned char _weaponNo);
+
+public:
+
+	inline void AllDown()
+	{
+		for (unsigned char i = 0; i < DRAW_TYPE_COUNT; i++)
+		{
+			nowSetWeaponMask->SetAllDownFlg();
+		}
+	}
+
 
 protected:
 
@@ -22,7 +47,12 @@ protected:
 		unsigned char _drawNo,
 		WeaponHandType _type)override;
 
+public:
+
+	void GetNowSelectWeaponData(WeaponHandType& _type, unsigned char& _drawNo);
+
 private:
 
-	ChCpp::BitBool nowSetWeaponMask[DRAW_TYPE_COUNT] = { ChCpp::BitBool(PALETTE_COUNT) ,ChCpp::BitBool(PALETTE_COUNT) };
+	unsigned char nowSelectWeaponNo = 0;
+	ChCpp::BitBool nowSetWeaponMask[DRAW_TYPE_COUNT] = { ChCpp::BitBool((PALETTE_COUNT/8) + 1) ,ChCpp::BitBool((PALETTE_COUNT / 8) + 1) };
 };
