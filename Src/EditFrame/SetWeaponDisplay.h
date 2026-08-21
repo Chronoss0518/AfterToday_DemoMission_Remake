@@ -23,7 +23,7 @@ public:
 
 	void InitAttackList();
 
-	void ReleaseAtackList();
+	void ReleaseAttackList();
 
 private:
 

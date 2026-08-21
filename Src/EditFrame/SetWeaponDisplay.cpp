@@ -175,7 +175,7 @@ void SetWeaponDisplay::InitAttackList()
 	weaponPaletteUI->Open();
 }
 
-void SetWeaponDisplay::ReleaseAtackList()
+void SetWeaponDisplay::ReleaseAttackList()
 {
 
 }
