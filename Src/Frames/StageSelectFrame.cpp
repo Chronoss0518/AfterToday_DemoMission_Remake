@@ -23,6 +23,8 @@ void StageSelectFrame::Init(ChPtr::Shared<ChCpp::SendDataClass> _sendData)
 
 	MenuBase::InitMenu();
 
+	MenuBase::SetDefaultActionTest();
+
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 	spriteShader.Init(device);
 
