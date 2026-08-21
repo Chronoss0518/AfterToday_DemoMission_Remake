@@ -326,6 +326,7 @@ void PartsSelectDisplay::InitPartsList(ChPtr::Shared<MechaPartsObject> _parts)
 	SetPartsList(selectParts);
 
 	partsList->SetDrawPosition(0);
+	partsList->SetNowSelect(0);
 }
 
 void PartsSelectDisplay::SetPartsList(ChPtr::Shared<MechaPartsObject> _parts)
@@ -552,12 +553,13 @@ void PartsSelectDisplay::UpdateButtonSelect()
 
 	auto&& device = AppIns().GetDirect3D11().GetDevice();
 
-	partsList->SetDrawPosition(0);
 	selectParts = editSelectParts;
 
 	SetBaseParts(selectParts);
 
 	SetPartsList(selectParts);
+	partsList->SetDrawPosition(0);
+	partsList->SetNowSelect(0);
 }
 
 void PartsSelectDisplay::UpdateButtonChange()
