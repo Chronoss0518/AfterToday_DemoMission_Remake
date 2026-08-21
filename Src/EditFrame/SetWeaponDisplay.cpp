@@ -5,6 +5,7 @@
 #include"../BaseMecha/MechaParts.h"
 #include"../BaseMecha/MechaPartsObject.h"
 #include"../Attack/Attack.h"
+#include"../WeaponPaletteUI/WeaponPaletteEditUI.h"
 
 #include"../SelectList/SelectList.h"
 
@@ -122,6 +123,8 @@ void SetWeaponDisplay::Init(EditFrame* _frame)
 	auto rect = ChVec4::FromRect(PARTS_PANEL_LIST_X, PARTS_PANEL_LIST_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, PARTS_PANEL_LIST_Y + PANEL_SIZE_H * PANEL_COUNT);
 	backgroundSprite.SetPosRect(RectToGameWindow(rect));
 
+	weaponPaletteUI = ChPtr::Make_S<WeaponPaletteEditUI>();
+	weaponPaletteUI->Init(device);
 }
 
 void SetWeaponDisplay::Update(MenuBase::ActionType _type)
@@ -129,6 +132,7 @@ void SetWeaponDisplay::Update(MenuBase::ActionType _type)
 	size_t nowSelect = attackList->GetNowSelect();
 
 	attackList->UpdateAction(_type);
+	weaponPaletteUI->Update(_type);
 
 	if (_type == MenuBase::ActionType::Decision)
 	{
@@ -151,6 +155,7 @@ void SetWeaponDisplay::UpdateMouse()
 	size_t nowSelect = attackList->GetNowSelect();
 
 	attackList->UpdateMouse();
+	weaponPaletteUI->UpdateMouse();
 
 	if (nowSelect == attackList->GetNowSelect())return;
 
@@ -158,6 +163,8 @@ void SetWeaponDisplay::UpdateMouse()
 
 void SetWeaponDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 {
+	weaponPaletteUI->UpdateSelect(GetEditMecha());
+
 	_spriteShader.Draw(backGroundTexture, backgroundSprite);
 
 	attackList->Draw(_spriteShader);
@@ -165,7 +172,7 @@ void SetWeaponDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 
 void SetWeaponDisplay::InitAttackList()
 {
-
+	weaponPaletteUI->Open();
 }
 
 void SetWeaponDisplay::ReleaseAtackList()

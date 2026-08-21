@@ -5,6 +5,8 @@
 class AttackList;
 class AttackListItem;
 
+class WeaponPaletteEditUI;
+
 class SetWeaponDisplay : public EditFrame::EditFrameDisplayBase
 {
 public:
@@ -31,5 +33,6 @@ private:
 	ChPtr::Shared<AttackList>attackList = nullptr;
 	ChPtr::Shared<AttackListItem>cancelPanel = nullptr;
 
+	ChPtr::Shared<WeaponPaletteEditUI>weaponPaletteUI;
 
 };
