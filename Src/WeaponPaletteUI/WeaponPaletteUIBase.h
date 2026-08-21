@@ -6,6 +6,7 @@ class WeaponFunction;
 
 class BaseMecha;
 
+
 class WeaponPaletteUIBase : public ChCp::Initializer
 {
 public:
@@ -20,29 +21,6 @@ public:
 	{
 		selectWeaponNo[ChStd::EnumCast(_type)] = _no;
 	}
-
-protected:
-
-	void SetWeaponPaletteTop(float _pos) { weapomPaletteTop = _pos; }
-	
-	void SetWeaponPaletteWidth(float _pos) { weapomPaletteWidth = _pos; }
-
-	void SetWeaponPaletteHeight(float _pos) { weapomPaletteHeight = _pos; }
-
-
-	void SetLeftWeaponPaletteLeft(float _pos) { leftWeapomPaletteLeft = _pos; }
-	
-	void SetRightWeaponPaletteLeft(float _pos) { rightWeapomPaletteLeft = _pos; }
-
-
-	void SetWeaponPaletteTopAline(float _pos) { weaponPaletteTopAline = _pos; }
-
-	void SetWeaponPaletteSideAline(float _pos) { weaponPaletteSideAline = _pos; }
-
-
-	void SetPaletteWidth(float _pos) { paletteWidth = _pos; }
-
-	void SetPaletteHeight(float _pos) { paletteHeight = _pos; }
 
 public:
 
@@ -71,9 +49,7 @@ private:
 		ChD3D11::Shader::BaseDrawSprite11& _uiDrawer,
 		WeaponHandType _type);
 
-private:
-
-	ID3D11Device* device = nullptr;
+protected:
 
 	float weapomPaletteTop = 0.0f;
 	float weapomPaletteWidth = 0.0f;
@@ -87,6 +63,10 @@ private:
 
 	float paletteWidth = 0.0f;
 	float paletteHeight = 0.0f;
+
+private:
+
+	ID3D11Device* device = nullptr;
 
 	ChD3D11::Texture11* targetFunction[DRAW_TYPE_COUNT][PALETTE_COUNT];
 	unsigned char selectWeaponNo[DRAW_TYPE_COUNT] = { 0,0 };
