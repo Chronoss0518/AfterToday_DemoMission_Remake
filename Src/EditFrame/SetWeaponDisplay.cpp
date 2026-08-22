@@ -23,10 +23,14 @@
 #define PANEL_TITLE_TEXT_SIZE 24.0
 
 #define PANEL_SIZE_W 280.0f
-#define PANEL_SIZE_H 102.0f
+#define PANEL_SIZE_H 70.0f
 
 #define PARTS_PANEL_LIST_X 30.0f
-#define PARTS_PANEL_LIST_Y 141.0f
+#define PARTS_PANEL_LIST_Y 164.0f
+
+#define UP_BUTTON_PANEL_Y 30.0f
+#define DOWN_BUTTON_PANEL_Y 408.0f
+#define BUTTON_PANEL_SIZE_H 102.0f
 
 class AttackListItem : public SelectListItemBase
 {
@@ -136,13 +140,12 @@ void SetWeaponDisplay::Update(MenuBase::ActionType _type)
 
 	if (_type == MenuBase::ActionType::Decision)
 	{
-		CloseChangeParts();
-		return;
+
 	}
 
 	if (_type == MenuBase::ActionType::Cancel)
 	{
-		CloseChangeParts();
+		CloseSetWeapon();
 		return;
 	}
 
@@ -168,14 +171,21 @@ void SetWeaponDisplay::Draw(ChD3D11::Shader::BaseDrawSprite11& _spriteShader)
 	_spriteShader.Draw(backGroundTexture, backgroundSprite);
 
 	attackList->Draw(_spriteShader);
+
+	weaponPaletteUI->Draw(_spriteShader);
 }
 
 void SetWeaponDisplay::InitAttackList()
 {
 	weaponPaletteUI->Open();
+
+	SetUpButtonSpriteRect(RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, UP_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, UP_BUTTON_PANEL_Y + BUTTON_PANEL_SIZE_H)));
+	SetDownButtonSpriteRect(RectToGameWindow(ChVec4::FromRect(PARTS_PANEL_LIST_X, DOWN_BUTTON_PANEL_Y, PARTS_PANEL_LIST_X + PANEL_SIZE_W, DOWN_BUTTON_PANEL_Y + BUTTON_PANEL_SIZE_H)));
 }
 
 void SetWeaponDisplay::ReleaseAttackList()
 {
-
+	SetInitUpButtonSpriteRect();
+	SetInitDownButtonSpriteRect();
 }
+
