@@ -8,18 +8,18 @@
 #include"WeaponPaletteEditUI.h"
 
 
-#define WEAPON_PALETTE_TOP 560.0f
-#define WEAPON_PALETTE_WIDTH 290.0f
-#define WEAPON_PALETTE_HEIGHT 50.0f
+#define WEAPON_PALETTE_TOP 590.0f
+#define WEAPON_PALETTE_WIDTH 580.0f
+#define WEAPON_PALETTE_HEIGHT 100.0f
 
-#define LEFT_WEAPON_PALETTE_LEFT 153.0f
-#define RIGHT_WEAPON_PALETTE_LEFT 836.0f
+#define LEFT_WEAPON_PALETTE_LEFT 20.0f
+#define RIGHT_WEAPON_PALETTE_LEFT 680.0f
 
-#define WEAPON_PALETTE_TOP_ALINE 5.0f
-#define WEAPON_PALETTE_SIDE_ALINE 10.0f
+#define WEAPON_PALETTE_TOP_ALINE 10.0f
+#define WEAPON_PALETTE_SIDE_ALINE 20.0f
 
-#define PALETTE_WIDTH 46.0f
-#define PALETTE_HEIGHT 40.0f
+#define PALETTE_WIDTH 92.0f
+#define PALETTE_HEIGHT 80.0f
 
 #define WEAPON_SELECT_COLOR ChVec4::FromColor(1.0f,1.0f,0.0f,1.0f)
 #define WEAPON_UNSELECT_COLOR ChVec4::FromColor(1.0f,1.0f,1.0f,1.0f)
@@ -71,11 +71,11 @@ void WeaponPaletteEditUI::UpdateMouse()
 		{
 			leftTop.x += weaponPaletteSideAline;
 
-			if (IsMoucePosOnRect(ChVec4::FromRect(
+			if (IsMoucePosOnRect(RectToGameWindow(ChVec4::FromRect(
 				leftTop.x,
 				leftTop.y,
 				leftTop.x + paletteWidth,
-				leftTop.y + paletteHeight)))
+				leftTop.y + paletteHeight))))
 			{
 				nowSelectWeaponNo = j + (i * PALETTE_COUNT);
 				return;
@@ -96,7 +96,7 @@ void WeaponPaletteEditUI::UpdateSelect(ChPtr::Shared<BaseMecha>_editMecha)
 
 	if (nowSelectWeaponNo < PALETTE_COUNT)
 	{
-		WeaponPaletteUIBase::SetSelectWeaponNo(WeaponHandType::Left, PALETTE_COUNT - nowSelectWeaponNo);
+		WeaponPaletteUIBase::SetSelectWeaponNo(WeaponHandType::Left, PALETTE_COUNT - nowSelectWeaponNo - 1);
 		WeaponPaletteUIBase::SetSelectWeaponNo(WeaponHandType::Right, NOT_WEAPON_PALETTE_SELECT_NO);
 	}
 	else
@@ -131,7 +131,7 @@ void WeaponPaletteEditUI::GetNowSelectWeaponData(WeaponHandType& _type, unsigned
 	if (nowSelectWeaponNo < PALETTE_COUNT)
 	{
 		_type = WeaponHandType::Left;
-		_drawNo = PALETTE_COUNT - nowSelectWeaponNo;
+		_drawNo = PALETTE_COUNT - nowSelectWeaponNo - 1;
 	}
 	else
 	{
