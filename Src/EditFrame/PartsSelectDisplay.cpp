@@ -602,6 +602,7 @@ void PartsSelectDisplay::UpdateButtonRemove()
 
 void PartsSelectDisplay::UpdateButtonSetWeapon()
 {
+	UpdateButtonCancel();
 	OpenSetWeapon();
 }
 
