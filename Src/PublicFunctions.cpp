@@ -48,11 +48,7 @@ bool IsMoucePosOnRect(const ChVec4& _rect)
 {
 	ChVec2 mousePos = ChWin::Mouse().GetNowProPosToChVec2();
 
-	bool res = false;
-
-	if (_rect.IsOnPoint(mousePos))res = true;
-
-	return res;
+	return _rect.IsOnPoint(mousePos);
 }
 
 bool IsMoucePosOnSprite(const ChD3D11::Sprite11& _sprite)
